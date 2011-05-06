@@ -39,3 +39,17 @@ Simply configure as many paths as needed with the given cache controls:
     liip_cache_control:
         rules:
             - { path: /, controls: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" } }
+
+
+To use the varnish cache invalidator helper, you can define a service
+
+    cacheInvalidator:
+        class: Liip\CacheControlBundle\Helper\Varnish
+        arguments:
+            domain: www.liip.ch
+            varnishes: 10.0.0.10 10.0.0.11     # space character separated list of ips
+            port: 80  # port varnish is listening on for incoming web connections
+
+In your code, you do something along the lines:
+
+$cacheInvalidator->invalidatePath($router->generate('myRouteName'));
