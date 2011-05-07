@@ -43,7 +43,7 @@ of the varnish reverse proxies:
             - { path: /, controls: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" } }
         purger:
             domain: http://www.liip.ch
-            varnishes: 10.0.0.10 10.0.0.11 # space character separated list of ips, or an array of ips
+            varnishes: 10.0.0.10, 10.0.0.11 # comma separated list of ips, or an array of ips
             port: 80  # port varnish is listening on for incoming web connections
 
 Varnish purging
