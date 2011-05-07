@@ -40,6 +40,17 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('purger')
+                    ->children()
+                        ->arrayNode('varnishes')
+                            ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')->end()
+                        ->end()
+                        ->scalarNode('domain')->defaultNull()->end()
+                        ->scalarNode('port')->defaultNull()->end()
+                    ->end()
+                ->end()
             ->end()
         ;
 

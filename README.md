@@ -30,26 +30,33 @@ Installation
           );
         }
 
-Configuration
+Cache control
 =============
 
-Simply configure as many paths as needed with the given cache controls:
+Simply configure as many paths as needed with the given cache control rules and/or the location
+of the varnish reverse proxies:
 
     # app/config.yml
     liip_cache_control:
         rules:
+            # the controls section values are used in a call to Response::setCache();
             - { path: /, controls: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" } }
-
-
-To use the varnish cache invalidator helper, you can define a service
-
-    cacheInvalidator:
-        class: Liip\CacheControlBundle\Helper\Varnish
-        arguments:
-            domain: www.liip.ch
-            varnishes: 10.0.0.10 10.0.0.11     # space character separated list of ips
+        purger:
+            domain: http://www.liip.ch
+            varnishes: 10.0.0.10 10.0.0.11 # space character separated list of ips, or an array of ips
             port: 80  # port varnish is listening on for incoming web connections
 
-In your code, you do something along the lines:
+Varnish purging
+===============
 
-$cacheInvalidator->invalidatePath($router->generate('myRouteName'));
+To use the varnish cache purger helper you must inject the ``liip_cache_control.purger`` service
+or fetch it from the service container:
+
+    // using a "manual" url
+    $purger = $this->container->get('liip_cache_control.purger');
+    $purger->invalidatePath('http://www.liip.ch/some/path');
+
+    // using the router to generate the url
+    $router = $this->container->get('router');
+    $purger = $this->container->get('liip_cache_control.purger');
+    $purger->invalidatePath($router->generate('myRouteName'));

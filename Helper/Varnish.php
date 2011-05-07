@@ -8,7 +8,7 @@ namespace Liip\CacheControlBundle\Helper;
  * Uses PURGE requests to the frontend. Supports multiple varnish instances.
  *
  * To set up varnish, you need to configure it accordingly.
- * add the following code
+ * Please add the following code
 
 #top level:
 # who is allowed to purge from cache
@@ -48,8 +48,8 @@ if (req.request == "PURGE") {
  */
 class Varnish
 {
-    private $domain;
     private $varnishes;
+    private $domain;
     private $port;
 
     /**
@@ -59,14 +59,14 @@ class Varnish
      * @param array $varnishes space separated list of varnish ips to talk to
      * @param int $port the port the varnishes listen on (its the same port for all instances)
      */
-    public function __construct($domain, $varnishes, $port)
+    public function __construct($domain, array $varnishes, $port)
     {
         $url = parse_url($domain);
         $this->domain = $url['host'];
         if (isset($url['port'])) {
             $this->domain .= ':' . $url['port'];
         }
-        $this->varnishes = array_map("trim", explode(' ', $varnishes));
+        $this->varnishes = $varnishes;
         $this->port = $port;
     }
 
@@ -78,23 +78,23 @@ class Varnish
      */
     public function invalidatePath($path)
     {
-        foreach($this->varnishes as $ip) {
+        foreach ($this->varnishes as $ip) {
             $fp = fsockopen($ip, $this->port, $errno, $errstr, 2);
             if (!$fp) {
-                throw new Exception("$errstr ($errno)");
-            } else {
-                $out = "PURGE $path HTTP/1.0\r\n";
-                $out .= "Host: {$this->domain}\r\n";
-                $out .= "Connection: Close\r\n\r\n";
-                fwrite($fp, $out);
-
-                //read answer to the end, to be sure varnish is finished before continuing
-                while (!feof($fp)) {
-                    fgets($fp, 128);
-                }
-
-                fclose($fp);
+                throw new \Exception("$errstr ($errno)");
             }
+
+            $out = "PURGE $path HTTP/1.0\r\n";
+            $out .= "Host: {$this->domain}\r\n";
+            $out .= "Connection: Close\r\n\r\n";
+            fwrite($fp, $out);
+
+            //read answer to the end, to be sure varnish is finished before continuing
+            while (!feof($fp)) {
+                fgets($fp, 128);
+            }
+
+            fclose($fp);
         }
     }
 }

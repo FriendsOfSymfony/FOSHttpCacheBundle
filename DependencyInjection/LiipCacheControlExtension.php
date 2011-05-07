@@ -24,21 +24,29 @@ class LiipCacheControlExtension extends Extension
         $configuration = new Configuration();
         $config = $processor->processConfiguration($configuration, $configs);
 
-        if (empty($config['rules'])) {
+        if (empty($config['rules']) && $config['purger']) {
             return;
         }
 
         $loader =  new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('cache_control.xml');
 
-        foreach ($config['rules'] as $cache) {
-            $matcher = $this->createRequestMatcher(
-                $container,
-                $cache['path']
-            );
+        if (isset($config['rules'])) {
+            foreach ($config['rules'] as $cache) {
+                $matcher = $this->createRequestMatcher(
+                    $container,
+                    $cache['path']
+                );
 
-            $container->getDefinition($this->getAlias().'.response_listener')
-                      ->addMethodCall('add', array($matcher, $cache['controls']));
+                $container->getDefinition($this->getAlias().'.response_listener')
+                          ->addMethodCall('add', array($matcher, $cache['controls']));
+            }
+        }
+
+        if (isset($config['purger'])) {
+            $container->setParameter($this->getAlias().'.varnishes', $config['purger']['varnishes']);
+            $container->setParameter($this->getAlias().'.domain', $config['purger']['domain']);
+            $container->setParameter($this->getAlias().'.port', $config['purger']['port']);
         }
     }
 
