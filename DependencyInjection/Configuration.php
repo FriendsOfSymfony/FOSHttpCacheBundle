@@ -41,6 +41,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->arrayNode('purger')
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('varnishes')
                             ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()

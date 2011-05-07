@@ -27,23 +27,19 @@ class LiipCacheControlExtension extends Extension
         $loader =  new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('cache_control.xml');
 
-        if (isset($config['rules'])) {
-            foreach ($config['rules'] as $cache) {
-                $matcher = $this->createRequestMatcher(
-                    $container,
-                    $cache['path']
-                );
+        foreach ($config['rules'] as $cache) {
+            $matcher = $this->createRequestMatcher(
+                $container,
+                $cache['path']
+            );
 
-                $container->getDefinition($this->getAlias().'.response_listener')
-                          ->addMethodCall('add', array($matcher, $cache['controls']));
-            }
+            $container->getDefinition($this->getAlias().'.response_listener')
+                      ->addMethodCall('add', array($matcher, $cache['controls']));
         }
 
-        if (isset($config['purger'])) {
-            $container->setParameter($this->getAlias().'.varnishes', $config['purger']['varnishes']);
-            $container->setParameter($this->getAlias().'.domain', $config['purger']['domain']);
-            $container->setParameter($this->getAlias().'.port', $config['purger']['port']);
-        }
+        $container->setParameter($this->getAlias().'.varnishes', $config['purger']['varnishes']);
+        $container->setParameter($this->getAlias().'.domain', $config['purger']['domain']);
+        $container->setParameter($this->getAlias().'.port', $config['purger']['port']);
     }
 
     protected function createRequestMatcher(ContainerBuilder $container, $path = null)
