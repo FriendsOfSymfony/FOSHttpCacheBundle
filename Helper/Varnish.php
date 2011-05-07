@@ -6,33 +6,6 @@ namespace Liip\CacheControlBundle\Helper;
  * Helper to invalidate varnish entries (purge)
  *
  * Uses PURGE requests to the frontend. Supports multiple varnish instances.
- *
- * To set up varnish, you need to configure it accordingly.
- * Please add the following code
-
-#top level:
-# who is allowed to purge from cache
-# http://varnish-cache.org/trac/wiki/VCLExamplePurging
-acl purge {
-        "127.0.0.1"; #localhost for dev purposes
-        "10.0.11.0"/24; #server closed network
-}
-
-#in sub vcl_recv
-# purge if client is in correct ip range
-if (req.request == "PURGE") {
-    if (!client.ip ~ purge) {
-        error 405 "Not allowed.";
-    }
-    purge("req.url ~ " req.url);
-    #log "PURGE " req.url;
-    error 200 "Success";
-}
-
- * NOTE: this code invalidates the url for all domains. If your varnish serves
- * multiple domains, you should improve this configuration.
- * Pull requests welcome :-)
- *
  * This is about equivalent to doing this
 
      netcat localhost 6081 << EOF
