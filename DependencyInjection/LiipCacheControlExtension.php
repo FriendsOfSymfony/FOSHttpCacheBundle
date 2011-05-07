@@ -24,10 +24,6 @@ class LiipCacheControlExtension extends Extension
         $configuration = new Configuration();
         $config = $processor->processConfiguration($configuration, $configs);
 
-        if (empty($config['rules']) && $config['purger']) {
-            return;
-        }
-
         $loader =  new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('cache_control.xml');
 
