@@ -86,7 +86,7 @@ or fetch it from the service container:
 
     // using a "manual" url
     $purger = $this->container->get('liip_cache_control.purger');
-    $purger->invalidatePath('http://www.liip.ch/some/path');
+    $purger->invalidatePath('/some/path');
 
     // using the router to generate the url
     $router = $this->container->get('router');
