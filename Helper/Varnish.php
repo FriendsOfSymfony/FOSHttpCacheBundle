@@ -15,6 +15,7 @@ namespace Liip\CacheControlBundle\Helper;
  *   netcat localhost 6081 << EOF
  *   PURGE /url/to/purge HTTP/1.1
  *   Host: webapp-host.name
+ * 
  *   EOF
  *
  * For a forced refresh it uses a normal GET with appropriate cache headers
@@ -26,6 +27,7 @@ namespace Liip\CacheControlBundle\Helper;
  *   GET /url/to/refresh HTTP/1.1
  *   Host: webapp-host.name
  *   Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+ *
  *   EOF
  *
  * TODO: would be nice to support the varnish admin shell as well. It would be
