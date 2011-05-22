@@ -3,17 +3,30 @@
 namespace Liip\CacheControlBundle\Helper;
 
 /**
- * Helper to invalidate varnish entries (purge)
+ * Helper to invalidate or force a refresh varnish entries
  *
- * Uses PURGE requests to the frontend. Supports multiple varnish instances.
+ * Supports multiple varnish instances.
+ * 
+ * For invalidation uses PURGE requests to the frontend.
+ * See http://www.varnish-cache.org/trac/wiki/VCLExamplePurging
+ *
  * This is about equivalent to doing this
-
-     netcat localhost 6081 << EOF
-     PURGE /url/to/purge HTTP/1.1
-     host: webapp-host.name
-
-     EOF
-
+ *
+ *   netcat localhost 6081 << EOF
+ *   PURGE /url/to/purge HTTP/1.1
+ *   Host: webapp-host.name
+ *   EOF
+ *
+ * For a forced refresh it uses a normal GET with appropriate cache headers
+ * See: http://www.varnish-cache.org/trac/wiki/VCLExampleEnableForceRefresh
+ *
+ * This is about equivalent to doing this
+ *
+ *   netcat localhost 6081 << EOF
+ *   GET /url/to/refresh HTTP/1.1
+ *   Host: webapp-host.name
+ *   Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+ *   EOF
  *
  * TODO: would be nice to support the varnish admin shell as well. It would be
  * more clean and secure, but you have to configure varnish accordingly. By default
@@ -46,23 +59,51 @@ class Varnish
     /**
      * Purge this absolute path at all registered cache server
      *
-     * @param $path Must be an absolute path
-     * @throw Exception if connection to one of the varnish servers fails. TODO: should we be more tolerant?
+     * @param string $path Must be an absolute path
+     * @throw \RuntimeException if connection to one of the varnish servers fails.
      */
     public function invalidatePath($path)
+    {
+        $request = "PURGE $path HTTP/1.0\r\n";
+        $request.= "Host: {$this->domain}\r\n";
+        $request.= "Connection: Close\r\n\r\n";
+
+        $this->sendRequestToAllVarnishes($request);
+    }
+
+    /**
+     * Force this absolute path to be refreshed 
+     *
+     * @param string $path Must be an absolute path
+     * @throw \RuntimeException if connection to one of the varnish servers fails.
+     */
+    public function refreshPath($path)
+    {
+        $request = "GET $path HTTP/1.0\r\n";
+        $request.= "Host: {$this->domain}\r\n";
+        $request.= "Cache-Control: no-cache, no-store, max-age=0, must-revalidate";
+        $request.= "Connection: Close\r\n\r\n";
+
+        $this->sendRequestToAllVarnishes($request);
+    }
+
+    /**
+     * Send a request to all configured varnishes
+     *
+     * @param string $request request string
+     * @throw \RuntimeException if connection to one of the varnish servers fails. TODO: should we be more tolerant?
+     */
+    protected function sendRequestToAllVarnishes($request)
     {
         foreach ($this->varnishes as $ip) {
             $fp = fsockopen($ip, $this->port, $errno, $errstr, 2);
             if (!$fp) {
-                throw new \Exception("$errstr ($errno)");
+                throw new \RuntimeException("$errstr ($errno)");
             }
 
-            $out = "PURGE $path HTTP/1.0\r\n";
-            $out .= "Host: {$this->domain}\r\n";
-            $out .= "Connection: Close\r\n\r\n";
-            fwrite($fp, $out);
+            fwrite($fp, $request);
 
-            //read answer to the end, to be sure varnish is finished before continuing
+            // read answer to the end, to be sure varnish is finished before continuing
             while (!feof($fp)) {
                 fgets($fp, 128);
             }
