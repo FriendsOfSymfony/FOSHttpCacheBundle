@@ -149,4 +149,7 @@ In this scenario on a cache hit, Varnish can be configured to issue a HEAD reque
 content is accessed. This way Symfony2 can be used to validate the authorization, but no
 work needs to be made to regenerate the content that is already in the Varnish cache.
 
+Note this obviously means that it only works with path based Security. Any additional security
+implemented inside the Controller will be ignored.
+
 TODO: add example Varnish config
