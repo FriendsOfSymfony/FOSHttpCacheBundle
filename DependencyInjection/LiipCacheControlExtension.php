@@ -25,21 +25,30 @@ class LiipCacheControlExtension extends Extension
         $config = $processor->processConfiguration($configuration, $configs);
 
         $loader =  new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('cache_control.xml');
 
-        foreach ($config['rules'] as $cache) {
-            $matcher = $this->createRequestMatcher(
-                $container,
-                $cache['path']
-            );
+        if (!empty($config['rules'])) {
+            $loader->load('rule_response_listener.xml');
+            foreach ($config['rules'] as $cache) {
+                $matcher = $this->createRequestMatcher(
+                    $container,
+                    $cache['path']
+                );
 
-            $container->getDefinition($this->getAlias().'.response_listener')
-                      ->addMethodCall('add', array($matcher, $cache['controls']));
+                $container->getDefinition($this->getAlias().'.response_listener')
+                          ->addMethodCall('add', array($matcher, $cache['controls']));
+            }
         }
 
-        $container->setParameter($this->getAlias().'.varnishes', $config['purger']['varnishes']);
-        $container->setParameter($this->getAlias().'.domain', $config['purger']['domain']);
-        $container->setParameter($this->getAlias().'.port', $config['purger']['port']);
+        if (!empty($config['varnish'])) {
+            $loader->load('varnish_helper.xml');
+            $container->setParameter($this->getAlias().'.varnish.ips', $config['varnish']['ips']);
+            $container->setParameter($this->getAlias().'.varnish.domain', $config['varnish']['domain']);
+            $container->setParameter($this->getAlias().'.varnish.port', $config['varnish']['port']);
+        }
+
+        if ($config['authorization_listener']) {
+            $loader->load('authorization_request_listener.xml');
+        }
     }
 
     protected function createRequestMatcher(ContainerBuilder $container, $path = null)

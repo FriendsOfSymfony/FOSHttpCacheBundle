@@ -12,15 +12,5 @@
 
         <service id="liip_cache_control.request_matcher" class="Symfony\Component\HttpFoundation\RequestMatcher" public="false" />
 
-        <service id="liip_cache_control.varnish" class="Liip\CacheControlBundle\Helper\Varnish">
-            <argument>%liip_cache_control.domain%</argument>
-            <argument>%liip_cache_control.varnishes%</argument>
-            <argument>%liip_cache_control.port%</argument>
-        </service>
-
-        <service id="liip_cache_control.cache_authorization_listener" class="Liip\CacheControlBundle\Request\CacheAuthorizationListener">
-            <tag name="kernel.listener" event="onCoreRequest" priority="-129" />
-        </service>
-
     </services>
 </container>

@@ -40,10 +40,10 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('purger')
+                ->arrayNode('varnish')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->arrayNode('varnishes')
+                        ->arrayNode('ips')
                             ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
                             ->useAttributeAsKey('name')
                             ->prototype('scalar')->end()
@@ -52,7 +52,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('port')->defaultNull()->end()
                     ->end()
                 ->end()
-                ->booleanNode('cache_authorization_listener')->defaultFalse()->end()
+                ->booleanNode('authorization_listener')->defaultFalse()->end()
             ->end()
         ;
 

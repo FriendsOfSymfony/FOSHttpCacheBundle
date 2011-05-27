@@ -36,7 +36,7 @@ namespace Liip\CacheControlBundle\Helper;
  */
 class Varnish
 {
-    private $varnishes;
+    private $ips;
     private $domain;
     private $port;
 
@@ -44,17 +44,17 @@ class Varnish
      * Constructor
      *
      * @param string $domain the domain we want to purge urls from. only domain and port are used, path is ignored
-     * @param array $varnishes space separated list of varnish ips to talk to
+     * @param array $ips space separated list of varnish ips to talk to
      * @param int $port the port the varnishes listen on (its the same port for all instances)
      */
-    public function __construct($domain, array $varnishes, $port)
+    public function __construct($domain, array $ips, $port)
     {
         $url = parse_url($domain);
         $this->domain = $url['host'];
         if (isset($url['port'])) {
             $this->domain .= ':' . $url['port'];
         }
-        $this->varnishes = $varnishes;
+        $this->ips = $ips;
         $this->port = $port;
     }
 
@@ -97,7 +97,7 @@ class Varnish
      */
     protected function sendRequestToAllVarnishes($request)
     {
-        foreach ($this->varnishes as $ip) {
+        foreach ($this->ips as $ip) {
             $fp = fsockopen($ip, $this->port, $errno, $errstr, 2);
             if (!$fp) {
                 throw new \RuntimeException("$errstr ($errno)");
