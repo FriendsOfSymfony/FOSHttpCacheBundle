@@ -45,6 +45,7 @@ of the varnish reverse proxies:
             domain: http://www.liip.ch
             varnishes: 10.0.0.10, 10.0.0.11 # comma separated list of ips, or an array of ips
             port: 80  # port varnish is listening on for incoming web connections
+        cache_authorization_listener: true
 
 Varnish helper
 ==============
@@ -136,3 +137,16 @@ or fetch it from the service container:
     // using a "manual" url
     $varnish = $this->container->get('liip_cache_control.varnish');
     $varnish->refreshPath('/some/path');
+
+Cache authorization listener
+============================
+
+This listener makes it possible to stop a request with a 204 "No Content" for HEAD requests
+right after the security firewall has finished. This is useful when one uses Varnish while
+handling content that is not available for all users.
+
+In this scenario on a cache hit, Varnish can be configured to issue a HEAD request when this
+content is accessed. This way Symfony2 can be used to validate the authorization, but no
+work needs to be made to regenerate the content that is already in the Varnish cache.
+
+TODO: add example Varnish config
