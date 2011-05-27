@@ -52,6 +52,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('port')->defaultNull()->end()
                     ->end()
                 ->end()
+                ->booleanNode('cache_authorization_listener')->defaultFalse()->end()
             ->end()
         ;
 

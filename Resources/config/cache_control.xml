@@ -18,5 +18,9 @@
             <argument>%liip_cache_control.port%</argument>
         </service>
 
+        <service id="liip_cache_control.cache_authorization_listener" class="Liip\CacheControlBundle\Request\CacheAuthorizationListener">
+            <tag name="kernel.listener" event="onCoreRequest" priority="-129" />
+        </service>
+
     </services>
 </container>
