@@ -141,7 +141,7 @@ or fetch it from the service container:
 Cache authorization listener
 ============================
 
-This listener makes it possible to stop a request with a 204 "No Content" for HEAD requests
+This listener makes it possible to stop a request with a 200 "OK" for HEAD requests
 right after the security firewall has finished. This is useful when one uses Varnish while
 handling content that is not available for all users.
 
@@ -151,5 +151,9 @@ work needs to be made to regenerate the content that is already in the Varnish c
 
 Note this obviously means that it only works with path based Security. Any additional security
 implemented inside the Controller will be ignored.
+
+Note further that a HEAD response is supposed to contain the same HTTP header meta data as the
+GET response to the same URL. However for the purpose of this use case we have no other choice
+but to assume a 200.
 
 TODO: add example Varnish config

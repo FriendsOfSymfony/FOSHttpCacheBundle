@@ -20,8 +20,8 @@ class CacheAuthorizationListener
         $request = $event->getRequest();
 
         if ($request->getMethod() == 'HEAD') {
-            // return a 204 "No Content" Response to stop processing
-            $response = new Response('', 204);
+            // return a 200 "OK" Response to stop processing
+            $response = new Response('', 200);
             $event->setResponse($response);
         }
     }
