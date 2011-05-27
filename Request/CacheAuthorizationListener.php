@@ -4,8 +4,6 @@ namespace Liip\CacheControlBundle\Request;
 
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RequestMatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * listen to HEAD requests, return response after security, but before Controller is invoked
