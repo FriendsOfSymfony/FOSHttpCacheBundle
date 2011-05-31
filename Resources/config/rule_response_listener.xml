@@ -7,7 +7,7 @@
     <services>
 
         <service id="liip_cache_control.response_listener" class="Liip\CacheControlBundle\Response\CacheControlListener">
-            <tag name="kernel.listener" event="oncore.controller" method="CoreResponse" />
+            <tag name="kernel.listener" event="core.response" method="onCoreResponse" />
         </service>
 
         <service id="liip_cache_control.request_matcher" class="Symfony\Component\HttpFoundation\RequestMatcher" public="false" />
