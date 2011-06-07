@@ -34,8 +34,10 @@ class LiipCacheControlExtension extends Extension
                     $cache['path']
                 );
 
+                unset($cache['path']);
+
                 $container->getDefinition($this->getAlias().'.response_listener')
-                          ->addMethodCall('add', array($matcher, $cache['controls']));
+                          ->addMethodCall('add', array($matcher, $cache));
             }
         }
 
