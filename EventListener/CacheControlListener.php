@@ -44,8 +44,8 @@ class CacheControlListener
                 $response->setCache($this->prepareControls($options['controls']));
             }
 
-            if (null !== $options['varnish_ttl']) {
-                $response->headers->set('X-Varnish-TTL', (int) $options['varnish_ttl'], false);
+            if (null !== $options['reverse_proxy_ttl']) {
+                $response->headers->set('X-Reverse-Proxy-TTL', (int) $options['reverse_proxy_ttl'], false);
             }
         }
 
