@@ -47,6 +47,49 @@ of the varnish reverse proxies:
             port: 80  # port varnish is listening on for incoming web connections
         authorization_listener: true
 
+Custom Varnish Time-Outs
+------------------------
+
+Varnish checks the `Cache-Control` header of your response to set the TTL.
+Sometimes you may want that varnish should cache your response for a longer
+time than the browser. This way you can increase the performance by reducing
+requests to the backend.
+
+To achieve this you can set the `reverse_proxy_ttl` option for your rule:
+
+    # app/config.yml
+    liip_cache_control:
+        rules:
+            # the controls section values are used in a call to Response::setCache();
+            - { path: /, reverse_proxy_ttl: 300, controls: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" } }
+
+This example will add the header `X-Reverse-Proxy-TTL: 300` to your response.
+
+But by default, varnish will not know anything about it. To get it to work
+you have to extend your varnish `vcl_fetch` configuration:
+
+    sub vcl_fetch {
+
+        /* ... */
+
+        if (beresp.http.X-Reverse-Proxy-TTL) {
+            C{
+                char *ttl;
+                ttl = VRT_GetHdr(sp, HDR_BERESP, "\024X-Reverse-Proxy-TTL:");
+                VRT_l_beresp_ttl(sp, atoi(ttl));
+            }C
+            unset beresp.http.X-Reverse-Proxy-TTL;
+        }
+
+        /* ... */
+
+    }
+
+Varnish will then look for the `X-Reverse-Proxy-TTL` header and if it exists,
+varnish will use the found value as TTL and then remove the header.
+
+Note that if you are using this, you should have a good purging strategy.
+
 Varnish helper
 ==============
 

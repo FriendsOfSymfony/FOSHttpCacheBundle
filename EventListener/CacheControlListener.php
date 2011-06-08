@@ -22,11 +22,11 @@ class CacheControlListener
      * Constructor.
      *
      * @param RequestMatcherInterface $requestMatcher A RequestMatcherInterface instance
-     * @param array                   $controls          An array of cache controls
+     * @param array                   $options        An array of options
      */
-    public function add(RequestMatcherInterface $requestMatcher, array $controls = array())
+    public function add(RequestMatcherInterface $requestMatcher, array $options = array())
     {
-        $this->map[] = array($requestMatcher, $controls);
+        $this->map[] = array($requestMatcher, $options);
     }
 
    /**
@@ -38,10 +38,15 @@ class CacheControlListener
     {
         $response = $event->getResponse();
         $request = $event->getRequest();
-        $controls = $this->getPatterns($request);
 
-        if ($controls !== null) {
-            $response->setCache($this->prepareControls($controls));
+        if ($options = $this->getOptions($request)) {
+            if (!empty($options['controls'])) {
+                $response->setCache($this->prepareControls($options['controls']));
+            }
+
+            if (null !== $options['reverse_proxy_ttl']) {
+                $response->headers->set('X-Reverse-Proxy-TTL', (int) $options['reverse_proxy_ttl'], false);
+            }
         }
 
         $vary = $response->getVary();
@@ -52,11 +57,12 @@ class CacheControlListener
     }
 
     /**
-     * Return the cache controls for the current request
+     * Return the cache options for the current request
+     *
      * @param Request $request
      * @return array of settings
      */
-    protected function getPatterns(Request $request)
+    protected function getOptions(Request $request)
     {
         foreach ($this->map as $elements) {
             if (null === $elements[0] || $elements[0]->matches($request)) {
