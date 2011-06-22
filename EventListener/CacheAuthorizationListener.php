@@ -15,7 +15,7 @@ class CacheAuthorizationListener
    /**
     * @param GetResponseEvent $event
     */
-    public function onCoreRequest(GetResponseEvent $event)
+    public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
 

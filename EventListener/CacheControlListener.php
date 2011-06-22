@@ -30,11 +30,9 @@ class CacheControlListener
     }
 
    /**
-    * On 'core.response' sets cache settings on the response object
-    *
     * @param EventInterface $event
     */
-    public function onCoreResponse(FilterResponseEvent $event)
+    public function onKernelResponse(FilterResponseEvent $event)
     {
         $response = $event->getResponse();
         $request = $event->getRequest();
