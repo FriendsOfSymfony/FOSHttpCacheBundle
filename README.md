@@ -8,7 +8,7 @@ Installation
 
     1. Add this bundle to your project as a Git submodule:
 
-        $ git submodule add git://github.com/liip/CacheControlBundle.git vendor/bundles/Liip/CacheControlBundle
+        $ git submodule add git://github.com/liip/LiipCacheControlBundle.git vendor/bundles/Liip/CacheControlBundle
 
     2. Add the Liip namespace to your autoloader:
 
