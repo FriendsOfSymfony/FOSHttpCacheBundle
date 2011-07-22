@@ -45,12 +45,10 @@ class CacheControlListener
             if (null !== $options['reverse_proxy_ttl']) {
                 $response->headers->set('X-Reverse-Proxy-TTL', (int) $options['reverse_proxy_ttl'], false);
             }
-        }
 
-        $vary = $response->getVary();
-        if (! in_array('Cookie', $vary)) {
-            $vary[] = 'Cookie';
-            $response->setVary($vary, true); //update if already has vary
+            if (!empty($options['vary'])) {
+                $response->setVary(array_merge($response->getVary(), $options['vary']), true); //update if already has vary
+            }
         }
     }
 

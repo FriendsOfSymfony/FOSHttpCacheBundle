@@ -40,7 +40,7 @@ of the varnish reverse proxies:
     liip_cache_control:
         rules:
             # the controls section values are used in a call to Response::setCache();
-            - { path: /, controls: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" } }
+            - { path: /, controls: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
         varnish:
             domain: http://www.liip.ch
             ips: 10.0.0.10, 10.0.0.11 # comma separated list of ips, or an array of ips
