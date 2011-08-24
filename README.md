@@ -1,7 +1,8 @@
 CacheControlBundle
 ==================
 
-This Bundle provides a way to set path based cache expiration headers via the app configuration
+This Bundle provides a way to set path based cache expiration headers via the app configuration and provides
+a helper to control the reverse proxy varnish.
 
 Installation
 ============
@@ -33,19 +34,13 @@ Installation
 Cache control
 =============
 
-Simply configure as many paths as needed with the given cache control rules and/or the location
-of the varnish reverse proxies:
+Simply configure as many paths as needed with the given cache control rules:
 
     # app/config.yml
     liip_cache_control:
         rules:
             # the controls section values are used in a call to Response::setCache();
             - { path: /, controls: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
-        varnish:
-            domain: http://www.liip.ch
-            ips: 10.0.0.10, 10.0.0.11 # comma separated list of ips, or an array of ips
-            port: 80  # port varnish is listening on for incoming web connections
-        authorization_listener: true
 
 Custom Varnish Time-Outs
 ------------------------
@@ -92,6 +87,16 @@ Note that if you are using this, you should have a good purging strategy.
 
 Varnish helper
 ==============
+
+Configure the location of the varnish reverse proxies (be sure not to forget any, as each varnish must be purged):
+
+    # app/config.yml
+    liip_cache_control:
+        varnish:
+            domain: http://www.liip.ch
+            ips: 10.0.0.10, 10.0.0.11 # comma separated list of ips, or an array of ips
+            port: 80  # port varnish is listening on for incoming web connections
+
 
 Purging
 -------
@@ -181,8 +186,16 @@ or fetch it from the service container:
     $varnish = $this->container->get('liip_cache_control.varnish');
     $varnish->refreshPath('/some/path');
 
+
 Cache authorization listener
 ============================
+
+Enable the authorization listener:
+
+    # app/config.yml
+    liip_cache_control:
+        authorization_listener: true
+
 
 This listener makes it possible to stop a request with a 200 "OK" for HEAD requests
 right after the security firewall has finished. This is useful when one uses Varnish while
