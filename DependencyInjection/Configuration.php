@@ -3,6 +3,7 @@
 namespace Liip\CacheControlBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder,
+    Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition,
     Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
@@ -26,6 +27,21 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('liip_cache_control', 'array');
 
         $rootNode
+            ->children()
+                ->booleanNode('authorization_listener')->defaultFalse()->end()
+            ->end()
+        ;
+
+        $this->addRulesSection($rootNode);
+        $this->addVarnishSection($rootNode);
+        $this->addFlashMessageListenerSection($rootNode);
+
+        return $treeBuilder;
+    }
+
+    private function addRulesSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
             ->fixXmlConfig('rule', 'rules')
             ->children()
                 ->arrayNode('rules')
@@ -45,6 +61,13 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+            ->end();
+    }
+
+    private function addVarnishSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
                 ->arrayNode('varnish')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -57,11 +80,25 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('port')->defaultNull()->end()
                     ->end()
                 ->end()
-                ->booleanNode('authorization_listener')->defaultFalse()->end()
-            ->end()
-        ;
+            ->end();
+    }
 
-        return $treeBuilder;
+    private function addFlashMessageListenerSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('flash_message_listener')
+                    ->addDefaultsIfNotSet()
+                    ->canBeUnset()
+                    ->children()
+                        ->scalarNode('name')->defaultValue('flashes')->end()
+                        ->scalarNode('path')->defaultValue('/')->end()
+                        ->scalarNode('domain')->defaultNull()->end()
+                        ->scalarNode('secure')->defaultFalse()->end()
+                        ->scalarNode('httpOnly')->defaultTrue()->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 
 }

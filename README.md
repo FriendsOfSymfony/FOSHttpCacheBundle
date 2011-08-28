@@ -213,3 +213,20 @@ GET response to the same URL. However for the purpose of this use case we have n
 but to assume a 200.
 
 TODO: add example Varnish config
+
+Flash message listener
+======================
+
+The Response flash message listener moves all flash messages currently set into a cookie. This
+way it becomes possible to better handle flash messages in combination with ESI. The ESI
+configuration will need to ignore the configured cookie. It will then be up to the client
+to read out the cookie, display the flash message and remove the flash message via javascript.
+
+    # app/config.yml
+    liip_cache_control:
+        flash_message_listener:
+            name: flashes
+            path: /
+            domain: null
+            secure: false
+            httpOnly: true

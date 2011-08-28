@@ -51,6 +51,12 @@ class LiipCacheControlExtension extends Extension
         if ($config['authorization_listener']) {
             $loader->load('authorization_request_listener.xml');
         }
+
+        if (!empty($config['flash_message_listener'])) {
+            $loader->load('flash_message_listener.xml');
+
+            $container->setParameter($this->getAlias().'.flash_message_listener.options', $config['flash_message_listener']);
+        }
     }
 
     protected function createRequestMatcher(ContainerBuilder $container, $path = null)
