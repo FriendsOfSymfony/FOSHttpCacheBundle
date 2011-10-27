@@ -212,7 +212,53 @@ Note further that a HEAD response is supposed to contain the same HTTP header me
 GET response to the same URL. However for the purpose of this use case we have no other choice
 but to assume a 200.
 
-TODO: add example Varnish config
+```
+backend default {
+    .host = “127.0.0.1″;
+    .port = “81″;
+}
+
+acl purge {
+    “127.0.0.1″; #localhost for dev purposes
+}
+
+sub vcl_recv {
+    # pipe HEAD requests as we convert all GET requests to HEAD and back later on
+    if (req.request == “HEAD”) {
+        return (pipe);
+    }
+}
+
+sub vcl_hash {
+}
+
+sub vcl_fetch {
+    if (beresp.http.Cache-Control ~ “(private|no-cache|no-store)”) {
+        return (pass);
+    }
+
+    if (beresp.status >= 200 && beresp.status < 300) {
+        if (req.request == "HEAD") {
+            # if the BE response said OK, change the request type back to GET and restart
+            set req.request = "GET";
+            restart;
+        }
+    } else {
+        # In any other case (authentication 302 most likely), just pass the response to the client
+        # Don't forget to set the content-length, as the HEAD response doesn't have any (and the client will hang)
+        if (req.request == "HEAD") {
+            set beresp.http.content-length = "0";
+        }
+
+        return (pass);
+    }
+
+    if (beresp.http.Surrogate-Control ~ "ESI/1.0") {
+        unset beresp.http.Surrogate-Control;
+        esi;
+    }
+}
+```
 
 Flash message listener
 ======================
