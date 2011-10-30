@@ -227,6 +227,17 @@ sub vcl_recv {
     if (req.request == “HEAD”) {
         return (pipe);
     }
+
+
+    if (req.request == "GET") {
+        if (req.restarts == 0) {
+            set req.request = "HEAD";
+            return (pass);
+        } else {
+            set req.http.Surrogate-Capability = "abc=ESI/1.0";
+            return (lookup);
+        }
+    }
 }
 
 sub vcl_hash {
