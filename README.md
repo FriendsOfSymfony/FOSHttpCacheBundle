@@ -70,6 +70,17 @@ liip_cache_control:
         - { path: /, controls: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
 ```
 
+About the path parameter
+------------------------
+
+The ``path`` parameter of the rules represent a regular expression that a page must match to use the rule.
+
+For this reason, and it's probably not the behaviour you'd have expected, the path ```/``` will match any page.
+
+If you just want to match the homepage you need to use the path ```/$```.
+
+To match pages URLs with caching rules, this bundle uses the class ```Symfony\Component\HttpFoundation\RequestMatcher```.
+
 Custom Varnish Time-Outs
 ------------------------
 
