@@ -77,7 +77,7 @@ The ``path`` parameter of the rules represent a regular expression that a page m
 
 For this reason, and it's probably not the behaviour you'd have expected, the path ```/``` will match any page.
 
-If you just want to match the homepage you need to use the path ```/$```.
+If you just want to match the homepage you need to use the path ```^/$```.
 
 To match pages URLs with caching rules, this bundle uses the class ```Symfony\Component\HttpFoundation\RequestMatcher```.
 
