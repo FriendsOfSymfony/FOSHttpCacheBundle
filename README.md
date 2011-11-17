@@ -7,7 +7,7 @@ a helper to control the reverse proxy varnish.
 Installation
 ============
 
-1. There are two way to add the bundle to your project:
+STEP 1: There are two way to add the bundle to your project:
 
 a) With the vendor script (preferred method):
 
@@ -33,7 +33,7 @@ Add this bundle to your project as a Git submodule:
 $ git submodule add git://github.com/liip/LiipCacheControlBundle.git vendor/bundles/Liip/CacheControlBundle
 ```
 
-2. Add the Liip namespace to your autoloader:
+STEP 2: Add the Liip namespace to your autoloader:
 
 ``` php
 // app/autoload.php
@@ -43,7 +43,7 @@ $loader->registerNamespaces(array(
 ));
 ```
 
-3. Add this bundle to your application's kernel:
+STEP 3: Add this bundle to your application's kernel:
 
 ``` php
 // application/ApplicationKernel.php
