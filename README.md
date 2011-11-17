@@ -7,20 +7,45 @@ a helper to control the reverse proxy varnish.
 Installation
 ============
 
-    1. Add this bundle to your project as a Git submodule:
+    1. There are two way to add the bundle to your project:
 
+    a) With the vendor script (preferred method):
+
+        Add the following lines to your ``deps`` file:
+
+        ```
+        [LiipCacheControl]
+            git=git@github.com:liip/LiipCacheControlBundle.git
+            target=bundles/Liip/CacheControlBundle
+        ```
+
+        Then run the vendor script:
+
+        ``` bash
+        $ ./bin/vendors install
+        ```
+
+    b) As a git submodule
+
+        Add this bundle to your project as a Git submodule:
+
+        ``` bash
         $ git submodule add git://github.com/liip/LiipCacheControlBundle.git vendor/bundles/Liip/CacheControlBundle
+        ```
 
     2. Add the Liip namespace to your autoloader:
 
+        ``` php
         // app/autoload.php
         $loader->registerNamespaces(array(
             'Liip' => __DIR__.'/../vendor/bundles',
             // your other namespaces
         ));
+        ```
 
     3. Add this bundle to your application's kernel:
 
+        ``` php
         // application/ApplicationKernel.php
         public function registerBundles()
         {
@@ -30,17 +55,20 @@ Installation
               // ...
           );
         }
+        ```
 
 Cache control
 =============
 
 Simply configure as many paths as needed with the given cache control rules:
 
+    ``` yaml
     # app/config.yml
     liip_cache_control:
         rules:
             # the controls section values are used in a call to Response::setCache();
             - { path: /, controls: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
+    ```
 
 Custom Varnish Time-Outs
 ------------------------
@@ -52,17 +80,20 @@ requests to the backend.
 
 To achieve this you can set the `reverse_proxy_ttl` option for your rule:
 
+    ``` yaml
     # app/config.yml
     liip_cache_control:
         rules:
             # the controls section values are used in a call to Response::setCache();
             - { path: /, reverse_proxy_ttl: 300, controls: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" } }
+    ```
 
 This example will add the header `X-Reverse-Proxy-TTL: 300` to your response.
 
 But by default, varnish will not know anything about it. To get it to work
 you have to extend your varnish `vcl_fetch` configuration:
 
+    ```
     sub vcl_fetch {
 
         /* ... */
@@ -79,6 +110,7 @@ you have to extend your varnish `vcl_fetch` configuration:
         /* ... */
 
     }
+    ```
 
 Varnish will then look for the `X-Reverse-Proxy-TTL` header and if it exists,
 varnish will use the found value as TTL and then remove the header.
@@ -90,19 +122,21 @@ Varnish helper
 
 Configure the location of the varnish reverse proxies (be sure not to forget any, as each varnish must be purged):
 
+    ``` yaml
     # app/config.yml
     liip_cache_control:
         varnish:
             domain: http://www.liip.ch
             ips: 10.0.0.10, 10.0.0.11 # comma separated list of ips, or an array of ips
             port: 80  # port varnish is listening on for incoming web connections
-
+    ```
 
 Purging
 -------
 
 Please add the following code to your Varnish configuration.
 
+    ```
     #top level:
     # who is allowed to purge from cache
     # http://varnish-cache.org/trac/wiki/VCLExamplePurging
@@ -121,6 +155,7 @@ Please add the following code to your Varnish configuration.
         #log "PURGE " req.url;
         error 200 "Success";
     }
+    ```
 
 NOTE: this code invalidates the url for all domains. If your varnish serves multiple domains,
 you should improve this configuration. Pull requests welcome :-)
@@ -136,6 +171,7 @@ The varnish path invalidation is about equivalent to doing this:
 To use the varnish cache helper you must inject the ``liip_cache_control.varnish`` service
 or fetch it from the service container:
 
+    ``` php
     // using a "manual" url
     $varnish = $this->container->get('liip_cache_control.varnish');
     $varnish->invalidatePath('/some/path');
@@ -144,12 +180,14 @@ or fetch it from the service container:
     $router = $this->container->get('router');
     $varnish = $this->container->get('liip_cache_control.varnish');
     $varnish->invalidatePath($router->generate('myRouteName'));
+    ```
 
 Force refresh
 -------------
 
 Alternatively one can also force a refresh using the approach
 
+    ```
     #top level:
     # who is allowed to purge from cache
     # http://www.varnish-cache.org/trac/wiki/VCLExampleEnableForceRefresh
@@ -169,6 +207,7 @@ Alternatively one can also force a refresh using the approach
         }
         deliver;
     }
+    ```
 
 The vanish path force refresh is about equivalent to doing this:
 
@@ -182,20 +221,22 @@ The vanish path force refresh is about equivalent to doing this:
 To use the varnish cache helper you must inject the ``liip_cache_control.varnish`` service
 or fetch it from the service container:
 
+    ``` php
     // using a "manual" url
     $varnish = $this->container->get('liip_cache_control.varnish');
     $varnish->refreshPath('/some/path');
-
+    ```
 
 Cache authorization listener
 ============================
 
 Enable the authorization listener:
 
+    ``` yaml
     # app/config.yml
     liip_cache_control:
         authorization_listener: true
-
+    ```
 
 This listener makes it possible to stop a request with a 200 "OK" for HEAD requests
 right after the security firewall has finished. This is useful when one uses Varnish while
@@ -279,6 +320,7 @@ way it becomes possible to better handle flash messages in combination with ESI.
 configuration will need to ignore the configured cookie. It will then be up to the client
 to read out the cookie, display the flash message and remove the flash message via javascript.
 
+    ``` yaml
     # app/config.yml
     liip_cache_control:
         flash_message_listener:
@@ -287,3 +329,4 @@ to read out the cookie, display the flash message and remove the flash message v
             domain: null
             secure: false
             httpOnly: true
+    ```
