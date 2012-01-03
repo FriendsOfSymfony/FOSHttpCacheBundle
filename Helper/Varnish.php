@@ -62,7 +62,7 @@ class Varnish
      * Purge this absolute path at all registered cache server
      *
      * @param string $path Must be an absolute path
-     * @throw \RuntimeException if connection to one of the varnish servers fails.
+     * @throws \RuntimeException if connection to one of the varnish servers fails.
      */
     public function invalidatePath($path)
     {
@@ -77,7 +77,7 @@ class Varnish
      * Force this absolute path to be refreshed 
      *
      * @param string $path Must be an absolute path
-     * @throw \RuntimeException if connection to one of the varnish servers fails.
+     * @throws \RuntimeException if connection to one of the varnish servers fails.
      */
     public function refreshPath($path)
     {
@@ -93,7 +93,7 @@ class Varnish
      * Send a request to all configured varnishes
      *
      * @param string $request request string
-     * @throw \RuntimeException if connection to one of the varnish servers fails. TODO: should we be more tolerant?
+     * @throws \RuntimeException if connection to one of the varnish servers fails. TODO: should we be more tolerant?
      */
     protected function sendRequestToAllVarnishes($request)
     {
