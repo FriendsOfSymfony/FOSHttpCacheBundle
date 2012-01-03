@@ -31,10 +31,14 @@ class LiipCacheControlExtension extends Extension
             foreach ($config['rules'] as $cache) {
                 $matcher = $this->createRequestMatcher(
                     $container,
-                    $cache['path']
+                    $cache['path'],
+                    $cache['domain']
                 );
 
-                unset($cache['path']);
+                unset(
+                    $cache['path'],
+                    $cache['domain']
+                );
 
                 $container->getDefinition($this->getAlias().'.response_listener')
                           ->addMethodCall('add', array($matcher, $cache));
@@ -59,17 +63,14 @@ class LiipCacheControlExtension extends Extension
         }
     }
 
-    protected function createRequestMatcher(ContainerBuilder $container, $path = null)
+    protected function createRequestMatcher(ContainerBuilder $container, $path = null, $domain = null)
     {
         $serialized = serialize(array($path));
         $id = $this->getAlias().'.request_matcher.'.md5($serialized).sha1($serialized);
 
         if (!$container->hasDefinition($id)) {
             // only add arguments that are necessary
-            $arguments = array($path);
-            while (count($arguments) > 0 && !end($arguments)) {
-                array_pop($arguments);
-            }
+            $arguments = array($path, $domain);
 
             $container
                 ->setDefinition($id, new DefinitionDecorator($this->getAlias().'.request_matcher'))
