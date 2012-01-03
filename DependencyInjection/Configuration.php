@@ -48,6 +48,7 @@ class Configuration implements ConfigurationInterface
                     ->prototype('array')
                         ->children()
                             ->scalarNode('path')->defaultNull()->end()
+                            ->scalarNode('domain')->defaultNull()->end()
                             ->scalarNode('reverse_proxy_ttl')->defaultNull()->end()
                             ->arrayNode('controls')
                                 ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
