@@ -68,7 +68,7 @@ liip_cache_control:
     rules:
         # the controls section values are used in a call to Response::setCache();
         - { path: ^/, controls: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
-```
+
         # only match login.example.com
         - { domain: ^login.example.com$, controls: { public: false, max_age: 0, s_maxage: 0, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
 ```
