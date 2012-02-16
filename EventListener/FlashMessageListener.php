@@ -32,7 +32,7 @@ class FlashMessageListener
      * @param   Session     $session A session instance
      * @param   array       $options
      */
-    public function __construct(Session $session, array $options = array())
+    public function __construct($session, array $options = array())
     {
         $this->session = $session;
         $this->options = $options;
