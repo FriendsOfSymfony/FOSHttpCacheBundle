@@ -4,8 +4,10 @@ CacheControlBundle
 This Bundle provides a way to set path based cache expiration headers via the app configuration and provides
 a helper to control the reverse proxy varnish.
 
-Installation
-============
+This bundle works with Symfony 2.0 as well as the upcoming release 2.1.
+
+Installation with Symfony 2.0
+=============================
 
 STEP 1: There are two way to add the bundle to your project:
 
@@ -43,7 +45,20 @@ $loader->registerNamespaces(array(
 ));
 ```
 
-STEP 3: Add this bundle to your application's kernel:
+Installation with Symfony 2.1 and composer
+==========================================
+
+Just add the following line to your projects composer.json require section:
+
+```
+"liip/cache-control-bundle": "dev-master"
+```
+
+
+Enable the module
+=================
+
+Add this bundle to your application's kernel:
 
 ``` php
 // application/ApplicationKernel.php
@@ -72,6 +87,9 @@ liip_cache_control:
         # only match login.example.com
         - { domain: ^login.example.com$, controls: { public: false, max_age: 0, s_maxage: 0, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
 ```
+
+The matches are tried from top to bottom, the first match is taken and applied.
+
 
 About the path parameter
 ------------------------
