@@ -146,6 +146,8 @@ sub vcl_fetch {
 
 Varnish will then look for the `X-Reverse-Proxy-TTL` header and if it exists,
 varnish will use the found value as TTL and then remove the header.
+There is a beresp.ttl field in VCL but unfortunately it can only be set to
+absolute values and not dynamically. Thus we have to use a C code fragment.
 
 Note that if you are using this, you should have a good purging strategy.
 
@@ -213,6 +215,11 @@ $router = $this->container->get('router');
 $varnish = $this->container->get('liip_cache_control.varnish');
 $varnish->invalidatePath($router->generate('myRouteName'));
 ```
+
+When using ESI, you will want to purge individual fragments. To generate the
+corresponding _internal route, inject the http_kernel into your controller and
+use HttpKernel::generateInternalUri with the parameters as in the twig ``render``
+tag.
 
 Force refresh
 -------------
@@ -339,7 +346,10 @@ sub vcl_fetch {
 
     if (beresp.http.Surrogate-Control ~ "ESI/1.0") {
         unset beresp.http.Surrogate-Control;
+        // varnish < 3.0:
         esi;
+        // varnish 3.0 and later:
+        // set beresp.do_esi = true;
     }
 }
 ```
