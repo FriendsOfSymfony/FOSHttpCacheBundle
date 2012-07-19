@@ -102,6 +102,19 @@ If you just want to match the homepage you need to use the path ```^/$```.
 
 To match pages URLs with caching rules, this bundle uses the class ```Symfony\Component\HttpFoundation\RequestMatcher```.
 
+Custom Varnish Parameters
+------------------------
+
+Additionally to the default supported headers, you may want to set custom caching headers for varnish.
+
+``` yaml
+# app/config.yml
+liip_cache_control:
+    rules:
+        # the controls section values are used in a call to Response::setCache();
+        - { path: /, controls: { stale_while_revalidate=9000, stale_if_error=3000, must-revalidate=false, proxy_revalidate=true } }
+```
+
 Custom Varnish Time-Outs
 ------------------------
 
