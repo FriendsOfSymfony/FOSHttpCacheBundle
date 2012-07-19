@@ -63,7 +63,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
         $newHeaders = $response->headers->all();
 
-        $this->assertEquals('no-transform, proxy-revalidate, stale-if-error=300, stale-while-revalidate=400, private', $newHeaders['cache-control'][0]);
+        $this->assertEquals('must-revalidate, no-transform, proxy-revalidate, stale-if-error=300, stale-while-revalidate=400, private', $newHeaders['cache-control'][0]);
     }
 
     public function testCompoundHeaders()
@@ -96,7 +96,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
         $newHeaders = $response->headers->all();
 
-        $this->assertEquals('max-age=900, no-transform, proxy-revalidate, public, s-maxage=300, stale-if-error=300, stale-while-revalidate=400', $newHeaders['cache-control'][0]);
+        $this->assertEquals('max-age=900, must-revalidate, no-transform, proxy-revalidate, public, s-maxage=300, stale-if-error=300, stale-while-revalidate=400', $newHeaders['cache-control'][0]);
     }
 
     public function testSetNoCacheHeaders()

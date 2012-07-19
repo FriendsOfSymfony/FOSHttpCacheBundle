@@ -30,7 +30,7 @@ class CacheControlListener
     }
 
    /**
-    * @param EventInterface $event
+    * @param FilterResponseEvent $event
     */
     public function onKernelResponse(FilterResponseEvent $event)
     {
@@ -40,6 +40,7 @@ class CacheControlListener
         if ($options = $this->getOptions($request)) {
             if (!empty($options['controls'])) {
                 $supportedHeaders = array('etag', 'last_modified', 'max_age', 's_maxage', 'private', 'public');
+                $supportedHeaders = array_combine($supportedHeaders, $supportedHeaders);
 
                 $this->setDefaultHeaders($supportedHeaders, $options, $response);
                 $this->setExtraHeaders($supportedHeaders, $options, $response);
@@ -49,7 +50,7 @@ class CacheControlListener
                 $response->headers->set('X-Reverse-Proxy-TTL', (int) $options['reverse_proxy_ttl'], false);
             }
 
-            if (isset($options['vary']) && !empty($options['vary'])) {
+            if (!empty($options['vary'])) {
                 $response->setVary(array_merge($response->getVary(), $options['vary']), true); //update if already has vary
             }
         }
@@ -60,20 +61,24 @@ class CacheControlListener
      *
      * @param array $supportedHeaders
      * @param array $options
-     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param Response $response
      */
     private function setDefaultHeaders(array $supportedHeaders, array $options, Response $response)
     {
-        $controls = array_intersect_ukey($options['controls'], array_combine($supportedHeaders, $supportedHeaders), function($key1, $key2){
-            if ($key1 == $key2)
+        //filter all headers that are supported by Response::setCache
+        $controls = array_intersect_ukey($options['controls'], $supportedHeaders, function($key1, $key2) {
+            if ($key1 == $key2) {
                 return 0;
-            else if ($key1 > $key2)
+            } else if ($key1 > $key2) {
                 return 1;
-            else
+            } else {
                 return -1;
+            }
         });
 
-        $response->setCache($this->prepareControls($controls));
+        if (!empty($controls)) {
+            $response->setCache($this->prepareControls($controls));
+        }
     }
 
     /**
@@ -81,51 +86,53 @@ class CacheControlListener
      *
      * @param array $supportedHeaders
      * @param array $options
-     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param Response $response
      */
     private function setExtraHeaders(array $supportedHeaders, array $options, Response $response)
     {
-        $extraControls = array_intersect_ukey($options['controls'], array_combine($supportedHeaders, $supportedHeaders), function($key1, $key2){
-            if ($key1 == $key2)
+        //filter all headers that are not yet supported by Response::setCache
+        $extraControls = array_intersect_ukey($options['controls'], $supportedHeaders, function($key1, $key2) {
+            if ($key1 == $key2) {
                 return -1;
-            else if ($key1 > $key2)
+            } else {
                 return 0;
-            else
-                return 0;
+            }
         });
 
-        $this->setExtraControls($response, $extraControls);
+        if (!empty($extraControls)) {
+            $this->setExtraControls($response, $extraControls);
+        }
     }
 
     /**
      * adds extra cache controls
      *
-     * @param \Symfony\Component\HttpFoundation\Response $response
+     * @param Response $response
      * @param $controls
      */
     protected function setExtraControls(Response $response, array $controls)
     {
-        if (isset($controls['must_revalidate']) && $controls['must_revalidate'] != '') {
-            $response->mustRevalidate($controls['must_revalidate']);
+        if (!empty($controls['must_revalidate'])) {
+            $response->headers->addCacheControlDirective('must-revalidate', $controls['must_revalidate']);
         }
 
-        if (isset($controls['proxy_revalidate']) && $controls['proxy_revalidate'] != '') {
+        if (!empty($controls['proxy_revalidate'])) {
             $response->headers->addCacheControlDirective('proxy-revalidate', true);
         }
 
-        if (isset($controls['no_transform']) && $controls['no_transform'] != '') {
+        if (!empty($controls['no_transform'])) {
             $response->headers->addCacheControlDirective('no-transform', true);
         }
 
-        if (isset($controls['stale_if_error']) && $controls['stale_if_error'] != '') {
+        if (!empty($controls['stale_if_error'])) {
             $response->headers->addCacheControlDirective('stale-if-error='.$controls['stale_if_error'], true);
         }
 
-        if (isset($controls['stale_while_revalidate']) && $controls['stale_while_revalidate'] != '') {
+        if (!empty($controls['stale_while_revalidate'])) {
             $response->headers->addCacheControlDirective('stale-while-revalidate='.$controls['stale_while_revalidate'], true);
         }
 
-        if (isset($controls['no_cache']) && ($controls['no_cache'] != '') ) {
+        if (!empty($controls['no_cache'])) {
             $response->headers->remove('Cache-Control');
             $response->headers->set('Cache-Control','no-cache', true);
         }
