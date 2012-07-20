@@ -19,6 +19,13 @@ class CacheControlListener
     protected $map = array();
 
     /**
+     * supported headers from Response
+     *
+     * @var array
+     */
+    protected $supportedHeaders = array('etag' => true, 'last_modified' => true, 'max_age' => true, 's_maxage' => true, 'private' => true, 'public' => true);
+
+    /**
      * Constructor.
      *
      * @param RequestMatcherInterface $requestMatcher A RequestMatcherInterface instance
@@ -30,7 +37,7 @@ class CacheControlListener
     }
 
    /**
-    * @param EventInterface $event
+    * @param FilterResponseEvent $event
     */
     public function onKernelResponse(FilterResponseEvent $event)
     {
@@ -39,16 +46,70 @@ class CacheControlListener
 
         if ($options = $this->getOptions($request)) {
             if (!empty($options['controls'])) {
-                $response->setCache($this->prepareControls($options['controls']));
+
+                $controls = array_intersect_key($options['controls'], $this->supportedHeaders);
+                $extraControls = array_diff_ukey($options['controls'], $this->supportedHeaders, function($key1, $key2) {
+                    if ($key1 == $key2) {
+                        return 0;
+                    }
+                    if ($key1 > $key2) {
+                        return 1;
+                    }
+                    return -1;
+                });
+
+                //set supported headers
+                if (!empty($controls)) {
+                    $response->setCache($this->prepareControls($controls));
+                }
+
+                //set extra headers for varnish
+                if (!empty($extraControls)) {
+                    $this->setExtraControls($response, $extraControls);
+                }
             }
 
-            if (null !== $options['reverse_proxy_ttl']) {
+            if (isset($options['reverse_proxy_ttl']) && null !== $options['reverse_proxy_ttl']) {
                 $response->headers->set('X-Reverse-Proxy-TTL', (int) $options['reverse_proxy_ttl'], false);
             }
 
             if (!empty($options['vary'])) {
                 $response->setVary(array_merge($response->getVary(), $options['vary']), true); //update if already has vary
             }
+        }
+    }
+
+    /**
+     * adds extra cache controls
+     *
+     * @param Response $response
+     * @param $controls
+     */
+    protected function setExtraControls(Response $response, array $controls)
+    {
+        if (!empty($controls['must_revalidate'])) {
+            $response->headers->addCacheControlDirective('must-revalidate', $controls['must_revalidate']);
+        }
+
+        if (!empty($controls['proxy_revalidate'])) {
+            $response->headers->addCacheControlDirective('proxy-revalidate', true);
+        }
+
+        if (!empty($controls['no_transform'])) {
+            $response->headers->addCacheControlDirective('no-transform', true);
+        }
+
+        if (!empty($controls['stale_if_error'])) {
+            $response->headers->addCacheControlDirective('stale-if-error='.$controls['stale_if_error'], true);
+        }
+
+        if (!empty($controls['stale_while_revalidate'])) {
+            $response->headers->addCacheControlDirective('stale-while-revalidate='.$controls['stale_while_revalidate'], true);
+        }
+
+        if (!empty($controls['no_cache'])) {
+            $response->headers->remove('Cache-Control');
+            $response->headers->set('Cache-Control','no-cache', true);
         }
     }
 
