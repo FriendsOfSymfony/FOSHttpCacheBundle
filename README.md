@@ -6,6 +6,8 @@ a helper to control the reverse proxy varnish.
 
 This bundle works with Symfony 2.0 as well as the upcoming release 2.1.
 
+[![Build Status](https://secure.travis-ci.org/liip/LiipCacheControlBundle.png)](http://travis-ci.org/liip/LiipCacheControlBundle)
+
 Installation with Symfony 2.0
 =============================
 
