@@ -19,6 +19,13 @@ class CacheControlListener
     protected $map = array();
 
     /**
+     * supported headers from Response
+     *
+     * @var array
+     */
+    protected $supportedHeaders = array('etag' => true, 'last_modified' => true, 'max_age' => true, 's_maxage' => true, 'private' => true, 'public' => true);
+
+    /**
      * Constructor.
      *
      * @param RequestMatcherInterface $requestMatcher A RequestMatcherInterface instance
@@ -39,11 +46,27 @@ class CacheControlListener
 
         if ($options = $this->getOptions($request)) {
             if (!empty($options['controls'])) {
-                $supportedHeaders = array('etag', 'last_modified', 'max_age', 's_maxage', 'private', 'public');
-                $supportedHeaders = array_combine($supportedHeaders, $supportedHeaders);
 
-                $this->setDefaultHeaders($supportedHeaders, $options, $response);
-                $this->setExtraHeaders($supportedHeaders, $options, $response);
+                $controls = array_intersect_key($options['controls'], $this->supportedHeaders);
+                $extraControls = array_diff_ukey($options['controls'], $this->supportedHeaders, function($key1, $key2) {
+                    if ($key1 == $key2) {
+                        return 0;
+                    }
+                    if ($key1 > $key2) {
+                        return 1;
+                    }
+                    return -1;
+                });
+
+                //set supported headers
+                if (!empty($controls)) {
+                    $response->setCache($this->prepareControls($controls));
+                }
+
+                //set extra headers for varnish
+                if (!empty($extraControls)) {
+                    $this->setExtraControls($response, $extraControls);
+                }
             }
 
             if (isset($options['reverse_proxy_ttl']) && null !== $options['reverse_proxy_ttl']) {
@@ -53,54 +76,6 @@ class CacheControlListener
             if (!empty($options['vary'])) {
                 $response->setVary(array_merge($response->getVary(), $options['vary']), true); //update if already has vary
             }
-        }
-    }
-
-    /**
-     * sets the supported headers on Response
-     *
-     * @param array $supportedHeaders
-     * @param array $options
-     * @param Response $response
-     */
-    private function setDefaultHeaders(array $supportedHeaders, array $options, Response $response)
-    {
-        //filter all headers that are supported by Response::setCache
-        $controls = array_intersect_ukey($options['controls'], $supportedHeaders, function($key1, $key2) {
-            if ($key1 == $key2) {
-                return 0;
-            } else if ($key1 > $key2) {
-                return 1;
-            } else {
-                return -1;
-            }
-        });
-
-        if (!empty($controls)) {
-            $response->setCache($this->prepareControls($controls));
-        }
-    }
-
-    /**
-     * sets extra headers not supported headers on Response
-     *
-     * @param array $supportedHeaders
-     * @param array $options
-     * @param Response $response
-     */
-    private function setExtraHeaders(array $supportedHeaders, array $options, Response $response)
-    {
-        //filter all headers that are not yet supported by Response::setCache
-        $extraControls = array_intersect_ukey($options['controls'], $supportedHeaders, function($key1, $key2) {
-            if ($key1 == $key2) {
-                return -1;
-            } else {
-                return 0;
-            }
-        });
-
-        if (!empty($extraControls)) {
-            $this->setExtraControls($response, $extraControls);
         }
     }
 
