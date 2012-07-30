@@ -48,15 +48,7 @@ class CacheControlListener
             if (!empty($options['controls'])) {
 
                 $controls = array_intersect_key($options['controls'], $this->supportedHeaders);
-                $extraControls = array_diff_ukey($options['controls'], $this->supportedHeaders, function($key1, $key2) {
-                    if ($key1 == $key2) {
-                        return 0;
-                    }
-                    if ($key1 > $key2) {
-                        return 1;
-                    }
-                    return -1;
-                });
+                $extraControls = array_diff_key($options['controls'], $controls);
 
                 //set supported headers
                 if (!empty($controls)) {
