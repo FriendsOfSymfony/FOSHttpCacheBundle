@@ -6,7 +6,7 @@ namespace Liip\CacheControlBundle\Helper;
  * Helper to invalidate or force a refresh varnish entries
  *
  * Supports multiple varnish instances.
- * 
+ *
  * For invalidation uses PURGE requests to the frontend.
  * See http://www.varnish-cache.org/trac/wiki/VCLExamplePurging
  *
@@ -15,7 +15,7 @@ namespace Liip\CacheControlBundle\Helper;
  *   netcat localhost 6081 << EOF
  *   PURGE /url/to/purge HTTP/1.1
  *   Host: webapp-host.name
- * 
+ *
  *   EOF
  *
  * For a forced refresh it uses a normal GET with appropriate cache headers
@@ -40,6 +40,8 @@ class Varnish
     private $domain;
     private $port;
 
+    private $curlHandler;
+
     /**
      * Constructor
      *
@@ -56,6 +58,12 @@ class Varnish
         }
         $this->ips = $ips;
         $this->port = $port;
+
+        $this->curlHandler = curl_init($this->domain);
+        //Default Option
+        curl_setopt($this->curlHandler, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->curlHandler, CURLOPT_HEADER, true); // Display headers
+
     }
 
     /**
@@ -66,27 +74,32 @@ class Varnish
      */
     public function invalidatePath($path)
     {
-        $request = "PURGE $path HTTP/1.0\r\n";
-        $request.= "Host: {$this->domain}\r\n";
-        $request.= "Connection: Close\r\n\r\n";
+        $this->setRequestOptions(array(CURLOPT_CUSTOMREQUEST => 'PURGE'));
 
-        $this->sendRequestToAllVarnishes($request);
+        $request['path'] = $path;
+
+        return $this->sendRequestToAllVarnishes($request);
     }
 
     /**
-     * Force this absolute path to be refreshed 
+     * Force this absolute path to be refreshed
      *
      * @param string $path Must be an absolute path
      * @throws \RuntimeException if connection to one of the varnish servers fails.
      */
     public function refreshPath($path)
     {
-        $request = "GET $path HTTP/1.0\r\n";
-        $request.= "Host: {$this->domain}\r\n";
-        $request.= "Cache-Control: no-cache, no-store, max-age=0, must-revalidate";
-        $request.= "Connection: Close\r\n\r\n";
 
-        $this->sendRequestToAllVarnishes($request);
+        $headers = array("Cache-Control: no-cache, no-store, max-age=0, must-revalidate");
+
+        $options[CURLOPT_HTTPHEADER]    = $headers;
+        $options[CURLOPT_CUSTOMREQUEST] = 'GET';
+
+        $this->setRequestOptions($options);
+
+        $request['path'] = $path;
+
+        return $this->sendRequestToAllVarnishes($request);
     }
 
     /**
@@ -97,20 +110,44 @@ class Varnish
      */
     protected function sendRequestToAllVarnishes($request)
     {
+
+        $requestResponseByIp = array();
+
         foreach ($this->ips as $ip) {
-            $fp = fsockopen($ip, $this->port, $errno, $errstr, 2);
-            if (!$fp) {
-                throw new \RuntimeException("$errstr ($errno)");
-            }
 
-            fwrite($fp, $request);
+            curl_setopt($this->curlHandler, CURLOPT_URL, $ip.':'.$this->port.$request['path']);
 
-            // read answer to the end, to be sure varnish is finished before continuing
-            while (!feof($fp)) {
-                fgets($fp, 128);
-            }
+            $response = curl_exec($this->curlHandler);
 
-            fclose($fp);
+            list($header, $body) = explode("\r\n\r\n", $response, 2);
+
+            $requestResponseByIp[$ip] = array('headers' => $header, 'body' => $body);
+
+        }
+
+        return $requestResponseByIp;
+
+    }
+    /**
+     * Override or modify default cUrl Options
+     * @param array $options
+     */
+    public function setRequestOptions($options)
+    {
+
+        foreach($options as $option => $value) {
+
+            curl_setopt($this->curlHandler, $option, $value);
+        }
+
+    }
+    /**
+     * Desctructor
+     */
+    public function __destruct()
+    {
+        if ($this->curlHandler) {
+            curl_close($this->curlHandler);
         }
     }
 }
