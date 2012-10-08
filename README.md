@@ -4,7 +4,7 @@ CacheControlBundle
 This Bundle provides a way to set path based cache expiration headers via the app configuration and provides
 a helper to control the reverse proxy varnish.
 
-This bundle works with Symfony 2.0 as well as the upcoming release 2.1.
+This bundle works with Symfony 2.0 and 2.1.
 
 [![Build Status](https://secure.travis-ci.org/liip/LiipCacheControlBundle.png)](http://travis-ci.org/liip/LiipCacheControlBundle)
 

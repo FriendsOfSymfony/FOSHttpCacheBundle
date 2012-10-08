@@ -2,6 +2,8 @@
 
 namespace Liip\CacheControlBundle\DependencyInjection;
 
+use Liip\CacheControlBundle\DependencyNotMetException;
+
 use Symfony\Component\Config\Definition\Processor,
     Symfony\Component\Config\FileLocator,
     Symfony\Component\HttpKernel\DependencyInjection\Extension,
@@ -46,6 +48,11 @@ class LiipCacheControlExtension extends Extension
         }
 
         if (!empty($config['varnish'])) {
+
+            if (!extension_loaded('curl')) {
+                throw new DependencyNotMetException('Varnish Helper requires cUrl php extension. Please install it to continue');
+            }
+
             $loader->load('varnish_helper.xml');
             $container->setParameter($this->getAlias().'.varnish.ips', $config['varnish']['ips']);
             $container->setParameter($this->getAlias().'.varnish.domain', $config['varnish']['domain']);
