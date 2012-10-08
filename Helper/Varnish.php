@@ -76,7 +76,7 @@ class Varnish
     {
         $this->setRequestOptions(array(CURLOPT_CUSTOMREQUEST => 'PURGE'));
 
-        $request['path'] = $path;
+        $request = array('path' => $path);
 
         return $this->sendRequestToAllVarnishes($request);
     }
@@ -89,6 +89,7 @@ class Varnish
      */
     public function refreshPath($path)
     {
+        $options = array();
 
         $headers = array("Cache-Control: no-cache, no-store, max-age=0, must-revalidate");
 
@@ -97,7 +98,7 @@ class Varnish
 
         $this->setRequestOptions($options);
 
-        $request['path'] = $path;
+        $request = array('path' => $path);
 
         return $this->sendRequestToAllVarnishes($request);
     }
@@ -105,7 +106,7 @@ class Varnish
     /**
      * Send a request to all configured varnishes
      *
-     * @param string $request request string
+     * @param array $request request string
      * @throws \RuntimeException if connection to one of the varnish servers fails. TODO: should we be more tolerant?
      */
     protected function sendRequestToAllVarnishes($request)
@@ -137,7 +138,7 @@ class Varnish
 
         foreach($options as $option => $value) {
 
-            curl_setopt($this->curlHandler, $option, $value);
+            curl_setopt($this->curlHandler, (int)$option, $value);
         }
 
     }
