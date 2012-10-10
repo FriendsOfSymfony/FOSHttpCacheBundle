@@ -2,15 +2,14 @@
 
 namespace Liip\CacheControlBundle\DependencyInjection;
 
-use Liip\CacheControlBundle\DependencyNotMetException;
-
 use Symfony\Component\Config\Definition\Processor,
     Symfony\Component\Config\FileLocator,
     Symfony\Component\HttpKernel\DependencyInjection\Extension,
     Symfony\Component\DependencyInjection\Loader\XmlFileLoader,
     Symfony\Component\DependencyInjection\ContainerBuilder,
     Symfony\Component\DependencyInjection\Reference,
-    Symfony\Component\DependencyInjection\DefinitionDecorator;
+    Symfony\Component\DependencyInjection\DefinitionDecorator,
+    Symfony\Component\DependencyInjection\Exception\RuntimeException;
 
 class LiipCacheControlExtension extends Extension
 {
@@ -50,7 +49,8 @@ class LiipCacheControlExtension extends Extension
         if (!empty($config['varnish'])) {
 
             if (!extension_loaded('curl')) {
-                throw new DependencyNotMetException('Varnish Helper requires cUrl php extension. Please install it to continue');
+                throw new RuntimeException('Varnish Helper requires cUrl php extension. Please install it to continue');
+
             }
 
             $loader->load('varnish_helper.xml');

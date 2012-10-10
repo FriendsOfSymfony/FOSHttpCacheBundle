@@ -56,69 +56,82 @@ class Varnish
         if (isset($url['port'])) {
             $this->domain .= ':' . $url['port'];
         }
-        $this->ips = $ips;
+        $this->ips  = $ips;
         $this->port = $port;
-
-        $this->curlHandler = curl_init($this->domain);
-        //Default Option
-        curl_setopt($this->curlHandler, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->curlHandler, CURLOPT_HEADER, true); // Display headers
 
     }
 
     /**
      * Purge this absolute path at all registered cache server
      *
-     * @param string $path Must be an absolute path
+     * @param string $path    Must be an absolute path
+     * @param array  $options Options for cUrl Request
+     *
+     * @return array An associative array with keys 'headers' and 'body' which holds a raw response from the server
+     *
      * @throws \RuntimeException if connection to one of the varnish servers fails.
      */
-    public function invalidatePath($path)
+    public function invalidatePath($path, $options = array())
     {
-        $this->setRequestOptions(array(CURLOPT_CUSTOMREQUEST => 'PURGE'));
+        //Garanteed to be a purge request
+        $options[CURLOPT_CUSTOMREQUEST] = 'PURGE';
 
         $request = array('path' => $path);
 
-        return $this->sendRequestToAllVarnishes($request);
+        return $this->sendRequestToAllVarnishes($request, $options);
     }
 
     /**
      * Force this absolute path to be refreshed
      *
      * @param string $path Must be an absolute path
+     * @param array  $options Options for cUrl Request
+     *
+     * @return array An associative array with keys 'headers' and 'body' which holds a raw response from the server
      * @throws \RuntimeException if connection to one of the varnish servers fails.
      */
-    public function refreshPath($path)
+    public function refreshPath($path, $options = array())
     {
-        $options = array();
 
         $headers = array("Cache-Control: no-cache, no-store, max-age=0, must-revalidate");
 
         $options[CURLOPT_HTTPHEADER]    = $headers;
         $options[CURLOPT_CUSTOMREQUEST] = 'GET';
 
-        $this->setRequestOptions($options);
-
         $request = array('path' => $path);
 
-        return $this->sendRequestToAllVarnishes($request);
+        return $this->sendRequestToAllVarnishes($request, $options);
     }
 
     /**
      * Send a request to all configured varnishes
      *
      * @param array $request request string
+     * @param array $options Options for request
+     *
+     * @return array An associative array with keys 'headers' and 'body' which holds a raw response from the server
      * @throws \RuntimeException if connection to one of the varnish servers fails. TODO: should we be more tolerant?
      */
-    protected function sendRequestToAllVarnishes($request)
+    protected function sendRequestToAllVarnishes($request, $options = array())
     {
 
         $requestResponseByIp = array();
 
+        $curlHandler = curl_init($this->domain);
+            //Default Options
+        curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlHandler, CURLOPT_HEADER, true); // Display headers
+
+        foreach($options as $option => $value) {
+
+            curl_setopt($curlHandler, (int)$option, $value);
+        }
+
         foreach ($this->ips as $ip) {
 
-            curl_setopt($this->curlHandler, CURLOPT_URL, $ip.':'.$this->port.$request['path']);
+            curl_setopt($curlHandler, CURLOPT_URL, $ip.':'.$this->port.$request['path']);
 
-            $response = curl_exec($this->curlHandler);
+            $response = curl_exec($curlHandler);
 
             list($header, $body) = explode("\r\n\r\n", $response, 2);
 
@@ -126,29 +139,9 @@ class Varnish
 
         }
 
+        curl_close($curlHandler);
+
         return $requestResponseByIp;
-
     }
-    /**
-     * Override or modify default cUrl Options
-     * @param array $options
-     */
-    public function setRequestOptions($options)
-    {
 
-        foreach($options as $option => $value) {
-
-            curl_setopt($this->curlHandler, (int)$option, $value);
-        }
-
-    }
-    /**
-     * Desctructor
-     */
-    public function __destruct()
-    {
-        if ($this->curlHandler) {
-            curl_close($this->curlHandler);
-        }
-    }
 }
