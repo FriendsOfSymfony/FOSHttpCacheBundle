@@ -119,14 +119,14 @@ class Varnish
         $requestResponseByIp = array();
 
         $curlHandler = curl_init($this->domain);
-            //Default Options
-        curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curlHandler, CURLOPT_HEADER, true); // Display headers
 
         foreach ($options as $option => $value) {
 
             curl_setopt($curlHandler, (int) $option, $value);
         }
+        //Default Options
+        curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlHandler, CURLOPT_HEADER, true); // Display headers
 
         foreach ($this->ips as $ip) {
 
