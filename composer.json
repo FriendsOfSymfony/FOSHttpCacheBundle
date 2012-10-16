@@ -26,7 +26,7 @@
         "psr-0": { "Liip\\CacheControlBundle": "" }
     },
     "suggest": {
-        "ext-curl": "Used by Varnish Helper to construct requests. See http://www.php.net/manual/en/curl.installation.php"
+        "ext-curl": "Used by Varnish Helper to construct requests."
     },
     "target-dir": "Liip/CacheControlBundle"
 }

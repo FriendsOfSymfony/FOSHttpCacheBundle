@@ -40,14 +40,15 @@ class Varnish
     private $domain;
     private $port;
 
-    private $curlHandler;
+    private $lastRequestError;
+    private $lastRequestInfo;
 
     /**
      * Constructor
      *
      * @param string $domain the domain we want to purge urls from. only domain and port are used, path is ignored
-     * @param array $ips space separated list of varnish ips to talk to
-     * @param int $port the port the varnishes listen on (its the same port for all instances)
+     * @param array  $ips    space separated list of varnish ips to talk to
+     * @param int    $port   the port the varnishes listen on (its the same port for all instances)
      */
     public function __construct($domain, array $ips, $port)
     {
@@ -71,7 +72,7 @@ class Varnish
      *
      * @throws \RuntimeException if connection to one of the varnish servers fails.
      */
-    public function invalidatePath($path, $options = array())
+    public function invalidatePath($path, array $options = array())
     {
         //Garanteed to be a purge request
         $options[CURLOPT_CUSTOMREQUEST] = 'PURGE';
@@ -84,13 +85,13 @@ class Varnish
     /**
      * Force this absolute path to be refreshed
      *
-     * @param string $path Must be an absolute path
+     * @param string $path    Must be an absolute path
      * @param array  $options Options for cUrl Request
      *
-     * @return array An associative array with keys 'headers' and 'body' which holds a raw response from the server
+     * @return array             An associative array with keys 'headers' and 'body' which holds a raw response from the server
      * @throws \RuntimeException if connection to one of the varnish servers fails.
      */
-    public function refreshPath($path, $options = array())
+    public function refreshPath($path, array $options = array())
     {
 
         $headers = array("Cache-Control: no-cache, no-store, max-age=0, must-revalidate");
@@ -109,10 +110,10 @@ class Varnish
      * @param array $request request string
      * @param array $options Options for request
      *
-     * @return array An associative array with keys 'headers' and 'body' which holds a raw response from the server
+     * @return array             An associative array with keys 'headers', 'body', 'error' and 'errorNumber' for each configured Ip
      * @throws \RuntimeException if connection to one of the varnish servers fails. TODO: should we be more tolerant?
      */
-    protected function sendRequestToAllVarnishes($request, $options = array())
+    protected function sendRequestToAllVarnishes($request, array $options = array())
     {
 
         $requestResponseByIp = array();
@@ -122,9 +123,9 @@ class Varnish
         curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curlHandler, CURLOPT_HEADER, true); // Display headers
 
-        foreach($options as $option => $value) {
+        foreach ($options as $option => $value) {
 
-            curl_setopt($curlHandler, (int)$option, $value);
+            curl_setopt($curlHandler, (int) $option, $value);
         }
 
         foreach ($this->ips as $ip) {
@@ -133,9 +134,23 @@ class Varnish
 
             $response = curl_exec($curlHandler);
 
-            list($header, $body) = explode("\r\n\r\n", $response, 2);
+            //Failed
+            if ($response === false) {
+                $header = '';
+                $body   = '';
+                $error  = curl_error($curlHandler);
+                $errorNumber = curl_errno($curlHandler);
 
-            $requestResponseByIp[$ip] = array('headers' => $header, 'body' => $body);
+            } else {
+                $error = null;
+                $errorNumber = CURLE_OK;
+                list($header, $body) = explode("\r\n\r\n", $response, 2);
+            }
+
+            $requestResponseByIp[$ip] = array('headers' => $header,
+                                              'body'    => $body,
+                                              'error'   => $error,
+                                              'errorNumber' => $errorNumber);
 
         }
 
