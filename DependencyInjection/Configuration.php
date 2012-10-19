@@ -34,7 +34,9 @@ class Configuration implements ConfigurationInterface
 
         $this->addRulesSection($rootNode);
         $this->addVarnishSection($rootNode);
-        $this->addFlashMessageListenerSection($rootNode);
+        // PM 2012 Oct 19 - Remove flash listener
+        // TODO: Move to enable config setting
+        // $this->addFlashMessageListenerSection($rootNode);
 
         return $treeBuilder;
     }
