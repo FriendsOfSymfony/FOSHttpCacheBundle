@@ -6,7 +6,7 @@ namespace Liip\CacheControlBundle\Helper;
  * Helper to invalidate or force a refresh varnish entries
  *
  * Supports multiple varnish instances.
- * 
+ *
  * For invalidation uses PURGE requests to the frontend.
  * See http://www.varnish-cache.org/trac/wiki/VCLExamplePurging
  *
@@ -15,7 +15,7 @@ namespace Liip\CacheControlBundle\Helper;
  *   netcat localhost 6081 << EOF
  *   PURGE /url/to/purge HTTP/1.1
  *   Host: webapp-host.name
- * 
+ *
  *   EOF
  *
  * For a forced refresh it uses a normal GET with appropriate cache headers
@@ -40,12 +40,15 @@ class Varnish
     private $domain;
     private $port;
 
+    private $lastRequestError;
+    private $lastRequestInfo;
+
     /**
      * Constructor
      *
      * @param string $domain the domain we want to purge urls from. only domain and port are used, path is ignored
-     * @param array $ips space separated list of varnish ips to talk to
-     * @param int $port the port the varnishes listen on (its the same port for all instances)
+     * @param array  $ips    space separated list of varnish ips to talk to
+     * @param int    $port   the port the varnishes listen on (its the same port for all instances)
      */
     public function __construct($domain, array $ips, $port)
     {
@@ -54,63 +57,106 @@ class Varnish
         if (isset($url['port'])) {
             $this->domain .= ':' . $url['port'];
         }
-        $this->ips = $ips;
+        $this->ips  = $ips;
         $this->port = $port;
+
     }
 
     /**
      * Purge this absolute path at all registered cache server
      *
-     * @param string $path Must be an absolute path
+     * @param string $path    Must be an absolute path
+     * @param array  $options Options for cUrl Request
+     *
+     * @return array An associative array with keys 'headers' and 'body' which holds a raw response from the server
+     *
      * @throws \RuntimeException if connection to one of the varnish servers fails.
      */
-    public function invalidatePath($path)
+    public function invalidatePath($path, array $options = array())
     {
-        $request = "PURGE $path HTTP/1.0\r\n";
-        $request.= "Host: {$this->domain}\r\n";
-        $request.= "Connection: Close\r\n\r\n";
+        //Garanteed to be a purge request
+        $options[CURLOPT_CUSTOMREQUEST] = 'PURGE';
 
-        $this->sendRequestToAllVarnishes($request);
+        $request = array('path' => $path);
+
+        return $this->sendRequestToAllVarnishes($request, $options);
     }
 
     /**
-     * Force this absolute path to be refreshed 
+     * Force this absolute path to be refreshed
      *
-     * @param string $path Must be an absolute path
+     * @param string $path    Must be an absolute path
+     * @param array  $options Options for cUrl Request
+     *
+     * @return array             An associative array with keys 'headers' and 'body' which holds a raw response from the server
      * @throws \RuntimeException if connection to one of the varnish servers fails.
      */
-    public function refreshPath($path)
+    public function refreshPath($path, array $options = array())
     {
-        $request = "GET $path HTTP/1.0\r\n";
-        $request.= "Host: {$this->domain}\r\n";
-        $request.= "Cache-Control: no-cache, no-store, max-age=0, must-revalidate";
-        $request.= "Connection: Close\r\n\r\n";
 
-        $this->sendRequestToAllVarnishes($request);
+        $headers = array("Cache-Control: no-cache, no-store, max-age=0, must-revalidate");
+
+        $options[CURLOPT_HTTPHEADER]    = $headers;
+        $options[CURLOPT_CUSTOMREQUEST] = 'GET';
+
+        $request = array('path' => $path);
+
+        return $this->sendRequestToAllVarnishes($request, $options);
     }
 
     /**
      * Send a request to all configured varnishes
      *
-     * @param string $request request string
+     * @param array $request request string
+     * @param array $options Options for request
+     *
+     * @return array             An associative array with keys 'headers', 'body', 'error' and 'errorNumber' for each configured Ip
      * @throws \RuntimeException if connection to one of the varnish servers fails. TODO: should we be more tolerant?
      */
-    protected function sendRequestToAllVarnishes($request)
+    protected function sendRequestToAllVarnishes($request, array $options = array())
     {
-        foreach ($this->ips as $ip) {
-            $fp = fsockopen($ip, $this->port, $errno, $errstr, 2);
-            if (!$fp) {
-                throw new \RuntimeException("$errstr ($errno)");
-            }
 
-            fwrite($fp, $request);
+        $requestResponseByIp = array();
 
-            // read answer to the end, to be sure varnish is finished before continuing
-            while (!feof($fp)) {
-                fgets($fp, 128);
-            }
+        $curlHandler = curl_init($this->domain);
 
-            fclose($fp);
+        foreach ($options as $option => $value) {
+
+            curl_setopt($curlHandler, (int) $option, $value);
         }
+        //Default Options
+        curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlHandler, CURLOPT_HEADER, true); // Display headers
+
+        foreach ($this->ips as $ip) {
+
+            curl_setopt($curlHandler, CURLOPT_URL, $ip.':'.$this->port.$request['path']);
+
+            $response = curl_exec($curlHandler);
+
+            //Failed
+            if ($response === false) {
+                $header = '';
+                $body   = '';
+                $error  = curl_error($curlHandler);
+                $errorNumber = curl_errno($curlHandler);
+
+            } else {
+                $error = null;
+                $errorNumber = CURLE_OK;
+                list($header, $body) = explode("\r\n\r\n", $response, 2);
+            }
+
+            $requestResponseByIp[$ip] = array('headers' => $header,
+                                              'body'    => $body,
+                                              'error'   => $error,
+                                              'errorNumber' => $errorNumber);
+
+        }
+
+        curl_close($curlHandler);
+
+        return $requestResponseByIp;
     }
+
 }

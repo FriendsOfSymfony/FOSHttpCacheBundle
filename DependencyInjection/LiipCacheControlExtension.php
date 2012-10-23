@@ -8,7 +8,8 @@ use Symfony\Component\Config\Definition\Processor,
     Symfony\Component\DependencyInjection\Loader\XmlFileLoader,
     Symfony\Component\DependencyInjection\ContainerBuilder,
     Symfony\Component\DependencyInjection\Reference,
-    Symfony\Component\DependencyInjection\DefinitionDecorator;
+    Symfony\Component\DependencyInjection\DefinitionDecorator,
+    Symfony\Component\DependencyInjection\Exception\RuntimeException;
 
 class LiipCacheControlExtension extends Extension
 {
@@ -46,6 +47,12 @@ class LiipCacheControlExtension extends Extension
         }
 
         if (!empty($config['varnish'])) {
+
+            if (!extension_loaded('curl')) {
+                throw new RuntimeException('Varnish Helper requires cUrl php extension. Please install it to continue');
+
+            }
+
             $loader->load('varnish_helper.xml');
             $container->setParameter($this->getAlias().'.varnish.ips', $config['varnish']['ips']);
             $container->setParameter($this->getAlias().'.varnish.domain', $config['varnish']['domain']);

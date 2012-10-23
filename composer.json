@@ -5,6 +5,9 @@
     "keywords": ["esi", "varnish", "caching", "http"],
     "license": "MIT",
     "minimum-stability": "dev",
+    "require-dev": {
+         "ext-curl": "*"
+    },
     "authors": [
         {
             "name": "Liip AG",
@@ -21,6 +24,9 @@
     },
     "autoload": {
         "psr-0": { "Liip\\CacheControlBundle": "" }
+    },
+    "suggest": {
+        "ext-curl": "Used by Varnish Helper to construct requests."
     },
     "target-dir": "Liip/CacheControlBundle"
 }
