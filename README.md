@@ -223,12 +223,20 @@ or fetch it from the service container:
 ``` php
 // using a "manual" url
 $varnish = $this->container->get('liip_cache_control.varnish');
-$varnish->invalidatePath('/some/path');
+/* $response Is an associative array with keys 'headers', 'body', 'error' and 'errorNumber' for each configured IP. 
+   A sample response will look like:
+   array('10.0.0.10' => array('body'    => 'raw-request-body',
+                              'headers' => 'raw-headers',
+                              'error'   =>  'curl-error-msg',
+                              'errorNumber'   =>  integer-curl-error-number),
+          '10.0.0.11' => ...)
+*/
+$response = $varnish->invalidatePath('/some/path');
 
 // using the router to generate the url
 $router = $this->container->get('router');
 $varnish = $this->container->get('liip_cache_control.varnish');
-$varnish->invalidatePath($router->generate('myRouteName'));
+$response = $varnish->invalidatePath($router->generate('myRouteName'));
 ```
 
 When using ESI, you will want to purge individual fragments. To generate the
