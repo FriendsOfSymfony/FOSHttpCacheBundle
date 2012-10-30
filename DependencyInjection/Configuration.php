@@ -70,7 +70,6 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('varnish')
-                    ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('ips')
                             ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
