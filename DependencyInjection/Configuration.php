@@ -89,7 +89,6 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('flash_message_listener')
-                    ->addDefaultsIfNotSet()
                     ->canBeUnset()
                     ->children()
                         ->scalarNode('name')->defaultValue('flashes')->end()
