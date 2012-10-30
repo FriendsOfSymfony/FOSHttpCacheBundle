@@ -125,9 +125,9 @@ class CacheControlListener
     protected function getOptions(Request $request)
     {
         foreach ($this->map as $elements) {
-            if (!empty($elements[1]['role'])
+            if (!empty($elements[1]['unless_role'])
                 && $this->securityContext
-                && $this->securityContext->isGranted($elements[1]['role'])
+                && $this->securityContext->isGranted($elements[1]['unless_role'])
             ) {
                 continue;
             }

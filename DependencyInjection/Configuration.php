@@ -47,7 +47,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('rules')
                     ->prototype('array')
                         ->children()
-                            ->scalarNode('role')->defaultNull()->end()
+                            ->scalarNode('unless_role')->defaultNull()->end()
                             ->scalarNode('path')->defaultNull()->end()
                             ->scalarNode('domain')->defaultNull()->end()
                             ->scalarNode('reverse_proxy_ttl')->defaultNull()->end()
