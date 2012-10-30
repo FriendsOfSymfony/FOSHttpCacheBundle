@@ -8,6 +8,7 @@
 
         <service id="liip_cache_control.response_listener" class="Liip\CacheControlBundle\EventListener\CacheControlListener">
             <tag name="kernel.event_listener" event="kernel.response" method="onKernelResponse" />
+            <argument type="service" id="security.context" on-invalid="ignore"/>
         </service>
 
         <service id="liip_cache_control.request_matcher" class="Symfony\Component\HttpFoundation\RequestMatcher" public="false" />
