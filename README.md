@@ -104,6 +104,8 @@ If you just want to match the homepage you need to use the path ```^/$```.
 
 To match pages URLs with caching rules, this bundle uses the class ```Symfony\Component\HttpFoundation\RequestMatcher```.
 
+The ``unless_role`` makes it possible to skip rules based on if the current authenticated user has been granted the provided role.
+
 Custom Varnish Parameters
 ------------------------
 

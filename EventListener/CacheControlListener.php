@@ -6,6 +6,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\SecurityContext;
 
 /**
  * Set caching settings on the reponse according to the app config
@@ -16,6 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class CacheControlListener
 {
+    protected $securityContext;
+
     protected $map = array();
 
     /**
@@ -28,6 +31,14 @@ class CacheControlListener
     /**
      * Constructor.
      *
+     * @param \Symfony\Component\Security\Core\SecurityContext $securityContext
+     */
+    public function __construct(SecurityContext $securityContext = null)
+    {
+        $this->securityContext = $securityContext;
+    }
+
+    /**
      * @param RequestMatcherInterface $requestMatcher A RequestMatcherInterface instance
      * @param array                   $options        An array of options
      */
@@ -114,6 +125,13 @@ class CacheControlListener
     protected function getOptions(Request $request)
     {
         foreach ($this->map as $elements) {
+            if (!empty($elements[1]['unless_role'])
+                && $this->securityContext
+                && $this->securityContext->isGranted($elements[1]['unless_role'])
+            ) {
+                continue;
+            }
+
             if (null === $elements[0] || $elements[0]->matches($request)) {
                 return $elements[1];
             }
