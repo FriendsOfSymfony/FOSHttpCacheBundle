@@ -45,6 +45,7 @@ class Configuration implements ConfigurationInterface
             ->fixXmlConfig('rule', 'rules')
             ->children()
                 ->arrayNode('rules')
+                    ->cannotBeOverwritten()
                     ->prototype('array')
                         ->children()
                             ->scalarNode('unless_role')->defaultNull()->end()
