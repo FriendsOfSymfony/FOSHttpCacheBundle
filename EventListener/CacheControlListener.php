@@ -17,8 +17,14 @@ use Symfony\Component\Security\Core\SecurityContext;
  */
 class CacheControlListener
 {
+    /**
+     * @var \Symfony\Component\Security\Core\SecurityContext
+     */
     protected $securityContext;
 
+    /**
+     * @var array
+     */
     protected $map = array();
 
     /**
@@ -26,7 +32,14 @@ class CacheControlListener
      *
      * @var array
      */
-    protected $supportedHeaders = array('etag' => true, 'last_modified' => true, 'max_age' => true, 's_maxage' => true, 'private' => true, 'public' => true);
+    protected $supportedHeaders = array(
+        'etag' => true,
+        'last_modified' => true,
+        'max_age' => true,
+        's_maxage' => true,
+        'private' => true,
+        'public' => true,
+    );
 
     /**
      * Constructor.
@@ -52,12 +65,10 @@ class CacheControlListener
     */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        $response = $event->getResponse();
-        $request = $event->getRequest();
-
-        if ($options = $this->getOptions($request)) {
+        $options = $this->getOptions($event->getRequest());
+        if ($options) {
+            $response = $event->getResponse();
             if (!empty($options['controls'])) {
-
                 $controls = array_intersect_key($options['controls'], $this->supportedHeaders);
                 $extraControls = array_diff_key($options['controls'], $controls);
 
@@ -66,7 +77,7 @@ class CacheControlListener
                     $response->setCache($this->prepareControls($controls));
                 }
 
-                //set extra headers for varnish
+                //set extra headers, f.e. varnish specific headers
                 if (!empty($extraControls)) {
                     $this->setExtraControls($response, $extraControls);
                 }
@@ -137,7 +148,7 @@ class CacheControlListener
             }
         }
 
-        return null;
+        return array();
     }
 
     /**
@@ -146,10 +157,10 @@ class CacheControlListener
      * @param array $controls
      * @return array
      */
-    protected function prepareControls($controls)
+    protected function prepareControls(array $controls)
     {
         if (isset($controls['last_modified'])) {
-            //this must be a DateTime, convert from the string in configuration
+            // this must be a DateTime, convert from the string in configuration
             $controls['last_modified'] = new \DateTime($controls['last_modified']);
         }
 
