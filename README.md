@@ -185,7 +185,8 @@ liip_cache_control:
 Purging
 -------
 
-Please add the following code to your Varnish configuration.
+Add the following code to your Varnish configuration to have it handle PURGE requests
+(this code works with Varnish 2.x - PR to update for Varnish 3.x welcome):
 
 ```
 #top level:
