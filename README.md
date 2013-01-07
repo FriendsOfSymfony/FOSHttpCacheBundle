@@ -398,3 +398,12 @@ liip_cache_control:
         secure: false
         httpOnly: true
 ```
+
+If you do not want the flash message listener, you can disable it:
+
+``` yaml
+# app/config.yml
+liip_cache_control:
+    flash_message_listener:
+        enabled: false
+```
