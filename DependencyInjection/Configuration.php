@@ -34,9 +34,7 @@ class Configuration implements ConfigurationInterface
 
         $this->addRulesSection($rootNode);
         $this->addVarnishSection($rootNode);
-        // PM 2012 Oct 19 - Remove flash listener
-        // TODO: Move to enable config setting
-        // $this->addFlashMessageListenerSection($rootNode);
+        $this->addFlashMessageListenerSection($rootNode);
 
         return $treeBuilder;
     }
@@ -93,7 +91,11 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('flash_message_listener')
                     ->addDefaultsIfNotSet()
                     ->canBeUnset()
+                    ->treatFalseLike(array('enabled' => false))
+                    ->treatTrueLike(array('enabled' => true))
+                    ->treatNullLike(array('enabled' => true))
                     ->children()
+                        ->scalarNode('enabled')->defaultTrue()->end()
                         ->scalarNode('name')->defaultValue('flashes')->end()
                         ->scalarNode('path')->defaultValue('/')->end()
                         ->scalarNode('domain')->defaultNull()->end()
