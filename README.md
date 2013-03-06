@@ -185,9 +185,9 @@ liip_cache_control:
 Purging
 -------
 
-Add the following code to your Varnish configuration to have it handle PURGE requests
-(this code works with Varnish 2.x - PR to update for Varnish 3.x welcome):
+Add the following code to your Varnish configuration to have it handle PURGE requests (make sure to uncomment the appropiate line(s))
 
+varnish 2.x
 ```
 #top level:
 # who is allowed to purge from cache
@@ -203,11 +203,50 @@ if (req.request == "PURGE") {
     if (!client.ip ~ purge) {
         error 405 "Not allowed.";
     }
+
     purge("req.url ~ " req.url);
-    #log "PURGE " req.url;
     error 200 "Success";
 }
 ```
+
+varnish 3.x
+```
+#top level:
+# who is allowed to purge from cache
+# http://varnish-cache.org/trac/wiki/VCLExamplePurging
+acl purge {
+    "127.0.0.1"; #localhost for dev purposes
+    "10.0.11.0"/24; #server closed network
+}
+
+#in sub vcl_recv
+# purge if client is in correct ip range
+if (req.request == "PURGE") {
+    if (!client.ip ~ purge) {
+        error 405 "Not allowed.";
+    }
+
+    return(lookup);    
+}
+
+sub vcl_hit {
+  if (req.request == "PURGE") {
+     purge;
+     error 200 "Purged";
+     return (error);
+  }
+}
+
+sub vcl_miss {
+   if (req.request == "PURGE") {
+     purge;
+     error 404 "Not in cache";
+     return (error);
+   }
+}
+
+```
+
 
 NOTE: this code invalidates the url for all domains. If your varnish serves multiple domains,
 you should improve this configuration. Pull requests welcome :-)
