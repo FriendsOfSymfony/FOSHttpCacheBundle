@@ -185,8 +185,7 @@ liip_cache_control:
 Purging
 -------
 
-Add the following code to your Varnish configuration to have it handle PURGE requests
-(this code works with Varnish 2.x - PR to update for Varnish 3.x welcome):
+Add the following code to your Varnish configuration to have it handle PURGE requests (make sure to uncomment the appropiate line(s))
 
 ```
 #top level:
@@ -203,9 +202,13 @@ if (req.request == "PURGE") {
     if (!client.ip ~ purge) {
         error 405 "Not allowed.";
     }
-    purge("req.url ~ " req.url);
-    #log "PURGE " req.url;
-    error 200 "Success";
+
+    # varnish 2.0
+    # purge("req.url ~ " req.url);
+    # error 200 "Success";
+
+    # varnish 3.0
+    # return(lookup);
 }
 ```
 
