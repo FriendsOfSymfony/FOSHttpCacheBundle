@@ -5,7 +5,8 @@ namespace Liip\CacheControlBundle\EventListener;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent,
     Symfony\Component\HttpFoundation\Session,
     Symfony\Component\HttpFoundation\Cookie,
-    Symfony\Component\HttpFoundation\ResponseHeaderBag;
+    Symfony\Component\HttpFoundation\ResponseHeaderBag,
+    Symfony\Component\HttpKernel\HttpKernel;
 
 /**
  * This listener reads all flash messages and moves them into a cookie.
@@ -45,6 +46,10 @@ class FlashMessageListener
     */
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        if ($event->getRequestType() !== HttpKernel::MASTER_REQUEST) {
+            return;
+        }
+        
         $flashes = $this->session->getFlashes();
         if (empty($flashes)) {
             return;
