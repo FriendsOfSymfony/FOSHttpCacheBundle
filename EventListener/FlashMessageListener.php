@@ -46,8 +46,6 @@ class FlashMessageListener
     */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        //do we need to process flashes on every sub request ?
-        //process flashes only on master request
         if ($event->getRequestType() !== HttpKernel::MASTER_REQUEST) return;
         
         $flashes = $this->session->getFlashes();
