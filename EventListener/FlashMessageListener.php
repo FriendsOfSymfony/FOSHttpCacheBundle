@@ -46,7 +46,9 @@ class FlashMessageListener
     */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        if ($event->getRequestType() !== HttpKernel::MASTER_REQUEST) return;
+        if ($event->getRequestType() !== HttpKernel::MASTER_REQUEST) {
+            return;
+        }
         
         $flashes = $this->session->getFlashes();
         if (empty($flashes)) {
