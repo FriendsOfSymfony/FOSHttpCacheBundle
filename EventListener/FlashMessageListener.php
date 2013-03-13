@@ -15,8 +15,6 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent,
  */
 class FlashMessageListener
 {
-    const COOKIE_DELIMITER = ':';
-
     /**
      * @var array
      */
@@ -49,25 +47,25 @@ class FlashMessageListener
         if ($event->getRequestType() !== HttpKernel::MASTER_REQUEST) {
             return;
         }
-        
-        $flashes = $this->session->getFlashes();
+
+        $flashBag = $this->session->getFlashBag();
+        $flashes = $flashBag->all();
+
         if (empty($flashes)) {
             return;
         }
-
-        $this->session->clearFlashes();
 
         $response = $event->getResponse();
 
         $cookies = $response->headers->getCookies(ResponseHeaderBag::COOKIES_ARRAY);
         if (isset($cookies[$this->options['domain']][$this->options['path']][$this->options['name']])) {
             $rawCookie = $cookies[$this->options['domain']][$this->options['path']][$this->options['name']]->getValue();
-            $flashes = array_merge($flashes, explode(self::COOKIE_DELIMITER, base64_decode($rawCookie)));
+            $flashes = array_merge($flashes, json_decode($rawCookie));
         }
 
         $cookie = new Cookie(
             $this->options['name'],
-            base64_encode(implode(self::COOKIE_DELIMITER, $flashes)),
+            json_encode($flashes),
             0,
             $this->options['path'],
             $this->options['domain'],
