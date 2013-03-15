@@ -9,13 +9,13 @@ This bundle works with Symfony 2.1 and 2.2.
 [![Build Status](https://secure.travis-ci.org/liip/LiipCacheControlBundle.png)](http://travis-ci.org/liip/LiipCacheControlBundle)
 
 
-Installation with Symfony 2.1 and composer
-==========================================
+Installation with composer
+==========================
 
 Just add the following line to your projects composer.json require section:
 
 ```
-"liip/cache-control-bundle": "dev-master"
+"liip/cache-control-bundle": "1.1.*"
 ```
 
 
