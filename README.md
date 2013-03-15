@@ -4,48 +4,10 @@ CacheControlBundle
 This Bundle provides a way to set path based cache expiration headers via the app configuration and provides
 a helper to control the reverse proxy varnish.
 
-This bundle works with Symfony 2.0 and 2.1.
+This bundle works with Symfony 2.1 and 2.2.
 
 [![Build Status](https://secure.travis-ci.org/liip/LiipCacheControlBundle.png)](http://travis-ci.org/liip/LiipCacheControlBundle)
 
-Installation with Symfony 2.0
-=============================
-
-STEP 1: There are two way to add the bundle to your project:
-
-a) With the vendor script (preferred method):
-
-Add the following lines to your ``deps`` file:
-
-```
-[LiipCacheControl]
-    git=git@github.com:liip/LiipCacheControlBundle.git
-    target=bundles/Liip/CacheControlBundle
-```
-
-Then run the vendor script:
-
-``` bash
-$ ./bin/vendors install
-```
-
-b) As a git submodule
-
-Add this bundle to your project as a Git submodule:
-
-``` bash
-$ git submodule add git://github.com/liip/LiipCacheControlBundle.git vendor/bundles/Liip/CacheControlBundle
-```
-
-STEP 2: Add the Liip namespace to your autoloader:
-
-``` php
-// app/autoload.php
-$loader->registerNamespaces(array(
-    'Liip' => __DIR__.'/../vendor/bundles',
-    // your other namespaces
-));
-```
 
 Installation with Symfony 2.1 and composer
 ==========================================
