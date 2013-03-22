@@ -74,6 +74,12 @@ class Varnish
      */
     public function invalidatePath($path, array $options = array())
     {
+        $headers = array(
+            sprintf('Host: %s', $this->domain)
+        );
+
+        $options[CURLOPT_HTTPHEADER]    = $headers;
+
         //Garanteed to be a purge request
         $options[CURLOPT_CUSTOMREQUEST] = 'PURGE';
 
