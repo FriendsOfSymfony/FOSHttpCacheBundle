@@ -120,10 +120,19 @@ class Varnish
 
         $curlHandler = curl_init($this->domain);
 
-        foreach ($options as $option => $value) {
+        $headers = array(
+            sprintf('Host: %s', $this->domain)
+        );
+        if (isset($options[CURLOPT_HTTPHEADER])) {
+            $options[CURLOPT_HTTPHEADER]    = array_merge($headers, $options[CURLOPT_HTTPHEADER]);
+        } else {
+            $options[CURLOPT_HTTPHEADER]    = $headers;
+        }
 
+        foreach ($options as $option => $value) {
             curl_setopt($curlHandler, (int) $option, $value);
         }
+
         //Default Options
         curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curlHandler, CURLOPT_HEADER, true); // Display headers
