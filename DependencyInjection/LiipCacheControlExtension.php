@@ -27,6 +27,8 @@ class LiipCacheControlExtension extends Extension
 
         $loader =  new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
+        $container->setParameter($this->getAlias().'.debug', $config['debug']);
+
         if (!empty($config['rules'])) {
             $loader->load('rule_response_listener.xml');
             foreach ($config['rules'] as $cache) {

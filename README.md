@@ -68,8 +68,43 @@ To match pages URLs with caching rules, this bundle uses the class ```Symfony\Co
 
 The ``unless_role`` makes it possible to skip rules based on if the current authenticated user has been granted the provided role.
 
+Debug information
+-----------------
+
+The debug parameter adds a ``X-Cache-Debug`` header to each response that you can use in your Varnish configuration.
+
+``` yaml
+# app/config.yml
+liip_cache_control:
+    debug: true
+```
+
+Add the following code to your Varnish configuration to have debug headers added to the response if it is enabled:
+
+```
+#in sub vcl_deliver
+# debug info
+# https://www.varnish-cache.org/trac/wiki/VCLExampleHitMissHeader
+if (resp.http.X-Cache-Debug) {
+    if (obj.hits > 0) {
+        set resp.http.X-Cache = "HIT";
+        set resp.http.X-Cache-Hits = obj.hits;
+    } else {
+       set resp.http.X-Cache = "MISS";
+    }
+    set resp.http.X-Cache-Expires = resp.http.Expires;
+} else {
+    # remove Varnish/proxy header
+    remove resp.http.X-Varnish;
+    remove resp.http.Via;
+    remove resp.http.Age;
+    remove resp.http.X-Purge-URL;
+    remove resp.http.X-Purge-Host;
+}
+```
+
 Custom Varnish Parameters
-------------------------
+-------------------------
 
 Additionally to the default supported headers, you may want to set custom caching headers for varnish.
 
@@ -144,6 +179,33 @@ liip_cache_control:
         port: 80  # port varnish is listening on for incoming web connections
 ```
 
+To use the varnish cache helper you must inject the ``liip_cache_control.varnish`` service
+or fetch it from the service container:
+
+``` php
+// using a "manual" url
+$varnish = $this->container->get('liip_cache_control.varnish');
+/* $response Is an associative array with keys 'headers', 'body', 'error' and 'errorNumber' for each configured IP.
+   A sample response will look like:
+   array('10.0.0.10' => array('body'    => 'raw-request-body',
+                              'headers' => 'raw-headers',
+                              'error'   =>  'curl-error-msg',
+                              'errorNumber'   =>  integer-curl-error-number),
+          '10.0.0.11' => ...)
+*/
+$response = $varnish->invalidatePath('/some/path');
+
+// using the router to generate the url
+$router = $this->container->get('router');
+$varnish = $this->container->get('liip_cache_control.varnish');
+$response = $varnish->invalidatePath($router->generate('myRouteName'));
+```
+
+When using ESI, you will want to purge individual fragments. To generate the
+corresponding _internal route, inject the http_kernel into your controller and
+use HttpKernel::generateInternalUri with the parameters as in the twig ``render``
+tag.
+
 Purging
 -------
 
@@ -153,7 +215,7 @@ varnish 2.x
 ```
 #top level:
 # who is allowed to purge from cache
-# http://varnish-cache.org/trac/wiki/VCLExamplePurging
+# https://www.varnish-cache.org/docs/trunk/users-guide/purging.html
 acl purge {
     "127.0.0.1"; #localhost for dev purposes
     "10.0.11.0"/24; #server closed network
@@ -175,7 +237,7 @@ varnish 3.x
 ```
 #top level:
 # who is allowed to purge from cache
-# http://varnish-cache.org/trac/wiki/VCLExamplePurging
+# https://www.varnish-cache.org/docs/trunk/users-guide/purging.html
 acl purge {
     "127.0.0.1"; #localhost for dev purposes
     "10.0.11.0"/24; #server closed network
@@ -221,32 +283,40 @@ The varnish path invalidation is about equivalent to doing this:
 
      EOF
 
-To use the varnish cache helper you must inject the ``liip_cache_control.varnish`` service
-or fetch it from the service container:
+Banning
+-------
 
-``` php
-// using a "manual" url
-$varnish = $this->container->get('liip_cache_control.varnish');
-/* $response Is an associative array with keys 'headers', 'body', 'error' and 'errorNumber' for each configured IP. 
-   A sample response will look like:
-   array('10.0.0.10' => array('body'    => 'raw-request-body',
-                              'headers' => 'raw-headers',
-                              'error'   =>  'curl-error-msg',
-                              'errorNumber'   =>  integer-curl-error-number),
-          '10.0.0.11' => ...)
-*/
-$response = $varnish->invalidatePath('/some/path');
+Since varnish 3 banning can be used to invalidate the cache. The varnish helper method ``invalidate`` can be used to
+clear one or several paths providing the host, an url regex and the content type.
 
-// using the router to generate the url
-$router = $this->container->get('router');
-$varnish = $this->container->get('liip_cache_control.varnish');
-$response = $varnish->invalidatePath($router->generate('myRouteName'));
+Add the following code to your Varnish configuration:
+
+varnish 3.x
 ```
+#top level:
+# who is allowed to purge from cache
+# https://www.varnish-cache.org/docs/trunk/users-guide/purging.html
+acl purge {
+    "127.0.0.1"; #localhost for dev purposes
+    "10.0.11.0"/24; #server closed network
+}
 
-When using ESI, you will want to purge individual fragments. To generate the
-corresponding _internal route, inject the http_kernel into your controller and
-use HttpKernel::generateInternalUri with the parameters as in the twig ``render``
-tag.
+#in sub vcl_recv
+# purge if client is in correct ip range
+if (req.request == "PURGE") {
+    if (!client.ip ~ purge) {
+        error 405 "Not allowed.";
+    }
+    ban("obj.http.X-Purge-Host ~ " + req.http.X-Purge-Host + " && obj.http.X-Purge-URL ~ " + req.http.X-Purge-Regex + " && obj.http.Content-Type ~ " + req.http.X-Purge-Content-Type);
+    error 200 "Purged.";
+}
+
+#in sub vcl_fetch
+# add ban-lurker tags to object
+set beresp.http.X-Purge-URL = req.url;
+set beresp.http.X-Purge-Host = req.http.host;
+
+```
 
 Force refresh
 -------------

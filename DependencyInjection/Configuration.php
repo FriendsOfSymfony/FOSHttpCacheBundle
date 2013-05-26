@@ -28,6 +28,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->booleanNode('debug')->defaultValue('%kernel.debug%')->end()
                 ->booleanNode('authorization_listener')->defaultFalse()->end()
             ->end()
         ;

@@ -42,13 +42,22 @@ class CacheControlListener
     );
 
     /**
+     * add debug header, allows vcl to display debug information
+     *
+     * @var bool
+     */
+    protected $debug = false;
+
+    /**
      * Constructor.
      *
      * @param \Symfony\Component\Security\Core\SecurityContext $securityContext
+     * @param Boolean $debug The current debug mode
      */
-    public function __construct(SecurityContext $securityContext = null)
+    public function __construct(SecurityContext $securityContext = null, $debug = false)
     {
         $this->securityContext = $securityContext;
+        $this->debug = $debug;
     }
 
     /**
@@ -81,6 +90,10 @@ class CacheControlListener
                 if (!empty($extraControls)) {
                     $this->setExtraControls($response, $extraControls);
                 }
+            }
+
+            if ($this->debug) {
+                $response->headers->set('X-Cache-Debug', 1, false);
             }
 
             if (isset($options['reverse_proxy_ttl']) && null !== $options['reverse_proxy_ttl']) {
