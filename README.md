@@ -1,8 +1,8 @@
 CacheControlBundle
 ==================
 
-This Bundle provides a way to set path based cache expiration headers via the app configuration and provides
-a helper to control the reverse proxy varnish.
+This Bundle provides a way to set path based cache expiration headers via the
+app configuration and provides a helper to control the reverse proxy varnish.
 
 This bundle works with Symfony 2.1 and 2.2.
 
@@ -58,20 +58,25 @@ The matches are tried from top to bottom, the first match is taken and applied.
 About the path parameter
 ------------------------
 
-The ``path`` and ``domain`` parameter of the rules represent a regular expression that a page must match to use the rule.
+The ``path`` and ``domain`` parameter of the rules represent a regular
+expression that a page must match to use the rule.
 
-For this reason, and it's probably not the behaviour you'd have expected, the path ```^/``` will match any page.
+For this reason, and it's probably not the behaviour you'd have expected, the
+path ```^/``` will match any page.
 
 If you just want to match the homepage you need to use the path ```^/$```.
 
-To match pages URLs with caching rules, this bundle uses the class ```Symfony\Component\HttpFoundation\RequestMatcher```.
+To match pages URLs with caching rules, this bundle uses the class
+```Symfony\Component\HttpFoundation\RequestMatcher```.
 
-The ``unless_role`` makes it possible to skip rules based on if the current authenticated user has been granted the provided role.
+The ``unless_role`` makes it possible to skip rules based on if the current
+authenticated user has been granted the provided role.
 
 Debug information
 -----------------
 
-The debug parameter adds a ``X-Cache-Debug`` header to each response that you can use in your Varnish configuration.
+The debug parameter adds a ``X-Cache-Debug`` header to each response that you
+can use in your Varnish configuration.
 
 ``` yaml
 # app/config.yml
@@ -79,7 +84,8 @@ liip_cache_control:
     debug: true
 ```
 
-Add the following code to your Varnish configuration to have debug headers added to the response if it is enabled:
+Add the following code to your Varnish configuration to have debug headers
+added to the response if it is enabled:
 
 ```
 #in sub vcl_deliver
@@ -106,7 +112,8 @@ if (resp.http.X-Cache-Debug) {
 Custom Varnish Parameters
 -------------------------
 
-Additionally to the default supported headers, you may want to set custom caching headers for varnish.
+Additionally to the default supported headers, you may want to set custom
+caching headers for varnish.
 
 ``` yaml
 # app/config.yml
@@ -168,7 +175,8 @@ Note that if you are using this, you should have a good purging strategy.
 Varnish helper
 ==============
 
-Configure the location of the varnish reverse proxies (be sure not to forget any, as each varnish must be purged):
+Configure the location of the varnish reverse proxies (be sure not to forget
+any, as each varnish must be purged):
 
 ``` yaml
 # app/config.yml
@@ -179,8 +187,8 @@ liip_cache_control:
         port: 80  # port varnish is listening on for incoming web connections
 ```
 
-To use the varnish cache helper you must inject the ``liip_cache_control.varnish`` service
-or fetch it from the service container:
+To use the varnish cache helper you must inject the
+``liip_cache_control.varnish`` service or fetch it from the service container:
 
 ``` php
 // using a "manual" url
@@ -203,13 +211,14 @@ $response = $varnish->invalidatePath($router->generate('myRouteName'));
 
 When using ESI, you will want to purge individual fragments. To generate the
 corresponding _internal route, inject the http_kernel into your controller and
-use HttpKernel::generateInternalUri with the parameters as in the twig ``render``
-tag.
+use HttpKernel::generateInternalUri with the parameters as in the twig
+``render`` tag.
 
 Purging
 -------
 
-Add the following code to your Varnish configuration to have it handle PURGE requests (make sure to uncomment the appropiate line(s))
+Add the following code to your Varnish configuration to have it handle PURGE
+requests (make sure to uncomment the appropiate line(s))
 
 varnish 2.x
 ```
@@ -272,8 +281,9 @@ sub vcl_miss {
 ```
 
 
-NOTE: this code invalidates the url for all domains. If your varnish serves multiple domains,
-you should improve this configuration. Pull requests welcome :-)
+NOTE: this code invalidates the url for all domains. If your varnish serves
+multiple domains, you should improve this configuration.
+Pull requests welcome :-)
 
 The varnish path invalidation is about equivalent to doing this:
 
@@ -286,8 +296,9 @@ The varnish path invalidation is about equivalent to doing this:
 Banning
 -------
 
-Since varnish 3 banning can be used to invalidate the cache. The varnish helper method ``invalidate`` can be used to
-clear one or several paths providing the host, an url regex and the content type.
+Since varnish 3 banning can be used to invalidate the cache. The varnish
+helper method ``invalidate`` can be used to clear one or several paths
+providing the host, an url regex and the content type.
 
 Add the following code to your Varnish configuration:
 
@@ -354,8 +365,8 @@ The vanish path force refresh is about equivalent to doing this:
 
     EOF
 
-To use the varnish cache helper you must inject the ``liip_cache_control.varnish`` service
-or fetch it from the service container:
+To use the varnish cache helper you must inject the
+``liip_cache_control.varnish`` service or fetch it from the service container:
 
 ``` php
 // using a "manual" url
@@ -374,20 +385,21 @@ liip_cache_control:
     authorization_listener: true
 ```
 
-This listener makes it possible to stop a request with a 200 "OK" for HEAD requests
-right after the security firewall has finished. This is useful when one uses Varnish while
-handling content that is not available for all users.
+This listener makes it possible to stop a request with a 200 "OK" for HEAD
+requests right after the security firewall has finished. This is useful when
+one uses Varnish while handling content that is not available for all users.
 
-In this scenario on a cache hit, Varnish can be configured to issue a HEAD request when this
-content is accessed. This way Symfony2 can be used to validate the authorization, but no
-work needs to be made to regenerate the content that is already in the Varnish cache.
+In this scenario on a cache hit, Varnish can be configured to issue a HEAD
+request when this content is accessed. This way Symfony2 can be used to
+validate the authorization, but no work needs to be made to regenerate the
+content that is already in the Varnish cache.
 
-Note this obviously means that it only works with path based Security. Any additional security
-implemented inside the Controller will be ignored.
+Note this obviously means that it only works with path based Security. Any
+additional security implemented inside the Controller will be ignored.
 
-Note further that a HEAD response is supposed to contain the same HTTP header meta data as the
-GET response to the same URL. However for the purpose of this use case we have no other choice
-but to assume a 200.
+Note further that a HEAD response is supposed to contain the same HTTP header
+meta data as the GET response to the same URL. However for the purpose of this
+use case we have no other choice but to assume a 200.
 
 ```
 backend default {
@@ -454,10 +466,11 @@ sub vcl_fetch {
 Flash message listener
 ======================
 
-The Response flash message listener moves all flash messages currently set into a cookie. This
-way it becomes possible to better handle flash messages in combination with ESI. The ESI
-configuration will need to ignore the configured cookie. It will then be up to the client
-to read out the cookie, display the flash message and remove the flash message via javascript.
+The Response flash message listener moves all flash messages currently set into
+a cookie. This way it becomes possible to better handle flash messages in
+combination with ESI. The ESI configuration will need to ignore the configured
+cookie. It will then be up to the client to read out the cookie, display the
+flash message and remove the flash message via javascript.
 
 ``` yaml
 # app/config.yml
