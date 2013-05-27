@@ -59,6 +59,7 @@ class LiipCacheControlExtension extends Extension
             $container->setParameter($this->getAlias().'.varnish.ips', $config['varnish']['ips']);
             $container->setParameter($this->getAlias().'.varnish.domain', $config['varnish']['domain']);
             $container->setParameter($this->getAlias().'.varnish.port', $config['varnish']['port']);
+            $container->setParameter($this->getAlias().'.varnish.purge_instruction', $config['varnish']['purge_instruction']);
         }
 
         if ($config['authorization_listener']) {

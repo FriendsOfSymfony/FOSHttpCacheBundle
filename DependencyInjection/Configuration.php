@@ -81,6 +81,10 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('domain')->defaultNull()->end()
                         ->scalarNode('port')->defaultNull()->end()
+                        ->enumNode('purge_instruction')
+                            ->values(array('purge', 'ban'))
+                            ->defaultValue('purge')
+                        ->end()
                     ->end()
                 ->end()
             ->end();

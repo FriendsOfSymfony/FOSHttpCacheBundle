@@ -296,11 +296,19 @@ The varnish path invalidation is about equivalent to doing this:
 Banning
 -------
 
-Since varnish 3 banning can be used to invalidate the cache. The varnish
-helper method ``invalidate`` can be used to clear one or several paths
-providing the host, an url regex and the content type.
+Since varnish 3 banning can be used to invalidate the cache.
 
-Add the following code to your Varnish configuration:
+Configure the varnish reverse proxies to use ban as purge instruction:
+
+``` yaml
+# app/config.yml
+liip_cache_control:
+    varnish:
+        purge_instruction: ban
+```
+
+This will do a purge request and will add X-Purge headers which can be used by
+your Varnish configuration:
 
 varnish 3.x
 ```
