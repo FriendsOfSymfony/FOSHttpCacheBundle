@@ -38,14 +38,20 @@ namespace Liip\CacheControlBundle\Helper;
 class Varnish
 {
     const PURGE_INSTRUCTION_PURGE = 'purge';
-    const PURGE_INSTRUCTION_BAN = 'ban';
+    const PURGE_INSTRUCTION_BAN   = 'ban';
 
-    const PURGE_HEADER_HOST = 'X-Purge-Host';
-    const PURGE_HEADER_REGEX = 'X-Purge-Regex';
+    const PURGE_HEADER_HOST         = 'X-Purge-Host';
+    const PURGE_HEADER_REGEX        = 'X-Purge-Regex';
     const PURGE_HEADER_CONTENT_TYPE = 'X-Purge-Content-Type';
 
+    const CONTENT_TYPE_ALL   = '.*';
+    const CONTENT_TYPE_HTML  = 'text/html';
+    const CONTENT_TYPE_CSS   = 'text/css';
+    const CONTENT_TYPE_JS    = 'javascript';
+    const CONTENT_TYPE_IMAGE = 'image/';
+
     private $ips;
-    private $domain;
+    private $host;
     private $port;
     private $purgeInstruction;
 
@@ -55,20 +61,20 @@ class Varnish
     /**
      * Constructor
      *
-     * @param string $domain    the domain we want to purge urls from. only
-     *                          domain and port are used, path is ignored
+     * @param string $host      The default host we want to purge urls from.
+     *                          only host and port are used, path is ignored
      * @param array  $ips       space separated list of varnish ips to talk to
      * @param int    $port      the port the varnishes listen on (its the same
      *                          port for all instances)
-     * @param int    $purgeInstruction the purge instruction (purge in Varnish
+     * @param string $purgeInstruction the purge instruction (purge in Varnish
      *                          2, ban possible since Varnish 3)
      */
-    public function __construct($domain, array $ips, $port, $purgeInstruction)
+    public function __construct($host, array $ips, $port, $purgeInstruction = self::PURGE_INSTRUCTION_PURGE)
     {
-        $url = parse_url($domain);
-        $this->domain = $url['host'];
+        $url = parse_url($host);
+        $this->host = $url['host'];
         if (isset($url['port'])) {
-            $this->domain .= ':' . $url['port'];
+            $this->host .= ':' . $url['port'];
         }
         $this->ips  = $ips;
         $this->port = $port;
@@ -79,31 +85,25 @@ class Varnish
      * Purge this path at all registered cache server.
      * See https://www.varnish-cache.org/docs/trunk/users-guide/purging.html
      *
-     * @param string $path          Path to be purged, since varnish 3 this can
-     *                              also be a regex to invalidate multiple
-     *                              paths at once
-     * @param array  $options       Options for cUrl Request
-     * @param string $contentType
-     * @param array  $hosts         Hosts (ex. domain.com), by default the
-     *                              configured domain is used
+     * @param string $path        Path to be purged, since varnish 3 this can
+     *                            also be a regex for banning
+     * @param array  $options     Options for cUrl Request
+     * @param string $contentType Banning option: invalidate all or fe. only html
+     * @param array  $hosts       Banning option: replace default host with
+     *                            multiple hosts
      *
      * @return array An associative array with keys 'headers' and 'body' which
      *               holds a raw response from the server
      *
      * @throws \RuntimeException if connection to one of the varnish servers fails.
      */
-    public function invalidatePath($path, array $options = array(), $contentType = '.*', array $hosts = array())
+    public function invalidatePath($path, array $options = array(), $contentType = self::CONTENT_TYPE_ALL, array $hosts = array())
     {
-        //Garanteed to be a purge request
-        $options[CURLOPT_CUSTOMREQUEST] = 'PURGE';
-
-        $request = array(
-            'hosts'       => $hosts,
-            'path'        => $path,
-            'contentType' => $contentType,
-        );
-
-        return $this->sendRequestToAllVarnishes($request, $options);
+        if ($this->purgeInstruction === self::PURGE_INSTRUCTION_BAN) {
+            return $this->requestBan($path, $contentType, $hosts, $options);
+        } else {
+            return $this->requestPurge($path, $options);
+        }
     }
 
     /**
@@ -118,48 +118,78 @@ class Varnish
      */
     public function refreshPath($path, array $options = array())
     {
-
         $headers = array("Cache-Control: no-cache, no-store, max-age=0, must-revalidate");
 
-        $options[CURLOPT_HTTPHEADER]    = $headers;
         $options[CURLOPT_CUSTOMREQUEST] = 'GET';
 
-        $request = array('path' => $path);
+        return $this->sendRequestToAllVarnishes($path, $headers, $options);
+    }
 
-        return $this->sendRequestToAllVarnishes($request, $options);
+    /**
+     * Do a request using the purge instruction
+     *
+     * @param string $path    Path to be purged
+     * @param array  $options Options for cUrl Request
+     *
+     * @return array An associative array with keys 'headers' and 'body' which
+     *               holds a raw response from the server
+     * @throws \RuntimeException if connection to one of the varnish servers fails.
+     */
+    protected function requestPurge($path, array $options = array())
+    {
+        $headers = array(
+            sprintf('Host: %s', $this->host),
+        );
+
+        //Garanteed to be a purge request
+        $options[CURLOPT_CUSTOMREQUEST] = 'PURGE';
+
+        return $this->sendRequestToAllVarnishes($path, $headers, $options);
+    }
+
+    /**
+     * Do a request using the ban instruction (available since varnish 3)
+     *
+     * @param string $path        Path to be purged, this can also be a regex
+     * @param string $contentType Invalidate all or fe. only html
+     * @param array  $hosts       Replace default host with multiple hosts
+     * @param array  $options     Options for cUrl Request
+     *
+     * @return array An associative array with keys 'headers' and 'body' which
+     *               holds a raw response from the server
+     * @throws \RuntimeException if connection to one of the varnish servers fails.
+     */
+    protected function requestBan($path, $contentType = self::CONTENT_TYPE_ALL, array $hosts = array(), array $options = array())
+    {
+        $hosts = count($hosts) === 0 ? array($this->host) : $hosts;
+
+        $headers = array(
+            sprintf('%s: %s', self::PURGE_HEADER_HOST, '^('.join('|', $hosts).')$'),
+            sprintf('%s: %s', self::PURGE_HEADER_REGEX, $path),
+            sprintf('%s: %s', self::PURGE_HEADER_CONTENT_TYPE, $contentType),
+        );
+
+        //Garanteed to be a purge request
+        $options[CURLOPT_CUSTOMREQUEST] = 'PURGE';
+
+        return $this->sendRequestToAllVarnishes('/', $headers, $options);
     }
 
     /**
      * Send a request to all configured varnishes
      *
-     * @param array $request request hosts, path, urlRegEx and contentType
-     * @param array $options Options for request
+     * @param string $path    URL path for request
+     * @param array  $headers Headers for cUrl Request
+     * @param array  $options Options for cUrl Request
      *
      * @return array An associative array with keys 'headers', 'body', 'error'
      *               and 'errorNumber' for each configured Ip
      * @throws \RuntimeException if connection to one of the varnish servers fails. TODO: should we be more tolerant?
      */
-    protected function sendRequestToAllVarnishes($request, array $options = array())
+    protected function sendRequestToAllVarnishes($path, array $headers = array(), array $options = array())
     {
         $requestResponseByIp = array();
-        $isPurge = isset($options[CURLOPT_CUSTOMREQUEST]) && $options[CURLOPT_CUSTOMREQUEST] === 'PURGE';
-        $hosts = isset($request['hosts']) && is_array($request['hosts']) ? join('|', $request['hosts']) : $this->domain;
-        $path = isset($request['path']) ? $request['path'] : '/';
-        $contentType = isset($request['contentType']) ? $request['contentType'] : '.*';
-        $requestPath = $isPurge && $this->purgeInstruction === self::PURGE_INSTRUCTION_BAN ? '/' : $path;
-
-        $curlHandler = curl_init($this->domain);
-
-        $headers = array(
-            sprintf('Host: %s', $this->domain),
-        );
-
-        if ($isPurge && $this->purgeInstruction === self::PURGE_INSTRUCTION_BAN) {
-            // add headers for banning purpose
-            $headers[] = sprintf('%s: %s', self::PURGE_HEADER_HOST, '^('.$hosts.')$');
-            $headers[] = sprintf('%s: %s', self::PURGE_HEADER_REGEX, $path);
-            $headers[] = sprintf('%s: %s', self::PURGE_HEADER_CONTENT_TYPE, $contentType);
-        }
+        $curlHandler = curl_init();
 
         if (isset($options[CURLOPT_HTTPHEADER])) {
             $options[CURLOPT_HTTPHEADER]    = array_merge($headers, $options[CURLOPT_HTTPHEADER]);
@@ -177,7 +207,7 @@ class Varnish
 
         foreach ($this->ips as $ip) {
 
-            curl_setopt($curlHandler, CURLOPT_URL, $ip.':'.$this->port.$requestPath);
+            curl_setopt($curlHandler, CURLOPT_URL, $ip.':'.$this->port.$path);
 
             $response = curl_exec($curlHandler);
 
