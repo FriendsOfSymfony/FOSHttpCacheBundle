@@ -49,7 +49,7 @@ liip_cache_control:
         - { path: ^/, controls: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
 
         # only match login.example.com
-        - { domain: ^login.example.com$, controls: { public: false, max_age: 0, s_maxage: 0, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
+        - { host: ^login.example.com$, controls: { public: false, max_age: 0, s_maxage: 0, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
 ```
 
 The matches are tried from top to bottom, the first match is taken and applied.
@@ -58,7 +58,7 @@ The matches are tried from top to bottom, the first match is taken and applied.
 About the path parameter
 ------------------------
 
-The ``path`` and ``domain`` parameter of the rules represent a regular
+The ``path`` and ``host`` parameter of the rules represent a regular
 expression that a page must match to use the rule.
 
 For this reason, and it's probably not the behaviour you'd have expected, the
@@ -103,7 +103,6 @@ if (resp.http.X-Cache-Debug) {
     # remove Varnish/proxy header
     remove resp.http.X-Varnish;
     remove resp.http.Via;
-    remove resp.http.Age;
     remove resp.http.X-Purge-URL;
     remove resp.http.X-Purge-Host;
 }
@@ -182,7 +181,7 @@ any, as each varnish must be purged):
 # app/config.yml
 liip_cache_control:
     varnish:
-        domain: http://www.liip.ch
+        host: http://www.liip.ch
         ips: 10.0.0.10, 10.0.0.11 # comma separated list of ips, or an array of ips
         port: 80  # port varnish is listening on for incoming web connections
 ```
@@ -237,6 +236,7 @@ if (req.request == "PURGE") {
         error 405 "Not allowed.";
     }
 
+    purge("req.url ~ " req.url);
     purge("req.url ~ " req.url);
     error 200 "Success";
 }
@@ -486,7 +486,7 @@ liip_cache_control:
     flash_message_listener:
         name: flashes
         path: /
-        domain: null
+        host: null
         secure: false
         httpOnly: true
 ```

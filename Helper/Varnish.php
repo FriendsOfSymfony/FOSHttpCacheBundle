@@ -89,15 +89,16 @@ class Varnish
      *                            also be a regex for banning
      * @param array  $options     Options for cUrl Request
      * @param string $contentType Banning option: invalidate all or fe. only html
-     * @param array  $hosts       Banning option: replace default host with
-     *                            multiple hosts
+     * @param array  $hosts       Banning option: hosts to ban, leave null to
+     *                            use default host and an empty array to ban
+     *                            all hosts
      *
      * @return array An associative array with keys 'headers' and 'body' which
      *               holds a raw response from the server
      *
      * @throws \RuntimeException if connection to one of the varnish servers fails.
      */
-    public function invalidatePath($path, array $options = array(), $contentType = self::CONTENT_TYPE_ALL, array $hosts = array())
+    public function invalidatePath($path, array $options = array(), $contentType = self::CONTENT_TYPE_ALL, array $hosts = null)
     {
         if ($this->purgeInstruction === self::PURGE_INSTRUCTION_BAN) {
             return $this->requestBan($path, $contentType, $hosts, $options);
@@ -152,19 +153,21 @@ class Varnish
      *
      * @param string $path        Path to be purged, this can also be a regex
      * @param string $contentType Invalidate all or fe. only html
-     * @param array  $hosts       Replace default host with multiple hosts
+     * @param array  $hosts       Hosts to ban, leave null to use default host
+     *                            and an empty array to ban all hosts
      * @param array  $options     Options for cUrl Request
      *
      * @return array An associative array with keys 'headers' and 'body' which
      *               holds a raw response from the server
      * @throws \RuntimeException if connection to one of the varnish servers fails.
      */
-    protected function requestBan($path, $contentType = self::CONTENT_TYPE_ALL, array $hosts = array(), array $options = array())
+    protected function requestBan($path, $contentType = self::CONTENT_TYPE_ALL, array $hosts = null, array $options = array())
     {
-        $hosts = count($hosts) === 0 ? array($this->host) : $hosts;
+        $hosts = is_null($hosts) ? array($this->host) : $hosts;
+        $hostRegEx = count($hosts) > 0 ? '^('.join('|', $hosts).')$' : '.*';
 
         $headers = array(
-            sprintf('%s: %s', self::PURGE_HEADER_HOST, '^('.join('|', $hosts).')$'),
+            sprintf('%s: %s', self::PURGE_HEADER_HOST, $hostRegEx),
             sprintf('%s: %s', self::PURGE_HEADER_REGEX, $path),
             sprintf('%s: %s', self::PURGE_HEADER_CONTENT_TYPE, $contentType),
         );

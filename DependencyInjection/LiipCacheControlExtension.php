@@ -32,15 +32,19 @@ class LiipCacheControlExtension extends Extension
         if (!empty($config['rules'])) {
             $loader->load('rule_response_listener.xml');
             foreach ($config['rules'] as $cache) {
+                // domain is depreciated and will be removed in future
+                $host = is_null($cache['host']) && $cache['domain'] ? $cache['domain'] : $cache['host'];
+
                 $matcher = $this->createRequestMatcher(
                     $container,
                     $cache['path'],
-                    $cache['domain']
+                    $host
                 );
 
                 unset(
                     $cache['path'],
-                    $cache['domain']
+                    $cache['domain'],
+                    $cache['host']
                 );
 
                 $container->getDefinition($this->getAlias().'.response_listener')
@@ -55,9 +59,12 @@ class LiipCacheControlExtension extends Extension
 
             }
 
+            // domain is depreciated and will be removed in future
+            $host = is_null($config['varnish']['host']) && $config['varnish']['domain'] ? $config['varnish']['domain'] : $config['varnish']['host'];
+
             $loader->load('varnish_helper.xml');
             $container->setParameter($this->getAlias().'.varnish.ips', $config['varnish']['ips']);
-            $container->setParameter($this->getAlias().'.varnish.domain', $config['varnish']['domain']);
+            $container->setParameter($this->getAlias().'.varnish.host', $host);
             $container->setParameter($this->getAlias().'.varnish.port', $config['varnish']['port']);
             $container->setParameter($this->getAlias().'.varnish.purge_instruction', $config['varnish']['purge_instruction']);
         }
@@ -73,14 +80,14 @@ class LiipCacheControlExtension extends Extension
         }
     }
 
-    protected function createRequestMatcher(ContainerBuilder $container, $path = null, $domain = null)
+    protected function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null)
     {
         $serialized = serialize(array($path));
         $id = $this->getAlias().'.request_matcher.'.md5($serialized).sha1($serialized);
 
         if (!$container->hasDefinition($id)) {
             // only add arguments that are necessary
-            $arguments = array($path, $domain);
+            $arguments = array($path, $host);
 
             $container
                 ->setDefinition($id, new DefinitionDecorator($this->getAlias().'.request_matcher'))
