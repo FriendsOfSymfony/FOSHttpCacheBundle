@@ -58,8 +58,8 @@ class FlashMessageListener
         $response = $event->getResponse();
 
         $cookies = $response->headers->getCookies(ResponseHeaderBag::COOKIES_ARRAY);
-        if (isset($cookies[$this->options['domain']][$this->options['path']][$this->options['name']])) {
-            $rawCookie = $cookies[$this->options['domain']][$this->options['path']][$this->options['name']]->getValue();
+        if (isset($cookies[$this->options['host']][$this->options['path']][$this->options['name']])) {
+            $rawCookie = $cookies[$this->options['host']][$this->options['path']][$this->options['name']]->getValue();
             $flashes = array_merge($flashes, json_decode($rawCookie));
         }
 
@@ -68,7 +68,7 @@ class FlashMessageListener
             json_encode($flashes),
             0,
             $this->options['path'],
-            $this->options['domain'],
+            $this->options['host'],
             $this->options['secure'],
             $this->options['httpOnly']
         );

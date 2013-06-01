@@ -1,8 +1,8 @@
 CacheControlBundle
 ==================
 
-This Bundle provides a way to set path based cache expiration headers via the app configuration and provides
-a helper to control the reverse proxy varnish.
+This Bundle provides a way to set path based cache expiration headers via the
+app configuration and provides a helper to control the reverse proxy varnish.
 
 This bundle works with Symfony 2.1 and 2.2.
 
@@ -49,7 +49,7 @@ liip_cache_control:
         - { path: ^/, controls: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
 
         # only match login.example.com
-        - { domain: ^login.example.com$, controls: { public: false, max_age: 0, s_maxage: 0, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
+        - { host: ^login.example.com$, controls: { public: false, max_age: 0, s_maxage: 0, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
 ```
 
 The matches are tried from top to bottom, the first match is taken and applied.
@@ -58,20 +58,61 @@ The matches are tried from top to bottom, the first match is taken and applied.
 About the path parameter
 ------------------------
 
-The ``path`` and ``domain`` parameter of the rules represent a regular expression that a page must match to use the rule.
+The ``path`` and ``host`` parameter of the rules represent a regular
+expression that a page must match to use the rule.
 
-For this reason, and it's probably not the behaviour you'd have expected, the path ```^/``` will match any page.
+For this reason, and it's probably not the behaviour you'd have expected, the
+path ```^/``` will match any page.
 
 If you just want to match the homepage you need to use the path ```^/$```.
 
-To match pages URLs with caching rules, this bundle uses the class ```Symfony\Component\HttpFoundation\RequestMatcher```.
+To match pages URLs with caching rules, this bundle uses the class
+```Symfony\Component\HttpFoundation\RequestMatcher```.
 
-The ``unless_role`` makes it possible to skip rules based on if the current authenticated user has been granted the provided role.
+The ``unless_role`` makes it possible to skip rules based on if the current
+authenticated user has been granted the provided role.
+
+Debug information
+-----------------
+
+The debug parameter adds a ``X-Cache-Debug`` header to each response that you
+can use in your Varnish configuration.
+
+``` yaml
+# app/config.yml
+liip_cache_control:
+    debug: true
+```
+
+Add the following code to your Varnish configuration to have debug headers
+added to the response if it is enabled:
+
+```
+#in sub vcl_deliver
+# debug info
+# https://www.varnish-cache.org/trac/wiki/VCLExampleHitMissHeader
+if (resp.http.X-Cache-Debug) {
+    if (obj.hits > 0) {
+        set resp.http.X-Cache = "HIT";
+        set resp.http.X-Cache-Hits = obj.hits;
+    } else {
+       set resp.http.X-Cache = "MISS";
+    }
+    set resp.http.X-Cache-Expires = resp.http.Expires;
+} else {
+    # remove Varnish/proxy header
+    remove resp.http.X-Varnish;
+    remove resp.http.Via;
+    remove resp.http.X-Purge-URL;
+    remove resp.http.X-Purge-Host;
+}
+```
 
 Custom Varnish Parameters
-------------------------
+-------------------------
 
-Additionally to the default supported headers, you may want to set custom caching headers for varnish.
+Additionally to the default supported headers, you may want to set custom
+caching headers for varnish.
 
 ``` yaml
 # app/config.yml
@@ -133,27 +174,56 @@ Note that if you are using this, you should have a good purging strategy.
 Varnish helper
 ==============
 
-Configure the location of the varnish reverse proxies (be sure not to forget any, as each varnish must be purged):
+Configure the location of the varnish reverse proxies (be sure not to forget
+any, as each varnish must be purged):
 
 ``` yaml
 # app/config.yml
 liip_cache_control:
     varnish:
-        domain: http://www.liip.ch
+        host: http://www.liip.ch
         ips: 10.0.0.10, 10.0.0.11 # comma separated list of ips, or an array of ips
         port: 80  # port varnish is listening on for incoming web connections
 ```
 
+To use the varnish cache helper you must inject the
+``liip_cache_control.varnish`` service or fetch it from the service container:
+
+``` php
+// using a "manual" url
+$varnish = $this->container->get('liip_cache_control.varnish');
+/* $response Is an associative array with keys 'headers', 'body', 'error' and 'errorNumber' for each configured IP.
+   A sample response will look like:
+   array('10.0.0.10' => array('body'    => 'raw-request-body',
+                              'headers' => 'raw-headers',
+                              'error'   =>  'curl-error-msg',
+                              'errorNumber'   =>  integer-curl-error-number),
+          '10.0.0.11' => ...)
+*/
+$response = $varnish->invalidatePath('/some/path');
+
+// using the router to generate the url
+$router = $this->container->get('router');
+$varnish = $this->container->get('liip_cache_control.varnish');
+$response = $varnish->invalidatePath($router->generate('myRouteName'));
+```
+
+When using ESI, you will want to purge individual fragments. To generate the
+corresponding _internal route, inject the http_kernel into your controller and
+use HttpKernel::generateInternalUri with the parameters as in the twig
+``render`` tag.
+
 Purging
 -------
 
-Add the following code to your Varnish configuration to have it handle PURGE requests (make sure to uncomment the appropiate line(s))
+Add the following code to your Varnish configuration to have it handle PURGE
+requests (make sure to uncomment the appropiate line(s))
 
 varnish 2.x
 ```
 #top level:
 # who is allowed to purge from cache
-# http://varnish-cache.org/trac/wiki/VCLExamplePurging
+# https://www.varnish-cache.org/docs/trunk/users-guide/purging.html
 acl purge {
     "127.0.0.1"; #localhost for dev purposes
     "10.0.11.0"/24; #server closed network
@@ -167,6 +237,7 @@ if (req.request == "PURGE") {
     }
 
     purge("req.url ~ " req.url);
+    purge("req.url ~ " req.url);
     error 200 "Success";
 }
 ```
@@ -175,7 +246,7 @@ varnish 3.x
 ```
 #top level:
 # who is allowed to purge from cache
-# http://varnish-cache.org/trac/wiki/VCLExamplePurging
+# https://www.varnish-cache.org/docs/trunk/users-guide/purging.html
 acl purge {
     "127.0.0.1"; #localhost for dev purposes
     "10.0.11.0"/24; #server closed network
@@ -210,8 +281,9 @@ sub vcl_miss {
 ```
 
 
-NOTE: this code invalidates the url for all domains. If your varnish serves multiple domains,
-you should improve this configuration. Pull requests welcome :-)
+NOTE: this code invalidates the url for all domains. If your varnish serves
+multiple domains, you should improve this configuration.
+Pull requests welcome :-)
 
 The varnish path invalidation is about equivalent to doing this:
 
@@ -221,32 +293,49 @@ The varnish path invalidation is about equivalent to doing this:
 
      EOF
 
-To use the varnish cache helper you must inject the ``liip_cache_control.varnish`` service
-or fetch it from the service container:
+Banning
+-------
 
-``` php
-// using a "manual" url
-$varnish = $this->container->get('liip_cache_control.varnish');
-/* $response Is an associative array with keys 'headers', 'body', 'error' and 'errorNumber' for each configured IP. 
-   A sample response will look like:
-   array('10.0.0.10' => array('body'    => 'raw-request-body',
-                              'headers' => 'raw-headers',
-                              'error'   =>  'curl-error-msg',
-                              'errorNumber'   =>  integer-curl-error-number),
-          '10.0.0.11' => ...)
-*/
-$response = $varnish->invalidatePath('/some/path');
+Since varnish 3 banning can be used to invalidate the cache.
 
-// using the router to generate the url
-$router = $this->container->get('router');
-$varnish = $this->container->get('liip_cache_control.varnish');
-$response = $varnish->invalidatePath($router->generate('myRouteName'));
+Configure the varnish reverse proxies to use ban as purge instruction:
+
+``` yaml
+# app/config.yml
+liip_cache_control:
+    varnish:
+        purge_instruction: ban
 ```
 
-When using ESI, you will want to purge individual fragments. To generate the
-corresponding _internal route, inject the http_kernel into your controller and
-use HttpKernel::generateInternalUri with the parameters as in the twig ``render``
-tag.
+This will do a purge request and will add X-Purge headers which can be used by
+your Varnish configuration:
+
+varnish 3.x
+```
+#top level:
+# who is allowed to purge from cache
+# https://www.varnish-cache.org/docs/trunk/users-guide/purging.html
+acl purge {
+    "127.0.0.1"; #localhost for dev purposes
+    "10.0.11.0"/24; #server closed network
+}
+
+#in sub vcl_recv
+# purge if client is in correct ip range
+if (req.request == "PURGE") {
+    if (!client.ip ~ purge) {
+        error 405 "Not allowed.";
+    }
+    ban("obj.http.X-Purge-Host ~ " + req.http.X-Purge-Host + " && obj.http.X-Purge-URL ~ " + req.http.X-Purge-Regex + " && obj.http.Content-Type ~ " + req.http.X-Purge-Content-Type);
+    error 200 "Purged.";
+}
+
+#in sub vcl_fetch
+# add ban-lurker tags to object
+set beresp.http.X-Purge-URL = req.url;
+set beresp.http.X-Purge-Host = req.http.host;
+
+```
 
 Force refresh
 -------------
@@ -284,8 +373,8 @@ The vanish path force refresh is about equivalent to doing this:
 
     EOF
 
-To use the varnish cache helper you must inject the ``liip_cache_control.varnish`` service
-or fetch it from the service container:
+To use the varnish cache helper you must inject the
+``liip_cache_control.varnish`` service or fetch it from the service container:
 
 ``` php
 // using a "manual" url
@@ -304,20 +393,21 @@ liip_cache_control:
     authorization_listener: true
 ```
 
-This listener makes it possible to stop a request with a 200 "OK" for HEAD requests
-right after the security firewall has finished. This is useful when one uses Varnish while
-handling content that is not available for all users.
+This listener makes it possible to stop a request with a 200 "OK" for HEAD
+requests right after the security firewall has finished. This is useful when
+one uses Varnish while handling content that is not available for all users.
 
-In this scenario on a cache hit, Varnish can be configured to issue a HEAD request when this
-content is accessed. This way Symfony2 can be used to validate the authorization, but no
-work needs to be made to regenerate the content that is already in the Varnish cache.
+In this scenario on a cache hit, Varnish can be configured to issue a HEAD
+request when this content is accessed. This way Symfony2 can be used to
+validate the authorization, but no work needs to be made to regenerate the
+content that is already in the Varnish cache.
 
-Note this obviously means that it only works with path based Security. Any additional security
-implemented inside the Controller will be ignored.
+Note this obviously means that it only works with path based Security. Any
+additional security implemented inside the Controller will be ignored.
 
-Note further that a HEAD response is supposed to contain the same HTTP header meta data as the
-GET response to the same URL. However for the purpose of this use case we have no other choice
-but to assume a 200.
+Note further that a HEAD response is supposed to contain the same HTTP header
+meta data as the GET response to the same URL. However for the purpose of this
+use case we have no other choice but to assume a 200.
 
 ```
 backend default {
@@ -384,10 +474,11 @@ sub vcl_fetch {
 Flash message listener
 ======================
 
-The Response flash message listener moves all flash messages currently set into a cookie. This
-way it becomes possible to better handle flash messages in combination with ESI. The ESI
-configuration will need to ignore the configured cookie. It will then be up to the client
-to read out the cookie, display the flash message and remove the flash message via javascript.
+The Response flash message listener moves all flash messages currently set into
+a cookie. This way it becomes possible to better handle flash messages in
+combination with ESI. The ESI configuration will need to ignore the configured
+cookie. It will then be up to the client to read out the cookie, display the
+flash message and remove the flash message via javascript.
 
 ``` yaml
 # app/config.yml
@@ -395,7 +486,7 @@ liip_cache_control:
     flash_message_listener:
         name: flashes
         path: /
-        domain: null
+        host: null
         secure: false
         httpOnly: true
 ```

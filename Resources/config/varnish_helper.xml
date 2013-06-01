@@ -7,9 +7,10 @@
     <services>
 
         <service id="liip_cache_control.varnish" class="Liip\CacheControlBundle\Helper\Varnish">
-            <argument>%liip_cache_control.varnish.domain%</argument>
+            <argument>%liip_cache_control.varnish.host%</argument>
             <argument>%liip_cache_control.varnish.ips%</argument>
             <argument>%liip_cache_control.varnish.port%</argument>
+            <argument>%liip_cache_control.varnish.purge_instruction%</argument>
         </service>
 
     </services>
