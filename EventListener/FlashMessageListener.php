@@ -48,6 +48,10 @@ class FlashMessageListener
             return;
         }
 
+        if (!$this->session->isStarted()) {
+            return;
+        }
+
         $flashBag = $this->session->getFlashBag();
         $flashes = $flashBag->all();
 
