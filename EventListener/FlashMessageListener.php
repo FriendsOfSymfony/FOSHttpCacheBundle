@@ -48,6 +48,11 @@ class FlashMessageListener
             return;
         }
 
+        // If there is no session, there can't be any flash messages in it
+        if (!$this->session->isStarted()) {
+            return;
+        }
+
         $flashBag = $this->session->getFlashBag();
         $flashes = $flashBag->all();
 
