@@ -48,7 +48,9 @@ class FlashMessageListener
             return;
         }
 
-        // If there is no session, there can't be any flash messages in it
+        // Flash messages are stored in the session. If there is none, there
+        // can't be any flash messages in it. $session->getFlashBag() would
+        // create a session, we need to avoid that.
         if (!$this->session->isStarted()) {
             return;
         }
