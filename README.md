@@ -1,4 +1,4 @@
-DriebitHttpCacheBundle [![Build Status](https://travis-ci.org/driebit/DriebitHttpCacheBundle.png?branch=master)](https://travis-ci.org/driebit/DriebitHttpCacheBundle)
+DriebitHttpCacheBundle [![Build Status](https://travis-ci.org/driebit/DriebitHttpCacheBundle.png?branch=master)](https://travis-ci.org/driebit/DriebitHttpCacheBundle) [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/driebit/DriebitHttpCacheBundle/badges/quality-score.png?s=19e67940317eb4591d64bb3b116cbb30d7bb18b9)](https://scrutinizer-ci.com/g/driebit/DriebitHttpCacheBundle/)
 ======================
 
 Introduction
