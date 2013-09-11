@@ -1,4 +1,4 @@
-DriebitHttpCacheBundle
+DriebitHttpCacheBundle [![Build Status](https://travis-ci.org/driebit/DriebitHttpCacheBundle.png?branch=master)](https://travis-ci.org/driebit/DriebitHttpCacheBundle)
 ======================
 
 Introduction

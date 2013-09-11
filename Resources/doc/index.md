@@ -1,14 +1,13 @@
 Installation
 ------------
 
-This library is available on [Packagist](https://packagist.org/). You can install it using Composer:
-
+This library is available on [Packagist](https://packagist.org/packages/driebit/http-cache-bundle). You can install it
+using Composer:
 ```bash
 $ composer require driebit/http-cache-bundle:dev-master
 ```
 
-Then add the bundle to your application::
-
+Then add the bundle to your application:
 ```php
 <?php
 // app/AppKernel.php
@@ -21,7 +20,6 @@ public function registerBundles()
         ...
     );
 }
-
 ```
 
 Configuration
@@ -45,15 +43,13 @@ Usage
 
 ### Invalidation using the cache manager
 
-Use the [cache manager](CacheManager.php) to invalidate (purge) routes:
-
+Use the [cache manager](/CacheManager.php) to invalidate (purge) routes:
 ```php
 $cacheManager = $container->get('driebit_http_cache.cache_manager');
 $cacheManager->invalidateRoute('user_details', array('id' => 123));
 ```
 
 You can invalidate multiple routes together:
-
 ```php
 $cacheManager
     ->invalidateRoute('villains_index')
@@ -65,7 +61,6 @@ $cacheManager
 Internally, the cache manager collects all routes to be invalidated and only sends them when it gets flushed. During
 HTTP requests, the manager is flushed automatically. If you want to invalidate routes outside request context, for
 instance from the command-line, you need to flush the cache manager manually:
-
 ```php
 $cacheManager
   ->invalidateRoute(...)
@@ -75,7 +70,7 @@ $cacheManager
 The performance impact of sending invalidation requests is kept to a minimum by:
 
 * flushing the cache manager only after the response by your controller has been sent to the client’s browser
-(during [kernel.terminate event](http://symfony.com/doc/current/components/http_kernel/introduction.html#the-kernel-terminate-event).
+(during Symfony’s [kernel.terminate event](http://symfony.com/doc/current/components/http_kernel/introduction.html#the-kernel-terminate-event)).
 * sending all invalidation requests in parallel.
 
 ### Invalidation using invalidators
@@ -86,7 +81,6 @@ Invalidators offer a second way to invalidate routes, using configuration only. 
 * one or more `invalidate_routes`, i.e., routes that will be invalidated.
 
 You can configure invalidators as follows:
-
 ```yaml
 # app/config/config.yml
 
@@ -117,8 +111,7 @@ end, the page `villain/123` will be purged.
 Run the tests
 -------------
 
-Clone this repository, install its vendors, and run PHPUnit:
-
+Clone this repository, install its vendors, and invoke PHPUnit:
 ```bash
 $ composer install --dev
 $ phpunit
