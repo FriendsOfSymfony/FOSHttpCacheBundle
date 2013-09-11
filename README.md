@@ -1,5 +1,5 @@
-driebit/http-cache-bundle
-=========================
+DriebitHttpCacheBundle
+======================
 
 Introduction
 ------------
@@ -17,4 +17,4 @@ Features
 Documentation
 -------------
 
-Documentation is included in the [Resources/doc](Resources/doc) directory.
+Documentation is included in the [Resources/doc](Resources/doc/index.md) directory.

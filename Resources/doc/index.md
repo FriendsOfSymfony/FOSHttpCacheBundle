@@ -4,7 +4,24 @@ Installation
 This library is available on [Packagist](https://packagist.org/). You can install it using Composer:
 
 ```bash
-$ composer install driebit/http-cache-bundle:0.1
+$ composer require driebit/http-cache-bundle:dev-master
+```
+
+Then add the bundle to your application::
+
+```php
+<?php
+// app/AppKernel.php
+
+public function registerBundles()
+{
+    $bundles = array(
+        ...
+        new Driebit\HttpCacheBundle\DriebitHttpCacheBundle(),
+        ...
+    );
+}
+
 ```
 
 Configuration
@@ -13,9 +30,9 @@ Configuration
 You need to configure at least one HTTP cache proxy. Currently, this bundle offers integration with
 [Varnish](https://www.varnish-cache.org/) only.
 
-In your `config.yml`:
-
 ```yaml
+# app/config/config.yml
+
 driebit_http_cache:
   http_cache:
     varnish:
@@ -68,9 +85,11 @@ Invalidators offer a second way to invalidate routes, using configuration only. 
 * one or more `origin_routes`, i.e., routes that trigger the invalidation
 * one or more `invalidate_routes`, i.e., routes that will be invalidated.
 
-Configure your invalidators in your `config.yml`:
+You can configure invalidators as follows:
 
 ```yaml
+# app/config/config.yml
+
 driebit_http_cache:
   ...
   invalidators:
