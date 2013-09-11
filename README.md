@@ -4,8 +4,8 @@ DriebitHttpCacheBundle [![Build Status](https://travis-ci.org/driebit/DriebitHtt
 Introduction
 ------------
 
-This bundle offers an easy way to send invalidation (purge) requests from your Symfony2 application to your HTTP cache
-(usually Varnish).
+This bundle offers an easy way to manage your Symfony2 application’s invalidation (purge) requests and send these
+requests to your HTTP cache.
 
 Features
 --------

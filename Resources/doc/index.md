@@ -34,7 +34,7 @@ You need to configure at least one HTTP cache proxy. Currently, this bundle offe
 driebit_http_cache:
   http_cache:
     varnish:
-      ips: [ 123.123.123.1, 123.123.123.2 ]
+      ips: [ "http://123.123.123.1", "http://123.123.123.2" ]
       host: yourwebsite.com
 ```
 
