@@ -23,7 +23,9 @@
         "symfony/routing": "~2.3",
         "symfony/http-foundation": "~2.3",
         "symfony/http-kernel": "~2.3",
-        "symfony/config": "~2.3"
+        "symfony/config": "~2.3",
+        "symfony/dependency-injection": "~2.3",
+        "guzzle/plugin-mock": "*"
     },
     "autoload": {
         "psr-0": { "Driebit\\HttpCacheBundle": "" }

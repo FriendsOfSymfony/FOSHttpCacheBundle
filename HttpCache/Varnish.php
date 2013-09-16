@@ -62,7 +62,7 @@ class Varnish implements HttpCacheInterface
      *
      * @param \Monolog\Logger $logger
      */
-    public function setLogger(Logger $logger)
+    public function setLogger(Logger $logger = null)
     {
         $this->logger = $logger;
     }
@@ -116,6 +116,7 @@ class Varnish implements HttpCacheInterface
                 } else {
                     $level = 'info';
                 }
+
                 $this->log(
                     sprintf(
                         'Caught exception while trying to %s %s' . PHP_EOL . 'Message: %s',

@@ -3,6 +3,12 @@
 namespace Driebit\HttpCacheBundle\Tests\EventListener;
 
 use Driebit\HttpCacheBundle\HttpCache\Varnish;
+use Guzzle\Http\Client;
+use Guzzle\Http\Exception\CurlException;
+use Guzzle\Http\Exception\MultiTransferException;
+use Guzzle\Http\Message\Request;
+use Guzzle\Http\Message\Response;
+use Guzzle\Plugin\Mock\MockPlugin;
 use \Mockery;
 
 class VarnishTest extends \PHPUnit_Framework_TestCase
@@ -63,5 +69,25 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $varnish = new Varnish($ips, 'my_hostname.dev', $client);
 
         $varnish->invalidateUrls(array('/url/one', '/url/two'));
+    }
+
+    public function testCurlExceptionIsLogged()
+    {
+        $mock = new MockPlugin();
+        $mock->addException(new CurlException('connect to host'));
+
+        $client = new Client('');
+        $client->addSubscriber($mock);
+
+        $varnish = new Varnish(array('http://127.0.0.1:123'), 'my_hostname.dev', $client);
+
+        $logger = \Mockery::mock('\Monolog\Logger')
+            ->shouldReceive('crit')
+            ->with('/connect to host/')
+            ->once()
+            ->getMock();
+        $varnish->setLogger($logger);
+
+        $varnish->invalidateUrl('/test/this/a');
     }
 }
