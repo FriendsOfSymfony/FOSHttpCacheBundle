@@ -1,7 +1,7 @@
 {
     "name": "driebit/http-cache-bundle",
     "type": "symfony-bundle",
-    "description": "Send invalidation requests to your your HTTP cache",
+    "description": "Send invalidation requests to your HTTP cache",
     "keywords": [ "caching", "purge", "invalidation", "varnish" ],
     "homepage": "https://github.com/driebit/DriebitHttpCacheBundle",
     "license": "MIT",
@@ -19,6 +19,7 @@
     },
     "require-dev": {
         "mockery/mockery": "*",
+        "monolog/monolog": "*",
         "symfony/routing": "~2.3",
         "symfony/http-foundation": "~2.3",
         "symfony/http-kernel": "~2.3",
