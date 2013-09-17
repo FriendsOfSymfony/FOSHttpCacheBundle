@@ -8,6 +8,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class DriebitHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @expectedExceptionMessage The child node "http_cache" at path "driebit_http_cache" must be configured.
+     */
     public function testConfigLoadDefault()
     {
         $extension = new DriebitHttpCacheExtension();

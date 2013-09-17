@@ -22,7 +22,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->arrayNode('http_cache')
+                ->arrayNode('http_cache')->isRequired()
                     ->children()
                         ->arrayNode('varnish')
                             ->children()
