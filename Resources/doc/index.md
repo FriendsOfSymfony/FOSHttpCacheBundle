@@ -38,6 +38,47 @@ driebit_http_cache:
       host: yourwebsite.com
 ```
 
+Make sure your Varnish is [configured for handling PURGE requests](https://www.varnish-cache.org/docs/3.0/tutorial/purging.html).
+For example:
+
+```
+# /etc/varnish/your_varnish.vcl
+
+sub vcl_recv {
+  ...
+  if (req.request == "PURGE") {
+    if (!client.ip ~ ClearCache) {
+      error 405 "PURGE not allowed";
+    }
+    return (lookup);
+  }
+  ...
+}
+
+...
+
+sub vcl_hit {
+  if (req.request == "PURGE") {
+    purge;
+    error 200 "Purged";
+  }
+}
+
+...
+
+sub vcl_miss {
+  if (req.request == "PURGE") {
+    purge;
+    error 404 "Not in cache";
+  }
+}
+
+# Example ACL that makes sure Varnish can only be purged from localhost
+acl ClearCache {
+  "localhost";
+}
+```
+
 Usage
 -----
 
