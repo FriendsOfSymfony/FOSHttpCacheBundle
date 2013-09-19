@@ -4,7 +4,7 @@ Installation
 This library is available on [Packagist](https://packagist.org/packages/driebit/http-cache-bundle). You can install it
 using Composer:
 ```bash
-$ composer require driebit/http-cache-bundle:dev-master
+$ composer require driebit/http-cache-bundle:@stable
 ```
 
 Then add the bundle to your application:
