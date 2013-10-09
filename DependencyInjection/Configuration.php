@@ -53,6 +53,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('path')->defaultNull()->info('URL path info')->end()
                             ->scalarNode('domain')->defaultNull()->info('depreciated, use host instead')->end()
                             ->scalarNode('host')->defaultNull()->info('URL host name')->end()
+                            ->scalarNode('controller')->defaultNull()->info('controller action name')->end()
                             ->scalarNode('reverse_proxy_ttl')->defaultNull()->end()
                             ->arrayNode('controls')
                                 ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()

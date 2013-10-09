@@ -50,6 +50,10 @@ liip_cache_control:
 
         # only match login.example.com
         - { host: ^login.example.com$, controls: { public: false, max_age: 0, s_maxage: 0, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
+
+        # match a specific controller action
+        - { controller: ^AcmeBundle:Default:index$, controls: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }, vary: [Accept-Encoding, Accept-Language] }
+
 ```
 
 The matches are tried from top to bottom, the first match is taken and applied.
@@ -58,7 +62,7 @@ The matches are tried from top to bottom, the first match is taken and applied.
 About the path parameter
 ------------------------
 
-The ``path`` and ``host`` parameter of the rules represent a regular
+The ``path``, ``host`` and ``controller`` parameter of the rules represent a regular
 expression that a page must match to use the rule.
 
 For this reason, and it's probably not the behaviour you'd have expected, the
