@@ -2,11 +2,15 @@
 
 namespace LiipCacheControlBundle\Test\EventListener;
 
-use Symfony\Component\HttpFoundation\Response;
+use Liip\CacheControlBundle\DependencyInjection\LiipCacheControlExtension;
 use Liip\CacheControlBundle\EventListener\CacheControlListener;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\DefinitionDecorator;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestMatcher;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -133,4 +137,78 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('no-cache, private', $newHeaders['cache-control'][0]);
     }
 
+    public function testConfigDefineRequestMatcherWithControllerName() {
+        $extension = new LiipCacheControlExtension();
+        $container = new ContainerBuilder();
+
+        // Load configuration
+        $extension->load(array(
+            array('rules' =>
+                array(
+                    array('controller' => '^AcmeBundle:Default:index$', 'controls' => array())
+                )
+            )
+        ), $container);
+
+        // Extract the corresponding definition
+        $matcherDefinition = null;
+        foreach ($container->getDefinitions() as $definition) {
+            if ($definition instanceof DefinitionDecorator &&
+                $definition->getParent() === 'liip_cache_control.request_matcher'
+            ) {
+                $matcherDefinition = $definition;
+            }
+        }
+
+        // definition should exist
+        $this->assertNotNull($matcherDefinition);
+
+        // 4th argument should contain the controller name value
+        $this->assertEquals(array('_controller' => '^AcmeBundle:Default:index$'), $matcherDefinition->getArgument(4));
+    }
+
+    public function testMatchRuleWithActionName()
+    {
+        $listener = new \Liip\CacheControlBundle\EventListener\CacheControlListener();
+
+        $headers = array( 'controls' => array(
+            'etag' => '1337',
+            'last_modified' => '13.07.2003',
+            'max_age' => '900',
+            's_maxage' => '300',
+            'public' => true,
+            'private' => false
+        ));
+
+        $listener->add(
+          new RequestMatcher(null, null, null, null, array('_controller' => '^AcmeBundle:Default:index$')),
+          $headers
+        );
+
+        // Request with a matching controller name
+        $kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
+        $request = new Request();
+        $request->attributes->set('_controller', 'AcmeBundle:Default:index');
+        $response = new Response();
+        $event = new FilterResponseEvent($kernel, $request, 'GET', $response);
+
+        $listener->onKernelResponse($event);
+
+        $newHeaders = $response->headers->all();
+
+        $this->assertEquals('max-age=900, public, s-maxage=300', $newHeaders['cache-control'][0]);
+        $this->assertEquals(strtotime('13.07.2003'), strtotime($newHeaders['last-modified'][0]));
+
+        // Request with a non-matching controller name
+        $request = new Request();
+        $request->attributes->set('_controller', 'AcmeBundle:Default:notIndex');
+        $response = new Response();
+        $event = new FilterResponseEvent($kernel, $request, 'GET', $response);
+
+        $listener->onKernelResponse($event);
+
+        $newHeaders = $response->headers->all();
+
+        $this->assertEquals('no-cache', $newHeaders['cache-control'][0]);
+    }
 }
