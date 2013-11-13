@@ -213,7 +213,7 @@ $response = $varnish->invalidatePath($router->generate('myRouteName'));
 ```
 
 When using ESI, you will want to purge individual fragments. To generate the
-corresponding _internal route, inject the http_kernel into your controller and
+corresponding ``_internal`` route, inject the ``http_kernel`` into your controller and
 use HttpKernel::generateInternalUri with the parameters as in the twig
 ``render`` tag.
 
