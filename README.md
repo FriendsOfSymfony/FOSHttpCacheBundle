@@ -66,12 +66,12 @@ The ``path``, ``host`` and ``controller`` parameter of the rules represent a reg
 expression that a page must match to use the rule.
 
 For this reason, and it's probably not the behaviour you'd have expected, the
-path ```^/``` will match any page.
+path ``^/`` will match any page.
 
-If you just want to match the homepage you need to use the path ```^/$```.
+If you just want to match the homepage you need to use the path ``^/$``.
 
 To match pages URLs with caching rules, this bundle uses the class
-```Symfony\Component\HttpFoundation\RequestMatcher```.
+``Symfony\Component\HttpFoundation\RequestMatcher``.
 
 The ``unless_role`` makes it possible to skip rules based on if the current
 authenticated user has been granted the provided role.
@@ -263,7 +263,7 @@ if (req.request == "PURGE") {
         error 405 "Not allowed.";
     }
 
-    return(lookup);    
+    return(lookup);
 }
 
 sub vcl_hit {
