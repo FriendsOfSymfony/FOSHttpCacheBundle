@@ -178,17 +178,23 @@ Note that if you are using this, you should have a good purging strategy.
 Varnish helper
 ==============
 
+This helper can be used to talk back to varnish to invalidate cached URLs.
 Configure the location of the varnish reverse proxies (be sure not to forget
-any, as each varnish must be purged):
+any, as each varnish must be notified separately):
 
 ``` yaml
 # app/config.yml
 liip_cache_control:
     varnish:
         host: http://www.liip.ch
-        ips: 10.0.0.10, 10.0.0.11 # comma separated list of ips, or an array of ips
-        port: 80  # port varnish is listening on for incoming web connections
+        ips: 10.0.0.10, 10.0.0.11
+        port: 80
 ```
+
+* **host**: This must match the web host clients are using when connecting to varnish.
+  You will not notice if this is mistyped, but cache invalidation will never happen.
+* **ips**: List of IP adresses of your varnish servers. Comma separated.
+* **port**: The port varnish is listening on for incoming web connections.
 
 To use the varnish cache helper you must inject the
 ``liip_cache_control.varnish`` service or fetch it from the service container:
@@ -222,29 +228,6 @@ Purging
 
 Add the following code to your Varnish configuration to have it handle PURGE
 requests (make sure to uncomment the appropiate line(s))
-
-varnish 2.x
-```
-#top level:
-# who is allowed to purge from cache
-# https://www.varnish-cache.org/docs/trunk/users-guide/purging.html
-acl purge {
-    "127.0.0.1"; #localhost for dev purposes
-    "10.0.11.0"/24; #server closed network
-}
-
-#in sub vcl_recv
-# purge if client is in correct ip range
-if (req.request == "PURGE") {
-    if (!client.ip ~ purge) {
-        error 405 "Not allowed.";
-    }
-
-    purge("req.url ~ " req.url);
-    purge("req.url ~ " req.url);
-    error 200 "Success";
-}
-```
 
 varnish 3.x
 ```
@@ -284,10 +267,34 @@ sub vcl_miss {
 
 ```
 
+In Varnish 2, the `purge` action is actually just marking caches as invalid.
+This is called `ban` in Varnish 3.
+
+Varnish 2.x
+```
+#top level:
+# who is allowed to purge from cache
+# https://www.varnish-cache.org/docs/trunk/users-guide/purging.html
+acl purge {
+    "127.0.0.1"; #localhost for dev purposes
+    "10.0.11.0"/24; #server closed network
+}
+
+#in sub vcl_recv
+# purge if client is in correct ip range
+if (req.request == "PURGE") {
+    if (!client.ip ~ purge) {
+        error 405 "Not allowed.";
+    }
+
+    purge("req.url ~ " req.url);
+    purge("req.url ~ " req.url);
+    error 200 "Success";
+}
+```
 
 NOTE: this code invalidates the url for all domains. If your varnish serves
 multiple domains, you should improve this configuration.
-Pull requests welcome :-)
 
 The varnish path invalidation is about equivalent to doing this:
 
@@ -300,7 +307,9 @@ The varnish path invalidation is about equivalent to doing this:
 Banning
 -------
 
-Since varnish 3 banning can be used to invalidate the cache.
+Since varnish 3 banning can be used to invalidate the cache. Banning
+invalidates whole section with regular expressions, so you will need to be
+careful to not invalidate too much.
 
 Configure the varnish reverse proxies to use ban as purge instruction:
 
