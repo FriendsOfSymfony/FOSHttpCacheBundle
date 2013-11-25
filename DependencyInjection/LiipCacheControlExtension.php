@@ -39,11 +39,17 @@ class LiipCacheControlExtension extends Extension
                     $container,
                     $cache['path'],
                     $host,
+                    $cache['method'],
+                    $cache['ips'],
+                    $cache['attributes'],
                     $cache['controller']
                 );
 
                 unset(
                     $cache['path'],
+                    $cache['method'],
+                    $cache['ips'],
+                    $cache['attributes'],
                     $cache['domain'],
                     $cache['host'],
                     $cache['controller']
@@ -82,11 +88,13 @@ class LiipCacheControlExtension extends Extension
         }
     }
 
-    protected function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null, $controller = null)
+    protected function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null, $methods = null, $ips = null, array $attributes = array(), $controller = null)
     {
-        $attributes = is_null($controller) ? array() : array('_controller' => $controller);
+        if (null !== $controller) {
+            $attributes['_controller'] = $controller;
+        }
 
-        $arguments = array($path, $host, null, null, $attributes);
+        $arguments = array($path, $host, $methods, $ips, $attributes);
         $serialized = serialize($arguments);
         $id = $this->getAlias().'.request_matcher.'.md5($serialized).sha1($serialized);
 

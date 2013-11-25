@@ -58,6 +58,7 @@ liip_cache_control:
 
 The matches are tried from top to bottom, the first match is taken and applied.
 
+Run ``app/console config:dump-reference liip_cache_control`` to get the full list of configuration options.
 
 About the path parameter
 ------------------------
