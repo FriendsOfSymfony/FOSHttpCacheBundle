@@ -15,7 +15,7 @@ Installation with composer
 Just add the following line to your projects composer.json require section:
 
 ```
-"liip/cache-control-bundle": "1.1.*"
+"liip/cache-control-bundle": "~1.0"
 ```
 
 
