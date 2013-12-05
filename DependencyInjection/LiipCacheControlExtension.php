@@ -34,6 +34,7 @@ class LiipCacheControlExtension extends Extension
             foreach ($config['rules'] as $cache) {
                 // domain is depreciated and will be removed in future
                 $host = is_null($cache['host']) && $cache['domain'] ? $cache['domain'] : $cache['host'];
+                $cache['ips'] = (empty($cache['ips'])) ? null : $cache['ips'];
 
                 $matcher = $this->createRequestMatcher(
                     $container,
