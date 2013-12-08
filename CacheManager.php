@@ -41,6 +41,20 @@ class CacheManager
     }
 
     /**
+     * Invalidate a path (URL)
+     *
+     * @param string $path Path
+     *
+     * @return $this
+     */
+    public function invalidatePath($path)
+    {
+        $this->invalidationQueue[$path] = $path;
+
+        return $this;
+    }
+
+    /**
      * Invalidate a route
      *
      * @param string $name       Route name
@@ -50,31 +64,37 @@ class CacheManager
      */
     public function invalidateRoute($name, $parameters = array())
     {
-        $this->invalidationQueue[] = $this->router->generate($name, $parameters);
+        $this->invalidatePath($this->router->generate($name, $parameters));
 
         return $this;
     }
 
     /**
      * Flush all paths queued for invalidation
+     *
+     * @return array Paths that were flushed from the queue
      */
     public function flush()
     {
-        if (0 === count($this->invalidationQueue)) {
-            return;
+        $queue = $this->getInvalidationQueue();
+
+        if (0 === count($queue)) {
+            return $queue;
         }
 
-        $this->cache->invalidateUrls(\array_unique($this->invalidationQueue));
+        $this->cache->invalidateUrls($queue);
         $this->invalidationQueue = array();
+
+        return $queue;
     }
 
     /**
-     * Get queue of routes to be invalidated
+     * Get paths (URLs) that are queued for invalidation
      *
      * @return array
      */
     public function getInvalidationQueue()
     {
-        return $this->invalidationQueue;
+        return \array_values($this->invalidationQueue);
     }
 }
