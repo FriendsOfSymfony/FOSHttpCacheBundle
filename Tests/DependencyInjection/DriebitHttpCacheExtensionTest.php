@@ -6,8 +6,18 @@ use Driebit\HttpCacheBundle\DependencyInjection\DriebitHttpCacheExtension;
 use \Mockery;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class DriebitHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
+class DriebitHttpCacheExtentionTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var DriebitHttpCacheExtension
+     */
+    protected $extension;
+
+    protected function setUp()
+    {
+        $this->extension = new DriebitHttpCacheExtension();
+    }
+
     /**
      * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      * @expectedExceptionMessage The child node "http_cache" at path "driebit_http_cache" must be configured.
@@ -23,42 +33,48 @@ class DriebitHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigLoadVanish()
     {
-        $config = array(
-            'http_cache' => array(
-                'varnish' => array(
-                    'host' => 'my_hostname'
-                )
-            )
-        );
-
-        $extension = new DriebitHttpCacheExtension();
         $container = new ContainerBuilder();
-        $extension->load(array($config), $container);
+        $this->extension->load(array($this->getBaseConfig()), $container);
 
         $this->assertTrue($container->hasDefinition('driebit_http_cache.varnish'));
         $this->assertTrue($container->hasAlias('driebit_http_cache.http_cache'));
+        $this->assertTrue($container->hasDefinition('driebit_http_cache.event_listener.invalidation'));
     }
 
     public function testConfigLoadInvalidators()
     {
-        $config = array(
-            'http_cache' => array(
-                'varnish' => array(
-                    'host' => 'my_hostname'
-                )
-            ),
+        $config = $this->getBaseConfig() + array(
             'invalidators' => array(
                 array(
-                    'name' => 'ding'
+                    'name' => 'invalidator1',
+                    'origin_routes' => array(
+                        'my_route'
+                    ),
+                    'invalidate_routes' => array(
+                        array(
+                            'name' => 'invalidate_route1',
+                        )
+                    )
                 )
             )
         );
 
-        $extension = new DriebitHttpCacheExtension();
         $container = new ContainerBuilder();
-        $container->setParameter('kernel.cache_dir', sys_get_temp_dir());
-        $extension->load(array($config), $container);
-
-        $this->assertTrue($container->hasDefinition('driebit_http_cache.event_listener.invalidation'));
+        $this->extension->load(array($config), $container);
     }
-}
+
+    protected function getBaseConfig()
+    {
+        return array(
+            'http_cache' => array(
+                'varnish' => array(
+                    'host' => 'my_hostname',
+                    'ips' => array(
+                        '127.0.0.1'
+                    )
+                )
+            )
+        );
+    }
+
+} 
