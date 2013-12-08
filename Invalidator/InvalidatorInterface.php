@@ -37,7 +37,7 @@ interface InvalidatorInterface
      *
      * @return InvalidatorInterface
      */
-    public function addInvalidatedRoute($route, $config);
+    public function addInvalidatedRoute($route, array $config);
 
     /**
      * Get routes that will be invalidated

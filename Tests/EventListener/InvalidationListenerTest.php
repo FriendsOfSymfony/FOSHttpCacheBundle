@@ -5,18 +5,16 @@ namespace Driebit\HttpCacheBundle\Tests\EventListener;
 use Driebit\HttpCacheBundle\EventListener\InvalidationListener;
 use Driebit\HttpCacheBundle\Invalidator\Invalidator;
 use Driebit\HttpCacheBundle\Invalidator\InvalidatorCollection;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use \Mockery;
-use Driebit\HttpCacheBundle\HttpCache\Varnish;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
 class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testNoRoutesInvalidedWhenResponseIsUnsuccessful()
+    public function testNoRoutesInvalidatedWhenResponseIsUnsuccessful()
     {
         $cacheManager = \Mockery::mock('\Driebit\HttpCacheBundle\CacheManager')
             ->shouldDeferMissing()
@@ -46,25 +44,27 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelTerminate()
     {
-        $cacheManager = \Mockery::mock('\Driebit\HttpCacheBundle\CacheManager')
-            ->shouldReceive('invalidateRoute')
-            ->with('route_invalidated', array('id' => '123'))
-            ->shouldReceive('invalidateRoute')->with('route_invalidated_special', array('id' => '123', 'special' => 'bla'))
+        $cacheManager = \Mockery::mock('\Driebit\HttpCacheBundle\CacheManager');
+        $cacheManager->shouldReceive('invalidatePath')->with('/retrieve/something/123')
+            ->shouldReceive('invalidatePath')->with('/retrieve/something/123/bla')
             ->shouldReceive('flush')->once()
             ->getMock();
 
         $routes = new RouteCollection();
-        $route = new Route('/edit/something/{id}/{special}');
-        $route2 = new Route('/retrieve/something/{id}');
-        $route3 = new Route('/retrieve/something/{id}/{special}');
-        $routes->add('route_invalidator', $route);
-        $routes->add('route_invalidated', $route2);
-        $routes->add('route_invalidated_special', $route3);
+        $routes->add('route_invalidator', new Route('/edit/something/{id}/{special}'));
+        $routes->add('route_invalidated', new Route('/retrieve/something/{id}'));
+        $routes->add('route_invalidated_special', new Route('/retrieve/something/{id}/{special}'));
 
+        $requestParams = array('id' => 123, 'special' => 'bla');
         $router = \Mockery::mock('\Symfony\Component\Routing\Router')
             ->shouldDeferMissing()
-            ->shouldReceive('getRouteCollection')
-            ->andReturn($routes)
+            ->shouldReceive('generate')
+            ->with('route_invalidated', $requestParams)
+            ->andReturn('/retrieve/something/123?special=bla')
+
+            ->shouldReceive('generate')
+            ->with('route_invalidated_special', $requestParams)
+            ->andReturn('/retrieve/something/123/bla')
             ->getMock();
 
         $invalidator = new Invalidator();
@@ -79,7 +79,7 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
 
         $request = new Request();
         $request->attributes->set('_route', 'route_invalidator');
-        $request->attributes->set('_route_params', array('id' => '123', 'special' => 'bla'));
+        $request->attributes->set('_route_params', $requestParams);
 
         $event = $this->getEvent($request);
         $listener->onKernelTerminate($event);

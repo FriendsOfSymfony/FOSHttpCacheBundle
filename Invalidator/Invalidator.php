@@ -50,8 +50,12 @@ class Invalidator implements InvalidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function addInvalidatedRoute($route, $config = null)
+    public function addInvalidatedRoute($route, array $config = array())
     {
+        $defaultConfig = array(
+            'ignore_extra_params' => true
+        );
+        $config = \array_merge($defaultConfig, $config);
         $this->invalidatedRoutes[$route] = $config;
 
         return $this;
