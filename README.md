@@ -17,17 +17,15 @@ with a caching proxy.
 Features
 --------
 
-Caching Headers
-...............
+### Caching Headers
 
-Cache Invalidation
-..................
+### Cache Invalidation
+
 * Set up an invalidation scheme without writing PHP code.
 * Send invalidation requests with minimal impact on performance.
 * Easily implement your own HTTP cache client.
 
-Tools
-.....
+### Tools
 
 Documentation
 -------------
