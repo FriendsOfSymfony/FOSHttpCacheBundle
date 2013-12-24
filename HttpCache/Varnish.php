@@ -1,21 +1,31 @@
 <?php
 
-namespace Driebit\HttpCacheBundle\HttpCache;
+namespace FOS\HttpCacheBundle\HttpCache;
 
+use FOS\HttpCacheBundle\HttpCache\Invalidation\RefreshInterface;
 use Guzzle\Http\Client;
 use Guzzle\Http\ClientInterface;
 use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Exception\MultiTransferException;
 use Monolog\Logger;
+use FOS\HttpCacheBundle\HttpCache\Invalidation\BanInterface;
+use FOS\HttpCacheBundle\HttpCache\Invalidation\PurgeInterface;
+use FOS\HttpCacheBundle\HttpCache\Invalidation\RevalidateInterface;
+use Guzzle\Http\Message\RequestInterface;
 
 /**
  * Varnish HTTP cache
  *
  * @author David de Boer <david@driebit.nl>
  */
-class Varnish implements HttpCacheInterface
+class Varnish implements BanInterface, PurgeInterface, RefreshInterface
 {
-    const HTTP_METHOD_PURGE = 'PURGE';
+    const HTTP_METHOD_BAN          = 'BAN';
+    const HTTP_METHOD_PURGE        = 'PURGE';
+    const HTTP_METHOD_REFRESH      = 'GET';
+    const HTTP_HEADER_HOST         = 'X-Host';
+    const HTTP_HEADER_URL          = 'X-Url';
+    const HTTP_HEADER_CONTENT_TYPE = 'X-Content-Type';
 
     /**
      * IP addresses of all Varnish instances
@@ -34,7 +44,7 @@ class Varnish implements HttpCacheInterface
     /**
      * HTTP client
      *
-     * @var\Guzzle\Http\ClientInterface
+     * @var ClientInterface
      */
     protected $client;
 
@@ -44,11 +54,16 @@ class Varnish implements HttpCacheInterface
     protected $logger;
 
     /**
+     * @var array|RequestInterface[]
+     */
+    protected $queue;
+
+    /**
      * Constructor
      *
      * @param array           $ips    Varnish IP addresses
-     * @param string          $host   Application hostname
-     * @param ClientInterface $client HTTP client
+     * @param string          $host   Default hostname
+     * @param ClientInterface $client HTTP client (optional)
      */
     public function __construct(array $ips, $host, ClientInterface $client = null)
     {
@@ -70,41 +85,105 @@ class Varnish implements HttpCacheInterface
     /**
      * {@inheritdoc}
      */
-    public function invalidateUrl($url)
+    public function ban($path, $contentType = self::CONTENT_TYPE_ALL, array $hosts = null)
     {
-        $this->sendRequests(self::HTTP_METHOD_PURGE, array($url));
+        $hosts = is_array($hosts) ? $hosts : array($this->host);
+        $hostRegEx = count($hosts) > 0 ? '^('.join('|', $hosts).')$' : self::REGEX_MATCH_ALL;
+
+        $headers = array(
+            sprintf('%s: %s', self::HTTP_HEADER_HOST, $hostRegEx),
+            sprintf('%s: %s', self::HTTP_HEADER_URL, $path),
+            sprintf('%s: %s', self::HTTP_HEADER_CONTENT_TYPE, $contentType)
+        );
+
+        $this->queueRequest(self::HTTP_METHOD_BAN, '/', $headers);
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function invalidateUrls(array $urls)
+    public function purge($url)
     {
-        $this->sendRequests(self::HTTP_METHOD_PURGE, $urls);
+        $this->queueRequest(self::HTTP_METHOD_PURGE, $url);
+
+        return $this;
     }
 
     /**
-     * Sends requests for each URL to each Varnish instance
+     * {@inheritdoc}
+     */
+    public function refresh($url)
+    {
+        $this->queueRequest(
+            self::HTTP_METHOD_REFRESH,
+            $url,
+            array('Cache-Control' => 'no-cache')
+        );
+
+        return $this;
+    }
+
+    /**
+     * Flush the queue
+     *
+     */
+    public function flush()
+    {
+        $this->sendRequests($this->queue);
+        $this->queue = array();
+    }
+
+    /**
+     * Add a request to the queue
+     *
+     * @param string $method  HTTP method
+     * @param string $url     URL
+     * @param array  $headers HTTP headers
+     *
+     * @return RequestInterface Request that was added to the queue
+     */
+    protected function queueRequest($method, $url, array $headers = array())
+    {
+        $request = $this->client->createRequest($method, $url, $headers);
+
+        // If $url doesn't contain a hostname, prefix it with the default hostname
+        $parsedUrl = parse_url($url);
+        if (!isset($parsedUrl['host'])) {
+            $request->setHeader('Host', $this->host);
+        }
+
+        $this->queue[] = $request;
+
+        return $request;
+    }
+
+    /**
+     * Sends all requests to each Varnish instance
      *
      * Requests are sent in parallel to minimise impact on performance.
      *
-     * @param string $method HTTP method
-     * @param array  $urls   URLs
+     * @param RequestInterface[] $requests Requests
      */
-    protected function sendRequests($method, array $urls)
+    protected function sendRequests(array $requests)
     {
-        $requests = array();
+        $allRequests = array();
 
-        foreach ($urls as $url) {
+        foreach ($requests as $request) {
             foreach ($this->ips as $ip) {
-                $request = $this->client->createRequest($method, $ip . $url);
-                $request->setHeader('Host', $this->host);
-                $requests[] = $request;
+                $varnishRequest = $this->client->createRequest(
+                    $request->getMethod(),
+                    $ip . $request->getResource(),
+                    $request->getHeaders()
+                );
+
+                $allRequests[] = $varnishRequest;
             }
         }
 
         try {
-            $responses = $this->client->send($requests);
+            $responses = $this->client->send($allRequests);
         } catch (MultiTransferException $e) {
             /*
              * @todo what if there is no cache server available (405 'Method not allowed')
