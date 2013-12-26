@@ -149,9 +149,11 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     {
         $request = $this->client->createRequest($method, $url, $headers);
 
-        // If $url doesn't contain a hostname, prefix it with the default hostname
+        // If $url doesn't contain a hostname, and Host header hasn't yet been
+        // set, set the Host header to the default hostname
         $parsedUrl = parse_url($url);
-        if (!isset($parsedUrl['host'])) {
+        if (!isset($parsedUrl['host']) && '' != $request->getHeader('Host')
+        ) {
             $request->setHeader('Host', $this->host);
         }
 
