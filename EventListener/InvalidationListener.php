@@ -1,9 +1,9 @@
 <?php
 
-namespace Driebit\HttpCacheBundle\EventListener;
+namespace FOS\HttpCacheBundle\EventListener;
 
-use Driebit\HttpCacheBundle\CacheManager;
-use Driebit\HttpCacheBundle\Invalidator\InvalidatorCollection;
+use FOS\HttpCacheBundle\CacheManager;
+use FOS\HttpCacheBundle\Invalidator\InvalidatorCollection;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;

@@ -6,10 +6,10 @@
 
     <services>
 
-        <service id="fos_rest.flash_message_listener" class="Liip\CacheControlBundle\EventListener\FlashMessageListener">
+        <service id="fos_rest.flash_message_listener" class="FOS\HttpCacheBundle\EventListener\FlashMessageListener">
             <tag name="kernel.event_listener" event="kernel.response" method="onKernelResponse" />
             <argument type="service" id="session"/>
-            <argument>%liip_cache_control.flash_message_listener.options%</argument>
+            <argument>%fos_http_cache.flash_message_listener.options%</argument>
         </service>
 
     </services>

@@ -1,28 +1,6 @@
 TODO: this should be a TOC and the rest split up and merged with liipREADME.md
 
-Installation
-------------
 
-This library is available on [Packagist](https://packagist.org/packages/friendsofsymfony/http-cache-bundle). You can install it
-using Composer:
-```bash
-$ composer require friendsofsymfony/http-cache-bundle:@stable
-```
-
-Then add the bundle to your application:
-```php
-<?php
-// app/AppKernel.php
-
-public function registerBundles()
-{
-    $bundles = array(
-        ...
-        new FOS\HttpCacheBundle\FOSHttpCacheBundle(),
-        ...
-    );
-}
-```
 
 Configuration
 -------------
@@ -33,7 +11,7 @@ You need to configure at least one HTTP cache proxy. Currently, this bundle offe
 ```yaml
 # app/config/config.yml
 
-driebit_http_cache:
+fos_http_cache:
   http_cache:
     varnish:
       ips: [ "http://123.123.123.1", "http://123.123.123.2" ]
@@ -88,7 +66,7 @@ Usage
 
 Use the [cache manager](/CacheManager.php) to invalidate (purge) routes:
 ```php
-$cacheManager = $container->get('driebit_http_cache.cache_manager');
+$cacheManager = $container->get('fos_http_cache.cache_manager');
 $cacheManager->invalidateRoute('user_details', array('id' => 123));
 ```
 
@@ -127,7 +105,7 @@ You can configure invalidators as follows:
 ```yaml
 # app/config/config.yml
 
-driebit_http_cache:
+fos_http_cache:
   ...
   invalidators:
     villains:

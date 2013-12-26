@@ -5,22 +5,22 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="driebit_http_cache.invalidator.collection"
-                 class="Driebit\HttpCacheBundle\Invalidator\InvalidatorCollection"
-                 factory-class="Driebit\HttpCacheBundle\Invalidator\InvalidatorCollectionFactory"
+        <service id="fos_http_cache.invalidator.collection"
+                 class="FOS\HttpCacheBundle\Invalidator\InvalidatorCollection"
+                 factory-class="FOS\HttpCacheBundle\Invalidator\InvalidatorCollectionFactory"
                  factory-method="getInvalidatorCollection">
-            <argument>%driebit_http_cache.invalidators%</argument>
+            <argument>%fos_http_cache.invalidators%</argument>
         </service>
 
-        <service id="driebit_http_cache.cache_manager"
-                 class="Driebit\HttpCacheBundle\CacheManager">
-            <argument type="service" id="driebit_http_cache.http_cache" />
+        <service id="fos_http_cache.cache_manager"
+                 class="FOS\HttpCacheBundle\CacheManager">
+            <argument type="service" id="fos_http_cache.http_cache" />
             <argument type="service" id="router" />
         </service>
 
-        <service id="driebit_http_cache.event_listener.invalidation" class="Driebit\HttpCacheBundle\EventListener\InvalidationListener">
-            <argument type="service" id="driebit_http_cache.cache_manager" />
-            <argument type="service" id="driebit_http_cache.invalidator.collection" />
+        <service id="fos_http_cache.event_listener.invalidation" class="FOS\HttpCacheBundle\EventListener\InvalidationListener">
+            <argument type="service" id="fos_http_cache.cache_manager" />
+            <argument type="service" id="fos_http_cache.invalidator.collection" />
             <argument type="service" id="router" />
             <tag name="kernel.event_subscriber" />
         </service>

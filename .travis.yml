@@ -3,8 +3,14 @@ language: php
 php:
   - 5.3
   - 5.4
+  - 5.5
+
+env:
+  - SYMFONY_VERSION=2.3.*
+  - SYMFONY_VERSION=2.4.*
+  - SYMFONY_VERSION=dev-master
 
 before_script:
-  - composer install --dev
+  - composer require symfony/framework-bundle:${SYMFONY_VERSION}
 
 script: phpunit --coverage-text

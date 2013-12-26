@@ -6,7 +6,7 @@
 
     <services>
 
-        <service id="liip_cache_control.cache_authorization_listener" class="Liip\CacheControlBundle\EventListener\CacheAuthorizationListener">
+        <service id="fos_http_cache.cache_authorization_listener" class="FOS\HttpCacheBundle\EventListener\CacheAuthorizationListener">
             <tag name="kernel.event_listener" event="kernel.request" method="onKernelRequest" priority="-129" />
         </service>
 

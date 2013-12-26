@@ -1,8 +1,8 @@
 <?php
 
-namespace Driebit\HttpCacheBundle;
+namespace FOS\HttpCacheBundle;
 
-use Driebit\HttpCacheBundle\HttpCache\HttpCacheInterface;
+use FOS\HttpCacheBundle\HttpCache\HttpCacheInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -47,9 +47,9 @@ class CacheManager
      *
      * @return $this
      */
-    public function invalidatePath($path)
+    public function invalidatePath($path, array $headers = array())
     {
-        $this->invalidationQueue[$path] = $path;
+        $this->invalidationQueue[$path] = $headers;
 
         return $this;
     }
@@ -67,6 +67,19 @@ class CacheManager
         $this->invalidatePath($this->router->generate($name, $parameters));
 
         return $this;
+    }
+
+    public function refreshPath($path, $headers)
+    {
+        $headers = array("Cache-Control: no-cache, no-store, max-age=0, must-revalidate");
+
+    }
+
+
+
+    public function invalidateRegex($regex)
+    {
+
     }
 
     /**
