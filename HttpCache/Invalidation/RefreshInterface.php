@@ -12,6 +12,8 @@ interface RefreshInterface
     /**
      * Refresh a URL
      *
+     * Refreshing a URL will generate a new cached response for it.
+     *
      * @param string $url
      *
      * @return $this

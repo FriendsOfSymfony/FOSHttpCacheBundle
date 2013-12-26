@@ -18,11 +18,13 @@ interface BanInterface
      * @param string $path        Path that will be banned. This can be a regex,
      *                            for instance, "\.png$"
      * @param string $contentType Content-type that cached responses must
-     *                            match in order to be invalidated
+     *                            match in order to be invalidated (optional).
+     *                            This can be part of a content type or regex,
+     *                            for instance, "text"
      * @param array  $hosts       Host that cached responses must match in
-     *                            order to be invalidated
+     *                            order to be invalidated (optional)
      *
      * @return $this
      */
-    public function ban($path, $contentType, array $hosts = null);
+    public function ban($path, $contentType = self::CONTENT_TYPE_ALL, array $hosts = null);
 }
