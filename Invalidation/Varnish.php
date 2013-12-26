@@ -1,16 +1,16 @@
 <?php
 
-namespace FOS\HttpCacheBundle\HttpCache;
+namespace FOS\HttpCacheBundle\Invalidation;
 
+use FOS\HttpCacheBundle\Invalidation\Method\BanInterface;
+use FOS\HttpCacheBundle\Invalidation\Method\PurgeInterface;
+use FOS\HttpCacheBundle\Invalidation\Method\RefreshInterface;
 use Guzzle\Http\Client;
 use Guzzle\Http\ClientInterface;
 use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Exception\MultiTransferException;
-use Monolog\Logger;
-use FOS\HttpCacheBundle\HttpCache\Invalidation\BanInterface;
-use FOS\HttpCacheBundle\HttpCache\Invalidation\PurgeInterface;
-use FOS\HttpCacheBundle\HttpCache\Invalidation\RefreshInterface;
 use Guzzle\Http\Message\RequestInterface;
+use Monolog\Logger;
 
 /**
  * Varnish HTTP cache
