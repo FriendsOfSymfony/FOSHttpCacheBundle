@@ -62,7 +62,9 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      *
      * @param array           $ips    Varnish IP addresses
      * @param string          $host   Default hostname
-     * @param ClientInterface $client HTTP client (optional)
+     * @param ClientInterface $client HTTP client (optional). If no HTTP client
+     *                                is supplied, a default one will be
+     *                                created automatically.
      */
     public function __construct(array $ips, $host, ClientInterface $client = null)
     {
