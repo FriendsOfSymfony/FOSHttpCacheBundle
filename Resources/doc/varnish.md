@@ -126,7 +126,7 @@ add the following to your Varnish configuration:
 
 ```varnish
 sub vcl_recv {
-    if (req.http.Cache-Control ~ "no-cache" && client.ip ~ Invalidators) {
+    if (req.http.Cache-Control ~ "no-cache" && client.ip ~ invalidators) {
         set req.hash_always_miss = true;
     }
 }
