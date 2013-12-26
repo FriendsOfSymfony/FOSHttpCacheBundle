@@ -138,7 +138,7 @@ sub vcl_recv {
 
 #### Usage
 
-You can now refresh a path or an absolute URL by calling the `purge` method:
+You can now refresh a path or an absolute URL by calling the `refresh` method:
 
 ```php
 $varnish->refresh('/my/path')
