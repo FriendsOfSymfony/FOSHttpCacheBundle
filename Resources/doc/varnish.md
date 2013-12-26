@@ -7,8 +7,8 @@ Configuration and usage
 
 If you wish to invalidate cached objects in Varnish, begin by adding an [ACL](https://www.varnish-cache.org/docs/3.0/tutorial/vcl.html#example-3-acls)
 to your Varnish configuration. This ACL determines which IPs are allowed to
-issue invalidation requests. Let’s call the ACL `invalidators`. This ACL will
-also be used throughout the Varnish examples on this page.
+issue invalidation requests. Let’s call the ACL `invalidators`. The ACL below
+will be used throughout the Varnish examples on this page.
 
 ```varnish
 # /etc/varnish/your_varnish.vcl
@@ -20,6 +20,10 @@ acl invalidators {
   # "192.168.1.0"/24;
 }
 ```
+
+Note: please make sure that all web servers running your Symfony2 app that may
+trigger invalidation are whitelisted here. Otherwise, lost cached invalidation
+requests will lead to lots of confusion.
 
 ### Purging
 
