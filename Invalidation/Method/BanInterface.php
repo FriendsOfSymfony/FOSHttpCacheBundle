@@ -21,8 +21,12 @@ interface BanInterface
      *                            match in order to be invalidated (optional).
      *                            This can be part of a content type or regex,
      *                            for instance, "text"
-     * @param array  $hosts       Host that cached responses must match in
-     *                            order to be invalidated (optional)
+     * @param array  $hosts       Hosts that cached responses must match in
+     *                            order to be invalidated (optional). This can
+     *                            be:
+     *                            - a regex, e.g. "^(www\.)?(this|that)\.com$"
+     *                            - an array of hosts that will be banned
+     *                            - null: to ban the default host.
      *
      * @return $this
      */
