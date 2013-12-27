@@ -1,5 +1,6 @@
 FOSHttpCacheBundle
 ==================
+[![Build Status](https://travis-ci.org/ddeboer/FOSHttpCacheBundle.png?branch=master)](https://travis-ci.org/ddeboer/FOSHttpCacheBundle)
 
 This is a work in progress to unite the LiipCacheControlBundle and
 DriebitHttpCacheBundle into one good bundle. We
