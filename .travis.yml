@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - 5.3
   - 5.4
   - 5.5
 
@@ -12,5 +11,15 @@ env:
 
 before_script:
   - composer require symfony/framework-bundle:${SYMFONY_VERSION}
+  - sudo apt-get update -qq
+
+  # Install Varnish
+  - sudo apt-get install -qq varnish
+  - sudo cp -f Tests/Functional/Fixtures/varnish/fos.vcl /etc/varnish/default.vcl
+  - sudo service varnish restart
+
+  # Start PHP built-in web server
+  - php -S 0.0.0.0:8000 -t Tests/Functional/Fixtures/web/ &
+  - sleep 1
 
 script: phpunit --coverage-text
