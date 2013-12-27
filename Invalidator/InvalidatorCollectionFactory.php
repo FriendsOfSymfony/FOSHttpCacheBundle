@@ -1,6 +1,6 @@
 <?php
 
-namespace Driebit\HttpCacheBundle\Invalidator;
+namespace FOS\HttpCacheBundle\Invalidator;
 
 class InvalidatorCollectionFactory
 {

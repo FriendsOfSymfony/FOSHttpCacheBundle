@@ -1,10 +1,10 @@
 <?php
 
-namespace Driebit\HttpCacheBundle\Tests\EventListener;
+namespace FOS\HttpCacheBundle\Tests\EventListener;
 
-use Driebit\HttpCacheBundle\EventListener\InvalidationListener;
-use Driebit\HttpCacheBundle\Invalidator\Invalidator;
-use Driebit\HttpCacheBundle\Invalidator\InvalidatorCollection;
+use FOS\HttpCacheBundle\EventListener\InvalidationListener;
+use FOS\HttpCacheBundle\Invalidator\Invalidator;
+use FOS\HttpCacheBundle\Invalidator\InvalidatorCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
@@ -16,13 +16,13 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
 {
     public function testNoRoutesInvalidatedWhenResponseIsUnsuccessful()
     {
-        $cacheManager = \Mockery::mock('\Driebit\HttpCacheBundle\CacheManager')
+        $cacheManager = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager')
             ->shouldDeferMissing()
             ->shouldReceive('invalidateRoute')
             ->never()
             ->getMock();
 
-        $invalidators = \Mockery::mock('\Driebit\HttpCacheBundle\Invalidator\InvalidatorCollection')
+        $invalidators = \Mockery::mock('\FOS\HttpCacheBundle\Invalidator\InvalidatorCollection')
             ->shouldReceive('hasInvalidatorRoute')
             ->with('my_route')
             ->andReturn(false)
@@ -44,7 +44,7 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelTerminate()
     {
-        $cacheManager = \Mockery::mock('\Driebit\HttpCacheBundle\CacheManager');
+        $cacheManager = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager');
         $cacheManager->shouldReceive('invalidatePath')->with('/retrieve/something/123')
             ->shouldReceive('invalidatePath')->with('/retrieve/something/123/bla')
             ->shouldReceive('flush')->once()
