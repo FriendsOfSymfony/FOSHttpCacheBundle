@@ -33,6 +33,10 @@
         "sensio/framework-extra-bundle": "~2.1",
         "symfony/expression-language": "~2.4"
     },
+    "suggest": {
+        "sensio/framework-extra-bundle": "For Tagged Cache Invalidation",
+        "symfony/expression-language": "For Tagged Cache Invalidation"
+    },
     "autoload": {
         "psr-0": { "FOS\\HttpCacheBundle": "" }
     },

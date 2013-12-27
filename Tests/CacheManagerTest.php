@@ -3,13 +3,23 @@
 namespace FOS\HttpCacheBundle\Tests;
 
 use FOS\HttpCacheBundle\CacheManager;
+use FOS\HttpCacheBundle\Invalidation\Method\BanInterface;
 use \Mockery;
 
 class CacheManagerTest extends \PHPUnit_Framework_TestCase
 {
+    protected $router;
+    protected $cacheManager;
+
+    public function setUp()
+    {
+        $this->router = \Mockery::mock('\Symfony\Component\Routing\Router[generate]');
+        $this->cacheProxy = \Mockery::mock('\FOS\HttpCacheBundle\Invalidation\CacheProxyInterface');
+    }
+
     public function testDuplicatePaths()
     {
-        $router = \Mockery::mock('\Symfony\Component\Routing\Router[generate]')
+        $this->router
             ->shouldReceive('generate')
             ->with('same_route', array())
             ->twice()
@@ -17,8 +27,8 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $cacheManager = new CacheManager(
-            \Mockery::mock('\FOS\HttpCacheBundle\HttpCache\HttpCacheInterface'),
-            $router
+            $this->cacheProxy,
+            $this->router
         );
 
         $cacheManager->invalidateRoute('same_route');
@@ -51,5 +61,20 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
         $cacheManager->invalidateRoute('my_route')
             ->invalidateRoute('route_with_params', array('id' => 123))
             ->flush();
+    }
+
+    public function testInvalidateTags()
+    {
+        $ban = \Mockery::mock(
+            '\FOS\HttpCacheBundle\Invalidation\Method\BanInterface,'
+            . ' \FOS\HttpCacheBundle\Invalidation\CacheProxyInterface'
+        )
+            ->shouldReceive('ban')
+            ->with(array('X-Cache-Tags' => '(post-1|posts)(,.+)?$'))
+            ->once()
+            ->getMock();
+
+        $cacheManager = new CacheManager($ban, $this->router);
+        $cacheManager->invalidateTags(array('post-1', 'posts'));
     }
 }

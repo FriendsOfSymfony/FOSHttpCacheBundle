@@ -17,7 +17,7 @@ use Monolog\Logger;
  *
  * @author David de Boer <david@driebit.nl>
  */
-class Varnish implements BanInterface, PurgeInterface, RefreshInterface
+class Varnish implements CacheProxyInterface, BanInterface, PurgeInterface, RefreshInterface
 {
     const HTTP_METHOD_BAN          = 'BAN';
     const HTTP_METHOD_PURGE        = 'PURGE';
@@ -25,6 +25,7 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     const HTTP_HEADER_HOST         = 'X-Host';
     const HTTP_HEADER_URL          = 'X-Url';
     const HTTP_HEADER_CONTENT_TYPE = 'X-Content-Type';
+    const HTTP_HEADER_CACHE        = 'X-Cache-Tags';
 
     /**
      * IP addresses of all Varnish instances
@@ -86,7 +87,26 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     /**
      * {@inheritdoc}
      */
-    public function ban($path, $contentType = self::CONTENT_TYPE_ALL, array $hosts = null)
+    public function ban(array $headers)
+    {
+        $headers = array_merge(
+            array(
+                self::HTTP_HEADER_HOST         => self::REGEX_MATCH_ALL,
+                self::HTTP_HEADER_URL          => self::REGEX_MATCH_ALL,
+                self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL
+            ),
+            $headers
+        );
+
+        $this->queueRequest(self::HTTP_METHOD_BAN, '/', $headers);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function banPath($path, $contentType = self::CONTENT_TYPE_ALL, array $hosts = null)
     {
         $hosts = is_array($hosts) ? $hosts : array($this->host);
         $hostRegEx = count($hosts) > 0 ? '^('.join('|', $hosts).')$' : self::REGEX_MATCH_ALL;
@@ -97,9 +117,7 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
             self::HTTP_HEADER_CONTENT_TYPE => $contentType
         );
 
-        $this->queueRequest(self::HTTP_METHOD_BAN, '/', $headers);
-
-        return $this;
+        return $this->ban($headers);
     }
 
     /**
@@ -132,6 +150,10 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      */
     public function flush()
     {
+        if (0 === count($this->queue)) {
+            return;
+        }
+
         $this->sendRequests($this->queue);
         $this->queue = array();
     }

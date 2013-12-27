@@ -13,6 +13,24 @@ interface BanInterface
     const CONTENT_TYPE_ALL = self::REGEX_MATCH_ALL;
 
     /**
+     * Ban cached objects matching HTTP headers
+     *
+     * Please make sure to configure your HTTP caching proxy to set the headers
+     * supplied here on the cached objects. So if you want to match objects by
+     * host name, configure your proxy to copy the host to a custom HTTP header
+     * such as X-Host.
+     *
+     * @param array $headers HTTP headers that path must match to be banned.
+     *                       Each header is either a:
+     *                       - regular string ('X-Host' => 'example.com')
+     *                       - or a POSIX regular expression
+     *                         ('X-Host' => '^(www\.)?(this|that)\.com$').
+     *
+     * @return $this
+     */
+    public function ban(array $headers);
+
+    /**
      * Ban paths matching a regular expression
      *
      * @param string $path        Path that will be banned. This can be a regex,
@@ -30,5 +48,5 @@ interface BanInterface
      *
      * @return $this
      */
-    public function ban($path, $contentType = self::CONTENT_TYPE_ALL, array $hosts = null);
+    public function banPath($path, $contentType = self::CONTENT_TYPE_ALL, array $hosts = null);
 }
