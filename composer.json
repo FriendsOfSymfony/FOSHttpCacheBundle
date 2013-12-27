@@ -1,34 +1,40 @@
 {
-    "name": "driebit/http-cache-bundle",
+    "name": "friendsofsymfony/http-cache-bundle",
     "type": "symfony-bundle",
-    "description": "Send invalidation requests to your HTTP cache",
-    "keywords": [ "caching", "purge", "invalidation", "varnish" ],
-    "homepage": "https://github.com/driebit/DriebitHttpCacheBundle",
+    "description": "Set path based HTTP cache headers and send invalidation requests to your HTTP cache",
+    "keywords": [ "http", "caching", "purge", "invalidation", "varnish", "esi" ],
+    "homepage": "https://github.com/ddeboer/FOSHttpCacheBundle",
     "license": "MIT",
     "authors": [
+        {
+            "name": "Liip AG",
+            "homepage": "http://www.liip.ch/"
+        },
         {
             "name": "Driebit",
             "homepage": "http://www.driebit.nl",
             "email": "tech@driebit.nl"
+        },
+        {
+            "name": "Community contributions",
+            "homepage": "https://github.com/friendsofsymfony/FOSHttpCacheBundle/contributors"
         }
     ],
     "require": {
         "php": ">=5.3.3",
         "ext-curl": "*",
-        "guzzle/http": "*"
+        "guzzle/http": "*",
+        "symfony/framework-bundle": "~2.1"
     },
     "require-dev": {
+        "guzzle/plugin-mock": "*",
         "mockery/mockery": "*",
         "monolog/monolog": "*",
-        "symfony/routing": "~2.3",
-        "symfony/http-foundation": "~2.3",
-        "symfony/http-kernel": "~2.3",
-        "symfony/config": "~2.3",
-        "symfony/dependency-injection": "~2.3",
-        "guzzle/plugin-mock": "*"
+        "sensio/framework-extra-bundle": "~2.1",
+        "symfony/expression-language": "~2.4"
     },
     "autoload": {
-        "psr-0": { "Driebit\\HttpCacheBundle": "" }
+        "psr-0": { "FOS\\HttpCacheBundle": "" }
     },
-    "target-dir": "Driebit/HttpCacheBundle"
+    "target-dir": "FOS/HttpCacheBundle"
 }

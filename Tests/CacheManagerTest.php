@@ -1,8 +1,8 @@
 <?php
 
-namespace Driebit\HttpCacheBundle\Tests;
+namespace FOS\HttpCacheBundle\Tests;
 
-use Driebit\HttpCacheBundle\CacheManager;
+use FOS\HttpCacheBundle\CacheManager;
 use \Mockery;
 
 class CacheManagerTest extends \PHPUnit_Framework_TestCase
@@ -17,7 +17,7 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $cacheManager = new CacheManager(
-            \Mockery::mock('\Driebit\HttpCacheBundle\HttpCache\HttpCacheInterface'),
+            \Mockery::mock('\FOS\HttpCacheBundle\HttpCache\HttpCacheInterface'),
             $router
         );
 
@@ -29,7 +29,7 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidateRoute()
     {
-        $httpCache = \Mockery::mock('\Driebit\HttpCacheBundle\HttpCache\HttpCacheInterface')
+        $httpCache = \Mockery::mock('\FOS\HttpCacheBundle\HttpCache\HttpCacheInterface')
             ->shouldReceive('invalidateUrls')
             ->with(array('/my/route', '/route/with/params/id/123'))
             ->once()

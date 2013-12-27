@@ -1,6 +1,6 @@
 <?php
 
-namespace Liip\CacheControlBundle\EventListener;
+namespace FOS\HttpCacheBundle\EventListener;
 
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpFoundation\Response;

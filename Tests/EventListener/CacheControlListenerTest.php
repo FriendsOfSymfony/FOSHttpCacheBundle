@@ -1,9 +1,9 @@
 <?php
 
-namespace LiipCacheControlBundle\Test\EventListener;
+namespace FOS\HttpCacheBundle\Test\EventListener;
 
-use Liip\CacheControlBundle\DependencyInjection\LiipCacheControlExtension;
-use Liip\CacheControlBundle\EventListener\CacheControlListener;
+use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
+use FOS\HttpCacheBundle\EventListener\CacheControlListener;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +16,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 {
     public function testDefaultHeaders()
     {
-        $listener = $this->getMockBuilder('Liip\CacheControlBundle\EventListener\CacheControlListener')
+        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
             ->setMethods(array('getOptions'))
             ->getMock();
 
@@ -45,7 +45,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testExtraHeaders()
     {
-        $listener = $this->getMockBuilder('Liip\CacheControlBundle\EventListener\CacheControlListener')
+        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
             ->setMethods(array('getOptions'))
             ->getMock();
 
@@ -72,7 +72,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testCompoundHeaders()
     {
-        $listener = $this->getMockBuilder('Liip\CacheControlBundle\EventListener\CacheControlListener')
+        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
             ->setMethods(array('getOptions'))
             ->getMock();
 
@@ -105,7 +105,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testSetNoCacheHeaders()
     {
-        $listener = $this->getMockBuilder('Liip\CacheControlBundle\EventListener\CacheControlListener')
+        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
             ->setMethods(array('getOptions'))
             ->getMock();
 
@@ -138,7 +138,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testConfigDefineRequestMatcherWithControllerName() {
-        $extension = new LiipCacheControlExtension();
+        $extension = new FOSHttpCacheExtension();
         $container = new ContainerBuilder();
 
         // Load configuration
@@ -154,7 +154,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         $matcherDefinition = null;
         foreach ($container->getDefinitions() as $definition) {
             if ($definition instanceof DefinitionDecorator &&
-                $definition->getParent() === 'liip_cache_control.request_matcher'
+                $definition->getParent() === 'fos_http_cache.request_matcher'
             ) {
                 $matcherDefinition = $definition;
             }
@@ -169,7 +169,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchRuleWithActionName()
     {
-        $listener = new \Liip\CacheControlBundle\EventListener\CacheControlListener();
+        $listener = new \FOS\HttpCacheBundle\EventListener\CacheControlListener();
 
         $headers = array( 'controls' => array(
             'etag' => '1337',
