@@ -22,4 +22,8 @@ before_script:
   - php -S 0.0.0.0:8000 -t Tests/Functional/Fixtures/web/ &
   - sleep 1
 
-script: phpunit --coverage-text
+script: phpunit --coverage-clover=coverage.clover
+
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
