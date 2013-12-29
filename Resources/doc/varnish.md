@@ -1,6 +1,13 @@
 Varnish
 =======
 
+This bundle is compatible with Varnish version 3.0 onwards. In order to use
+this bundle with Varnish, you probably have to make changes to your Varnish
+configuration.
+
+Below you will find detailed Varnish configuration recommendations. For a quick
+overview, have a look at [the configuration that we use for our functional
+tests](Tests/Functional/Fixtures/varnish/fos.vcl).
 
 Configuration and usage
 -----------------------
