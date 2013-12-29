@@ -92,9 +92,9 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
         $hostRegEx = count($hosts) > 0 ? '^('.join('|', $hosts).')$' : self::REGEX_MATCH_ALL;
 
         $headers = array(
-            sprintf('%s: %s', self::HTTP_HEADER_HOST, $hostRegEx),
-            sprintf('%s: %s', self::HTTP_HEADER_URL, $path),
-            sprintf('%s: %s', self::HTTP_HEADER_CONTENT_TYPE, $contentType)
+            self::HTTP_HEADER_HOST         => $hostRegEx,
+            self::HTTP_HEADER_URL          => $path,
+            self::HTTP_HEADER_CONTENT_TYPE => $contentType
         );
 
         $this->queueRequest(self::HTTP_METHOD_BAN, '/', $headers);
@@ -151,7 +151,7 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
 
         // If Host headers hasn't been set and $url doesn't contain a hostname,
         // set the Host header to the default hostname
-        if ('' != $request->getHeader('Host')) {
+        if ('' == $request->getHeader('Host')) {
             $parsedUrl = parse_url($url);
             if (!isset($parsedUrl['host'])) {
                 $request->setHeader('Host', $this->host);
