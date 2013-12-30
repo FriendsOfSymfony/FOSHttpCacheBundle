@@ -22,7 +22,6 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "ext-curl": "*",
         "guzzle/http": "*",
         "symfony/framework-bundle": "~2.1"
     },
