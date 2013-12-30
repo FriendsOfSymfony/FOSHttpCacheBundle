@@ -18,8 +18,8 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
     {
         $cacheManager = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager')
             ->shouldDeferMissing()
-            ->shouldReceive('invalidateRoute')
-            ->never()
+            ->shouldReceive('invalidateRoute')->never()
+            ->shouldReceive('flush')->once()
             ->getMock();
 
         $invalidators = \Mockery::mock('\FOS\HttpCacheBundle\Invalidator\InvalidatorCollection')

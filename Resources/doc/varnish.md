@@ -1,6 +1,9 @@
 Varnish
 =======
 
+Introduction
+------------
+
 This bundle is compatible with Varnish version 3.0 onwards. In order to use
 this bundle with Varnish, you probably have to make changes to your Varnish
 configuration.
@@ -151,4 +154,33 @@ You can now refresh a path or an absolute URL by calling the `refresh` method:
 $varnish->refresh('/my/path')
     ->refresh('http://myapp.dev/absolute/url')
     ->flush();
+```
+
+### Cache tagging
+
+Add the following to your Varnish configuration to enable
+[cache tagging](tagging.md).
+
+```varnish
+sub vcl_recv {
+    # ...
+
+    if (req.request == "BAN") {
+        # ...
+        if (req.http.x-cache-tags) {
+            ban("obj.http.host ~ " + req.http.x-host
+                + " && obj.http.x-url ~ " + req.http.x-url
+                + " && obj.http.content-type ~ " + req.http.x-content-type
+                + " && obj.http.x-cache-tags ~ " + req.http.x-cache-tags
+            );
+        } else {
+            ban("obj.http.host ~ " + req.http.x-host
+                + " && obj.http.x-url ~ " + req.http.x-url
+                + " && obj.http.content-type ~ " + req.http.x-content-type
+            );
+        }
+
+        error 200 "Banned";
+    }
+}
 ```

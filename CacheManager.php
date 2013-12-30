@@ -3,6 +3,9 @@
 namespace FOS\HttpCacheBundle;
 
 use FOS\HttpCacheBundle\HttpCache\HttpCacheInterface;
+use FOS\HttpCacheBundle\Invalidation\CacheProxyInterface;
+use FOS\HttpCacheBundle\Invalidation\Method\BanInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -11,6 +14,11 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class CacheManager
 {
+    /**
+     * @var string
+     */
+    protected $tagsHeader = 'X-Cache-Tags';
+
     /**
      * @var HttpCacheInterface
      */
@@ -31,13 +39,58 @@ class CacheManager
     /**
      * Constructor
      *
-     * @param HttpCacheInterface $cache  HTTP cache
-     * @param RouterInterface    $router Symfony router
+     * @param CacheProxyInterface $cache  HTTP cache
+     * @param RouterInterface     $router Symfony router
      */
-    public function __construct(HttpCacheInterface $cache, RouterInterface $router)
+    public function __construct(CacheProxyInterface $cache, RouterInterface $router)
     {
         $this->cache = $cache;
         $this->router = $router;
+    }
+
+    /**
+     * Set the HTTP header name that will hold cache tags
+     *
+     * @param string $tagsHeader
+     */
+    public function setTagsHeader($tagsHeader)
+    {
+        $this->tagsHeader = $tagsHeader;
+    }
+
+    /**
+     * Get the HTTP header name that will hold cache tags
+     *
+     * @return string
+     */
+    public function getTagsHeader()
+    {
+        return $this->tagsHeader;
+    }
+
+    /**
+     * Assign cache tags to a response
+     *
+     * @param Response $response
+     * @param array    $tags
+     * @param bool     $replace  Whether to replace the current tags on the
+     *                           response
+     *
+     * @return $this
+     */
+    public function tagResponse(Response $response, array $tags, $replace = false)
+    {
+        if (!$replace) {
+            $tags = array_merge(
+                $response->headers->get($this->getTagsHeader(), array()),
+                $tags
+            );
+        }
+
+        $uniqueTags = array_unique($tags);
+        $response->headers->set($this->getTagsHeader(), implode(',', $uniqueTags));
+
+        return $this;
     }
 
     /**
@@ -83,22 +136,32 @@ class CacheManager
     }
 
     /**
-     * Flush all paths queued for invalidation
+     * Invalidate cache tags
      *
-     * @return array Paths that were flushed from the queue
+     * @param array $tags Cache tags
+     *
+     * @return $this
+     * @throws \RuntimeException If HTTP cache does not support BAN requests
+     */
+    public function invalidateTags(array $tags)
+    {
+        if (!$this->cache instanceof BanInterface) {
+            throw new \RuntimeException('HTTP cache does not support BAN requests');
+        }
+
+        $headers = array($this->getTagsHeader() => '('.implode('|', $tags).')(,.+)?$');
+        $this->cache->ban($headers);
+
+        return $this;
+    }
+
+    /**
+     * Send all invalidation requests
+     *
      */
     public function flush()
     {
-        $queue = $this->getInvalidationQueue();
-
-        if (0 === count($queue)) {
-            return $queue;
-        }
-
-        $this->cache->invalidateUrls($queue);
-        $this->invalidationQueue = array();
-
-        return $queue;
+        $this->cache->flush();
     }
 
     /**
