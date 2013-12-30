@@ -61,6 +61,9 @@ class FOSHttpCacheExtension extends Extension
         }
 
         if (isset($config['varnish'])) {
+            if (!class_exists('\Guzzle\Http\Client')) {
+                throw new \RuntimeException('The Varnish component requires guzzle/http to be installed');
+            }
             $loader->load('varnish.xml');
             $container->setParameter($this->getAlias().'.varnish.ips', $config['varnish']['ips']);
             $container->setParameter($this->getAlias().'.varnish.host', $config['varnish']['host']);

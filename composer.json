@@ -22,10 +22,10 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "guzzle/http": "*",
         "symfony/framework-bundle": "~2.1"
     },
     "require-dev": {
+        "guzzle/http": "*",
         "guzzle/plugin-mock": "*",
         "mockery/mockery": "*",
         "monolog/monolog": "*",
@@ -33,6 +33,7 @@
         "symfony/expression-language": "~2.4"
     },
     "suggest": {
+        "guzzle/http": "For sending invalidation requests",
         "sensio/framework-extra-bundle": "For Tagged Cache Invalidation",
         "symfony/expression-language": "For Tagged Cache Invalidation"
     },

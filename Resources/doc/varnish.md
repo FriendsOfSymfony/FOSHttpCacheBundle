@@ -15,6 +15,13 @@ tests](../../Tests/Functional/Fixtures/varnish/fos.vcl).
 Configuration and usage
 -----------------------
 
+The bundle’s Varnish functionality requires the [Guzzle HTTP client](http://docs.guzzlephp.org/en/latest/http-client/client.html)
+to be installed:
+
+```bash
+$ composer require guzzle/http
+```
+
 If you wish to invalidate cached objects in Varnish, begin by adding an [ACL](https://www.varnish-cache.org/docs/3.0/tutorial/vcl.html#example-3-acls)
 to your Varnish configuration. This ACL determines which IPs are allowed to
 issue invalidation requests. Let’s call the ACL `invalidators`. The ACL below
