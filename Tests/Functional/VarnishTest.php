@@ -2,9 +2,6 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional;
 
-use FOS\HttpCacheBundle\Invalidation\Varnish;
-
-
 class VarnishTest extends FunctionalTestCase
 {
     public function testBanAll()
@@ -40,6 +37,26 @@ class VarnishTest extends FunctionalTestCase
 
         $this->varnish->purge('/cache.php')->flush();
         $this->assertMiss(self::getResponse('/cache.php'));
+    }
+
+    public function testPurgeContentType()
+    {
+        $json = array('Accept' => 'application/json');
+        $html = array('Accept' => 'text/html');
+
+        $response = self::getResponse('/negotation.php', $json);
+        $this->assertMiss($response);
+        $this->assertEquals('application/json', $response->getContentType());
+        $this->assertHit(self::getResponse('/negotation.php', $json));
+
+        $response = self::getResponse('/negotation.php', $html);
+        $this->assertEquals('text/html', $response->getContentType());
+        $this->assertMiss($response);
+        $this->assertHit(self::getResponse('/negotation.php', $html));
+
+        $this->varnish->purge('/negotation.php')->flush();
+        $this->assertMiss(self::getResponse('/negotation.php', $json));
+        $this->assertMiss(self::getResponse('/negotation.php', $html));
     }
 
     public function testRefresh()

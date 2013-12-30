@@ -35,9 +35,9 @@ abstract class FunctionalTestCase extends \PHPUnit_Framework_TestCase
         return self::$client;
     }
 
-    public static function getResponse($url)
+    public static function getResponse($url, array $headers = array())
     {
-        return self::getClient()->get($url)->send();
+        return self::getClient()->get($url, $headers)->send();
     }
 
     public function assertMiss(Response $response, $message = null)
