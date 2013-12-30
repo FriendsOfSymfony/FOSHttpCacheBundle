@@ -7,7 +7,7 @@ configuration.
 
 Below you will find detailed Varnish configuration recommendations. For a quick
 overview, have a look at [the configuration that we use for our functional
-tests](Tests/Functional/Fixtures/varnish/fos.vcl).
+tests](../../Tests/Functional/Fixtures/varnish/fos.vcl).
 
 Configuration and usage
 -----------------------
