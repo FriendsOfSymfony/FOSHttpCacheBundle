@@ -1,6 +1,16 @@
 Varnish
 =======
 
+This chapter describes how to configure Varnish to work with this bundle.
+
+* [Introduction](#introduction)
+* [Basic configuration](#basic-configuration)
+  * [Basic Varnish configuration](#basic-varnish-configuration)
+  * [Basic bundle configuration](#basic-varnish-configuration)
+* [Purge](#purge)
+* [Ban](#ban)
+* [Tagging](#tagging)
+
 Introduction
 ------------
 
@@ -9,13 +19,38 @@ this bundle with Varnish, you probably have to make changes to your Varnish
 configuration.
 
 Below you will find detailed Varnish configuration recommendations. For a quick
-overview, have a look at [the configuration that we use for our functional
-tests](../../Tests/Functional/Fixtures/varnish/fos.vcl).
+overview, have a look at [the configuration that is used for the bundle’s
+functional tests](../../Tests/Functional/Fixtures/varnish/fos.vcl).
 
-Configuration and usage
------------------------
+Basic configuration
+-------------------
 
-The bundle’s Varnish functionality requires the [Guzzle HTTP client](http://docs.guzzlephp.org/en/latest/http-client/client.html)
+### Bundle configuration
+
+```yaml
+# app/config/config.yml
+
+fos_http_cache:
+  http_cache:
+    varnish:
+      ips: 123.123.123.1:6081, 123.123.123.2
+      host: yourwebsite.com
+```
+
+* **host**: This must match the web host clients are using when connecting to varnish.
+  You will not notice if this is mistyped, but cache invalidation will never happen.
+* **ips**: List of IP adresses of your varnish servers. Comma separated.
+* **port**: The port varnish is listening on for incoming web connections.
+
+**TODO: MOVE** When using ESI, you will want to purge individual fragments. To generate the
+corresponding ``_internal`` route, inject the ``http_kernel`` into your controller and
+use HttpKernel::generateInternalUri with the parameters as in the twig
+``render`` tag.
+
+### Basic Varnish configuration
+
+The bundle’s Varnish functionality requires the
+[Guzzle HTTP client](http://docs.guzzlephp.org/en/latest/http-client/client.html)
 to be installed:
 
 ```bash
@@ -42,10 +77,9 @@ Note: please make sure that all web servers running your Symfony2 app that may
 trigger invalidation are whitelisted here. Otherwise, lost cached invalidation
 requests will lead to lots of confusion.
 
-### Purging
+### Purge
 
-First make sure your Varnish is [configured for handling PURGE requests](https://www.varnish-cache.org/docs/3.0/tutorial/purging.html).
-For example:
+To configure Varnish for [handling PURGE requests](https://www.varnish-cache.org/docs/3.0/tutorial/purging.html):
 
 ```varnish
 # /etc/varnish/your_varnish.vcl
@@ -74,19 +108,9 @@ sub vcl_miss {
 }
 ```
 
-#### Usage
+### Ban
 
-You can now invalidate a path or an absolute URL by calling the `purge` method:
-
-```php
-$varnish->purge('/my/path')
-    ->purge('http://myapp.dev/absolute/url')
-    ->flush();
-```
-
-### Banning
-
-First configure your Varnish for handling [BAN requests](https://www.varnish-software.com/static/book/Cache_invalidation.html):
+To configure Varnish for [handling BAN requests](https://www.varnish-software.com/static/book/Cache_invalidation.html):
 
 ```varnish
 # /etc/varnish/your_varnish.vcl
@@ -116,31 +140,7 @@ sub vcl_deliver {
 }
 ```
 
-#### Usage
-
-You can now invalidate all URLs matching a regular expression by using the
-`ban` method:
-
-For instance, to ban all .png files:
-
-```php
-$varnish->ban('.*png$')->flush();
-```
-
-To ban all HTML URLs that begin with `/articles/`:
-
-```php
-$varnish->ban('/articles/.*', 'text/html')->flush();
-```
-
-By default, URLs will be banned on all hosts. You can override this default and
-specify for which hosts you want to invalidate:
-
-```php
-$varnish->ban('*.png$', null, 'example\.com')->flush();
-```
-
-### Refreshing
+### Refresh
 
 If you want to invalidate cached objects by [forcing a refresh](https://www.varnish-cache.org/trac/wiki/VCLExampleEnableForceRefresh),
 add the following to your Varnish configuration:
@@ -153,20 +153,9 @@ sub vcl_recv {
 }
 ```
 
-#### Usage
+### Tagging
 
-You can now refresh a path or an absolute URL by calling the `refresh` method:
-
-```php
-$varnish->refresh('/my/path')
-    ->refresh('http://myapp.dev/absolute/url')
-    ->flush();
-```
-
-### Cache tagging
-
-Add the following to your Varnish configuration to enable
-[cache tagging](tagging.md).
+Add the following to your Varnish configuration to enable [cache tagging](tagging.md).
 
 ```varnish
 sub vcl_recv {
