@@ -18,10 +18,6 @@ before_script:
   - sudo cp -f Tests/Functional/Fixtures/varnish/fos.vcl /etc/varnish/default.vcl
   - sudo service varnish restart
 
-  # Start PHP built-in web server
-  - php -S 0.0.0.0:8000 -t Tests/Functional/Fixtures/web/ &
-  - sleep 1
-
 script: phpunit --coverage-clover=coverage.clover
 
 after_script:
