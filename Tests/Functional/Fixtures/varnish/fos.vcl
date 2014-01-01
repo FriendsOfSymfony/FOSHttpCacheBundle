@@ -42,13 +42,6 @@ sub vcl_fetch {
     # Set ban-lurker friendly custom headers
     set beresp.http.x-url = req.url;
     set beresp.http.x-host = req.http.host;
-
-    # Ban cache tags
-    if (beresp.status >= 200 && beresp.status < 400
-        && (req.request == "PUT" || req.request == "POST" || req.request == "PATCH" || req.request == "DELETE")
-    ) {
-        ban("obj.http.x-cache-tags ~ " + beresp.http.x-cache-tags);
-    }
 }
 
 sub vcl_hit {
