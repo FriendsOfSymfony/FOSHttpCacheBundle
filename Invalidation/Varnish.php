@@ -133,12 +133,14 @@ class Varnish implements CacheProxyInterface, BanInterface, PurgeInterface, Refr
     /**
      * {@inheritdoc}
      */
-    public function refresh($url)
+    public function refresh($url, array $headers = array())
     {
+        $headers = array_merge($headers, array('Cache-Control' => 'no-cache'));
+
         $this->queueRequest(
             self::HTTP_METHOD_REFRESH,
             $url,
-            array('Cache-Control' => 'no-cache')
+            $headers
         );
 
         return $this;

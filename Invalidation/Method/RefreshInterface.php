@@ -15,9 +15,10 @@ interface RefreshInterface
      * Refreshing a URL will generate a new cached response for the URL,
      * including the query string but excluding any Vary variants.
      *
-     * @param string $url
+     * @param string $url     Path or URL
+     * @param array  $headers HTTP headers (optional)
      *
      * @return $this
      */
-    public function refresh($url);
+    public function refresh($url, array $headers = array());
 } 

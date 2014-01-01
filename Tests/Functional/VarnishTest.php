@@ -71,4 +71,15 @@ class VarnishTest extends FunctionalTestCase
         $refreshed = self::getResponse('/cache.php');
         $this->assertGreaterThan((string) $response->getHeader('Age'), (string) $refreshed->getHeader('Age'));
     }
+
+    public function testRefreshContentType()
+    {
+        $json = array('Accept' => 'application/json');
+        $html = array('Accept' => 'text/html');
+
+        $this->varnish->refresh('/negotation.php', $json)->flush();
+
+        $this->assertHit(self::getResponse('/negotation.php', $json));
+        $this->assertMiss(self::getResponse('/negotation.php', $html));
+    }
 }
