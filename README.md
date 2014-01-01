@@ -38,4 +38,5 @@ Documentation is included in the [Resources/doc](Resources/doc/index.md) directo
 License
 -------
 
-This bundle is released under the MIT license. See the included [LICENSE](LICENSE) file for more information.
+This bundle is released under the MIT license. See the included
+[LICENSE](Resources/meta/LICENSE) file for more information.
