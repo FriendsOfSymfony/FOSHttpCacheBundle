@@ -3,8 +3,13 @@
 namespace FOS\HttpCacheBundle\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
+use FOS\HttpCacheBundle\Configuration\InvalidatePath;
+use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use FOS\HttpCacheBundle\Invalidator\InvalidatorCollection;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Symfony\Component\Routing\RouterInterface;
@@ -47,11 +52,13 @@ class InvalidationListener implements EventSubscriberInterface
     public function __construct(
         CacheManager $cacheManager,
         InvalidatorCollection $invalidators,
-        RouterInterface $router
+        RouterInterface $router,
+        ExpressionLanguage $expressionLanguage = null
     ) {
         $this->cacheManager = $cacheManager;
         $this->invalidators = $invalidators;
         $this->router = $router;
+        $this->expressionLanguage = $expressionLanguage ?: new ExpressionLanguage();
     }
 
     /**
@@ -71,14 +78,25 @@ class InvalidationListener implements EventSubscriberInterface
     {
         // Are there any invalidators configured for the current request route?
         $request = $event->getRequest();
-        $requestRoute = $request->attributes->get('_route');
-        if (!$this->invalidators->hasInvalidatorRoute($requestRoute)) {
-            return $this->cacheManager->flush();
-        }
 
         // Don't invalidate any caches if the request was unsuccessful
         $response = $event->getResponse();
         if (!$response->isSuccessful()) {
+            return $this->cacheManager->flush();
+        }
+
+        // Check controller annotations
+        if ($paths = $request->attributes->get('_invalidate_path')) {
+            $this->invalidatePaths($paths);
+        }
+
+        if ($routes = $request->attributes->get('_invalidate_route')) {
+            $this->invalidateRoutes($routes, $request);
+        }
+
+        // Check configured invalidators
+        $requestRoute = $request->attributes->get('_route');
+        if (!$this->invalidators->hasInvalidatorRoute($requestRoute)) {
             return $this->cacheManager->flush();
         }
 
@@ -110,5 +128,48 @@ class InvalidationListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(KernelEvents::TERMINATE => 'onKernelTerminate');
+    }
+
+    /**
+     * Invalidate paths from annotations
+     *
+     * @param array|InvalidatePath[] $pathConfigurations
+     */
+    protected function invalidatePaths(array $pathConfigurations)
+    {
+        foreach ($pathConfigurations as $pathConfiguration) {
+            foreach ($pathConfiguration->getPaths() as $path) {
+                $this->cacheManager->invalidatePath($path);
+            }
+        }
+    }
+
+    /**
+     * Invalidate routes from annotations
+     *
+     * @param array|InvalidateRoute[] $routes
+     * @param Request                 $request
+     */
+    protected function invalidateRoutes(array $routes, Request $request)
+    {
+        foreach ($routes as $route) {
+            $params = array();
+
+            if (null !== $route->getParams()) {
+                // Iterate over route params and try to evaluate their values
+                foreach ($route->getParams() as $key => $value) {
+                    try {
+                        $value = $this->expressionLanguage->evaluate($value, $request->attributes->all());
+                    } catch (SyntaxError $e) {
+                        // If a syntax error occurred, we assume the param was
+                        // no expression
+                    }
+
+                    $params[$key] = $value;
+                }
+            }
+
+            $this->cacheManager->invalidateRoute($route->getName(), $params);
+        }
     }
 }

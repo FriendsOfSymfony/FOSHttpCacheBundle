@@ -2,47 +2,66 @@
 
 namespace FOS\HttpCacheBundle\Tests\EventListener;
 
+use Doctrine\Common\Annotations\AnnotationReader;
+use FOS\HttpCacheBundle\Configuration\Invalidate;
+use FOS\HttpCacheBundle\Configuration\InvalidatePath;
+use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use FOS\HttpCacheBundle\EventListener\InvalidationListener;
 use FOS\HttpCacheBundle\Invalidator\Invalidator;
 use FOS\HttpCacheBundle\Invalidator\InvalidatorCollection;
+use FOS\HttpCacheBundle\Tests\EventListener\Fixture\FooControllerTagAtMethod;
+use Sensio\Bundle\FrameworkExtraBundle\EventListener\ControllerListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use \Mockery;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
 class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
 {
+    protected $cacheManager;
+    protected $invalidators;
+
+    public function setUp()
+    {
+        $this->cacheManager = \Mockery::mock(
+            '\FOS\HttpCacheBundle\CacheManager',
+            array(
+                \Mockery::mock(
+                    '\FOS\HttpCacheBundle\Invalidation\CacheProxyInterface,'
+                    . '\FOS\HttpCacheBundle\Invalidation\Method\BanInterface,'
+                    . '\FOS\HttpCacheBundle\Invalidation\Method\PurgeInterface'
+                ),
+                \Mockery::mock('\Symfony\Component\Routing\RouterInterface')
+            )
+        );
+
+        $this->invalidators = new InvalidatorCollection();
+    }
+
     public function testNoRoutesInvalidatedWhenResponseIsUnsuccessful()
     {
-        $cacheManager = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager')
-            ->shouldDeferMissing()
+        $this->cacheManager
             ->shouldReceive('invalidateRoute')->never()
-            ->shouldReceive('flush')->once()
-            ->getMock();
+            ->shouldReceive('flush')->once();
 
-        $invalidators = \Mockery::mock('\FOS\HttpCacheBundle\Invalidator\InvalidatorCollection')
+        $this->invalidators = \Mockery::mock('\FOS\HttpCacheBundle\Invalidator\InvalidatorCollection')
             ->shouldReceive('hasInvalidatorRoute')
             ->with('my_route')
             ->andReturn(false)
             ->getMock();
 
-        $listener = new InvalidationListener(
-            $cacheManager,
-            $invalidators,
-            \Mockery::mock('\Symfony\Component\Routing\RouterInterface')
-        );
-
         $request = new Request();
         $request->attributes->set('_route', 'my_route');
 
         $event = $this->getEvent($request, new Response('', 500));
-        $listener->onKernelTerminate($event);
+        $this->getListener()->onKernelTerminate($event);
     }
 
-
-    public function testOnKernelTerminate()
+    public function AAAtestOnKernelTerminate()
     {
         $cacheManager = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager');
         $cacheManager->shouldReceive('invalidatePath')->with('/retrieve/something/123')
@@ -85,12 +104,59 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
         $listener->onKernelTerminate($event);
     }
 
+    public function testInvalidatePath()
+    {
+        $request = new Request();
+        $request->attributes->set('_invalidate_path', array(
+            new InvalidatePath(array('value' => '/some/path')),
+            new InvalidatePath(array('value' => array('/other/path', 'http://absolute.com/path')))
+        ));
+
+        $event = $this->getEvent($request);
+
+        $this->cacheManager
+            ->shouldReceive('invalidatePath')->with('/some/path')->once()
+            ->shouldReceive('invalidatePath')->with('/other/path')->once()
+            ->shouldReceive('invalidatePath')->with('http://absolute.com/path')->once()
+            ->shouldReceive('flush')->once();
+
+        $this->getListener()->onKernelTerminate($event);
+    }
+
+    public function testInvalidateRoute()
+    {
+        $request = new Request();
+        $request->attributes->set('request_id', 123);
+        $request->attributes->set('_invalidate_route', array(
+            new InvalidateRoute(array('name' => 'some_route')),
+            new InvalidateRoute(array('name' => 'other_route', 'params' => array('id' => 'request_id')))
+        ));
+
+        $event = $this->getEvent($request);
+
+        $this->cacheManager
+            ->shouldReceive('invalidateRoute')->with('some_route', array())->once()
+            ->shouldReceive('invalidateRoute')->with('other_route', array('id' => 123))->once()
+            ->shouldReceive('flush')->once();
+
+        $this->getListener()->onKernelTerminate($event);
+    }
+
     protected function getEvent(Request $request, Response $response = null)
     {
         return new PostResponseEvent(
             \Mockery::mock('\Symfony\Component\HttpKernel\HttpKernelInterface'),
             $request,
             null !== $response ? $response : new Response()
+        );
+    }
+
+    protected function getListener()
+    {
+        return new InvalidationListener(
+            $this->cacheManager,
+            $this->invalidators,
+            \Mockery::mock('\Symfony\Component\Routing\RouterInterface')
         );
     }
 }
