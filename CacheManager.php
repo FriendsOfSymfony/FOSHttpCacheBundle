@@ -2,9 +2,10 @@
 
 namespace FOS\HttpCacheBundle;
 
-use FOS\HttpCacheBundle\HttpCache\HttpCacheInterface;
 use FOS\HttpCacheBundle\Invalidation\CacheProxyInterface;
 use FOS\HttpCacheBundle\Invalidation\Method\BanInterface;
+use FOS\HttpCacheBundle\Invalidation\Method\PurgeInterface;
+use FOS\HttpCacheBundle\Invalidation\Method\RefreshInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -20,7 +21,7 @@ class CacheManager
     protected $tagsHeader = 'X-Cache-Tags';
 
     /**
-     * @var HttpCacheInterface
+     * @var CacheProxyInterface
      */
     protected $cache;
 
@@ -28,13 +29,6 @@ class CacheManager
      * @var RouterInterface
      */
     protected $router;
-
-    /**
-     * Invalidation queue
-     *
-     * @var array
-     */
-    protected $invalidationQueue = array();
 
     /**
      * Constructor
@@ -94,15 +88,20 @@ class CacheManager
     }
 
     /**
-     * Invalidate a path (URL)
+     * Invalidate a path or URL
      *
-     * @param string $path Path
+     * @param string $path Path or URL
      *
      * @return $this
+     * @throws \RuntimeException
      */
-    public function invalidatePath($path, array $headers = array())
+    public function invalidatePath($path)
     {
-        $this->invalidationQueue[$path] = $headers;
+        if (!$this->cache instanceof PurgeInterface) {
+            throw new \RuntimeException('HTTP cache does not support PURGE requests');
+        }
+
+        return $this->cache->purge($path);
 
         return $this;
     }
@@ -122,10 +121,39 @@ class CacheManager
         return $this;
     }
 
-    public function refreshPath($path, $headers)
+    /**
+     * Refresh a path or URL
+     *
+     * @param string $path   Path or URL
+     * @param array $headers HTTP headers (optional)
+     *
+     * @return $this
+     * @throws \RuntimeException
+     */
+    public function refreshPath($path, array $headers = array())
     {
-        $headers = array("Cache-Control: no-cache, no-store, max-age=0, must-revalidate");
+        if (!$this->cache instanceof RefreshInterface) {
+            throw new \RuntimeException('HTTP cache does not support refresh requests');
+        }
 
+        $this->cache->refresh($path, $headers);
+
+        return $this;
+    }
+
+    /**
+     * Refresh a route
+     *
+     * @param string $route     Route name
+     * @param array $parameters Route parameters (optional)
+     *
+     * @return $this
+     */
+    public function refreshRoute($route, array $parameters = array())
+    {
+        $this->refreshPath($this->router->generate($route, $parameters));
+
+        return $this;
     }
 
 
@@ -162,15 +190,5 @@ class CacheManager
     public function flush()
     {
         $this->cache->flush();
-    }
-
-    /**
-     * Get paths (URLs) that are queued for invalidation
-     *
-     * @return array
-     */
-    public function getInvalidationQueue()
-    {
-        return \array_values($this->invalidationQueue);
     }
 }
