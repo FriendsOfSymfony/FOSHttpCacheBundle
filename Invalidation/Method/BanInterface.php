@@ -2,12 +2,14 @@
 
 namespace FOS\HttpCacheBundle\Invalidation\Method;
 
+use FOS\HttpCacheBundle\Invalidation\CacheProxyInterface;
+
 /**
  * An HTTP cache that supports invalidation by banning, that is, removing
  * objects from the cache that match a regular expression
  *
  */
-interface BanInterface
+interface BanInterface extends CacheProxyInterface
 {
     const REGEX_MATCH_ALL = '.*';
     const CONTENT_TYPE_ALL = self::REGEX_MATCH_ALL;

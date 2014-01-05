@@ -2,12 +2,14 @@
 
 namespace FOS\HttpCacheBundle\Invalidation\Method;
 
+use FOS\HttpCacheBundle\Invalidation\CacheProxyInterface;
+
 /**
  * An HTTP cache that supports invalidation by refresh requests that force a
  * cache miss for one specific URL
  *
  */
-interface RefreshInterface
+interface RefreshInterface extends CacheProxyInterface
 {
     /**
      * Refresh a URL

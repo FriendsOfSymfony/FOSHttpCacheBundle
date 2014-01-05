@@ -2,12 +2,14 @@
 
 namespace FOS\HttpCacheBundle\Invalidation\Method;
 
+use FOS\HttpCacheBundle\Invalidation\CacheProxyInterface;
+
 /**
  * An HTTP cache that supports invalidation by purging, that is, removing one
  * URL from the cache
  *
  */
-interface PurgeInterface
+interface PurgeInterface extends CacheProxyInterface
 {
     /**
      * Purge a URL
