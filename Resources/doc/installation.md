@@ -1,9 +1,6 @@
 Installation
 ============
 
-Installation
-------------
-
 This library is available on [Packagist](https://packagist.org/packages/friendsofsymfony/http-cache-bundle).
 You can install it using Composer:
 

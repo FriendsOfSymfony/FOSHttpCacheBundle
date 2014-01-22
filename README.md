@@ -20,15 +20,10 @@ with a caching proxy.
 Features
 --------
 
-### Caching Headers
-
-### Cache Invalidation
-
+* Set path-based cache expiration headers via your app configuration.
 * Set up an invalidation scheme without writing PHP code.
 * Send invalidation requests with minimal impact on performance.
 * Easily implement your own HTTP cache client.
-
-### Tools
 
 Documentation
 -------------

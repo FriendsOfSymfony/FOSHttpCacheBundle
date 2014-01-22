@@ -20,24 +20,15 @@ Tagged Cache Invalidation allows you to:
 Configuration
 -------------
 
-See the [Varnish chapter](varnish.md#cache-tagging) on how to configure your
-Varnish proxy for tagging.
+See the [Varnish chapter](varnish.md#tagging) on how to configure your Varnish
+proxy for tagging.
 
 Usage
 -----
 
 ### Set cache tags on responses
 
-#### Manually
-
-Set tags manually on any response object:
-
-```php
-$cacheManager = $container->get('fos_http_cache.manager');
-$cacheManager->tagResponse($response, array('some-tag', 'other-tag'));
-```
-
-#### Using annotations
+You can set tags manually on any response object using the [Cache Manager](cache-manager.md#tags).
 
 You can also tag your response with the `@Tag` annotation.
 
@@ -124,16 +115,10 @@ Or, using a [param converter](http://symfony.com/doc/current/bundles/SensioFrame
 
 ### Invalidate tags
 
-#### Manually
+You can invalidate cache tags manually using the [Cache Manager](cache-manager.md#tags).
 
-```php
-$cacheManager = $container->get('fos_http_cache.manager');
-$cacheManager->invalidateTags(array('some-tag', 'other-tag'));
-```
-
-#### Using annotations
-
-Annotate your controller just like you did when setting tags:
+You can also use annotations. Annotate your controller just like you did when
+setting tags:
 
 ```php
 use FOS\HttpCacheBundle\Configuration\Tag;
@@ -141,7 +126,7 @@ use FOS\HttpCacheBundle\Configuration\Tag;
 class PostController extends Controller
 {
     /**
-     * @Tag(expression="'post'~post.id")
+     * @Tag(expression="'post-'~post.id")
      * @Tag("posts")
      */
     public function editAction(Post $post)
