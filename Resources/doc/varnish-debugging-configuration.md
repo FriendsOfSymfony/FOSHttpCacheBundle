@@ -1,16 +1,11 @@
-Configuration
-=============
+Configuring Varnish Debugging Information
+=========================================
 
-* [Debug information](#debug-information)
-
-Debug information
------------------
-
-The debug parameter adds a ``X-Cache-Debug`` header to each response that you
-can use in your Varnish configuration.
+Enabling the debug parameter adds a ``X-Cache-Debug`` header to each response
+that you can use in your Varnish configuration.
 
 ``` yaml
-# app/config.yml
+# app/config_integration.yml
 fos_http_cache:
     debug: true
 ```
@@ -31,10 +26,13 @@ if (resp.http.X-Cache-Debug) {
     }
     set resp.http.X-Cache-Expires = resp.http.Expires;
 } else {
-    # remove Varnish/proxy header
-    remove resp.http.X-Varnish;
-    remove resp.http.Via;
-    remove resp.http.X-Purge-URL;
-    remove resp.http.X-Purge-Host;
+    # remove Varnish/proxy header and ban helper headers
+    unset resp.http.X-Varnish;
+    unset resp.http.Via;
+    unset resp.http.x-url;
+    unset resp.http.x-host;
+    unset resp.http.x-content-type;
 }
 ```
+
+Note: You normally do not want this enabled in your production environment.

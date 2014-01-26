@@ -4,15 +4,13 @@ FOSHttpCacheBundle
 This is the documentation for the FOSHttpCacheBundle. It covers:
 
 1. [Installation](installation.md) of the bundle
-2. [Configuration](configuration.md) of the bundle
-3. [Setting path-based cache headers](headers.md)
+3. [Configuring caching headers](headers.md) which also works without a caching proxy.
+5. Cache invalidation
+   1. [The Cache Manager Service](cache-manager.md)
+   2. [Cache Tagging](tagging.md)
+   3. [Invalidator Configuration](invalidation-configuration.md)
 4. Event listeners
    1. [Authorization listener](authorization-listener.md)
    2. [Flash message listener](flash-message-listener.md)
-5. [Cache invalidation](invalidation.md)
-   1. [Cache Manager](cache-manager.md)
-   2. [HTTP proxy](http-proxy.md)
-   3. [Tags](tagging.md)
-6. HTTP proxy configuration
-   1. [Varnish](varnish.md)
-7. [Testing](testing.md)
+3. [Varnish Debugging Configuration](varnish-debugging-configuration.md)
+6. [Testing](testing.md)

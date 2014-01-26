@@ -3,6 +3,8 @@
 namespace FOS\HttpCacheBundle\Tests\EventListener;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use FOS\HttpCache\Invalidation\Method\BanInterface;
+use FOS\HttpCache\Invalidation\Method\PurgeInterface;
 use FOS\HttpCacheBundle\Configuration\Invalidate;
 use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
@@ -31,9 +33,8 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
             '\FOS\HttpCacheBundle\CacheManager',
             array(
                 \Mockery::mock(
-                    '\FOS\HttpCacheBundle\Invalidation\CacheProxyInterface,'
-                    . '\FOS\HttpCacheBundle\Invalidation\Method\BanInterface,'
-                    . '\FOS\HttpCacheBundle\Invalidation\Method\PurgeInterface'
+                    '\FOS\HttpCache\Invalidation\Method\BanInterface,'
+                    . '\FOS\HttpCache\Invalidation\Method\PurgeInterface'
                 ),
                 \Mockery::mock('\Symfony\Component\Routing\RouterInterface')
             )

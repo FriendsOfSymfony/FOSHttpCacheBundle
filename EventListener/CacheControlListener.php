@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContext;
 
 /**
- * Set caching settings on the reponse according to the app config
+ * Set caching settings on the response according to the configuration.s
  *
  * Allowed options are found in Symfony\Component\HttpFoundation\Response::setCache
  *
@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\SecurityContext;
 class CacheControlListener
 {
     /**
-     * @var \Symfony\Component\Security\Core\SecurityContext
+     * @var SecurityContext
      */
     protected $securityContext;
 
@@ -34,15 +34,16 @@ class CacheControlListener
      */
     protected $supportedHeaders = array(
         'etag' => true,
-        'last_modified' => true,
-        'max_age' => true,
-        's_maxage' => true,
+        'last-modified' => true,
+        'max-age' => true,
+        's-maxage' => true,
         'private' => true,
         'public' => true,
     );
 
     /**
-     * add debug header, allows vcl to display debug information
+     * Add debug header to all responses, for example to add debug output in
+     * Varnish configuration.
      *
      * @var bool
      */
@@ -51,8 +52,8 @@ class CacheControlListener
     /**
      * Constructor.
      *
-     * @param \Symfony\Component\Security\Core\SecurityContext $securityContext
-     * @param Boolean $debug The current debug mode
+     * @param SecurityContext $securityContext Used to handle unless_role criteria. (optional)
+     * @param Boolean         $debug           Whether to output debug headers
      */
     public function __construct(SecurityContext $securityContext = null, $debug = false)
     {
@@ -114,27 +115,22 @@ class CacheControlListener
      */
     protected function setExtraControls(Response $response, array $controls)
     {
-        if (!empty($controls['must_revalidate'])) {
-            $response->headers->addCacheControlDirective('must-revalidate', $controls['must_revalidate']);
+        $flags = array('must-revalidate', 'proxy-revalidate', 'no-transform');
+        $options = array('stale-if-error', 'stale-while-revalidate');
+
+        foreach ($flags as $flag) {
+            if (!empty($controls[$flag])) {
+                $response->headers->addCacheControlDirective($flag);
+            }
         }
 
-        if (!empty($controls['proxy_revalidate'])) {
-            $response->headers->addCacheControlDirective('proxy-revalidate', true);
+        foreach ($options as $option) {
+            if (!empty($controls[$option])) {
+                $response->headers->addCacheControlDirective($option, $controls[$option]);
+            }
         }
 
-        if (!empty($controls['no_transform'])) {
-            $response->headers->addCacheControlDirective('no-transform', true);
-        }
-
-        if (!empty($controls['stale_if_error'])) {
-            $response->headers->addCacheControlDirective('stale-if-error='.$controls['stale_if_error'], true);
-        }
-
-        if (!empty($controls['stale_while_revalidate'])) {
-            $response->headers->addCacheControlDirective('stale-while-revalidate='.$controls['stale_while_revalidate'], true);
-        }
-
-        if (!empty($controls['no_cache'])) {
+        if (!empty($controls['no-cache'])) {
             $response->headers->remove('Cache-Control');
             $response->headers->set('Cache-Control','no-cache', true);
         }
@@ -172,9 +168,9 @@ class CacheControlListener
      */
     protected function prepareControls(array $controls)
     {
-        if (isset($controls['last_modified'])) {
+        if (isset($controls['last-modified'])) {
             // this must be a DateTime, convert from the string in configuration
-            $controls['last_modified'] = new \DateTime($controls['last_modified']);
+            $controls['last-modified'] = new \DateTime($controls['last-modified']);
         }
 
         return $controls;

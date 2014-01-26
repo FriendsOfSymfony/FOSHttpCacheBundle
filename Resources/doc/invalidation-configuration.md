@@ -1,15 +1,5 @@
-Cache invalidation
-==================
-
-This bundle offers several ways to help you invalidate cached objects.
-
-* [The Cache Manager](cache-manager.md)
-* [Lower-level HTTP proxy classes](http-proxy.md)
-* Configuration
-* [Tags](tagging.md)
-
-Requirements
-------------
+Cache Invalidation Configuration
+================================
 
 In order to invalidate cached objects, requests are sent to your HTTP caching
 proxy (for instance, Varnish). So in order to use this bundle’s invalidation
@@ -19,7 +9,10 @@ functionality, you will have to configure your HTTP caching proxy first:
 
 ### Invalidation using invalidators
 
-Invalidators offer a second way to invalidate routes, using configuration only. Each invalidator contains:
+Invalidators offer an alternative way to tag your content, similar to what
+you can do with [annotations](tagging.md).
+
+Each configuration entry contains:
 
 * one or more `origin_routes`, i.e., routes that trigger the invalidation
 * one or more `invalidate_routes`, i.e., routes that will be invalidated.
