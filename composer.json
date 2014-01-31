@@ -44,6 +44,7 @@
         "sensio/framework-extra-bundle": "For Tagged Cache Invalidation",
         "symfony/expression-language": "For Tagged Cache Invalidation"
     },
+    "minimum-stability": "dev",
     "autoload": {
         "psr-0": { "FOS\\HttpCacheBundle": "" }
     },
