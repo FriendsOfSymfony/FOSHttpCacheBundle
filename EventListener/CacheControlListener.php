@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContext;
 
 /**
- * Set caching settings on the response according to the configuration.s
+ * Set caching settings on the response according to the configurations.
  *
  * Allowed options are found in Symfony\Component\HttpFoundation\Response::setCache
  *

@@ -2,18 +2,18 @@
 
 namespace FOS\HttpCacheBundle;
 
-use FOS\HttpCache\CacheManager as BaseCacheManager;
+use FOS\HttpCache\CacheInvalidator;
 use FOS\HttpCache\Invalidation\CacheProxyInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Adding symfony Route support and tagging to the framework agnostic
- * FOS\HttpCache\CacheManager.
+ * The CacheManager is a CacheInvalidator but adds symfony Route support and
+ * response tagging to the framework agnostic FOS\HttpCache\CacheInvalidator.
  *
  * @author David de Boer <david@driebit.nl>
  */
-class CacheManager extends BaseCacheManager
+class CacheManager extends CacheInvalidator
 {
     /**
      * @var RouterInterface
