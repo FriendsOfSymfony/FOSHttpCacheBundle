@@ -6,10 +6,10 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\SecurityContextInterface;
 
 /**
- * Set caching settings on the reponse according to the app config
+ * Set caching settings on the response according to the configurations.
  *
  * Allowed options are found in Symfony\Component\HttpFoundation\Response::setCache
  *
@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\SecurityContext;
 class CacheControlListener
 {
     /**
-     * @var \Symfony\Component\Security\Core\SecurityContext
+     * @var SecurityContextInterface
      */
     protected $securityContext;
 
@@ -42,7 +42,8 @@ class CacheControlListener
     );
 
     /**
-     * add debug header, allows vcl to display debug information
+     * Add debug header to all responses, for example to add debug output in
+     * Varnish configuration.
      *
      * @var bool
      */
@@ -51,10 +52,10 @@ class CacheControlListener
     /**
      * Constructor.
      *
-     * @param \Symfony\Component\Security\Core\SecurityContext $securityContext
-     * @param Boolean $debug The current debug mode
+     * @param SecurityContextInterface $securityContext Used to handle unless_role criteria. (optional)
+     * @param Boolean         $debug           Whether to output debug headers
      */
-    public function __construct(SecurityContext $securityContext = null, $debug = false)
+    public function __construct(SecurityContextInterface $securityContext = null, $debug = false)
     {
         $this->securityContext = $securityContext;
         $this->debug = $debug;
@@ -75,7 +76,7 @@ class CacheControlListener
     public function onKernelResponse(FilterResponseEvent $event)
     {
         $options = $this->getOptions($event->getRequest());
-        if ($options) {
+        if (false !== $options) {
             $response = $event->getResponse();
             if (!empty($options['controls'])) {
                 $controls = array_intersect_key($options['controls'], $this->supportedHeaders);
@@ -114,24 +115,19 @@ class CacheControlListener
      */
     protected function setExtraControls(Response $response, array $controls)
     {
-        if (!empty($controls['must_revalidate'])) {
-            $response->headers->addCacheControlDirective('must-revalidate', $controls['must_revalidate']);
+        $flags = array('must_revalidate', 'proxy_revalidate', 'no_transform');
+        $options = array('stale_if_error', 'stale_while_revalidate');
+
+        foreach ($flags as $flag) {
+            if (!empty($controls[$flag])) {
+                $response->headers->addCacheControlDirective(str_replace('_', '-', $flag));
+            }
         }
 
-        if (!empty($controls['proxy_revalidate'])) {
-            $response->headers->addCacheControlDirective('proxy-revalidate', true);
-        }
-
-        if (!empty($controls['no_transform'])) {
-            $response->headers->addCacheControlDirective('no-transform', true);
-        }
-
-        if (!empty($controls['stale_if_error'])) {
-            $response->headers->addCacheControlDirective('stale-if-error='.$controls['stale_if_error'], true);
-        }
-
-        if (!empty($controls['stale_while_revalidate'])) {
-            $response->headers->addCacheControlDirective('stale-while-revalidate='.$controls['stale_while_revalidate'], true);
+        foreach ($options as $option) {
+            if (!empty($controls[$option])) {
+                $response->headers->addCacheControlDirective(str_replace('_', '-', $option), $controls[$option]);
+            }
         }
 
         if (!empty($controls['no_cache'])) {
@@ -144,6 +140,7 @@ class CacheControlListener
      * Return the cache options for the current request
      *
      * @param Request $request
+     *
      * @return array of settings
      */
     protected function getOptions(Request $request)
@@ -156,12 +153,12 @@ class CacheControlListener
                 continue;
             }
 
-            if (null === $elements[0] || $elements[0]->matches($request)) {
+            if ($elements[0]->matches($request)) {
                 return $elements[1];
             }
         }
 
-        return array();
+        return false;
     }
 
     /**

@@ -13,9 +13,9 @@ Introduction
 
 This bundle offers tools to improve HTTP caching with Symfony2. It provides
 global configuration options to set caching headers based on the path,
-controller and other aspects of the request. It provides means to actively
-invalidate caching proxies and some additional tools that can help when working
-with a caching proxy.
+controller and other aspects of the request. It provides services for the
+FOSHttpCache library tools to actively invalidate caching proxies and some
+additional tools that can help when working with a caching proxy.
 
 Features
 --------

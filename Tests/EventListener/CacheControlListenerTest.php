@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +24,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         $request = new Request();
         $event = new FilterResponseEvent($kernel, $request, 'GET', $response);
         $headers = array( 'controls' => array(
-            'etag' => '1337',
+            'etag' => '1337eax',
             'last_modified' => '13.07.2003',
             'max_age' => '900',
             's_maxage' => '300',
@@ -41,6 +40,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('max-age=900, public, s-maxage=300', $newHeaders['cache-control'][0]);
         $this->assertEquals(strtotime('13.07.2003'), strtotime($newHeaders['last-modified'][0]));
+        $this->assertEquals('"1337eax"', $newHeaders['etag'][0]);
     }
 
     public function testExtraHeaders()
@@ -137,18 +137,91 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('no-cache, private', $newHeaders['cache-control'][0]);
     }
 
+    public function testVary()
+    {
+        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
+            ->setMethods(array('getOptions'))
+            ->getMock();
+
+        $kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
+        $response = new Response();
+        $request = new Request();
+        $event = new FilterResponseEvent($kernel, $request, 'GET', $response);
+
+        $headers = array('vary' => array(
+            'Cookie',
+            'Accept-Language',
+            'Encoding',
+        ));
+        $listener->expects($this->once())->method('getOptions')->will($this->returnValue($headers));
+
+        $listener->onKernelResponse($event);
+
+        $newHeaders = $response->headers->all();
+
+        $this->assertTrue(isset($newHeaders['vary']), implode(',', array_keys($newHeaders)));
+        $this->assertEquals($headers['vary'], $newHeaders['vary']);
+    }
+
+    public function testReverseProxyTtl()
+    {
+        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
+            ->setMethods(array('getOptions'))
+            ->getMock();
+
+        $kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
+        $response = new Response();
+        $request = new Request();
+        $event = new FilterResponseEvent($kernel, $request, 'GET', $response);
+
+        $headers = array(
+            'reverse_proxy_ttl' => 600,
+        );
+        $listener->expects($this->once())->method('getOptions')->will($this->returnValue($headers));
+
+        $listener->onKernelResponse($event);
+
+        $newHeaders = $response->headers->all();
+
+        $this->assertTrue(isset($newHeaders['x-reverse-proxy-ttl']), implode(',', array_keys($newHeaders)));
+        $this->assertEquals(600, $newHeaders['x-reverse-proxy-ttl'][0]);
+    }
+
+    public function testDebug()
+    {
+        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
+            ->setMethods(array('getOptions'))
+            ->setConstructorArgs(array(null, true))
+            ->getMock();
+
+        $kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
+        $response = new Response();
+        $request = new Request();
+        $event = new FilterResponseEvent($kernel, $request, 'GET', $response);
+
+        $listener->expects($this->once())->method('getOptions')->will($this->returnValue(array()));
+
+        $listener->onKernelResponse($event);
+
+        $newHeaders = $response->headers->all();
+
+        $this->assertTrue(isset($newHeaders['x-cache-debug']), implode(',', array_keys($newHeaders)));
+        $this->assertTrue(isset($newHeaders['x-cache-debug'][0]));
+    }
+
     public function testConfigDefineRequestMatcherWithControllerName() {
         $extension = new FOSHttpCacheExtension();
         $container = new ContainerBuilder();
 
-        // Load configuration
         $extension->load(array(
-            array('rules' =>
+            array('rules' => array(
                 array(
-                    array('controller' => '^AcmeBundle:Default:index$', 'controls' => array())
+                    'attributes' => array(
+                        '_controller' => '^AcmeBundle:Default:index$',
+                    ),
                 )
             )
-        ), $container);
+        )), $container);
 
         // Extract the corresponding definition
         $matcherDefinition = null;
@@ -156,6 +229,9 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
             if ($definition instanceof DefinitionDecorator &&
                 $definition->getParent() === 'fos_http_cache.request_matcher'
             ) {
+                if ($matcherDefinition) {
+                    $this->fail('More then one request matcher was created');
+                }
                 $matcherDefinition = $definition;
             }
         }
@@ -181,8 +257,8 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         ));
 
         $listener->add(
-          new RequestMatcher(null, null, null, null, array('_controller' => '^AcmeBundle:Default:index$')),
-          $headers
+            new RequestMatcher(null, null, null, null, array('_controller' => '^AcmeBundle:Default:index$')),
+            $headers
         );
 
         // Request with a matching controller name
@@ -210,5 +286,46 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         $newHeaders = $response->headers->all();
 
         $this->assertEquals('no-cache', $newHeaders['cache-control'][0]);
+    }
+
+    public function testUnlessRole()
+    {
+        $security = $this->getMock('Symfony\Component\Security\Core\SecurityContextInterface');
+
+
+        $listener = new CacheControlListener($security);
+        $listener->add(
+            new RequestMatcher(),
+            array(
+                'controls' => array('public' => true),
+                'unless_role' => 'ROLE_NO_CACHE',
+            )
+        );
+
+        $kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
+        $response = new Response();
+        $request = new Request();
+
+        $event = new FilterResponseEvent($kernel, $request, 'GET', $response);
+        $listener->onKernelResponse($event);
+        $newHeaders = $response->headers->all();
+
+        $this->assertTrue(isset($newHeaders['cache-control']), implode(',', array_keys($newHeaders)));
+        $this->assertEquals('public', $newHeaders['cache-control'][0]);
+
+        // now with security saying we have the unless_role
+        $security->expects($this->once())
+            ->method('isGranted')
+            ->with('ROLE_NO_CACHE')
+            ->will($this->returnValue(true))
+        ;
+        $response = new Response();
+        $event = new FilterResponseEvent($kernel, $request, 'GET', $response);
+        $listener->onKernelResponse($event);
+
+        $newHeaders = $response->headers->all();
+
+        $this->assertTrue(isset($newHeaders['cache-control']), implode(',', array_keys($newHeaders)));
+        $this->assertNotContains('public', $newHeaders['cache-control'][0]);
     }
 }

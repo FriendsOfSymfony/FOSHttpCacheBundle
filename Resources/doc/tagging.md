@@ -8,7 +8,7 @@ If your application has many intricate relationships between cached items,
 which makes it complex to invalidate them by route, cache tagging may be
 useful.
 
-Caching tagging, or more precisely [Tagged Cache Invalidation](http://blog.kevburnsjr.com/tagged-cache-invalidation),
+Cache tagging, or more precisely [Tagged Cache Invalidation](http://blog.kevburnsjr.com/tagged-cache-invalidation),
 is a simpler version of [Linked Cache Invalidation](http://tools.ietf.org/html/draft-nottingham-linked-cache-inv-03)
 (LCI).
 
@@ -17,27 +17,31 @@ Tagged Cache Invalidation allows you to:
 * invalidate the responses by tag (e.g., invalidate all responses that are tagged
   `article-42`)
 
-Configuration
--------------
+Caching Proxy Configuration
+---------------------------
 
-See the [Varnish chapter](varnish.md#tagging) on how to configure your Varnish
-proxy for tagging.
+You need to configure your caching proxy to support cache tagging. For Varnish,
+you can find an example configuration in the [Varnish chapter of the FOSHttpCache library]
+(https://github.com/ddeboer/FOSHttpCache/blob/master/doc/varnish.md#tagging).
 
-Usage
------
+Tagging Using the Cache Manager
+------------------------
 
-### Set cache tags on responses
+You can use the [Cache Manager](cache-manager.md#tags) to manually set and
+invalidate tags.
 
-You can set tags manually on any response object using the [Cache Manager](cache-manager.md#tags).
+Tagging Using Annotations
+-------------------------
 
-You can also tag your response with the `@Tag` annotation.
+You can make this bundle tag your response automatically using the `@Tag`
+annotation. GET operations will lead to the response being tagged, modifying
+operations like POST, PUT, or DELETE will lead to the tags being invalidated.
 
 **Note:** the `@Tag` annotation has a dependency on the SensioFrameworkExtraBundle,
-so make sure to include that in your project:
+so if you want to use the annotation, make sure to include that in your project:
+`sensio/framework-extra-bundle`.
 
-```bash
-$ composer require sensio/framework-extra-bundle
-```
+A simple example might look like this:
 
 ```php
 use FOS\HttpCacheBundle\Configuration\Tag;
@@ -115,10 +119,8 @@ Or, using a [param converter](http://symfony.com/doc/current/bundles/SensioFrame
 
 ### Invalidate tags
 
-You can invalidate cache tags manually using the [Cache Manager](cache-manager.md#tags).
-
-You can also use annotations. Annotate your controller just like you did when
-setting tags:
+Invalidate with annotations works just the same. Annotate your modifying
+actions just like you did when setting tags:
 
 ```php
 use FOS\HttpCacheBundle\Configuration\Tag;
@@ -137,4 +139,4 @@ class PostController extends Controller
 ```
 
 Any non-safe request to the `editAction` that returns a successful response
-will trigger invalidation of both `posts` and `post-123` tags.
+will trigger invalidation of both the `posts` and the `post-123` tags.

@@ -1,6 +1,7 @@
 language: php
 
 php:
+  - 5.3
   - 5.4
   - 5.5
 
@@ -11,12 +12,6 @@ env:
 
 before_script:
   - composer require symfony/framework-bundle:${SYMFONY_VERSION}
-  - sudo apt-get update -qq
-
-  # Install Varnish
-  - sudo apt-get install -qq varnish
-  - sudo cp -f Tests/Functional/Fixtures/varnish/fos.vcl /etc/varnish/default.vcl
-  - sudo service varnish restart
 
 script: phpunit --coverage-clover=coverage.clover
 

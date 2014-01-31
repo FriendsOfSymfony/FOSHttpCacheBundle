@@ -31,28 +31,23 @@ class FOSHttpCacheExtension extends Extension
         if (!empty($config['rules'])) {
             $loader->load('rule_response_listener.xml');
             foreach ($config['rules'] as $cache) {
-                // domain is depreciated and will be removed in future
-                $host = is_null($cache['host']) && $cache['domain'] ? $cache['domain'] : $cache['host'];
                 $cache['ips'] = (empty($cache['ips'])) ? null : $cache['ips'];
 
                 $matcher = $this->createRequestMatcher(
                     $container,
                     $cache['path'],
-                    $host,
-                    $cache['method'],
+                    $cache['host'],
+                    $cache['methods'],
                     $cache['ips'],
-                    $cache['attributes'],
-                    $cache['controller']
+                    $cache['attributes']
                 );
 
                 unset(
                     $cache['path'],
-                    $cache['method'],
-                    $cache['ips'],
-                    $cache['attributes'],
-                    $cache['domain'],
                     $cache['host'],
-                    $cache['controller']
+                    $cache['methods'],
+                    $cache['ips'],
+                    $cache['attributes']
                 );
 
                 $container->getDefinition($this->getAlias().'.response_listener')
@@ -80,12 +75,8 @@ class FOSHttpCacheExtension extends Extension
         }
     }
 
-    protected function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null, $methods = null, $ips = null, array $attributes = array(), $controller = null)
+    protected function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null, $methods = null, $ips = null, array $attributes = array())
     {
-        if (null !== $controller) {
-            $attributes['_controller'] = $controller;
-        }
-
         $arguments = array($path, $host, $methods, $ips, $attributes);
         $serialized = serialize($arguments);
         $id = $this->getAlias().'.request_matcher.'.md5($serialized).sha1($serialized);

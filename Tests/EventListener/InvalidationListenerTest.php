@@ -3,6 +3,8 @@
 namespace FOS\HttpCacheBundle\Tests\EventListener;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use FOS\HttpCache\Invalidation\Method\BanInterface;
+use FOS\HttpCache\Invalidation\Method\PurgeInterface;
 use FOS\HttpCacheBundle\Configuration\Invalidate;
 use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
@@ -27,18 +29,7 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->cacheManager = \Mockery::mock(
-            '\FOS\HttpCacheBundle\CacheManager',
-            array(
-                \Mockery::mock(
-                    '\FOS\HttpCacheBundle\Invalidation\CacheProxyInterface,'
-                    . '\FOS\HttpCacheBundle\Invalidation\Method\BanInterface,'
-                    . '\FOS\HttpCacheBundle\Invalidation\Method\PurgeInterface'
-                ),
-                \Mockery::mock('\Symfony\Component\Routing\RouterInterface')
-            )
-        );
-
+        $this->cacheManager = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager');
         $this->invalidators = new InvalidatorCollection();
     }
 
@@ -61,7 +52,7 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
         $this->getListener()->onKernelTerminate($event);
     }
 
-    public function AAAtestOnKernelTerminate()
+    public function testOnKernelTerminate()
     {
         $cacheManager = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager');
         $cacheManager->shouldReceive('invalidatePath')->with('/retrieve/something/123')

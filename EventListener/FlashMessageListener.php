@@ -2,11 +2,11 @@
 
 namespace FOS\HttpCacheBundle\EventListener;
 
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent,
-    Symfony\Component\HttpFoundation\Session,
-    Symfony\Component\HttpFoundation\Cookie,
-    Symfony\Component\HttpFoundation\ResponseHeaderBag,
-    Symfony\Component\HttpKernel\HttpKernel;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\HttpKernel;
 
 /**
  * This listener reads all flash messages and moves them into a cookie.
@@ -40,7 +40,7 @@ class FlashMessageListener
    /**
     * Moves flash messages from the session to a cookie inside a Response Kernel listener
     *
-    * @param EventInterface $event
+    * @param FilterResponseEvent $event
     */
     public function onKernelResponse(FilterResponseEvent $event)
     {

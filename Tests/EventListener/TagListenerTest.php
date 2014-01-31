@@ -21,10 +21,7 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
         $this->cacheManager = \Mockery::mock(
             '\FOS\HttpCacheBundle\CacheManager',
             array(
-                \Mockery::mock(
-                    '\FOS\HttpCacheBundle\Invalidation\CacheProxyInterface,'
-                    . '\FOS\HttpCacheBundle\Invalidation\Method\BanInterface'
-                ),
+                \Mockery::mock('\FOS\HttpCache\Invalidation\Method\BanInterface'),
                 \Mockery::mock('\Symfony\Component\Routing\RouterInterface')
             )
         )->shouldDeferMissing();
