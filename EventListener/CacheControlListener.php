@@ -34,9 +34,9 @@ class CacheControlListener
      */
     protected $supportedHeaders = array(
         'etag' => true,
-        'last-modified' => true,
-        'max-age' => true,
-        's-maxage' => true,
+        'last_modified' => true,
+        'max_age' => true,
+        's_maxage' => true,
         'private' => true,
         'public' => true,
     );
@@ -115,22 +115,22 @@ class CacheControlListener
      */
     protected function setExtraControls(Response $response, array $controls)
     {
-        $flags = array('must-revalidate', 'proxy-revalidate', 'no-transform');
-        $options = array('stale-if-error', 'stale-while-revalidate');
+        $flags = array('must_revalidate', 'proxy_revalidate', 'no_transform');
+        $options = array('stale_if_error', 'stale_while_revalidate');
 
         foreach ($flags as $flag) {
             if (!empty($controls[$flag])) {
-                $response->headers->addCacheControlDirective($flag);
+                $response->headers->addCacheControlDirective(str_replace('_', '-', $flag));
             }
         }
 
         foreach ($options as $option) {
             if (!empty($controls[$option])) {
-                $response->headers->addCacheControlDirective($option, $controls[$option]);
+                $response->headers->addCacheControlDirective(str_replace('_', '-', $option), $controls[$option]);
             }
         }
 
-        if (!empty($controls['no-cache'])) {
+        if (!empty($controls['no_cache'])) {
             $response->headers->remove('Cache-Control');
             $response->headers->set('Cache-Control','no-cache', true);
         }
@@ -168,9 +168,9 @@ class CacheControlListener
      */
     protected function prepareControls(array $controls)
     {
-        if (isset($controls['last-modified'])) {
+        if (isset($controls['last_modified'])) {
             // this must be a DateTime, convert from the string in configuration
-            $controls['last-modified'] = new \DateTime($controls['last-modified']);
+            $controls['last_modified'] = new \DateTime($controls['last_modified']);
         }
 
         return $controls;

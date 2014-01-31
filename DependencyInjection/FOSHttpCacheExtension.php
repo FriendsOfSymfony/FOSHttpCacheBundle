@@ -37,7 +37,7 @@ class FOSHttpCacheExtension extends Extension
                     $container,
                     $cache['path'],
                     $cache['host'],
-                    $cache['method'],
+                    $cache['methods'],
                     $cache['ips'],
                     $cache['attributes']
                 );
@@ -45,16 +45,10 @@ class FOSHttpCacheExtension extends Extension
                 unset(
                     $cache['path'],
                     $cache['host'],
-                    $cache['method'],
+                    $cache['methods'],
                     $cache['ips'],
                     $cache['attributes']
                 );
-                if (isset($cache['controls'])) {
-                    foreach ($cache['controls'] as $key => $value) {
-                        unset($cache['controls'][$key]);
-                        $cache['controls'][str_replace('_', '-', $key)] = $value;
-                    }
-                }
 
                 $container->getDefinition($this->getAlias().'.response_listener')
                           ->addMethodCall('add', array($matcher, $cache));

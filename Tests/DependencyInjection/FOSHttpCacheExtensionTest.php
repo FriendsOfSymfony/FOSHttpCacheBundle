@@ -6,10 +6,10 @@ use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use \Mockery;
 
-class FOSHttpCacheExtentionTest extends \PHPUnit_Framework_TestCase
+class FOSHttpCacheExtenstionTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var DriebitHttpCacheExtension
+     * @var FOSHttpCacheExtension
      */
     protected $extension;
 
@@ -50,6 +50,62 @@ class FOSHttpCacheExtentionTest extends \PHPUnit_Framework_TestCase
         $this->extension->load(array($config), $container);
     }
 
+    public function testConfigLoadRules()
+    {
+        $config = array(
+            array('rules' => array(
+                array(
+                    'path' => '^/$',
+                    'host' => 'fos.lo',
+                    'methods' => array('GET', 'HEAD'),
+                    'ips' => array('1.1.1.1', '2.2.2.2'),
+                    'attributes' => array(
+                        '_controller' => '^AcmeBundle:Default:index$',
+                    ),
+                    'unless_role' => 'ROLE_NO_CACHE',
+                    'controls' => array('etag' => '42'),
+                    'reverse_proxy_ttl' => 42,
+                    'vary' => array('Cookie', 'Accept-Language')
+                )
+            ))
+        );
+
+        $container = new ContainerBuilder();
+        $this->extension->load($config, $container);
+    }
+
+    public function testConfigLoadRulesSplit()
+    {
+        $config = array(
+            array('rules' => array(
+                array(
+                    'methods' => 'GET,HEAD',
+                    'ips' => '1.1.1.1,2.2.2.2',
+                    'attributes' => array(
+                        '_controller' => '^AcmeBundle:Default:index$',
+                    ),
+                    'vary' => 'Cookie, Accept-Language',
+                )
+            ))
+        );
+
+        $container = new ContainerBuilder();
+        $this->extension->load($config, $container);
+    }
+
+    public function testConfigLoadRulesDefaults()
+    {
+        $config = array(
+            array('rules' => array(
+                array(
+                )
+            ))
+        );
+
+        $container = new ContainerBuilder();
+        $this->extension->load($config, $container);
+    }
+
     protected function getBaseConfig()
     {
         return array(
@@ -62,4 +118,4 @@ class FOSHttpCacheExtentionTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-} 
+}

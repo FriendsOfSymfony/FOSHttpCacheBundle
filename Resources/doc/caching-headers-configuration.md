@@ -58,9 +58,9 @@ page, use ``path: ^/$``.
 `host` is a regular expression to limit the caching rules to specific hosts,
 when you serve more than one host from this symfony application.
 
-# method
+# methods
 
-`method` can be used to limit caching rules to specific type of requests like
+`methods` can be used to limit caching rules to specific HTTP methods like
 GET requests.
 
 # ips
@@ -162,7 +162,8 @@ Extra headers
 # Vary
 
 You can set the `vary` option to an array to have the listener add a `Vary`
-header if the rule matches.
+header if the rule matches. This will only add to existing Vary headers,
+not replace any previously set Vary options.
 
 # X-Reverse-Proxy-TTL for Custom Varnish Time-Outs
 

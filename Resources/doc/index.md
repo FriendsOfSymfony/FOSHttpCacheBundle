@@ -4,7 +4,7 @@ FOSHttpCacheBundle
 This is the documentation for the FOSHttpCacheBundle. It covers:
 
 1. [Installation](installation.md) of the bundle
-2. [Configuring caching headers](headers.md) which also works without a caching proxy.
+2. [Configuring caching headers](caching-headers-configuration.md) which also works without a caching proxy.
 3. Cache invalidation
    1. [The Cache Manager Service](cache-manager.md)
    2. [Cache Tagging](tagging.md)

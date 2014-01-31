@@ -132,7 +132,8 @@ Flushing
 Internally, the invalidation requests are queued and only sent out to your HTTP
 proxy when the manager is flushed. During HTTP requests, the manager is flushed
 automatically. If you want to invalidate objects outside request context, for
-instance from the command-line, you need to flush the cache manager manually:
+instance from the command-line, you need to flush the cache manager manually
+(until https://github.com/ddeboer/FOSHttpCacheBundle/issues/32 is done):
 
 ```php
 $cacheManager

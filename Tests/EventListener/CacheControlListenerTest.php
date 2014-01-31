@@ -25,7 +25,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         $request = new Request();
         $event = new FilterResponseEvent($kernel, $request, 'GET', $response);
         $headers = array( 'controls' => array(
-            'etag' => '1337',
+            'etag' => '1337eax',
             'last_modified' => '13.07.2003',
             'max_age' => '900',
             's_maxage' => '300',
@@ -41,6 +41,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('max-age=900, public, s-maxage=300', $newHeaders['cache-control'][0]);
         $this->assertEquals(strtotime('13.07.2003'), strtotime($newHeaders['last-modified'][0]));
+        $this->assertEquals('"1337eax"', $newHeaders['etag'][0]);
     }
 
     public function testExtraHeaders()
@@ -141,14 +142,15 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         $extension = new FOSHttpCacheExtension();
         $container = new ContainerBuilder();
 
-        // Load configuration
         $extension->load(array(
-            array('rules' =>
+            array('rules' => array(
                 array(
-                    array('controller' => '^AcmeBundle:Default:index$', 'controls' => array())
+                    'attributes' => array(
+                        '_controller' => '^AcmeBundle:Default:index$',
+                    ),
                 )
             )
-        ), $container);
+        )), $container);
 
         // Extract the corresponding definition
         $matcherDefinition = null;
@@ -156,6 +158,9 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
             if ($definition instanceof DefinitionDecorator &&
                 $definition->getParent() === 'fos_http_cache.request_matcher'
             ) {
+                if ($matcherDefinition) {
+                    $this->fail('More then one request matcher was created');
+                }
                 $matcherDefinition = $definition;
             }
         }
