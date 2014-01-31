@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * listen to HEAD requests, return response after security, but before Controller is invoked
  *
- * @author Stefan Paschke stefan.paschke@gmail.com
+ * @author Stefan Paschke <stefan.paschke@gmail.com>
  */
 class CacheAuthorizationListener
 {

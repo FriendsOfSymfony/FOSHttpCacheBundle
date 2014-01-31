@@ -106,6 +106,44 @@ class FOSHttpCacheExtenstionTest extends \PHPUnit_Framework_TestCase
         $this->extension->load($config, $container);
     }
 
+    public function testConfigLoadAuthorizationListener()
+    {
+        $config = array(
+            array('authorization_listener' => true,
+            ),
+        );
+
+        $container = new ContainerBuilder();
+        $this->extension->load($config, $container);
+    }
+
+    public function testConfigLoadFlashMessageListener()
+    {
+        $config = array(
+            array('flash_message_listener' => array(
+                'name' => 'myflashes',
+                'path' => '/test',
+                'host' => '*.fos.lo',
+                'secure' => true,
+                'httpOnly' => false,
+            )),
+        );
+
+        $container = new ContainerBuilder();
+        $this->extension->load($config, $container);
+    }
+
+    public function testConfigLoadFlashMessageListenerDefaults()
+    {
+        $config = array(
+            array('flash_message_listener' => true,
+            ),
+        );
+
+        $container = new ContainerBuilder();
+        $this->extension->load($config, $container);
+    }
+
     protected function getBaseConfig()
     {
         return array(

@@ -6,7 +6,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\SecurityContextInterface;
 
 /**
  * Set caching settings on the response according to the configurations.
@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\SecurityContext;
 class CacheControlListener
 {
     /**
-     * @var SecurityContext
+     * @var SecurityContextInterface
      */
     protected $securityContext;
 
@@ -52,10 +52,10 @@ class CacheControlListener
     /**
      * Constructor.
      *
-     * @param SecurityContext $securityContext Used to handle unless_role criteria. (optional)
+     * @param SecurityContextInterface $securityContext Used to handle unless_role criteria. (optional)
      * @param Boolean         $debug           Whether to output debug headers
      */
-    public function __construct(SecurityContext $securityContext = null, $debug = false)
+    public function __construct(SecurityContextInterface $securityContext = null, $debug = false)
     {
         $this->securityContext = $securityContext;
         $this->debug = $debug;
@@ -76,7 +76,7 @@ class CacheControlListener
     public function onKernelResponse(FilterResponseEvent $event)
     {
         $options = $this->getOptions($event->getRequest());
-        if ($options) {
+        if (false !== $options) {
             $response = $event->getResponse();
             if (!empty($options['controls'])) {
                 $controls = array_intersect_key($options['controls'], $this->supportedHeaders);
@@ -140,6 +140,7 @@ class CacheControlListener
      * Return the cache options for the current request
      *
      * @param Request $request
+     *
      * @return array of settings
      */
     protected function getOptions(Request $request)
@@ -152,12 +153,12 @@ class CacheControlListener
                 continue;
             }
 
-            if (null === $elements[0] || $elements[0]->matches($request)) {
+            if ($elements[0]->matches($request)) {
                 return $elements[1];
             }
         }
 
-        return array();
+        return false;
     }
 
     /**
