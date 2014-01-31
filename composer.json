@@ -34,9 +34,10 @@
     "require-dev": {
         "guzzle/http": "*",
         "guzzle/plugin-mock": "*",
-        "mockery/mockery": "*",
+        "mockery/mockery": "0.8.*",
         "monolog/monolog": "*",
         "sensio/framework-extra-bundle": "~2.3",
+        "symfony/security": "~2.3",
         "symfony/expression-language": "~2.4"
     },
     "suggest": {
