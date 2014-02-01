@@ -39,7 +39,7 @@ fos_http_cache:
 
 * **host**: This must match the web host clients are using when connecting to varnish.
   You will not notice if this is mistyped, but cache invalidation will never happen.
-* **ips**: List of IP adresses of your varnish servers. Comma separated.
+* **ips**: List of IP addresses of your varnish servers. Comma separated.
 * **port**: The port varnish is listening on for incoming web connections.
 
 **TODO: MOVE** When using ESI, you will want to purge individual fragments. To generate the
