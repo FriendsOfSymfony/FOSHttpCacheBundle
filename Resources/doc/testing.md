@@ -2,7 +2,7 @@ Testing
 =======
 
 * [Unit tests](#unit-tests)
-* [Funtional tests](#functional-tests)
+* [Functional tests](#functional-tests)
 
 Unit tests
 ----------

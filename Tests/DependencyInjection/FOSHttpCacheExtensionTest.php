@@ -6,7 +6,7 @@ use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use \Mockery;
 
-class FOSHttpCacheExtenstionTest extends \PHPUnit_Framework_TestCase
+class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var FOSHttpCacheExtension
@@ -18,7 +18,7 @@ class FOSHttpCacheExtenstionTest extends \PHPUnit_Framework_TestCase
         $this->extension = new FOSHttpCacheExtension();
     }
 
-    public function testConfigLoadVanish()
+    public function testConfigLoadVarnish()
     {
         $container = new ContainerBuilder();
         $this->extension->load(array($this->getBaseConfig()), $container);

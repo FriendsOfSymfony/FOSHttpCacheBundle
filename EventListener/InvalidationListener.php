@@ -49,6 +49,7 @@ class InvalidationListener implements EventSubscriberInterface
      * @param CacheManager          $cacheManager
      * @param InvalidatorCollection $invalidators
      * @param RouterInterface       $router
+     * @param ExpressionLanguage    $expressionLanguage
      */
     public function __construct(
         CacheManager $cacheManager,
