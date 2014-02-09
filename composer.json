@@ -47,7 +47,8 @@
     },
     "minimum-stability": "dev",
     "autoload": {
-        "psr-0": { "FOS\\HttpCacheBundle": "" }
-    },
-    "target-dir": "FOS/HttpCacheBundle"
+        "psr-4": {
+            "FOS\\HttpCacheBundle\\": ""
+        }
+    }
 }
