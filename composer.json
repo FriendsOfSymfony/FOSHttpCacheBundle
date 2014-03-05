@@ -20,12 +20,6 @@
             "homepage": "https://github.com/friendsofsymfony/FOSHttpCacheBundle/contributors"
         }
     ],
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/ddeboer/FOSHttpCache"
-        }
-    ],
     "require": {
         "php": ">=5.3.3",
         "friendsofsymfony/http-cache": "1.0.*@dev",
