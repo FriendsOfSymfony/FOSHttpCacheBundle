@@ -2,25 +2,17 @@
 
 namespace FOS\HttpCacheBundle\Tests\EventListener;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use FOS\HttpCache\Invalidation\Method\BanInterface;
-use FOS\HttpCache\Invalidation\Method\PurgeInterface;
-use FOS\HttpCacheBundle\Configuration\Invalidate;
 use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use FOS\HttpCacheBundle\EventListener\InvalidationListener;
 use FOS\HttpCacheBundle\Invalidator\Invalidator;
 use FOS\HttpCacheBundle\Invalidator\InvalidatorCollection;
-use FOS\HttpCacheBundle\Tests\EventListener\Fixture\FooControllerTagAtMethod;
-use Sensio\Bundle\FrameworkExtraBundle\EventListener\ControllerListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
-use \Mockery;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use \Mockery;
 
 class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -131,6 +123,13 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('flush')->once();
 
         $this->getListener()->onKernelTerminate($event);
+    }
+
+    public function testOnTerminate()
+    {
+        $this->cacheManager->shouldReceive('flush')->once();
+
+        $this->getListener()->onTerminate();
     }
 
     protected function getEvent(Request $request, Response $response = null)

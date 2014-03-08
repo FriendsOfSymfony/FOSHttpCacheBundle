@@ -6,10 +6,13 @@ use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use FOS\HttpCacheBundle\Invalidator\InvalidatorCollection;
+use Symfony\Component\Console\ConsoleEvents;
+use Symfony\Component\Console\Event\ConsoleEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Symfony\Component\Routing\RouterInterface;
@@ -125,11 +128,24 @@ class InvalidationListener implements EventSubscriberInterface
     }
 
     /**
+     * Flush cache manager on console termination and exception
+     */
+    public function onTerminate()
+    {
+        $this->cacheManager->flush();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
-        return array(KernelEvents::TERMINATE => 'onKernelTerminate');
+        return array(
+            KernelEvents::TERMINATE  => 'onKernelTerminate',
+            KernelEvents::EXCEPTION  => 'onTerminate',
+            ConsoleEvents::TERMINATE => 'onTerminate',
+            ConsoleEvents::EXCEPTION => 'onTerminate'
+        );
     }
 
     /**
