@@ -93,7 +93,7 @@ If you prefer, you can combine your tags in one annotation:
 ### Expressions
 
 You can also use [expressions](http://symfony.com/doc/current/components/expression_language/index.html)
-in tags. Expressions have a dependency on the Symfony’s ExpressionLanguage
+in tags. Expressions have a dependency on Symfony’s ExpressionLanguage
 component, so make sure to include that in your project:
 
 ```bash
