@@ -5,6 +5,8 @@ Tagged Cache Invalidation
 * [Configuration](#configuration)
 * [Tagging with the Cache Manager](#tagging-with-the-cache-manager)
 * [Tagging with Annotations](#tagging-with-annotations)
+  * [Expressions](#expressions)
+  * [Invalidate Tags](#invalidate-tags) 
 
 Introduction
 ------------
@@ -88,17 +90,17 @@ If you prefer, you can combine your tags in one annotation:
      */
 ```
 
-You can also use [expressions](http://symfony.com/doc/current/components/expression_language/index.html)
-in tags.
+### Expressions
 
-**Note:** expressions have a dependency on the Symfony’s ExpressionLanguage
+You can also use [expressions](http://symfony.com/doc/current/components/expression_language/index.html)
+in tags. Expressions have a dependency on the Symfony’s ExpressionLanguage
 component, so make sure to include that in your project:
 
 ```bash
 $ composer require symfony/expression-language
 ```
 
-This will set tag `post-123` on the response:
+The annotation below will set tag `post-123` on the response:
 
 ```php
     /**
