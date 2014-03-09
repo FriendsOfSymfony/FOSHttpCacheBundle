@@ -1,6 +1,11 @@
 Tagged Cache Invalidation
 =========================
 
+* [Introduction](#introduction)
+* [Configuration](#configuration)
+* [Tagging with the Cache Manager](#tagging-with-the-cache-manager)
+* [Tagging with Annotations](#tagging-with-annotations)
+
 Introduction
 ------------
 
@@ -14,24 +19,24 @@ is a simpler version of [Linked Cache Invalidation](http://tools.ietf.org/html/d
 
 Tagged Cache Invalidation allows you to:
 * assign tags to your applications’s responses (e.g., `articles`, `article-42`)
-* invalidate the responses by tag (e.g., invalidate all responses that are tagged
+* [invalidate the responses by tag](https://github.com/FriendsOfSymfony/FOSHttpCache/blob/master/doc/cache-invalidator.md#tags) (e.g., invalidate all responses that are tagged
   `article-42`)
 
-Caching Proxy Configuration
----------------------------
+Configuration
+-------------
 
-You need to configure your caching proxy to support cache tagging. For Varnish,
-you can find an example configuration in the [Varnish chapter of the FOSHttpCache library]
-(https://github.com/ddeboer/FOSHttpCache/blob/master/doc/varnish.md#tagging).
+You need to configure your caching proxy to support cache tagging. See the FOSHttpCache
+documentation’s [Varnish Configuration chapter](https://github.com/FriendsOfSymfony/FOSHttpCache/blob/master/doc/varnish-configuration.md#tagging)
+for more details.
 
-Tagging Using the Cache Manager
+Tagging with the Cache Manager
+------------------------------
+
+See the [Cache Manager chapter](cache-manager.md#tags) for more information on how
+to manually set and invalidate tags.
+
+Tagging with Annotations
 ------------------------
-
-You can use the [Cache Manager](cache-manager.md#tags) to manually set and
-invalidate tags.
-
-Tagging Using Annotations
--------------------------
 
 You can make this bundle tag your response automatically using the `@Tag`
 annotation. GET operations will lead to the response being tagged, modifying
