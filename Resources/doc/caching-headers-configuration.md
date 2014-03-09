@@ -113,6 +113,7 @@ fos_http_cache:
                 max_age: 64000
                 s_maxage: 64000
                 last_modified: "-1 hour"
+```
 
 If you set `no_cache`, the header will simply be `Cache-Control: no-cache`
 regardless of any options you might have configured or set previously in the
