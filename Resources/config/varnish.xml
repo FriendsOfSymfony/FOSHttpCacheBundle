@@ -6,9 +6,9 @@
 
     <services>
         <service id="fos_http_cache.varnish"
-                 class="FOS\HttpCacheBundle\HttpCache\Varnish">
-            <argument>%fos_http_cache.http_cache.varnish.ips%</argument>
-            <argument>%fos_http_cache.http_cache.varnish.host%</argument>
+                 class="FOS\HttpCache\Invalidation\Varnish">
+            <argument>%fos_http_cache.varnish.ips%</argument>
+            <argument>%fos_http_cache.varnish.host%</argument>
             <call method="setLogger">
                 <argument id="logger" type="service" on-invalid="null" />
             </call>
