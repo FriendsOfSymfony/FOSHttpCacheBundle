@@ -1,0 +1,3 @@
+test:
+  pattern:   /test
+  defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::testAction }

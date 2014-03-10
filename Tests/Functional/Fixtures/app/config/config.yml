@@ -1,0 +1,9 @@
+framework:
+  secret: fos
+  router:
+    resource: "%kernel.root_dir%/config/routing.yml"
+  test: ~
+
+fos_http_cache:
+  varnish:
+    ips: 192.168.0.1
