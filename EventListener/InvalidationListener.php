@@ -12,7 +12,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Symfony\Component\Routing\RouterInterface;
@@ -128,11 +127,23 @@ class InvalidationListener implements EventSubscriberInterface
     }
 
     /**
-     * Flush cache manager on console termination and exception
+     * Flush cache manager when kernel exception occurs
      */
-    public function onTerminate()
+    public function onKernelException()
     {
         $this->cacheManager->flush();
+    }
+
+    /**
+     * Flush cache manager when console terminates or errors
+     */
+    public function onConsoleTerminate(ConsoleEvent $event)
+    {
+        $num = $this->cacheManager->flush();
+
+        if ($num > 0 && $event->getInput()->getOption('verbose')) {
+            $event->getOutput()->writeln(sprintf('Sent %d invalidation requests', $num));
+        }
     }
 
     /**
@@ -142,9 +153,9 @@ class InvalidationListener implements EventSubscriberInterface
     {
         return array(
             KernelEvents::TERMINATE  => 'onKernelTerminate',
-            KernelEvents::EXCEPTION  => 'onTerminate',
-            ConsoleEvents::TERMINATE => 'onTerminate',
-            ConsoleEvents::EXCEPTION => 'onTerminate'
+            KernelEvents::EXCEPTION  => 'onKernelException',
+            ConsoleEvents::TERMINATE => 'onConsoleTerminate',
+            ConsoleEvents::EXCEPTION => 'onConsoleTerminate'
         );
     }
 

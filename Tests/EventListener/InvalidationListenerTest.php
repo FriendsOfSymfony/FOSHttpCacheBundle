@@ -125,11 +125,15 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
         $this->getListener()->onKernelTerminate($event);
     }
 
-    public function testOnTerminate()
+    public function testOnConsoleTerminate()
     {
-        $this->cacheManager->shouldReceive('flush')->once();
+        $this->cacheManager->shouldReceive('flush')->once()->andReturn(2);
 
-        $this->getListener()->onTerminate();
+        $event = \Mockery::mock('\Symfony\Component\Console\Event\ConsoleEvent');
+        $event->shouldReceive('getInput->getOption')->with('verbose')->andReturn(true);
+        $event->shouldReceive('getOutput->writeln')->with('Sent 2 invalidation requests')->once();
+
+        $this->getListener()->onConsoleTerminate($event);
     }
 
     protected function getEvent(Request $request, Response $response = null)
