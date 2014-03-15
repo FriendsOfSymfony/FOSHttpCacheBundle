@@ -12,6 +12,7 @@ class AppKernel extends Kernel
     {
         return array(
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new \Symfony\Bundle\MonologBundle\MonologBundle(),
             new \FOS\HttpCacheBundle\FOSHttpCacheBundle(),
         );
@@ -30,7 +31,7 @@ class AppKernel extends Kernel
      */
     public function getCacheDir()
     {
-        return sys_get_temp_dir().'/fos/cache';
+        return sys_get_temp_dir().'/fos-http-cache-bundle/cache';
     }
 
     /**
@@ -38,6 +39,14 @@ class AppKernel extends Kernel
      */
     public function getLogDir()
     {
-        return sys_get_temp_dir().'/fos/logs';
+        return sys_get_temp_dir().'/fos-http-cache-bundle/logs';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getContainerBaseClass()
+    {
+        return '\PSS\SymfonyMockerContainer\DependencyInjection\MockerContainer';
     }
 }
