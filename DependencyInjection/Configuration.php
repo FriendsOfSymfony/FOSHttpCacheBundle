@@ -30,6 +30,7 @@ class Configuration implements ConfigurationInterface
 
         $this->addRulesSection($rootNode);
         $this->addVarnishSection($rootNode);
+        $this->addTagListenerSection($rootNode);
         $this->addFlashMessageListenerSection($rootNode);
         $this->addInvalidatorsSection($rootNode);
 
@@ -111,6 +112,25 @@ class Configuration implements ConfigurationInterface
                             ->info('IP addresses your varnish caches are listening on.')
                         ->end()
                         ->scalarNode('host')->defaultNull()->info('Default host name')->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    private function addTagListenerSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('tag_listener')
+                    ->addDefaultsIfNotSet()
+                    ->treatFalseLike(array('enabled' => false))
+                    ->treatTrueLike(array('enabled' => true))
+                    ->treatNullLike(array('enabled' => true))
+                    ->children()
+                        ->scalarNode('enabled')
+                            ->defaultTrue()
+                            ->info('Whether to enable the listener. True by default.')
+                        ->end()
                     ->end()
                 ->end()
             ->end();

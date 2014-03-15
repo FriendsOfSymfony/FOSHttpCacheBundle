@@ -65,6 +65,14 @@ class FOSHttpCacheExtension extends Extension
             $loader->load('authorization_request_listener.xml');
         }
 
+        if ($config['tag_listener']['enabled']) {
+            if (!class_exists('\Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
+                throw new \RuntimeException('The TagListener requires symfony/expression-language');
+            }
+
+            $loader->load('tag_listener.xml');
+        }
+
         if (!empty($config['flash_message_listener']) && $config['flash_message_listener']['enabled']) {
             $loader->load('flash_message_listener.xml');
 
