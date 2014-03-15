@@ -130,20 +130,12 @@ Flushing
 --------
 
 Internally, the invalidation requests are queued and only sent out to your HTTP
-proxy when the manager is flushed. During HTTP requests, the manager is flushed
-automatically. If you want to invalidate objects outside request context, for
-instance from the command-line, you need to flush the cache manager manually
-(until https://github.com/ddeboer/FOSHttpCacheBundle/issues/32 is done):
+proxy when the manager is flushed. The manager is flushed automatically at the
+right moment:
 
-```php
-$cacheManager
-    ->invalidateRoute(...)
-    ->invalidatePath(...)
-    ->flush();
-```
+* when handling a HTTP request, after the response has been sent to the client
+  (Symfony’s [kernel.terminate event](http://symfony.com/doc/current/components/http_kernel/introduction.html#the-kernel-terminate-event))
+* when running a console command, after the command has finished (Symfony’s
+  [console.terminate event](http://symfony.com/doc/current/components/console/events.html#the-consoleevents-terminate-event)).
 
-The performance impact of sending invalidation requests is kept to a minimum by:
-
-* flushing the cache manager only after the response by your controller has been sent to the client’s browser
-(during Symfony’s [kernel.terminate event](http://symfony.com/doc/current/components/http_kernel/introduction.html#the-kernel-terminate-event)).
-* sending all invalidation requests in parallel.
+You can also [flush the cache manager manually](https://github.com/FriendsOfSymfony/FOSHttpCache/blob/master/doc/cache-invalidator.md#flushing).
