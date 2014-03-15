@@ -4,11 +4,14 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <services>
+    <parameters>
+        <parameter key="fos_http_cache.event_listener.cache_authorization.class">FOS\HttpCacheBundle\EventListener\CacheAuthorizationListener</parameter>
+    </parameters>
 
-        <service id="fos_http_cache.cache_authorization_listener" class="FOS\HttpCacheBundle\EventListener\CacheAuthorizationListener">
+    <services>
+        <service id="fos_http_cache.event_listener.cache_authorization"
+                 class="%fos_http_cache.event_listener.cache_authorization.class%">
             <tag name="kernel.event_listener" event="kernel.request" method="onKernelRequest" priority="-129" />
         </service>
-
     </services>
 </container>

@@ -4,9 +4,13 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
+    <parameters>
+        <parameter key="fos_http_cache.event_listener.tag.class">FOS\HttpCacheBundle\EventListener\TagListener</parameter>
+    </parameters>
+
     <services>
-        <service id="fos_http_cache.tag_listener"
-                 class="FOS\HttpCacheBundle\EventListener\TagListener">
+        <service id="fos_http_cache.event_listener.tag"
+                 class="%fos_http_cache.event_listener.tag.class%">
             <argument type="service" id="fos_http_cache.cache_manager" />
             <tag name="kernel.event_subscriber" event="kernel.response" />
         </service>
