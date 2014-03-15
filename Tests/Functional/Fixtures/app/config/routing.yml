@@ -1,0 +1,13 @@
+test_list:
+  pattern:   /test/list
+  defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::listAction }
+  methods:  [GET]
+
+test_error:
+  pattern:   /test/error
+  defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::errorAction }
+
+test_one:
+  pattern:   /test/{id}
+  defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::itemAction }
+  methods:  [GET,POST]

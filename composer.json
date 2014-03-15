@@ -31,9 +31,11 @@
         "mockery/mockery": "0.8.*",
         "monolog/monolog": "*",
         "sensio/framework-extra-bundle": "~2.3",
-        "symfony/console": "~2.3",
+        "symfony/symfony": "~2.3",
         "symfony/security": "~2.3",
-        "symfony/expression-language": "~2.4"
+        "symfony/expression-language": "~2.4",
+        "symfony/monolog-bundle": "~2.3",
+        "polishsymfonycommunity/symfony-mocker-container": "~1.0"
     },
     "suggest": {
         "guzzle/http": "For sending invalidation requests",

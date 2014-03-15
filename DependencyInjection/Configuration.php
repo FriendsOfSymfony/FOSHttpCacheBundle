@@ -30,6 +30,7 @@ class Configuration implements ConfigurationInterface
 
         $this->addRulesSection($rootNode);
         $this->addVarnishSection($rootNode);
+        $this->addTagListenerSection($rootNode);
         $this->addFlashMessageListenerSection($rootNode);
         $this->addInvalidatorsSection($rootNode);
 
@@ -116,20 +117,24 @@ class Configuration implements ConfigurationInterface
             ->end();
     }
 
+    private function addTagListenerSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('tag_listener')
+                    ->canBeDisabled()
+                ->end()
+            ->end();
+    }
+
     private function addFlashMessageListenerSection(ArrayNodeDefinition $rootNode)
     {
         $rootNode
             ->children()
                 ->arrayNode('flash_message_listener')
                     ->canBeUnset()
-                    ->treatFalseLike(array('enabled' => false))
-                    ->treatTrueLike(array('enabled' => true))
-                    ->treatNullLike(array('enabled' => true))
+                    ->canBeEnabled()
                     ->children()
-                        ->scalarNode('enabled')
-                            ->defaultTrue()
-                            ->info('Whether to enable the listener. Automatically set if the flash_message_listener is configured.')
-                        ->end()
                         ->scalarNode('name')
                             ->defaultValue('flashes')
                             ->info('Name of the cookie to set for flashes.')

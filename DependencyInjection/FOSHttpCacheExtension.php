@@ -23,7 +23,7 @@ class FOSHttpCacheExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.xml');
+        $loader->load('cache_manager.xml');
 
         $container->setParameter($this->getAlias().'.debug', $config['debug']);
         $container->setParameter($this->getAlias().'.invalidators', $config['invalidators']);
@@ -56,9 +56,6 @@ class FOSHttpCacheExtension extends Extension
         }
 
         if (isset($config['varnish'])) {
-            if (!class_exists('\Guzzle\Http\Client')) {
-                throw new \RuntimeException('The Varnish component requires guzzle/http to be installed');
-            }
             $loader->load('varnish.xml');
             $container->setParameter($this->getAlias().'.varnish.ips', $config['varnish']['ips']);
             $container->setParameter($this->getAlias().'.varnish.host', $config['varnish']['host']);
@@ -66,6 +63,14 @@ class FOSHttpCacheExtension extends Extension
 
         if ($config['authorization_listener']) {
             $loader->load('authorization_request_listener.xml');
+        }
+
+        if ($config['tag_listener']['enabled']) {
+            if (!class_exists('\Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
+                throw new \RuntimeException('The TagListener requires symfony/expression-language');
+            }
+
+            $loader->load('tag_listener.xml');
         }
 
         if (!empty($config['flash_message_listener']) && $config['flash_message_listener']['enabled']) {

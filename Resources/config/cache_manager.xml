@@ -16,9 +16,19 @@
                  class="FOS\HttpCacheBundle\CacheManager">
             <argument type="service" id="fos_http_cache.http_cache" />
             <argument type="service" id="router" />
+            <call method="setEventDispatcher">
+                <argument id="event_dispatcher" type="service" on-invalid="ignore" />
+            </call>
         </service>
 
-        <service id="fos_http_cache.event_listener.invalidation" class="FOS\HttpCacheBundle\EventListener\InvalidationListener">
+        <service id="fos_http_cache.proxy.log_subscriber"
+                 class="FOS\HttpCache\EventListener\LogSubscriber"
+                 abstract="true">
+            <argument type="service" id="logger" />
+        </service>
+
+        <service id="fos_http_cache.event_listener.invalidation"
+                 class="FOS\HttpCacheBundle\EventListener\InvalidationListener">
             <argument type="service" id="fos_http_cache.cache_manager" />
             <argument type="service" id="fos_http_cache.invalidator.collection" />
             <argument type="service" id="router" />
