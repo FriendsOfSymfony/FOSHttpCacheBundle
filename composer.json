@@ -26,8 +26,6 @@
         "symfony/framework-bundle": "~2.3"
     },
     "require-dev": {
-        "guzzle/http": "*",
-        "guzzle/plugin-mock": "*",
         "mockery/mockery": "0.9.*",
         "monolog/monolog": "*",
         "sensio/framework-extra-bundle": "~2.3",
@@ -38,9 +36,9 @@
         "polishsymfonycommunity/symfony-mocker-container": "~1.0"
     },
     "suggest": {
-        "guzzle/http": "For sending invalidation requests",
         "sensio/framework-extra-bundle": "For Tagged Cache Invalidation",
-        "symfony/expression-language": "For Tagged Cache Invalidation"
+        "symfony/expression-language": "For Tagged Cache Invalidation",
+        "symfony/console": "To send invalidation requests from the command line"
     },
     "autoload": {
         "psr-4": {

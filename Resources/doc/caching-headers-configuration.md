@@ -1,4 +1,4 @@
-Caching headers
+Caching Headers
 ===============
 
 This bundle allows to configure `Cache-Control` and a couple of related headers

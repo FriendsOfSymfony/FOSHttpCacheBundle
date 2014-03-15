@@ -1,4 +1,4 @@
-Cache authorization listener
+Cache Authorization Listener
 ============================
 
 This listener makes it possible to stop a request with a 200 "OK" for HEAD

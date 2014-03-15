@@ -8,6 +8,7 @@ use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use FOS\HttpCacheBundle\Invalidator\InvalidatorCollection;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleEvent;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -141,8 +142,8 @@ class InvalidationListener implements EventSubscriberInterface
     {
         $num = $this->cacheManager->flush();
 
-        if ($num > 0 && $event->getInput()->getOption('verbose')) {
-            $event->getOutput()->writeln(sprintf('Sent %d invalidation requests', $num));
+        if ($num > 0 && OutputInterface::VERBOSITY_VERBOSE <= $event->getOutput()->getVerbosity()) {
+            $event->getOutput()->writeln(sprintf('Sent %d invalidation request(s)', $num));
         }
     }
 

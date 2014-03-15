@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * {@inheritdoc}
@@ -45,11 +46,11 @@ class FOSHttpCacheExtension extends Extension
                 );
 
                 unset(
-                    $cache['path'],
-                    $cache['host'],
-                    $cache['methods'],
-                    $cache['ips'],
-                    $cache['attributes']
+                $cache['path'],
+                $cache['host'],
+                $cache['methods'],
+                $cache['ips'],
+                $cache['attributes']
                 );
 
                 $container
@@ -88,6 +89,10 @@ class FOSHttpCacheExtension extends Extension
             $container->setParameter($this->getAlias().'.event_listener.flash_message.options', $config['flash_message_listener']);
 
             $loader->load('flash_message_listener.xml');
+        }
+
+        if (version_compare(Kernel::VERSION, '2.4.0', '>=')) {
+            $loader->load('commands.xml');
         }
     }
 
