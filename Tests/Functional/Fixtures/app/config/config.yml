@@ -6,7 +6,7 @@ framework:
 
 fos_http_cache:
   varnish:
-    ips: 127.0.0.1
+    servers: 127.0.0.1
 
 monolog:
   handlers:

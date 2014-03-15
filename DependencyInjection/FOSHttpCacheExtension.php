@@ -2,12 +2,13 @@
 
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader;
 
 /**
  * {@inheritdoc}
@@ -22,7 +23,7 @@ class FOSHttpCacheExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('cache_manager.xml');
 
         $container->setParameter($this->getAlias().'.debug', $config['debug']);
@@ -58,9 +59,7 @@ class FOSHttpCacheExtension extends Extension
         }
 
         if (isset($config['varnish'])) {
-            $loader->load('varnish.xml');
-            $container->setParameter($this->getAlias().'.varnish.ips', $config['varnish']['ips']);
-            $container->setParameter($this->getAlias().'.varnish.host', $config['varnish']['host']);
+            $this->loadVarnish($container, $loader, $config);
         }
 
         if ($config['authorization_listener']) {
@@ -97,5 +96,34 @@ class FOSHttpCacheExtension extends Extension
         }
 
         return new Reference($id);
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param $loader
+     * @param $config
+     */
+    protected function loadVarnish(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        $loader->load('varnish.xml');
+        foreach ($config['varnish']['servers'] as $url) {
+            $this->validateUrl($url, 'Not a valid varnish server address: "%s"');
+        }
+        if (!empty($config['varnish']['base_url'])) {
+            $this->validateUrl($config['varnish']['base_url'], 'Not a valid base path: "%s"');
+        }
+        $container->setParameter($this->getAlias() . '.varnish.servers', $config['varnish']['servers']);
+        $container->setParameter($this->getAlias() . '.varnish.base_url', $config['varnish']['base_url']);
+    }
+
+    private function validateUrl($url, $msg)
+    {
+        if (false === strpos($url, '://')) {
+            $url = sprintf('%s://%s', 'http', $url);
+        }
+
+        if (!$parts = parse_url($url)) {
+            throw new InvalidConfigurationException(sprintf($msg, $url));
+        }
     }
 }
