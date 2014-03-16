@@ -29,7 +29,7 @@ class FOSHttpCacheExtension extends Extension
         $container->setParameter($this->getAlias().'.invalidators', $config['invalidators']);
 
         if (!empty($config['rules'])) {
-            $loader->load('rule_response_listener.xml');
+            $loader->load('cache_control_listener.xml');
             foreach ($config['rules'] as $cache) {
                 $cache['ips'] = (empty($cache['ips'])) ? null : $cache['ips'];
 
@@ -50,8 +50,10 @@ class FOSHttpCacheExtension extends Extension
                     $cache['attributes']
                 );
 
-                $container->getDefinition($this->getAlias().'.response_listener')
-                          ->addMethodCall('add', array($matcher, $cache));
+                $container
+                    ->getDefinition($this->getAlias().'.event_listener.cache_control')
+                    ->addMethodCall('add', array($matcher, $cache))
+                ;
             }
         }
 
@@ -76,7 +78,7 @@ class FOSHttpCacheExtension extends Extension
         if (!empty($config['flash_message_listener']) && $config['flash_message_listener']['enabled']) {
             $loader->load('flash_message_listener.xml');
 
-            $container->setParameter($this->getAlias().'.flash_message_listener.options', $config['flash_message_listener']);
+            $container->setParameter($this->getAlias().'.event_listener.flash_message.options', $config['flash_message_listener']);
         }
     }
 

@@ -4,6 +4,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
+    <parameters>
+        <parameter key="fos_http_cache.cache_manager.class">FOS\HttpCacheBundle\CacheManager</parameter>
+        <parameter key="fos_http_cache.event_listener.log.class">FOS\HttpCache\EventListener\LogSubscriber</parameter>
+        <parameter key="fos_http_cache.event_listener.invalidation.class">FOS\HttpCacheBundle\EventListener\InvalidationListener</parameter>
+    </parameters>
+
     <services>
         <service id="fos_http_cache.invalidator.collection"
                  class="FOS\HttpCacheBundle\Invalidator\InvalidatorCollection"
@@ -13,7 +19,7 @@
         </service>
 
         <service id="fos_http_cache.cache_manager"
-                 class="FOS\HttpCacheBundle\CacheManager">
+                 class="%fos_http_cache.cache_manager.class%">
             <argument type="service" id="fos_http_cache.http_cache" />
             <argument type="service" id="router" />
             <call method="setEventDispatcher">
@@ -21,14 +27,14 @@
             </call>
         </service>
 
-        <service id="fos_http_cache.proxy.log_subscriber"
-                 class="FOS\HttpCache\EventListener\LogSubscriber"
+        <service id="fos_http_cache.event_listener.log"
+                 class="%fos_http_cache.event_listener.log.class%"
                  abstract="true">
             <argument type="service" id="logger" />
         </service>
 
         <service id="fos_http_cache.event_listener.invalidation"
-                 class="FOS\HttpCacheBundle\EventListener\InvalidationListener">
+                 class="%fos_http_cache.event_listener.invalidation.class%">
             <argument type="service" id="fos_http_cache.cache_manager" />
             <argument type="service" id="fos_http_cache.invalidator.collection" />
             <argument type="service" id="router" />
