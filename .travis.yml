@@ -11,7 +11,7 @@ env:
   - SYMFONY_VERSION=dev-master
 
 before_script:
-  - composer require --dev symfony/framework-bundle:${SYMFONY_VERSION} symfony/symfony:${SYMFONY_VERSION}
+  - composer require --dev symfony/symfony:${SYMFONY_VERSION}
 
 script: phpunit --coverage-clover=coverage.clover
 
