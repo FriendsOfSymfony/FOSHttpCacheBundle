@@ -46,11 +46,11 @@ class FOSHttpCacheExtension extends Extension
                 );
 
                 unset(
-                $cache['path'],
-                $cache['host'],
-                $cache['methods'],
-                $cache['ips'],
-                $cache['attributes']
+                    $cache['path'],
+                    $cache['host'],
+                    $cache['methods'],
+                    $cache['ips'],
+                    $cache['attributes']
                 );
 
                 $container

@@ -44,4 +44,9 @@ abstract class CommandTestCase extends WebTestCase
 
         return $output;
     }
+
+    protected function tearDown()
+    {
+        static::createClient()->getContainer()->unmock('fos_http_cache.cache_manager');
+    }
 }

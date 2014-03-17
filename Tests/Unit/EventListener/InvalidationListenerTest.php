@@ -7,6 +7,7 @@ use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use FOS\HttpCacheBundle\EventListener\InvalidationListener;
 use FOS\HttpCacheBundle\Invalidator\Invalidator;
 use FOS\HttpCacheBundle\Invalidator\InvalidatorCollection;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
@@ -129,9 +130,14 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->cacheManager->shouldReceive('flush')->once()->andReturn(2);
 
-        $event = \Mockery::mock('\Symfony\Component\Console\Event\ConsoleEvent');
-        $event->shouldReceive('getInput->getOption')->with('verbose')->andReturn(true);
-        $event->shouldReceive('getOutput->writeln')->with('Sent 2 invalidation requests')->once();
+        $output = \Mockery::mock('\Symfony\Component\Console\Output\OutputInterface')
+            ->shouldReceive('getVerbosity')->once()->andReturn(OutputInterface::VERBOSITY_VERBOSE)
+            ->shouldReceive('writeln')->with('Sent 2 invalidation request(s)')->once()
+            ->getMock();
+
+        $event = \Mockery::mock('\Symfony\Component\Console\Event\ConsoleEvent')
+            ->shouldReceive('getOutput')->andReturn($output)
+            ->getMock();
 
         $this->getListener()->onConsoleTerminate($event);
     }
