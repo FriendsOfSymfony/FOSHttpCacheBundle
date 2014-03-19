@@ -11,8 +11,8 @@
     <services>
         <service id="fos_http_cache.varnish"
                  class="%fos_http_cache.varnish.class%">
-            <argument>%fos_http_cache.varnish.ips%</argument>
-            <argument>%fos_http_cache.varnish.host%</argument>
+            <argument>%fos_http_cache.varnish.servers%</argument>
+            <argument>%fos_http_cache.varnish.base_url%</argument>
         </service>
 
         <service id="fos_http_cache.http_cache"

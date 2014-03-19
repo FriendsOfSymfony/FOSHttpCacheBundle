@@ -148,8 +148,8 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             'varnish' => array(
-                'host' => 'my_hostname',
-                'ips' => array(
+                'base_url' => 'my_hostname',
+                'servers' => array(
                     '127.0.0.1'
                 )
             )
