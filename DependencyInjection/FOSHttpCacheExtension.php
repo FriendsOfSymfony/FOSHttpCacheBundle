@@ -29,8 +29,11 @@ class FOSHttpCacheExtension extends Extension
         $container->setParameter($this->getAlias().'.debug', $config['debug']);
         $container->setParameter($this->getAlias().'.invalidators', $config['invalidators']);
 
-        if (!empty($config['rules'])) {
+        if (($config['debug']) || (!empty($config['rules']))) {
             $loader->load('cache_control_listener.xml');
+        }
+
+        if (!empty($config['rules'])) {
             foreach ($config['rules'] as $cache) {
                 $cache['ips'] = (empty($cache['ips'])) ? null : $cache['ips'];
 
