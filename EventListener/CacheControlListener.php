@@ -75,9 +75,14 @@ class CacheControlListener
     */
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        $response = $event->getResponse();
+
+        if ($this->debug) {
+            $response->headers->set('X-Cache-Debug', 1, false);
+        }
+
         $options = $this->getOptions($event->getRequest());
         if (false !== $options) {
-            $response = $event->getResponse();
             if (!empty($options['controls'])) {
                 $controls = array_intersect_key($options['controls'], $this->supportedHeaders);
                 $extraControls = array_diff_key($options['controls'], $controls);
@@ -91,10 +96,6 @@ class CacheControlListener
                 if (!empty($extraControls)) {
                     $this->setExtraControls($response, $extraControls);
                 }
-            }
-
-            if ($this->debug) {
-                $response->headers->set('X-Cache-Debug', 1, false);
             }
 
             if (isset($options['reverse_proxy_ttl']) && null !== $options['reverse_proxy_ttl']) {
