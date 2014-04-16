@@ -3,7 +3,7 @@
 namespace FOS\HttpCacheBundle;
 
 use FOS\HttpCache\CacheInvalidator;
-use FOS\HttpCache\Invalidation\CacheProxyInterface;
+use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -23,10 +23,10 @@ class CacheManager extends CacheInvalidator
     /**
      * Constructor
      *
-     * @param CacheProxyInterface $cache  HTTP cache
-     * @param RouterInterface     $router Symfony router
+     * @param ProxyClientInterface $cache  HTTP cache
+     * @param RouterInterface      $router Symfony router
      */
-    public function __construct(CacheProxyInterface $cache, RouterInterface $router)
+    public function __construct(ProxyClientInterface $cache, RouterInterface $router)
     {
         parent::__construct($cache);
         $this->router = $router;

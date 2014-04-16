@@ -28,7 +28,7 @@
     "require-dev": {
         "guzzle/http": "*",
         "guzzle/plugin-mock": "*",
-        "mockery/mockery": "0.8.*",
+        "mockery/mockery": "0.9.*",
         "monolog/monolog": "*",
         "sensio/framework-extra-bundle": "~2.3",
         "symfony/symfony": "~2.3",
@@ -42,7 +42,6 @@
         "sensio/framework-extra-bundle": "For Tagged Cache Invalidation",
         "symfony/expression-language": "For Tagged Cache Invalidation"
     },
-    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "FOS\\HttpCacheBundle\\": ""
