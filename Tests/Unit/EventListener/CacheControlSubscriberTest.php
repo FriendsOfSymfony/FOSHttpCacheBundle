@@ -3,7 +3,7 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
-use FOS\HttpCacheBundle\EventListener\CacheControlListener;
+use FOS\HttpCacheBundle\EventListener\CacheControlSubscriber;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,11 +11,11 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
-class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
+class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     public function testDefaultHeaders()
     {
-        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
+        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
             ->setMethods(array('getOptions'))
             ->getMock();
 
@@ -45,7 +45,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testExtraHeaders()
     {
-        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
+        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
             ->setMethods(array('getOptions'))
             ->getMock();
 
@@ -72,7 +72,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testCompoundHeaders()
     {
-        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
+        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
             ->setMethods(array('getOptions'))
             ->getMock();
 
@@ -105,7 +105,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testSetNoCacheHeaders()
     {
-        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
+        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
             ->setMethods(array('getOptions'))
             ->getMock();
 
@@ -139,7 +139,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testVary()
     {
-        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
+        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
             ->setMethods(array('getOptions'))
             ->getMock();
 
@@ -165,7 +165,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testReverseProxyTtl()
     {
-        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
+        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
             ->setMethods(array('getOptions'))
             ->getMock();
 
@@ -189,7 +189,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testDebug()
     {
-        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
+        $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
             ->setMethods(array('getOptions'))
             ->setConstructorArgs(array(null, 'X-Cache-Debug'))
             ->getMock();
@@ -245,7 +245,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchRuleWithActionName()
     {
-        $listener = new \FOS\HttpCacheBundle\EventListener\CacheControlListener();
+        $listener = new \FOS\HttpCacheBundle\EventListener\CacheControlSubscriber();
 
         $headers = array( 'controls' => array(
             'etag' => '1337',
@@ -293,7 +293,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         $security = $this->getMock('Symfony\Component\Security\Core\SecurityContextInterface');
 
 
-        $listener = new CacheControlListener($security);
+        $listener = new CacheControlSubscriber($security);
         $listener->add(
             new RequestMatcher(),
             array(

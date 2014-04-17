@@ -4,7 +4,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
 use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
-use FOS\HttpCacheBundle\EventListener\InvalidationListener;
+use FOS\HttpCacheBundle\EventListener\InvalidationSubscriber;
 use FOS\HttpCacheBundle\Invalidator\Invalidator;
 use FOS\HttpCacheBundle\Invalidator\InvalidatorCollection;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use \Mockery;
 
-class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
+class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     protected $cacheManager;
     protected $invalidators;
@@ -78,7 +78,7 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
         $invalidators = new InvalidatorCollection();
         $invalidators->addInvalidator($invalidator);
 
-        $listener = new InvalidationListener($cacheManager, $invalidators, $router);
+        $listener = new InvalidationSubscriber($cacheManager, $invalidators, $router);
 
         $request = new Request();
         $request->attributes->set('_route', 'route_invalidator');
@@ -153,7 +153,7 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function getListener()
     {
-        return new InvalidationListener(
+        return new InvalidationSubscriber(
             $this->cacheManager,
             $this->invalidators,
             \Mockery::mock('\Symfony\Component\Routing\RouterInterface')

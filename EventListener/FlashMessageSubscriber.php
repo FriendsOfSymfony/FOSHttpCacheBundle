@@ -2,18 +2,20 @@
 
 namespace FOS\HttpCacheBundle\EventListener;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\HttpKernel;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * This listener reads all flash messages and moves them into a cookie.
+ * This event handler reads all flash messages and moves them into a cookie.
  *
  * @author Lukas Kahwe Smith <smith@pooteeweet.org>
  */
-class FlashMessageListener
+class FlashMessageSubscriber implements EventSubscriberInterface
 {
     /**
      * @var array
@@ -35,6 +37,16 @@ class FlashMessageListener
     {
         $this->session = $session;
         $this->options = $options;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return array(
+            KernelEvents::RESPONSE => 'onKernelResponse',
+        );
     }
 
    /**

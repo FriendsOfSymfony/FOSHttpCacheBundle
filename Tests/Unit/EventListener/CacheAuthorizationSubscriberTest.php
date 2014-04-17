@@ -2,12 +2,12 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
-use FOS\HttpCacheBundle\EventListener\CacheAuthorizationListener;
+use FOS\HttpCacheBundle\EventListener\CacheAuthorizationSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
-class CacheAuthorizationListenerTest extends \PHPUnit_Framework_TestCase
+class CacheAuthorizationSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     public function testHeadRequest()
     {
@@ -15,7 +15,7 @@ class CacheAuthorizationListenerTest extends \PHPUnit_Framework_TestCase
         $request->setMethod('HEAD');
         $event = $this->getEvent($request);
 
-        $listener = new CacheAuthorizationListener();
+        $listener = new CacheAuthorizationSubscriber();
         $listener->onKernelRequest($event);
         $this->assertTrue($event->hasResponse());
     }
@@ -26,7 +26,7 @@ class CacheAuthorizationListenerTest extends \PHPUnit_Framework_TestCase
         $request->setMethod('GET');
         $event = $this->getEvent($request);
 
-        $listener = new CacheAuthorizationListener();
+        $listener = new CacheAuthorizationSubscriber();
         $listener->onKernelRequest($event);
         $this->assertFalse($event->hasResponse());
     }

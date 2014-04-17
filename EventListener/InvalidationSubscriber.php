@@ -18,12 +18,12 @@ use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * On kernel.terminate event, this listener invalidates routes for the current
- * request and flushes the CacheManager.
+ * On kernel.terminate event, this event handler invalidates routes for the
+ * current request and flushes the CacheManager.
  *
  * @author David de Boer <david@driebit.nl>
  */
-class InvalidationListener implements EventSubscriberInterface
+class InvalidationSubscriber implements EventSubscriberInterface
 {
     /**
      * Cache manager

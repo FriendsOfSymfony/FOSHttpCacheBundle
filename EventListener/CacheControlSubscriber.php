@@ -2,10 +2,12 @@
 
 namespace FOS\HttpCacheBundle\EventListener;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 
 /**
@@ -15,7 +17,7 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
  *
  * @author Lea Haensenberger <lea.haensenberger@gmail.com>
  */
-class CacheControlListener
+class CacheControlSubscriber implements EventSubscriberInterface
 {
     /**
      * @var SecurityContextInterface
@@ -59,6 +61,16 @@ class CacheControlListener
     {
         $this->securityContext = $securityContext;
         $this->debugHeader = $debugHeader;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return array(
+            KernelEvents::RESPONSE => 'onKernelResponse',
+        );
     }
 
     /**
