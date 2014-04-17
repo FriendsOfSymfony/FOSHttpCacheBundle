@@ -39,7 +39,7 @@ class Configuration implements ConfigurationInterface
         ;
 
         $this->addRulesSection($rootNode);
-        $this->addVarnishSection($rootNode);
+        $this->addProxyClientSection($rootNode);
         $this->addTagListenerSection($rootNode);
         $this->addFlashMessageListenerSection($rootNode);
         $this->addInvalidatorsSection($rootNode);
@@ -107,23 +107,31 @@ class Configuration implements ConfigurationInterface
         ;
     }
 
-    private function addVarnishSection(ArrayNodeDefinition $rootNode)
+    private function addProxyClientSection(ArrayNodeDefinition $rootNode)
     {
         $rootNode
             ->children()
-                ->arrayNode('varnish')
+                ->arrayNode('proxy_client')
                     ->children()
-                        ->arrayNode('servers')
-                            ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
-                            ->useAttributeAsKey('name')
-                            ->isRequired()
-                            ->requiresAtLeastOneElement()
-                            ->prototype('scalar')->end()
-                            ->info('Addresses of the hosts varnish is running on. May be hostname or ip, and with :port if not the default port 6081.')
+                        ->enumNode('default')
+                            ->values(array('varnish', 'nginx'))
+                            ->info('If you configure more than one proxy client, specify which client is the default.')
                         ->end()
-                        ->scalarNode('base_url')
-                            ->defaultNull()
-                            ->info('Default host name and optional path for path based invalidation.')
+                        ->arrayNode('varnish')
+                            ->children()
+                                ->arrayNode('servers')
+                                    ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
+                                    ->useAttributeAsKey('name')
+                                    ->isRequired()
+                                    ->requiresAtLeastOneElement()
+                                    ->prototype('scalar')->end()
+                                    ->info('Addresses of the hosts varnish is running on. May be hostname or ip, and with :port if not the default port 6081.')
+                                ->end()
+                                ->scalarNode('base_url')
+                                    ->defaultNull()
+                                    ->info('Default host name and optional path for path based invalidation.')
+                                ->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
@@ -135,8 +143,14 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('tag_listener')
-                    ->canBeDisabled()
-                    ->info('Allows to disable the listener for tag annotations when your project does not use the annotations.')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->enumNode('enabled')
+                            ->values(array(true, false, 'auto'))
+                            ->defaultValue('auto')
+                            ->info('Allows to disable the listener for tag annotations when your project does not use the annotations. Enabled by default if you configure a proxy client.')
+                        ->end()
+                    ->end()
                 ->end()
             ->end();
     }

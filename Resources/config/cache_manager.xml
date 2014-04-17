@@ -20,7 +20,7 @@
 
         <service id="fos_http_cache.cache_manager"
                  class="%fos_http_cache.cache_manager.class%">
-            <argument type="service" id="fos_http_cache.http_cache" />
+            <argument type="service" id="fos_http_cache.default_proxy_client" />
             <argument type="service" id="router" />
             <call method="setEventDispatcher">
                 <argument id="event_dispatcher" type="service" on-invalid="ignore" />

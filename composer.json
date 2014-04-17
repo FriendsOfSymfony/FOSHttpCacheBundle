@@ -22,7 +22,7 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "friendsofsymfony/http-cache": "1.0.*@dev",
+        "friendsofsymfony/http-cache": "~1.0.0-alpha2@dev",
         "symfony/framework-bundle": "~2.3"
     },
     "require-dev": {
