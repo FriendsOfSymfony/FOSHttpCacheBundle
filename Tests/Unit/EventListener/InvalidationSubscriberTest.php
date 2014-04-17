@@ -88,6 +88,25 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
         $listener->onKernelTerminate($event);
     }
 
+    public function testOnKernelException()
+    {
+        $cacheManager = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager');
+        $cacheManager
+            ->shouldReceive('flush')->once()
+        ;
+
+        $router = \Mockery::mock('\Symfony\Component\Routing\RouterInterface');
+
+        $invalidator = new InvalidatorCollection();
+
+        $listener = new InvalidationSubscriber($cacheManager, $invalidator, $router);
+
+        $request = new Request();
+
+        $event = $this->getEvent($request);
+        $listener->onKernelException($event);
+    }
+
     public function testInvalidatePath()
     {
         $request = new Request();
