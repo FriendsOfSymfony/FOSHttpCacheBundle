@@ -1,6 +1,6 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Tests\DependencyInjection;
+namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection;
 
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

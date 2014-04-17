@@ -1,6 +1,6 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Test\EventListener;
+namespace FOS\HttpCacheBundle\Test\Unit\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;

@@ -26,7 +26,8 @@ class FOSHttpCacheExtension extends Extension
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('cache_manager.xml');
 
-        $container->setParameter($this->getAlias().'.debug', $config['debug']);
+        $debugHeader = $config['debug'] ? $config['debug_header'] : false;
+        $container->setParameter($this->getAlias().'.debug_header', $debugHeader);
         $container->setParameter($this->getAlias().'.invalidators', $config['invalidators']);
 
         if (($config['debug']) || (!empty($config['rules']))) {

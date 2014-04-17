@@ -42,23 +42,23 @@ class CacheControlListener
     );
 
     /**
-     * Add debug header to all responses, for example to add debug output in
-     * Varnish configuration.
+     * Add debug header to all responses, telling the cache proxy to add debug
+     * output.
      *
-     * @var bool
+     * @var string Name of the header or false to add no header.
      */
-    protected $debug = false;
+    protected $debugHeader;
 
     /**
      * Constructor.
      *
      * @param SecurityContextInterface $securityContext Used to handle unless_role criteria. (optional)
-     * @param Boolean         $debug           Whether to output debug headers
+     * @param Boolean                  $debugHeader     Header to add for debugging, or false to send no header. (optional)
      */
-    public function __construct(SecurityContextInterface $securityContext = null, $debug = false)
+    public function __construct(SecurityContextInterface $securityContext = null, $debugHeader = false)
     {
         $this->securityContext = $securityContext;
-        $this->debug = $debug;
+        $this->debugHeader = $debugHeader;
     }
 
     /**
@@ -77,8 +77,8 @@ class CacheControlListener
     {
         $response = $event->getResponse();
 
-        if ($this->debug) {
-            $response->headers->set('X-Cache-Debug', 1, false);
+        if ($this->debugHeader) {
+            $response->headers->set($this->debugHeader, 1, false);
         }
 
         $options = $this->getOptions($event->getRequest());
