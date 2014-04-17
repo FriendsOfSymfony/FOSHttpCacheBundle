@@ -65,8 +65,17 @@ GET requests.
 
 # ips
 
-`ips` is an array that can be used to limit the rules to a specified set of IP
-addresses.
+`ips` is an array that can be used to limit the rules to a specified set of
+request client IP addresses.
+
+Note: If you are using a caching proxy, you need to be careful to not mix up
+headers for different target groups. If you have a specific IP that gets
+different headers, you probably need to do something on the cache proxy side as
+well to keep them apart.
+And you need to forward the client IP to the backend in the first place, as
+normally the backend will always see the caching proxy IP. See
+(Trusting Proxies)[http://symfony.com/doc/current/components/http_foundation/trusting_proxies.html]
+in the Symfony documentation.
 
 # attributes
 
