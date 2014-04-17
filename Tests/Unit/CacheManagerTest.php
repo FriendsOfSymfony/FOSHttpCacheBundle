@@ -8,24 +8,22 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CacheManagerTest extends \PHPUnit_Framework_TestCase
 {
-    protected $router;
-    protected $cacheManager;
+    protected $proxyClient;
 
     public function setUp()
     {
-        $this->router = \Mockery::mock('\Symfony\Component\Routing\Router[generate]');
-        $this->cacheProxy = \Mockery::mock('\FOS\HttpCache\Invalidation\CacheProxyInterface');
+        $this->proxyClient = \Mockery::mock('\FOS\HttpCache\ProxyClient\ProxyClientInterface');
     }
 
     public function testInvalidateRoute()
     {
-        $httpCache = \Mockery::mock('\FOS\HttpCache\Invalidation\Method\PurgeInterface')
+        $httpCache = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface')
             ->shouldReceive('purge')->once()->with('/my/route')
             ->shouldReceive('purge')->once()->with('/route/with/params/id/123')
             ->shouldReceive('flush')->once()
             ->getMock();
 
-        $router = \Mockery::mock('\Symfony\Component\Routing\Router[generate]')
+        $router = \Mockery::mock('\Symfony\Component\Routing\RouterInterface')
             ->shouldReceive('generate')
             ->with('my_route', array())
             ->andReturn('/my/route')
@@ -44,13 +42,13 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testRefreshRoute()
     {
-        $httpCache = \Mockery::mock('\FOS\HttpCache\Invalidation\Method\RefreshInterface')
+        $httpCache = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface')
             ->shouldReceive('refresh')->once()->with('/my/route', null)
             ->shouldReceive('refresh')->once()->with('/route/with/params/id/123', null)
             ->shouldReceive('flush')->never()
             ->getMock();
 
-        $router = \Mockery::mock('\Symfony\Component\Routing\Router[generate]')
+        $router = \Mockery::mock('\Symfony\Component\Routing\RouterInterface')
             ->shouldReceive('generate')
             ->with('my_route', array())
             ->andReturn('/my/route')
@@ -70,12 +68,14 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testTagResponse()
     {
-        $ban = \Mockery::mock('\FOS\HttpCache\Invalidation\Method\BanInterface');
+        $ban = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface');
+        $router = \Mockery::mock('\Symfony\Component\Routing\RouterInterface');
+
         $tags1 = array('post-1', 'posts');
         $tags2 = array('post-2');
         $tags3 = array('different');
 
-        $cacheManager = new CacheManager($ban, $this->router);
+        $cacheManager = new CacheManager($ban, $router);
         $response = new Response();
         $response->headers->set($cacheManager->getTagsHeader(), '');
         $cacheManager->tagResponse($response, $tags1);
