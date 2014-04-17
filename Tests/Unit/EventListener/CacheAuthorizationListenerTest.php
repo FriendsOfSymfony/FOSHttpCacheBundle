@@ -1,6 +1,6 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Tests\EventListener;
+namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
 use FOS\HttpCacheBundle\EventListener\CacheAuthorizationListener;
 use Symfony\Component\HttpFoundation\Request;

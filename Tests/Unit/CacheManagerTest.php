@@ -1,6 +1,6 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Tests;
+namespace FOS\HttpCacheBundle\Tests\Unit;
 
 use FOS\HttpCacheBundle\CacheManager;
 use \Mockery;

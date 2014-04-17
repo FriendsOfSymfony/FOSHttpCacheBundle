@@ -2,13 +2,16 @@ Configuring Varnish Debugging Information
 =========================================
 
 Enabling the debug parameter adds a ``X-Cache-Debug`` header to each response
-that you can use in your Varnish configuration.
+that you can use in your Varnish configuration:
 
 ``` yaml
 # app/config_integration.yml
 fos_http_cache:
     debug: true
 ```
+
+The default value is `%kernel.debug%`, triggering the header when you are in
+dev mode but not in prod mode.
 
 Add the following code to your Varnish configuration to have debug headers
 added to the response if it is enabled:
@@ -36,3 +39,11 @@ if (resp.http.X-Cache-Debug) {
 ```
 
 Note: You normally do not want this enabled in your production environment.
+
+You can also configure the header that should be sent:
+
+``` yaml
+# app/config_integration.yml
+fos_http_cache:
+    debug_header: Please-Send-Debug-Infos
+```

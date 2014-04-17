@@ -1,6 +1,6 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Test\EventListener;
+namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use FOS\HttpCacheBundle\EventListener\CacheControlListener;
@@ -191,7 +191,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     {
         $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlListener')
             ->setMethods(array('getOptions'))
-            ->setConstructorArgs(array(null, true))
+            ->setConstructorArgs(array(null, 'X-Cache-Debug'))
             ->getMock();
 
         $kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
