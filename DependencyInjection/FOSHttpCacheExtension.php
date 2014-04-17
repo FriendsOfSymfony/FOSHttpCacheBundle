@@ -24,13 +24,10 @@ class FOSHttpCacheExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('cache_manager.xml');
-
-        $debugHeader = $config['debug'] ? $config['debug_header'] : false;
-        $container->setParameter($this->getAlias().'.debug_header', $debugHeader);
-        $container->setParameter($this->getAlias().'.invalidators', $config['invalidators']);
 
         if (($config['debug']) || (!empty($config['rules']))) {
+            $debugHeader = $config['debug'] ? $config['debug_header'] : false;
+            $container->setParameter($this->getAlias().'.debug_header', $debugHeader);
             $loader->load('cache_control_listener.xml');
         }
 
@@ -62,26 +59,35 @@ class FOSHttpCacheExtension extends Extension
             }
         }
 
-        if (isset($config['varnish'])) {
-            $this->loadVarnish($container, $loader, $config);
+        if (isset($config['proxy_client'])) {
+            $container->setParameter($this->getAlias().'.invalidators', $config['invalidators']);
+            $this->loadProxyClient($container, $loader, $config['proxy_client']);
+
+            $loader->load('cache_manager.xml');
+
+            if ($config['tag_listener']['enabled']) {
+                // true or auto
+                if (class_exists('\Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
+                    $loader->load('tag_listener.xml');
+                } elseif (true === $config['tag_listener']['enabled']) {
+                    // silently skip if set to auto
+                    throw new \RuntimeException('The TagListener requires symfony/expression-language');
+                }
+            }
+        } elseif (!empty($config['invalidators'])) {
+            throw new InvalidConfigurationException('You need to configure a proxy client to use the invalidators.');
+        } elseif (true === $config['tag_listener']['enabled']) {
+            throw new InvalidConfigurationException('You need to configure a proxy client to use the tag listener.');
         }
 
         if ($config['authorization_listener']) {
             $loader->load('authorization_request_listener.xml');
         }
 
-        if ($config['tag_listener']['enabled']) {
-            if (!class_exists('\Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
-                throw new \RuntimeException('The TagListener requires symfony/expression-language');
-            }
-
-            $loader->load('tag_listener.xml');
-        }
-
         if (!empty($config['flash_message_listener']) && $config['flash_message_listener']['enabled']) {
-            $loader->load('flash_message_listener.xml');
-
             $container->setParameter($this->getAlias().'.event_listener.flash_message.options', $config['flash_message_listener']);
+
+            $loader->load('flash_message_listener.xml');
         }
     }
 
@@ -107,17 +113,35 @@ class FOSHttpCacheExtension extends Extension
      * @param $loader
      * @param $config
      */
+    protected function loadProxyClient(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        $default = empty($config['default']) ? false : $config['default'];
+        if (isset($config['varnish'])) {
+            $this->loadVarnish($container, $loader, $config['varnish']);
+            if (!$default) {
+                $default = 'varnish';
+            }
+        }
+
+        $container->setAlias($this->getAlias() . '.default_proxy_client', $this->getAlias() . '.proxy_client.' . $default);
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param $loader
+     * @param $config
+     */
     protected function loadVarnish(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
         $loader->load('varnish.xml');
-        foreach ($config['varnish']['servers'] as $url) {
+        foreach ($config['servers'] as $url) {
             $this->validateUrl($url, 'Not a valid varnish server address: "%s"');
         }
-        if (!empty($config['varnish']['base_url'])) {
-            $this->validateUrl($config['varnish']['base_url'], 'Not a valid base path: "%s"');
+        if (!empty($config['base_url'])) {
+            $this->validateUrl($config['base_url'], 'Not a valid base path: "%s"');
         }
-        $container->setParameter($this->getAlias() . '.varnish.servers', $config['varnish']['servers']);
-        $container->setParameter($this->getAlias() . '.varnish.base_url', $config['varnish']['base_url']);
+        $container->setParameter($this->getAlias() . '.proxy_client.varnish.servers', $config['servers']);
+        $container->setParameter($this->getAlias() . '.proxy_client.varnish.base_url', $config['base_url']);
     }
 
     private function validateUrl($url, $msg)

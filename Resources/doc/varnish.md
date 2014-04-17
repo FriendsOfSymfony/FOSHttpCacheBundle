@@ -14,13 +14,17 @@ This chapter describes how to configure Varnish to work with this bundle.
 Introduction
 ------------
 
-This bundle is compatible with Varnish version 3.0 onwards. In order to use
-this bundle with Varnish, you probably have to make changes to your Varnish
-configuration.
-
 Below you will find detailed Varnish configuration recommendations. For a quick
 overview, have a look at [the configuration that is used for the bundle’s
 functional tests](../../Tests/Functional/Fixtures/varnish/fos.vcl).
+
+You normally do not interact with the varnish service directly, but should go
+through the [cache manager](cache-manager.md). If you ever need direct access,
+you can use the service called `fos_http_cache.proxy_client.varnish`.
+
+This bundle is compatible with Varnish version 3.0 onwards. In order to use
+this bundle with Varnish, you probably have to make changes to your Varnish
+configuration.
 
 Basic configuration
 -------------------
@@ -31,16 +35,19 @@ Basic configuration
 # app/config/config.yml
 
 fos_http_cache:
-  http_cache:
+  proxy_client:
     varnish:
-      ips: 123.123.123.1:6081, 123.123.123.2
-      host: yourwebsite.com
+      servers: 123.123.123.1:6060, 123.123.123.2
+      base_url: yourwebsite.com
 ```
 
-* **host**: This must match the web host clients are using when connecting to varnish.
-  You will not notice if this is mistyped, but cache invalidation will never happen.
-* **ips**: List of IP addresses of your varnish servers. Comma separated.
-* **port**: The port varnish is listening on for incoming web connections.
+* **servers**: Comma separated list of IP addresses or host name of your
+  varnish servers. The port those servers will be contacted defaults to
+  6081, you can specify different ports with the :<port> notation.
+* **base_url**: This must match the web host clients are using when connecting
+  to varnish. Optionally can contain a base path to your application. Used for
+  invalidation with paths. You will not notice if this is mistyped, but cache
+  invalidation will never happen.
 
 **TODO: MOVE** When using ESI, you will want to purge individual fragments. To generate the
 corresponding ``_internal`` route, inject the ``http_kernel`` into your controller and

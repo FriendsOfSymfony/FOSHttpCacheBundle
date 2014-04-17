@@ -6,7 +6,7 @@ Tagged Cache Invalidation
 * [Tagging with the Cache Manager](#tagging-with-the-cache-manager)
 * [Tagging with Annotations](#tagging-with-annotations)
   * [Expressions](#expressions)
-  * [Invalidate Tags](#invalidate-tags) 
+  * [Invalidate Tags](#invalidate-tags)
 
 Introduction
 ------------
@@ -30,6 +30,18 @@ Configuration
 You need to configure your caching proxy to support cache tagging. See the FOSHttpCache
 documentation’s [Varnish Configuration chapter](https://github.com/FriendsOfSymfony/FOSHttpCache/blob/master/doc/varnish-configuration.md#tagging)
 for more details.
+
+The tag system is controlled by `fos_http_cache.tag_listener.enabled`. By
+default, this setting is on `auto`, meaning tagging is activated if you have a
+proxy client configured and you have `symfony/expression-language` available in
+your project. If you use tagging, it is recommended to set enabled to true to
+be notified if your setup is broken:
+
+```yaml
+fos_http_cache:
+    tag_listener:
+        enabled: true
+```
 
 Tagging with the Cache Manager
 ------------------------------

@@ -10,6 +10,8 @@ removes all variants (according to the VARY header), `refresh` will only use
 the variant of the refresh request. Both will remove caches for the requested
 page for all query string permutations.
 
+You need to configure a proxy client to have the cache manager enabled.
+
 * [Invalidating](#invalidating)
 * [Refreshing](#refreshing)
 * [Invalidating with a Regular Expression](#invalidating-with-a-regular-expression)

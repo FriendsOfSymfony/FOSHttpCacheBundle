@@ -5,8 +5,9 @@ framework:
   test: ~
 
 fos_http_cache:
-  varnish:
-    servers: 127.0.0.1
+  proxy_client:
+    varnish:
+      servers: 127.0.0.1
 
 monolog:
   handlers:

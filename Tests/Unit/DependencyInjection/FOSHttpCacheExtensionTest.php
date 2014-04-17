@@ -23,8 +23,8 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $container = new ContainerBuilder();
         $this->extension->load(array($this->getBaseConfig()), $container);
 
-        $this->assertTrue($container->hasDefinition('fos_http_cache.varnish'));
-        $this->assertTrue($container->hasAlias('fos_http_cache.http_cache'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
+        $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
     }
 
@@ -147,10 +147,12 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     protected function getBaseConfig()
     {
         return array(
-            'varnish' => array(
-                'base_url' => 'my_hostname',
-                'servers' => array(
-                    '127.0.0.1'
+            'proxy_client' => array(
+                'varnish' => array(
+                    'base_url' => 'my_hostname',
+                    'servers' => array(
+                        '127.0.0.1'
+                    )
                 )
             )
         );
