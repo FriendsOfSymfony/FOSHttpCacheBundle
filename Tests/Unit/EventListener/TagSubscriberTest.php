@@ -4,13 +4,13 @@ namespace FOS\HttpCacheBundle\Test\Unit\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
-use FOS\HttpCacheBundle\EventListener\TagListener;
+use FOS\HttpCacheBundle\EventListener\TagSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-class TagListenerTest extends \PHPUnit_Framework_TestCase
+class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     protected $cacheManager;
 
@@ -26,7 +26,7 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
             )
         )->shouldDeferMissing();
 
-        $this->listener = new TagListener($this->cacheManager);
+        $this->listener = new TagSubscriber($this->cacheManager);
     }
 
     public function testOnKernelResponseGet()

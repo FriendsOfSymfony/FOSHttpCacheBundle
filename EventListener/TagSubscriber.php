@@ -3,12 +3,18 @@
 namespace FOS\HttpCacheBundle\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
+use FOS\HttpCacheBundle\Configuration\Tag;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
-class TagListener implements EventSubscriberInterface
+/**
+ * Event handler for the cache tagging tags.
+ *
+ * @author David de Boer <david@driebit.nl>
+ */
+class TagSubscriber implements EventSubscriberInterface
 {
     /**
      * @var CacheManager
@@ -44,6 +50,7 @@ class TagListener implements EventSubscriberInterface
 
         // Check for _tag request attribute that is set when using @Tag
         // annotation
+        /** @var $tagConfigurations Tag[] */
         if (!$tagConfigurations = $request->attributes->get('_tag')) {
             return;
         }
@@ -87,4 +94,4 @@ class TagListener implements EventSubscriberInterface
             KernelEvents::RESPONSE => 'onKernelResponse'
         );
     }
-} 
+}
