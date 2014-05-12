@@ -47,6 +47,22 @@ By default the vary header is X-FOSHttpCache-SessionId, as the Cookie may not re
 a uniquer identifier for your user. If you use the default header, you have to define its
 value in the HttpProxy before sending the HEAD request.
 
+## Add information to the user context
+
+This bundle use the `HashGenerator` of the FOSHttpCache library, if you want to add
+specific information in the Hash from a service, you need to implement the
+`FOS\HttpCache\UserContext\ContextProviderInterface` interface in your service.
+
+Then you can add the tag `fos_http_cache.user_context_provider` to your service. The
+updateUserContext method will be called when the hash for the HEAD request is
+generated.
+
+``` xml
+<service id="my_service" class="%my_service.class%">
+    <tag name="fos_http_cache.user_context_provider" />
+</service>
+```
+
 ## Role Provider
 
 One of the most common scenario is to render a view based on user roles.
