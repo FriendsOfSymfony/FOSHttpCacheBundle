@@ -4,6 +4,7 @@ namespace FOS\HttpCacheBundle;
 
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\LoggerPass;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\TagListenerPass;
+use FOS\HttpCacheBundle\DependencyInjection\Compiler\UserContextListenerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -16,5 +17,6 @@ class FOSHttpCacheBundle extends Bundle
     {
         $container->addCompilerPass(new LoggerPass());
         $container->addCompilerPass(new TagListenerPass());
+        $container->addCompilerPass(new UserContextListenerPass());
     }
 }

@@ -33,13 +33,10 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('X-Cache-Debug')
                     ->info('The header to send if debug is true.')
                 ->end()
-                ->booleanNode('authorization_listener')
-                    ->defaultFalse()
-                    ->info('Whether to activate the authorization listener that early returns head request after the security check.')
-                ->end()
             ->end()
         ;
 
+        $this->addUserContextListenerSection($rootNode);
         $this->addRulesSection($rootNode);
         $this->addProxyClientSection($rootNode);
         $this->addTagListenerSection($rootNode);
@@ -47,6 +44,42 @@ class Configuration implements ConfigurationInterface
         $this->addInvalidatorsSection($rootNode);
 
         return $treeBuilder;
+    }
+
+    private function addUserContextListenerSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('user_context')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enable')
+                            ->defaultFalse()
+                            ->info('Whether to activate the authorization listener that early returns head request after the security check.')
+                        ->end()
+                        ->scalarNode('path')
+                            ->defaultValue('/_generate_hash')
+                            ->info('Match listener on this request path.')
+                        ->end()
+                        ->scalarNode('hash_cache_ttl')
+                            ->defaultValue(0)
+                            ->info('Cache head request with a specific ttl, not cached if set to 0.')
+                        ->end()
+                        ->scalarNode('vary_header')
+                            ->defaultValue('X-FOSHttpCache-SessionId')
+                            ->info('Vary header to use for the cache of the hash.')
+                        ->end()
+                        ->scalarNode('hash_header')
+                            ->defaultValue('X-FOSHttpCache-Hash')
+                            ->info('Name of the header to use for the hash.')
+                        ->end()
+                        ->booleanNode('role_provider')
+                            ->defaultFalse()
+                            ->info('Whether to activate the role provider, automatically add roles to user context when a token is available.')
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 
     private function addRulesSection(ArrayNodeDefinition $rootNode)

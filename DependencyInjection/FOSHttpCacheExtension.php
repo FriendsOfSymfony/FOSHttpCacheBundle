@@ -2,6 +2,7 @@
 
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
+use FOS\HttpCacheBundle\DependencyInjection\Compiler\UserContextListenerPass;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -64,8 +65,23 @@ class FOSHttpCacheExtension extends Extension
             throw new InvalidConfigurationException('You need to configure a proxy client to use the tag listener.');
         }
 
-        if ($config['authorization_listener']) {
-            $loader->load('authorization_request_listener.xml');
+        if ($config['user_context']['enable']) {
+            $loader->load('user_context.xml');
+
+            $container->getDefinition($this->getAlias().'.user_context.request_matcher')
+                ->replaceArgument(0, $config['user_context']['path'])
+                ->replaceArgument(1, null);
+
+            $container->getDefinition($this->getAlias().'.event_listener.user_context')
+                ->replaceArgument(2, $config['user_context']['vary_header'])
+                ->replaceArgument(3, $config['user_context']['hash_header'])
+                ->replaceArgument(4, $config['user_context']['hash_cache_ttl']);
+
+            if ($config['user_context']['role_provider']) {
+                $container->getDefinition($this->getAlias().'.user_context.role_provider')
+                    ->addTag(UserContextListenerPass::TAG_NAME)
+                    ->setAbstract(false);
+            }
         }
 
         if (!empty($config['flash_message_listener']) && $config['flash_message_listener']['enabled']) {
