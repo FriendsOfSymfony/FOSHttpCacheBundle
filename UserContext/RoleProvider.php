@@ -4,7 +4,7 @@ namespace FOS\HttpCacheBundle\UserContext;
 
 use FOS\HttpCache\UserContext\ContextProviderInterface;
 use FOS\HttpCache\UserContext\UserContext;
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\SecurityContextInterface;
 
 /**
  * RoleProvider add roles to the UserContext for the hash generation
@@ -13,7 +13,7 @@ class RoleProvider implements ContextProviderInterface
 {
     private $context;
 
-    public function __construct(SecurityContext $context)
+    public function __construct(SecurityContextInterface $context)
     {
         $this->context = $context;
     }
