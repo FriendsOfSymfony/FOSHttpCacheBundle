@@ -19,20 +19,21 @@ class UserContextListenerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->has('fos_http_cache.user_context.hash_generator')) {
-            $definition = $container->getDefinition('fos_http_cache.user_context.hash_generator');
+        if (!$container->has('fos_http_cache.user_context.hash_generator')) {
+            return;
+        }
 
-            foreach ($container->findTaggedServiceIds(self::TAG_NAME) as $id => $parameters) {
-                if (in_array('\FOS\HttpCache\UserContext\ContextProviderInterface', class_implements($container->getDefinition($id)->getClass()))) {
-                    throw new InvalidArgumentException(sprintf(
-                        'Class "%s" must implement the FOS\HttpCache\UserContext\ContextProviderInterface interface',
-                        $container->getDefinition($id)->getClass()
-                    ));
-                }
+        $definition = $container->getDefinition('fos_http_cache.user_context.hash_generator');
 
-                $definition->addMethodCall('registerProvider', array(new Reference($id)));
+        foreach ($container->findTaggedServiceIds(self::TAG_NAME) as $id => $parameters) {
+            if (in_array('\FOS\HttpCache\UserContext\ContextProviderInterface', class_implements($container->getDefinition($id)->getClass()))) {
+                throw new InvalidArgumentException(sprintf(
+                    'Class "%s" must implement the FOS\HttpCache\UserContext\ContextProviderInterface interface',
+                    $container->getDefinition($id)->getClass()
+                ));
             }
+
+            $definition->addMethodCall('registerProvider', array(new Reference($id)));
         }
     }
-
-} 
+}

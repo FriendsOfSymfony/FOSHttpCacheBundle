@@ -36,4 +36,4 @@ class RoleProvider implements ContextProviderInterface
 
         $context->addParameter('roles', $roles);
     }
-} 
+}
