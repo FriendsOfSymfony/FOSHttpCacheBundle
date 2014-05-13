@@ -55,7 +55,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->booleanNode('enable')
                             ->defaultFalse()
-                            ->info('Whether to activate the authorization listener that early returns head request after the security check.')
+                            ->info('Whether to activate the user context listener that early returns a request with the hash for the user context.')
                         ->end()
                         ->arrayNode('pattern')
                             ->addDefaultsIfNotSet()

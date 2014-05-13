@@ -75,6 +75,8 @@ class UserContextSubscriber implements EventSubscriberInterface
         if ($this->ttl > 0) {
             $response->setClientTtl($this->ttl);
             $response->setVary($this->varyHeader);
+        } else {
+            $response->setMaxAge(0);
         }
 
         $event->setResponse($response);
@@ -124,7 +126,7 @@ class UserContextSubscriber implements EventSubscriberInterface
     {
         return array(
             KernelEvents::RESPONSE => 'onKernelResponse',
-            KernelEvents::REQUEST  => array('onKernelRequest', 100),
+            KernelEvents::REQUEST  => array('onKernelRequest', 7),
         );
     }
 }
