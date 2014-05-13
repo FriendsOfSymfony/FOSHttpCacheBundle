@@ -26,13 +26,6 @@ class UserContextListenerPass implements CompilerPassInterface
         $definition = $container->getDefinition('fos_http_cache.user_context.hash_generator');
 
         foreach ($container->findTaggedServiceIds(self::TAG_NAME) as $id => $parameters) {
-            if (in_array('\FOS\HttpCache\UserContext\ContextProviderInterface', class_implements($container->getDefinition($id)->getClass()))) {
-                throw new InvalidArgumentException(sprintf(
-                    'Class "%s" must implement the FOS\HttpCache\UserContext\ContextProviderInterface interface',
-                    $container->getDefinition($id)->getClass()
-                ));
-            }
-
             $definition->addMethodCall('registerProvider', array(new Reference($id)));
         }
     }
