@@ -69,8 +69,9 @@ class FOSHttpCacheExtension extends Extension
             $loader->load('user_context.xml');
 
             $container->getDefinition($this->getAlias().'.user_context.request_matcher')
-                ->replaceArgument(0, $config['user_context']['path'])
-                ->replaceArgument(1, null);
+                ->replaceArgument(0, $config['user_context']['pattern']['path'])
+                ->replaceArgument(1, $config['user_context']['pattern']['host'])
+                ->replaceArgument(2, $config['user_context']['pattern']['method']);
 
             $container->getDefinition($this->getAlias().'.event_listener.user_context')
                 ->replaceArgument(2, $config['user_context']['vary_header'])

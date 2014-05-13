@@ -186,7 +186,11 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $config = array(
             array('user_context' => array(
                 'enable' => true,
-                'path'   => '/test',
+                'pattern'   => array(
+                    'path' => '/test',
+                    'host' => 'mydomain.com',
+                    'method' => 'AUTHENTICATE'
+                ),
                 'vary_header' => 'X-Foo',
                 'hash_header' => 'X-Bar',
                 'hash_cache_ttl' => 30,
@@ -210,7 +214,11 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $config = array(
             array('user_context' => array(
                 'enable' => false,
-                'path'   => '/test',
+                'pattern'   => array(
+                    'path' => '/test',
+                    'host' => 'mydomain.com',
+                    'method' => 'AUTHENTICATE'
+                ),
                 'vary_header' => 'X-Foo',
                 'hash_header' => 'X-Bar',
                 'hash_cache_ttl' => 30,

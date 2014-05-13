@@ -18,7 +18,7 @@
         <service id="fos_http_cache.user_context.request_matcher" class="%fos_http_cache.user_context.request_matcher.class%">
             <argument />
             <argument />
-            <argument>HEAD</argument>
+            <argument />
         </service>
 
         <service id="fos_http_cache.event_listener.user_context" class="%fos_http_cache.event_listener.user_context.class%">
