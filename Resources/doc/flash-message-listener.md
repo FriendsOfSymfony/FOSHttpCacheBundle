@@ -18,7 +18,7 @@ fos_http_cache:
         path: /
         host: null
         secure: false
-        httpOnly: true
+        httpOnly: false
 ```
 
 On client side, you need some javascript code that reads out the flash messages
