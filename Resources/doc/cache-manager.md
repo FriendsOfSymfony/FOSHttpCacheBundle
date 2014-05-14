@@ -22,7 +22,7 @@ Invalidating
 ------------
 
 Make sure to configure your proxy for purging first.
-(See [varnish](https://github.com/FriendOfSymfony/FOSHttpCache/blob/master/doc/varnish.md#purge).)
+(See [varnish](varnish.md#purge).)
 
 Invalidate a path:
 
