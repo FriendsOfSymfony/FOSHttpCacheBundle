@@ -28,6 +28,14 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
     }
 
+    public function testEmptyConfig()
+    {
+        $config = array();
+
+        $container = new ContainerBuilder();
+        $this->extension->load(array($config), $container);
+    }
+
     public function testConfigLoadInvalidators()
     {
         $config = $this->getBaseConfig() + array(

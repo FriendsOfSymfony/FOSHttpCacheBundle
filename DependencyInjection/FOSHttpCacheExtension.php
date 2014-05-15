@@ -75,6 +75,13 @@ class FOSHttpCacheExtension extends Extension
                     throw new \RuntimeException('The TagListener requires symfony/expression-language');
                 }
             }
+
+            if (version_compare(Kernel::VERSION, '2.4.0', '>=')) {
+                $container
+                    ->getDefinition('fos_http_cache.command.invalidate_path')
+                    ->addTag('console.command')
+                ;
+            }
         } elseif (!empty($config['invalidators'])) {
             throw new InvalidConfigurationException('You need to configure a proxy client to use the invalidators.');
         } elseif (true === $config['tag_listener']['enabled']) {
@@ -89,10 +96,6 @@ class FOSHttpCacheExtension extends Extension
             $container->setParameter($this->getAlias().'.event_listener.flash_message.options', $config['flash_message_listener']);
 
             $loader->load('flash_message_listener.xml');
-        }
-
-        if (version_compare(Kernel::VERSION, '2.4.0', '>=')) {
-            $loader->load('commands.xml');
         }
     }
 
