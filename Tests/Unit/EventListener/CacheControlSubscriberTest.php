@@ -218,6 +218,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->add(
             new RequestMatcher(null, null, null, null, array('_controller' => '^AcmeBundle:Default:index$')),
+            array(),
             $headers
         );
 
@@ -254,8 +255,10 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->add(
             new RequestMatcher(),
             array(
-                'cache_control' => array('public' => true),
                 'unless_role' => 'ROLE_NO_CACHE',
+            ),
+            array(
+                'cache_control' => array('public' => true),
             )
         );
         $event = $this->buildEvent();
@@ -293,6 +296,35 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $event = $this->buildEvent('POST');
 
         $subscriber->onKernelResponse($event);
+    }
+
+    public function testMatchResponse()
+    {
+        $subscriber = new CacheControlSubscriber();
+        $subscriber->add(
+            new RequestMatcher(),
+            array(
+                'match_response' => 'response.getStatusCode() >= 300',
+            ),
+            array(
+                'cache_control' => array('public' => true),
+            )
+        );
+        $event = $this->buildEvent();
+
+        $subscriber->onKernelResponse($event);
+        $response = $event->getResponse();
+        $newHeaders = $response->headers->all();
+
+        $this->assertTrue(isset($newHeaders['cache-control']), implode(',', array_keys($newHeaders)));
+        $this->assertEquals('no-cache', $newHeaders['cache-control'][0]);
+
+        $response->setStatusCode(400);
+        $subscriber->onKernelResponse($event);
+        $newHeaders = $response->headers->all();
+
+        $this->assertTrue(isset($newHeaders['cache-control']), implode(',', array_keys($newHeaders)));
+        $this->assertEquals('public', $newHeaders['cache-control'][0]);
     }
 
     protected function buildEvent($method = 'GET')

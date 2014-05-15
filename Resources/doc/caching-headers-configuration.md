@@ -10,6 +10,10 @@ set the cache rules on the response. The pattern are applied in the order
 specified, taking the first match. An example configuration could look like
 this:
 
+Rules are only checked on safe requests, as defined in
+`Request::isMethodSafe()`. This means only GET and HEAD requests get configured
+headers. Responses to other types of requests are considered uncacheable.
+
 ``` yaml
 # app/config.yml
 fos_http_cache:
@@ -26,6 +30,7 @@ fos_http_cache:
         -
             match:
                 attributes: { _controller: ^AcmeBundle:Default:.* }
+                additional_safe_status: [400]
             headers:
                 cache_control: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }
 
@@ -47,14 +52,15 @@ fos_http_cache:
 match
 -----
 
-All matching criteria are regular expressions. If a request matches the
-criteria and is "safe", the headers are set. The matching is done with
-`Symfony\Component\HttpFoundation\RequestMatcher`, which combines the
-criteria with an **and** logic.
+The matching criteria are regular expressions. If a request matches the
+criteria and the response status is considered "safe" as well, the headers are
+set. The matching is done with
+`Symfony\Component\HttpFoundation\RequestMatcher`, which combines the criteria
+with an **and** logic.
 
-By default, a response is only considered to be safe to cache if both
-`Request::isMethodSafe()` (GET or HEAD request) and the status code is in the
-list 200, 203, 300, 301, 302, 404, 410.
+By default, a response is only considered to be safe to cache if its status
+code is in the list 200, 203, 300, 301, 302, 404, 410. This can be tuned with
+`additional_safe_status` or overwritten with `match_response`.
 
 ### path
 
@@ -101,6 +107,26 @@ current authenticated user is granted the provided role. If there is no
 security in place, this filter will simply not be applied.
 
 You could use this for example to never cache the requests by an admin.
+
+### additional_safe_status
+
+A list of additional HTTP status codes of the response for which to also apply
+the rule.
+
+### match_response
+
+An ExpressionLanguage configuration to decide whether the response should have
+the headers applied. If not set, headers are applied if the status is in the
+list of safe status codes: 200, 203, 300, 301, 302, 404, 410, adding
+`additional_safe_status` if set.
+
+It is an error to set both `match_response` and `additional_safe_status` inside
+the same rule. `match_response` requires the ExpressionLanguage
+component available in your project.
+
+```
+response.getStatusCode() >= 400
+```
 
 headers
 -------

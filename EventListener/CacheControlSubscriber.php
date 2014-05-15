@@ -3,6 +3,7 @@
 namespace FOS\HttpCacheBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
@@ -23,20 +24,19 @@ class CacheControlSubscriber implements EventSubscriberInterface
     /**
      * @var SecurityContextInterface|null to check unless_role
      */
-    protected $securityContext;
+    private $securityContext;
 
     /**
-     * @var array RequestMatcherInterface => header array.
+     * @var array List of arrays with RequestMatcherInterface, extra criteria array, header array.
      */
-    protected $map = array();
+    private $map = array();
 
     /**
      * Cache control directives directly supported by Response.
      *
      * @var array
      */
-    protected $supportedDirectives = array(
-        'etag' => true,
+    private $supportedDirectives = array(
         'max_age' => true,
         's_maxage' => true,
         'private' => true,
@@ -75,11 +75,20 @@ class CacheControlSubscriber implements EventSubscriberInterface
      * Add a request matcher with a list of header directives.
      *
      * @param RequestMatcherInterface $requestMatcher The headers apply to requests matched by this.
+     * @param array                   $extraCriteria  Must also be satisfied to match.
      * @param array                   $headers        An array of header configuration.
+     * @param int                     $priority       Optional priority of this matcher. High values come first.
      */
-    public function add(RequestMatcherInterface $requestMatcher, array $headers = array())
-    {
-        $this->map[] = array($requestMatcher, $headers);
+    public function add(
+        RequestMatcherInterface $requestMatcher,
+        array $extraCriteria = array(),
+        array $headers = array(),
+        $priority = 0
+    ) {
+        if (!isset($this->map[$priority])) {
+            $this->map[$priority] = array();
+        }
+        $this->map[$priority][] = array($requestMatcher, $extraCriteria, $headers);
     }
 
     /**
@@ -97,7 +106,7 @@ class CacheControlSubscriber implements EventSubscriberInterface
         }
 
         // do not change cache directives on unsafe requests.
-        if (!$request->isMethodSafe()) {
+        if (!$this->isRequestSafe($request)) {
             return;
         }
 
@@ -153,7 +162,19 @@ class CacheControlSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Return the cache options for the current request.
+     * Decide whether to even look for matching rules with the current request.
+     *
+     * @param Request $request
+     *
+     * @return bool True if the request is safe and headers can be set.
+     */
+    protected function isRequestSafe(Request $request)
+    {
+        return $request->isMethodSafe();
+    }
+
+    /**
+     * Return the cache options for the current request if any rule matches.
      *
      * @param Request  $request
      * @param Response $response
@@ -162,18 +183,11 @@ class CacheControlSubscriber implements EventSubscriberInterface
      */
     protected function getOptions(Request $request, Response $response)
     {
-        foreach ($this->map as $elements) {
-            if (!empty($elements[1]['unless_role'])
-                && $this->securityContext
-                && $this->securityContext->isGranted($elements[1]['unless_role'])
+        foreach ($this->getRules() as $elements) {
+            if ($this->matchExtraCriteria($elements[1], $request, $response)
+                && $elements[0]->matches($request)
             ) {
-                continue;
-            }
-
-            if ($elements[0]->matches($request)
-                && $this->isResponseHandled($response, $elements[1])
-            ) {
-                return $elements[1];
+                return $elements[2];
             }
         }
 
@@ -181,15 +195,59 @@ class CacheControlSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Whether this response should be handled.
+     * Check whether we match criteria that can not be expressed with the
+     * request matcher.
      *
+     * @param array    $criteria
+     * @param Request  $request
      * @param Response $response
-     * @param array    $options  Configuration that might influence the decision.
      *
-     * @return bool
+     * @return bool Whether the criteria match
      */
-    protected function isResponseHandled(Response $response, array $options)
+    protected function matchExtraCriteria(array $criteria, Request $request, Response $response)
     {
-        return in_array($response->getStatusCode(), array(200, 203, 300, 301, 302, 404, 410));
+        if (!empty($criteria['unless_role'])
+            && $this->securityContext
+            && $this->securityContext->isGranted($criteria['unless_role'])
+        ) {
+            return false;
+        }
+
+        if (!empty($criteria['match_response'])) {
+            $expr = new ExpressionLanguage();
+            if (!$expr->evaluate($criteria['match_response'], array(
+                'response' => $response,
+            ))) {
+                return false;
+            }
+        } else {
+            $status = array(200, 203, 300, 301, 302, 404, 410);
+            if (!empty($criteria['additional_safe_status'])) {
+                $status += $criteria['additional_safe_status'];
+            }
+
+            if (!in_array($response->getStatusCode(), $status)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the rules ordered by priority.
+     *
+     * @return array of array with matcher, extra criteria, headers
+     */
+    private function getRules()
+    {
+        $sortedRules = array();
+        krsort($this->map);
+        foreach ($this->map as $rules) {
+            $sortedRules = array_merge($sortedRules, $rules);
+        }
+
+        return $sortedRules;
+
     }
 }
