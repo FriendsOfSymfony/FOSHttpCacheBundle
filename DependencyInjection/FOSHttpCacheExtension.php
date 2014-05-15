@@ -95,9 +95,16 @@ class FOSHttpCacheExtension extends Extension
                 $match['attributes']
             );
 
+            $extraCriteria = array();
+            foreach (array('unless_role', 'additional_safe_status', 'match_response') as $extra) {
+                if (isset($match[$extra])) {
+                    $extraCriteria[$extra] = $match[$extra];
+                }
+            }
+
             $container
                 ->getDefinition($this->getAlias() . '.event_listener.cache_control')
-                ->addMethodCall('add', array($matcher, $rule['headers']))
+                ->addMethodCall('add', array($matcher, $extraCriteria, $rule['headers']))
             ;
         }
     }
