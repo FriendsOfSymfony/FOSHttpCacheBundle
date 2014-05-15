@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * Copyright (c) 2014 FOS Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -7,6 +16,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\HttpCacheBundle\Configuration\Tag;
 
+/**
+ * Class TestController
+ */
 class TestController extends Controller
 {
     /**
@@ -37,4 +49,4 @@ class TestController extends Controller
     {
         return new Response('Forbidden', 403);
     }
-} 
+}

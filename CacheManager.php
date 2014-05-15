@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * Copyright (c) 2014 FOS Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle;
 
 use FOS\HttpCache\CacheInvalidator;
@@ -17,6 +26,8 @@ class CacheManager extends CacheInvalidator
 {
     /**
      * @var RouterInterface
+     *
+     * Router
      */
     protected $router;
 
@@ -35,12 +46,12 @@ class CacheManager extends CacheInvalidator
     /**
      * Assign cache tags to a response
      *
-     * @param Response $response
-     * @param array    $tags
+     * @param Response $response Response
+     * @param array    $tags     Tags
      * @param bool     $replace  Whether to replace the current tags on the
      *                           response
      *
-     * @return $this
+     * @return CacheManager self Object
      */
     public function tagResponse(Response $response, array $tags, $replace = false)
     {
@@ -66,7 +77,7 @@ class CacheManager extends CacheInvalidator
      * @param string $name       Route name
      * @param array  $parameters Route parameters (optional)
      *
-     * @return $this
+     * @return CacheManager self Object
      */
     public function invalidateRoute($name, array $parameters = array())
     {
@@ -78,10 +89,10 @@ class CacheManager extends CacheInvalidator
     /**
      * Refresh a route
      *
-     * @param string $route     Route name
-     * @param array $parameters Route parameters (optional)
+     * @param string $route      Route name
+     * @param array  $parameters Route parameters (optional)
      *
-     * @return $this
+     * @return CacheManager self Object
      */
     public function refreshRoute($route, array $parameters = array())
     {

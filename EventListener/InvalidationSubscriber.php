@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * Copyright (c) 2014 FOS Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
@@ -49,17 +58,18 @@ class InvalidationSubscriber implements EventSubscriberInterface
     /**
      * Constructor
      *
-     * @param CacheManager          $cacheManager
-     * @param InvalidatorCollection $invalidators
-     * @param RouterInterface       $router
-     * @param ExpressionLanguage    $expressionLanguage
+     * @param CacheManager          $cacheManager       Cache Manager
+     * @param InvalidatorCollection $invalidators       Invalidators
+     * @param RouterInterface       $router             Routers
+     * @param ExpressionLanguage    $expressionLanguage Expression Language
      */
     public function __construct(
         CacheManager $cacheManager,
         InvalidatorCollection $invalidators,
         RouterInterface $router,
         ExpressionLanguage $expressionLanguage = null
-    ) {
+    )
+    {
         $this->cacheManager = $cacheManager;
         $this->invalidators = $invalidators;
         $this->router = $router;
@@ -75,7 +85,7 @@ class InvalidationSubscriber implements EventSubscriberInterface
      * - flush the cache manager in order to send invalidation requests to the
      *   HTTP cache.
      *
-     * @param PostResponseEvent $event
+     * @param PostResponseEvent $event Event
      *
      * @return array Paths that were flushed from the invalidation queue
      */
@@ -137,6 +147,8 @@ class InvalidationSubscriber implements EventSubscriberInterface
 
     /**
      * Flush cache manager when console terminates or errors
+     *
+     * @param ConsoleEvent $event Event
      */
     public function onConsoleTerminate(ConsoleEvent $event)
     {
@@ -164,6 +176,8 @@ class InvalidationSubscriber implements EventSubscriberInterface
      * Invalidate paths from annotations
      *
      * @param array|InvalidatePath[] $pathConfigurations
+     *
+     * @return InvalidationSubscriber self Object
      */
     protected function invalidatePaths(array $pathConfigurations)
     {
@@ -172,6 +186,8 @@ class InvalidationSubscriber implements EventSubscriberInterface
                 $this->cacheManager->invalidatePath($path);
             }
         }
+
+        return $this;
     }
 
     /**
@@ -179,6 +195,8 @@ class InvalidationSubscriber implements EventSubscriberInterface
      *
      * @param array|InvalidateRoute[] $routes
      * @param Request                 $request
+     *
+     * @return InvalidationSubscriber self Object
      */
     protected function invalidateRoutes(array $routes, Request $request)
     {
@@ -201,5 +219,7 @@ class InvalidationSubscriber implements EventSubscriberInterface
 
             $this->cacheManager->invalidateRoute($route->getName(), $params);
         }
+
+        return $this;
     }
 }

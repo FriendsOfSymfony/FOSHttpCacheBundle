@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * Copyright (c) 2014 FOS Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -19,19 +28,23 @@ class FlashMessageSubscriber implements EventSubscriberInterface
 {
     /**
      * @var array
+     *
+     * Options
      */
     private $options;
 
     /**
      * @var Session
+     *
+     * Session
      */
     private $session;
 
     /**
      * Set a serializer instance
      *
-     * @param   Session     $session A session instance
-     * @param   array       $options
+     * @param Session $session A session instance
+     * @param array   $options Options
      */
     public function __construct($session, array $options = array())
     {
@@ -50,9 +63,10 @@ class FlashMessageSubscriber implements EventSubscriberInterface
     }
 
    /**
-    * Moves flash messages from the session to a cookie inside a Response Kernel listener
+    * Moves flash messages from the session to a cookie inside
+    * a Response Kernellistener
     *
-    * @param FilterResponseEvent $event
+    * @param FilterResponseEvent $event Event
     */
     public function onKernelResponse(FilterResponseEvent $event)
     {

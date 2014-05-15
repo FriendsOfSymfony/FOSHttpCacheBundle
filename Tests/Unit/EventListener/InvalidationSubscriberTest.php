@@ -1,7 +1,17 @@
 <?php
 
+/**
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * Copyright (c) 2014 FOS Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
+use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use FOS\HttpCacheBundle\EventListener\InvalidationSubscriber;
@@ -15,17 +25,37 @@ use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use \Mockery;
 
+/**
+ * Class InvalidationSubscriberTest
+ */
 class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var CacheManager
+     *
+     * cacheManager Cache manager
+     */
     protected $cacheManager;
+
+    /**
+     * @var InvalidatorCollection
+     *
+     * invalidators
+     */
     protected $invalidators;
 
+    /**
+     * Setup
+     */
     public function setUp()
     {
         $this->cacheManager = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager');
         $this->invalidators = new InvalidatorCollection();
     }
 
+    /**
+     * test no routes invalidated when response is unsuccessful
+     */
     public function testNoRoutesInvalidatedWhenResponseIsUnsuccessful()
     {
         $this->cacheManager
@@ -45,6 +75,9 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->getListener()->onKernelTerminate($event);
     }
 
+    /**
+     * test on kernel terminate
+     */
     public function testOnKernelTerminate()
     {
         $cacheManager = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager');
@@ -88,6 +121,9 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
         $listener->onKernelTerminate($event);
     }
 
+    /**
+     * test invalidate path
+     */
     public function testInvalidatePath()
     {
         $request = new Request();
@@ -107,6 +143,9 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->getListener()->onKernelTerminate($event);
     }
 
+    /**
+     * test invalidate routes
+     */
     public function testInvalidateRoute()
     {
         $request = new Request();
@@ -126,6 +165,9 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->getListener()->onKernelTerminate($event);
     }
 
+    /**
+     * test on console terminate
+     */
     public function testOnConsoleTerminate()
     {
         $this->cacheManager->shouldReceive('flush')->once()->andReturn(2);
@@ -142,6 +184,14 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->getListener()->onConsoleTerminate($event);
     }
 
+    /**
+     * Get event
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return PostResponseEvent Event
+     */
     protected function getEvent(Request $request, Response $response = null)
     {
         return new PostResponseEvent(
@@ -151,6 +201,11 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * Get listener
+     *
+     * @return InvalidationSubscriber
+     */
     protected function getListener()
     {
         return new InvalidationSubscriber(

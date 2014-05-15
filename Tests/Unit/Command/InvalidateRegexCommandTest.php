@@ -1,14 +1,28 @@
 <?php
 
+/**
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * Copyright (c) 2014 FOS Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\Tests\Unit\Command;
 
 use FOS\HttpCacheBundle\Command\InvalidateRegexCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
+/**
+ * Class InvalidateRegexCommandTest
+ */
 class InvalidateRegexCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * Test execute no parameters
+     *
      * @expectedException \RuntimeException
      */
     public function testExecuteNoParameters()
@@ -23,6 +37,9 @@ class InvalidateRegexCommandTest extends \PHPUnit_Framework_TestCase
         $commandTester->execute(array('command' => $command->getName()));
     }
 
+    /**
+     * Test execute parameter
+     */
     public function testExecuteParameter()
     {
         $invalidator = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager')
