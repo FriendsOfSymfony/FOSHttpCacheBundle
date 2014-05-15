@@ -53,21 +53,27 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     public function testConfigLoadRules()
     {
         $config = array(
-            array('rules' => array(
-                array(
-                    'path' => '^/$',
-                    'host' => 'fos.lo',
-                    'methods' => array('GET', 'HEAD'),
-                    'ips' => array('1.1.1.1', '2.2.2.2'),
-                    'attributes' => array(
-                        '_controller' => '^AcmeBundle:Default:index$',
-                    ),
-                    'unless_role' => 'ROLE_NO_CACHE',
-                    'controls' => array('etag' => '42'),
-                    'reverse_proxy_ttl' => 42,
-                    'vary' => array('Cookie', 'Accept-Language')
+            array(
+                'rules' => array(
+                    array(
+                        'match' => array(
+                            'path' => '^/$',
+                            'host' => 'fos.lo',
+                            'methods' => array('GET', 'HEAD'),
+                            'ips' => array('1.1.1.1', '2.2.2.2'),
+                            'attributes' => array(
+                                '_controller' => '^AcmeBundle:Default:index$',
+                            ),
+                            'unless_role' => 'ROLE_NO_CACHE',
+                        ),
+                        'headers' => array(
+                            'cache_control' => array('etag' => '42'),
+                            'reverse_proxy_ttl' => 42,
+                            'vary' => array('Cookie', 'Accept-Language')
+                        )
+                    )
                 )
-            ))
+            )
         );
 
         $container = new ContainerBuilder();
@@ -79,12 +85,16 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $config = array(
             array('rules' => array(
                 array(
-                    'methods' => 'GET,HEAD',
-                    'ips' => '1.1.1.1,2.2.2.2',
-                    'attributes' => array(
-                        '_controller' => '^AcmeBundle:Default:index$',
+                    'match' => array(
+                        'methods' => 'GET,HEAD',
+                        'ips' => '1.1.1.1,2.2.2.2',
+                        'attributes' => array(
+                            '_controller' => '^AcmeBundle:Default:index$',
+                        ),
                     ),
-                    'vary' => 'Cookie, Accept-Language',
+                    'headers' => array(
+                        'vary' => 'Cookie, Accept-Language',
+                    )
                 )
             ))
         );
@@ -93,14 +103,31 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->load($config, $container);
     }
 
-    public function testConfigLoadRulesDefaults()
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testInvalidDate()
     {
         $config = array(
-            array('rules' => array(
-                array(
+            array(
+                'rules' => array(
+                    array(
+                        'match' => array(),
+                        'headers' => array(
+                            'last_modified' => 'no valid date',
+                        )
+                    )
                 )
-            ))
+            )
         );
+
+        $container = new ContainerBuilder();
+        $this->extension->load($config, $container);
+    }
+
+    public function testConfigLoadRulesDefaults()
+    {
+        $config = array();
 
         $container = new ContainerBuilder();
         $this->extension->load($config, $container);
@@ -157,5 +184,4 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
             )
         );
     }
-
 }

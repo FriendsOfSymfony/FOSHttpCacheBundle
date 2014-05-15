@@ -16,27 +16,27 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
  * Allowed options are found in Symfony\Component\HttpFoundation\Response::setCache
  *
  * @author Lea Haensenberger <lea.haensenberger@gmail.com>
+ * @author David Buchmann <mail@davidbu.ch>
  */
 class CacheControlSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var SecurityContextInterface
+     * @var SecurityContextInterface|null to check unless_role
      */
     protected $securityContext;
 
     /**
-     * @var array
+     * @var array RequestMatcherInterface => header array.
      */
     protected $map = array();
 
     /**
-     * supported headers from Response
+     * Cache control directives directly supported by Response.
      *
      * @var array
      */
-    protected $supportedHeaders = array(
+    protected $supportedDirectives = array(
         'etag' => true,
-        'last_modified' => true,
         'max_age' => true,
         's_maxage' => true,
         'private' => true,
@@ -44,16 +44,14 @@ class CacheControlSubscriber implements EventSubscriberInterface
     );
 
     /**
-     * Add debug header to all responses, telling the cache proxy to add debug
-     * output.
+     * If set, add a debug header to all responses, telling the cache proxy to
+     * add debug output.
      *
      * @var string Name of the header or false to add no header.
      */
     protected $debugHeader;
 
     /**
-     * Constructor.
-     *
      * @param SecurityContextInterface $securityContext Used to handle unless_role criteria. (optional)
      * @param Boolean                  $debugHeader     Header to add for debugging, or false to send no header. (optional)
      */
@@ -74,39 +72,45 @@ class CacheControlSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param RequestMatcherInterface $requestMatcher A RequestMatcherInterface instance
-     * @param array                   $options        An array of options
+     * Add a request matcher with a list of header directives.
+     *
+     * @param RequestMatcherInterface $requestMatcher The headers apply to requests matched by this.
+     * @param array                   $headers        An array of header configuration.
      */
-    public function add(RequestMatcherInterface $requestMatcher, array $options = array())
+    public function add(RequestMatcherInterface $requestMatcher, array $headers = array())
     {
-        $this->map[] = array($requestMatcher, $options);
+        $this->map[] = array($requestMatcher, $headers);
     }
 
-   /**
-    * @param FilterResponseEvent $event
-    */
+    /**
+     * Apply the header rules if the request matches.
+     *
+     * @param FilterResponseEvent $event
+     */
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        $request = $event->getRequest();
         $response = $event->getResponse();
 
         if ($this->debugHeader) {
             $response->headers->set($this->debugHeader, 1, false);
         }
 
-        $options = $this->getOptions($event->getRequest());
+        // do not change cache directives on unsafe requests.
+        if (!$request->isMethodSafe()) {
+            return;
+        }
+
+        $options = $this->getOptions($request, $response);
         if (false !== $options) {
-            if (!empty($options['controls'])) {
-                $controls = array_intersect_key($options['controls'], $this->supportedHeaders);
-                $extraControls = array_diff_key($options['controls'], $controls);
-
-                //set supported headers
-                if (!empty($controls)) {
-                    $response->setCache($this->prepareControls($controls));
+            if (!empty($options['cache_control'])) {
+                $directives = array_intersect_key($options['cache_control'], $this->supportedDirectives);
+                $extraDirectives = array_diff_key($options['cache_control'], $directives);
+                if (!empty($directives)) {
+                    $response->setCache($directives);
                 }
-
-                //set extra headers, f.e. varnish specific headers
-                if (!empty($extraControls)) {
-                    $this->setExtraControls($response, $extraControls);
+                if (!empty($extraDirectives)) {
+                    $this->setExtraCacheDirectives($response, $extraDirectives);
                 }
             }
 
@@ -117,18 +121,22 @@ class CacheControlSubscriber implements EventSubscriberInterface
             if (!empty($options['vary'])) {
                 $response->setVary(array_merge($response->getVary(), $options['vary']), true); //update if already has vary
             }
+
+            if (isset($options['last_modified']) && null === $response->getLastModified()) {
+                $response->setLastModified(new \DateTime($options['last_modified']));
+            }
         }
     }
 
     /**
-     * adds extra cache controls
+     * Add extra cache control directives.
      *
      * @param Response $response
-     * @param $controls
+     * @param array    $controls
      */
-    protected function setExtraControls(Response $response, array $controls)
+    protected function setExtraCacheDirectives(Response $response, array $controls)
     {
-        $flags = array('must_revalidate', 'proxy_revalidate', 'no_transform');
+        $flags = array('must_revalidate', 'proxy_revalidate', 'no_transform', 'no_cache');
         $options = array('stale_if_error', 'stale_while_revalidate');
 
         foreach ($flags as $flag) {
@@ -142,21 +150,17 @@ class CacheControlSubscriber implements EventSubscriberInterface
                 $response->headers->addCacheControlDirective(str_replace('_', '-', $option), $controls[$option]);
             }
         }
-
-        if (!empty($controls['no_cache'])) {
-            $response->headers->remove('Cache-Control');
-            $response->headers->set('Cache-Control','no-cache', true);
-        }
     }
 
     /**
-     * Return the cache options for the current request
+     * Return the cache options for the current request.
      *
-     * @param Request $request
+     * @param Request  $request
+     * @param Response $response
      *
-     * @return array of settings
+     * @return array|false of settings or false if nothing matched.
      */
-    protected function getOptions(Request $request)
+    protected function getOptions(Request $request, Response $response)
     {
         foreach ($this->map as $elements) {
             if (!empty($elements[1]['unless_role'])
@@ -166,7 +170,9 @@ class CacheControlSubscriber implements EventSubscriberInterface
                 continue;
             }
 
-            if ($elements[0]->matches($request)) {
+            if ($elements[0]->matches($request)
+                && $this->isResponseHandled($response, $elements[1])
+            ) {
                 return $elements[1];
             }
         }
@@ -175,18 +181,19 @@ class CacheControlSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Create php values for needed controls
+     * Whether this response should be handled.
      *
-     * @param array $controls
-     * @return array
+     * @param Response $response
+     * @param array    $options  Configuration that might influence the decision.
+     *
+     * @return bool
      */
-    protected function prepareControls(array $controls)
+    protected function isResponseHandled(Response $response, array $options)
     {
-        if (isset($controls['last_modified'])) {
-            // this must be a DateTime, convert from the string in configuration
-            $controls['last_modified'] = new \DateTime($controls['last_modified']);
-        }
-
-        return $controls;
+        /* We can't use Response::isCacheable because that also checks if cache
+         * headers are already set. As we are about to set them, that would
+         * always return false.
+         */
+        return in_array($response->getStatusCode(), array(200, 203, 300, 301, 302, 404, 410));
     }
 }
