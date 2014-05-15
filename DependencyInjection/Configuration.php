@@ -3,8 +3,10 @@
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 /**
  * This is the class that validates and merges configuration from your app/config files
@@ -49,58 +51,85 @@ class Configuration implements ConfigurationInterface
 
     private function addRulesSection(ArrayNodeDefinition $rootNode)
     {
-        $rootNode
+        $rules = $rootNode
             ->fixXmlConfig('rule')
             ->children()
                 ->arrayNode('rules')
-                    ->cannotBeOverwritten()
-                    ->fixXmlConfig('method')
                     ->prototype('array')
-                        ->children()
-                            ->scalarNode('path')
-                                ->defaultNull()
-                                ->info('Match on this request path.')
-                            ->end()
-                            ->scalarNode('host')
-                                ->defaultNull()
-                                ->info('Match on this request host name.')
-                            ->end()
-                            ->arrayNode('methods')
-                                ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
-                                ->useAttributeAsKey('name')
-                                ->prototype('scalar')->end()
-                                ->info('Match on this HTTP method.')
-                            ->end()
-                            ->arrayNode('ips')
-                                ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
-                                ->useAttributeAsKey('name')
-                                ->prototype('scalar')->end()
-                                ->info('Match on the list of client ips.')
-                            ->end()
-                            ->arrayNode('attributes')
-                                ->useAttributeAsKey('name')
-                                ->prototype('scalar')->end()
-                                ->info('Match on these request attributes.')
-                            ->end()
-                            ->scalarNode('unless_role')
-                                ->defaultNull()
-                                ->info('Skip this rule if the current user is granted the specified role.')
-                            ->end()
-                            ->arrayNode('controls')
-                                ->useAttributeAsKey('name')
-                                ->prototype('scalar')->end()
-                                ->info('Add the specified cache control headers.')
-                            ->end()
-                            ->scalarNode('reverse_proxy_ttl')
-                                ->defaultNull()
-                                ->info('Specify an X-Reverse-Proxy-TTL header with a time in seconds for a caching proxy under your control.')
-                            ->end()
-                            ->arrayNode('vary')
-                                ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
-                                ->prototype('scalar')->end()
-                            ->end()
+                        ->children();
 
+        $this->addMatchSection($rules);
+        $this->addHeaderSection($rules);
+    }
+
+    private function addMatchSection(NodeBuilder $rules)
+    {
+        $rules
+            ->arrayNode('match')
+                ->cannotBeOverwritten()
+                ->isRequired()
+                ->fixXmlConfig('method')
+                ->children()
+                    ->scalarNode('path')
+                        ->defaultNull()
+                        ->info('Request path.')
+                    ->end()
+                    ->scalarNode('host')
+                        ->defaultNull()
+                        ->info('Request host name.')
+                    ->end()
+                    ->arrayNode('methods')
+                        ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
+                        ->useAttributeAsKey('name')
+                        ->prototype('scalar')->end()
+                        ->info('Request HTTP methods.')
+                    ->end()
+                    ->arrayNode('ips')
+                        ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
+                        ->useAttributeAsKey('name')
+                        ->prototype('scalar')->end()
+                        ->info('List of client IPs.')
+                    ->end()
+                    ->arrayNode('attributes')
+                        ->useAttributeAsKey('name')
+                        ->prototype('scalar')->end()
+                        ->info('Regular expressions on request attributes.')
+                    ->end()
+                    ->scalarNode('unless_role')
+                        ->defaultNull()
+                        ->info('Skip this rule if the current user is granted the specified role.')
+                    ->end()
+                ->end()
+            ->end()
+        ;
+    }
+
+    private function addHeaderSection(NodeBuilder $rules)
+    {
+        $rules
+            ->arrayNode('headers')
+                ->treatNullLike(array())
+                ->children()
+                    ->arrayNode('cache_control')
+                        ->useAttributeAsKey('name')
+                        ->prototype('scalar')->end()
+                        ->info('Add the specified cache control directives.')
+                    ->end()
+                    ->scalarNode('last_modified')
+                        ->validate()
+                            ->ifString()
+                            ->then(function ($v) {new \DateTime($v);})
                         ->end()
+                        ->info('Set a default last modified timestamp if none is set yet. Value must be parseable by DateTime')
+                    ->end()
+                    ->scalarNode('reverse_proxy_ttl')
+                        ->defaultNull()
+                        ->info('Specify an X-Reverse-Proxy-TTL header with a time in seconds for a caching proxy under your control.')
+                    ->end()
+                    ->arrayNode('vary')
+                        ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
+                        ->prototype('scalar')->end()
+                        ->info('Define a list of additional headers on which the response varies.')
                     ->end()
                 ->end()
             ->end()
