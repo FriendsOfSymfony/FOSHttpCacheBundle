@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * Copyright (c) 2014 FOS Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
@@ -11,8 +20,14 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
+/**
+ * Class CacheControlSubscriberTest
+ */
 class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * test default headers
+     */
     public function testDefaultHeaders()
     {
         $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
@@ -43,6 +58,9 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('"1337eax"', $newHeaders['etag'][0]);
     }
 
+    /**
+     * test extra headers
+     */
     public function testExtraHeaders()
     {
         $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
@@ -70,6 +88,9 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('must-revalidate, no-transform, proxy-revalidate, stale-if-error=300, stale-while-revalidate=400, private', $newHeaders['cache-control'][0]);
     }
 
+    /**
+     * test compound headers
+     */
     public function testCompoundHeaders()
     {
         $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
@@ -103,6 +124,9 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('max-age=900, must-revalidate, no-transform, proxy-revalidate, public, s-maxage=300, stale-if-error=300, stale-while-revalidate=400', $newHeaders['cache-control'][0]);
     }
 
+    /**
+     * test set no cache headers
+     */
     public function testSetNoCacheHeaders()
     {
         $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
@@ -137,6 +161,9 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('no-cache, private', $newHeaders['cache-control'][0]);
     }
 
+    /**
+     * test vary
+     */
     public function testVary()
     {
         $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
@@ -163,6 +190,9 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($headers['vary'], $newHeaders['vary']);
     }
 
+    /**
+     * test reverse proxy ttl
+     */
     public function testReverseProxyTtl()
     {
         $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
@@ -187,6 +217,9 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(600, $newHeaders['x-reverse-proxy-ttl'][0]);
     }
 
+    /**
+     * test debug
+     */
     public function testDebug()
     {
         $listener = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
@@ -209,7 +242,11 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(isset($newHeaders['x-cache-debug'][0]));
     }
 
-    public function testConfigDefineRequestMatcherWithControllerName() {
+    /**
+     * test config define request matcher with controller name
+     */
+    public function testConfigDefineRequestMatcherWithControllerName()
+    {
         $extension = new FOSHttpCacheExtension();
         $container = new ContainerBuilder();
 
@@ -243,9 +280,12 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('_controller' => '^AcmeBundle:Default:index$'), $matcherDefinition->getArgument(4));
     }
 
+    /**
+     * test match rule with action name
+     */
     public function testMatchRuleWithActionName()
     {
-        $listener = new \FOS\HttpCacheBundle\EventListener\CacheControlSubscriber();
+        $listener = new CacheControlSubscriber();
 
         $headers = array( 'controls' => array(
             'etag' => '1337',
@@ -288,10 +328,12 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('no-cache', $newHeaders['cache-control'][0]);
     }
 
+    /**
+     * Test unless role
+     */
     public function testUnlessRole()
     {
         $security = $this->getMock('Symfony\Component\Security\Core\SecurityContextInterface');
-
 
         $listener = new CacheControlSubscriber($security);
         $listener->add(

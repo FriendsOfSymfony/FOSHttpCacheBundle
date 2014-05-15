@@ -1,6 +1,15 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Test\Unit\EventListener;
+/**
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * Copyright (c) 2014 FOS Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
@@ -10,12 +19,28 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
+/**
+ * Class TagSubscriberTest
+ */
 class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var CacheManager
+     *
+     * cacheManager
+     */
     protected $cacheManager;
 
+    /**
+     * @var TagSubscriber
+     *
+     * listener
+     */
     protected $listener;
 
+    /**
+     * Setup
+     */
     public function setUp()
     {
         $this->cacheManager = \Mockery::mock(
@@ -29,6 +54,9 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->listener = new TagSubscriber($this->cacheManager);
     }
 
+    /**
+     * test on kernel response get
+     */
     public function testOnKernelResponseGet()
     {
         $tag1 = new Tag(array('value' => 'item-1'));
@@ -47,6 +75,9 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * test on kernel response get with expression
+     */
     public function testOnKernelResponseGetWithExpression()
     {
         $tag = new Tag(array('expression' => '"item-"~id'));
@@ -65,6 +96,9 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * test on kernel response post
+     */
     public function testOnKernelResponsePost()
     {
         $tag = new Tag(array('value' => array('item-1', 'item-2')));
@@ -82,6 +116,14 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->listener->onKernelResponse($event);
     }
 
+    /**
+     * Get event
+     *
+     * @param Request  $request  Request
+     * @param Response $response Response
+     *
+     * @return FilterResponseEvent
+     */
     protected function getEvent(Request $request, Response $response = null)
     {
         return new FilterResponseEvent(

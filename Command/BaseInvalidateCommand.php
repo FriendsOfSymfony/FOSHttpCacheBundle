@@ -1,11 +1,17 @@
 <?php
 
+/**
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * Copyright (c) 2014 FOS Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\InputArgument;
 
 use FOS\HttpCacheBundle\CacheManager;
 
@@ -18,6 +24,8 @@ abstract class BaseInvalidateCommand extends ContainerAwareCommand
 {
     /**
      * @var CacheManager
+     *
+     * Cache Manager
      */
     private $cacheManager;
 
@@ -37,7 +45,7 @@ abstract class BaseInvalidateCommand extends ContainerAwareCommand
      * Get the configured cache manager, loading fos_http_cache.cache_manager
      * from the container if none was specified.
      *
-     * @return CacheManager
+     * @return CacheManager Cache Manager
      */
     protected function getCacheManager()
     {

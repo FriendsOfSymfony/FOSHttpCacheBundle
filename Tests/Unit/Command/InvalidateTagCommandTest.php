@@ -1,14 +1,28 @@
 <?php
 
+/**
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * Copyright (c) 2014 FOS Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\Tests\Unit\Command;
 
 use FOS\HttpCacheBundle\Command\InvalidateTagCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
+/**
+ * Class InvalidateTagCommandTest
+ */
 class InvalidateTagCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * Test execute missing parameters
+     *
      * @expectedException \RuntimeException
      */
     public function testExecuteMissingParameters()
@@ -23,6 +37,9 @@ class InvalidateTagCommandTest extends \PHPUnit_Framework_TestCase
         $commandTester->execute(array('command' => $command->getName()));
     }
 
+    /**
+     * test execute parameter
+     */
     public function testExecuteParameter()
     {
         $invalidator = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager')

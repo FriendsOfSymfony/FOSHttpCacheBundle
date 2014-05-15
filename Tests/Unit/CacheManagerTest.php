@@ -1,11 +1,23 @@
 <?php
 
+/**
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * Copyright (c) 2014 FOS Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\Tests\Unit;
 
 use FOS\HttpCacheBundle\CacheManager;
 use \Mockery;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class CacheManagerTest
+ */
 class CacheManagerTest extends \PHPUnit_Framework_TestCase
 {
     protected $proxyClient;

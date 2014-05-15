@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * Copyright (c) 2014 FOS Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
@@ -18,6 +27,8 @@ class TagSubscriber implements EventSubscriberInterface
 {
     /**
      * @var CacheManager
+     *
+     * Cache manager
      */
     protected $cacheManager;
 
@@ -30,7 +41,8 @@ class TagSubscriber implements EventSubscriberInterface
     public function __construct(
         CacheManager $cacheManager,
         ExpressionLanguage $expressionLanguage = null
-    ) {
+    )
+    {
         $this->cacheManager = $cacheManager;
         $this->expressionLanguage = $expressionLanguage ?: new ExpressionLanguage();
     }
@@ -42,7 +54,7 @@ class TagSubscriber implements EventSubscriberInterface
      * - For a safe (GET or HEAD) request, the tags are set on the response.
      * - For a non-safe request, the tags will be invalidated.
      *
-     * @param FilterResponseEvent $event
+     * @param FilterResponseEvent $event Event
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {

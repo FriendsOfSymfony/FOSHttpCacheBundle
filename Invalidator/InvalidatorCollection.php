@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * Copyright (c) 2014 FOS Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\Invalidator;
 
 /**
@@ -23,6 +32,13 @@ class InvalidatorCollection
      */
     protected $invalidatorRoutes = array();
 
+    /**
+     * Add invalidator
+     *
+     * @param InvalidatorInterface $invalidator Invalidator
+     *
+     * @return InvalidatorCollection self Object
+     */
     public function addInvalidator(InvalidatorInterface $invalidator)
     {
         $this->invalidators[] = $invalidator;
@@ -33,17 +49,28 @@ class InvalidatorCollection
             }
             $this->invalidatorRoutes[$route][] = $invalidator;
         }
+
+        return $this;
     }
 
+    /**
+     * Return if has invalidator routes
+     *
+     * @param string $route Router
+     *
+     * @return bool Has invalidator Routes
+     */
     public function hasInvalidatorRoute($route)
     {
         return isset($this->invalidatorRoutes[$route]);
     }
 
     /**
-     * @param string $route
+     * Get all invalidators
      *
-     * @return Invalidator[]
+     * @param string $route Route
+     *
+     * @return Invalidator[] Invalidators
      */
     public function getInvalidators($route)
     {
@@ -59,6 +86,13 @@ class InvalidatorCollection
         return $invalidators;
     }
 
+    /**
+     * Get invalidated routes
+     *
+     * @param string $route Route
+     *
+     * @return array Routes array
+     */
     public function getInvalidatedRoutes($route)
     {
         $routes = array();

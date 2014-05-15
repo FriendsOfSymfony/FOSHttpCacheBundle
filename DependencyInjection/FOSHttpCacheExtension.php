@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * Copyright (c) 2014 FOS Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -99,6 +108,18 @@ class FOSHttpCacheExtension extends Extension
         }
     }
 
+    /**
+     * Create a new Request Matcher
+     *
+     * @param ContainerBuilder $container  Container
+     * @param null             $path       Path
+     * @param null             $host       Host
+     * @param null             $methods    Methods
+     * @param null             $ips        Ips
+     * @param array            $attributes Attributes
+     *
+     * @return Reference
+     */
     protected function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null, $methods = null, $ips = null, array $attributes = array())
     {
         $arguments = array($path, $host, $methods, $ips, $attributes);
@@ -117,9 +138,11 @@ class FOSHttpCacheExtension extends Extension
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param $loader
-     * @param $config
+     * Load proxy client
+     *
+     * @param ContainerBuilder $container Container
+     * @param XmlFileLoader    $loader    Loader
+     * @param array            $config    Config
      */
     protected function loadProxyClient(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
@@ -135,9 +158,11 @@ class FOSHttpCacheExtension extends Extension
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param $loader
-     * @param $config
+     * Load varnish
+     *
+     * @param ContainerBuilder $container Container
+     * @param XmlFileLoader    $loader    Loader
+     * @param array            $config    Config
      */
     protected function loadVarnish(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
@@ -152,6 +177,14 @@ class FOSHttpCacheExtension extends Extension
         $container->setParameter($this->getAlias() . '.proxy_client.varnish.base_url', $config['base_url']);
     }
 
+    /**
+     * Validate an url
+     *
+     * @param string $url Url to validate
+     * @param string $msg Exception message
+     *
+     * @throws InvalidConfigurationException
+     */
     private function validateUrl($url, $msg)
     {
         if (false === strpos($url, '://')) {
