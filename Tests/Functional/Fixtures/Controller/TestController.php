@@ -37,4 +37,9 @@ class TestController extends Controller
     {
         return new Response('Forbidden', 403);
     }
-} 
+
+    public function contentAction()
+    {
+        return new Response('content');
+    }
+}
