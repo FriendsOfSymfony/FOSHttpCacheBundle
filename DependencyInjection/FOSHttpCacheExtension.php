@@ -33,31 +33,7 @@ class FOSHttpCacheExtension extends Extension
         }
 
         if (!empty($config['rules'])) {
-            foreach ($config['rules'] as $cache) {
-                $cache['ips'] = (empty($cache['ips'])) ? null : $cache['ips'];
-
-                $matcher = $this->createRequestMatcher(
-                    $container,
-                    $cache['path'],
-                    $cache['host'],
-                    $cache['methods'],
-                    $cache['ips'],
-                    $cache['attributes']
-                );
-
-                unset(
-                    $cache['path'],
-                    $cache['host'],
-                    $cache['methods'],
-                    $cache['ips'],
-                    $cache['attributes']
-                );
-
-                $container
-                    ->getDefinition($this->getAlias().'.event_listener.cache_control')
-                    ->addMethodCall('add', array($matcher, $cache))
-                ;
-            }
+            $this->loadRules($container, $config);
         }
 
         if (isset($config['proxy_client'])) {
@@ -96,6 +72,36 @@ class FOSHttpCacheExtension extends Extension
             $container->setParameter($this->getAlias().'.event_listener.flash_message.options', $config['flash_message_listener']);
 
             $loader->load('flash_message_listener.xml');
+        }
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param $config
+     */
+    protected function loadRules(ContainerBuilder $container, $config)
+    {
+        foreach ($config['rules'] as $rule) {
+            if (!isset($rule['headers'])) {
+                continue;
+            }
+            $match = $rule['match'];
+
+            $match['ips'] = (empty($match['ips'])) ? null : $match['ips'];
+
+            $matcher = $this->createRequestMatcher(
+                $container,
+                $match['path'],
+                $match['host'],
+                $match['methods'],
+                $match['ips'],
+                $match['attributes']
+            );
+
+            $container
+                ->getDefinition($this->getAlias() . '.event_listener.cache_control')
+                ->addMethodCall('add', array($matcher, $rule['headers']))
+            ;
         }
     }
 
