@@ -106,6 +106,16 @@ class Configuration implements ConfigurationInterface
 
         $this->addMatchSection($rules);
         $this->addHeaderSection($rules);
+        $rules
+            ->arrayNode('tags')
+                ->prototype('scalar')
+                ->validate()
+                    ->ifTrue(function ($v) {return !count($v);})
+                    ->thenUnset()
+                ->end()
+                ->info('Tags to add to the response on safe requests, to invalidate on unsafe requests')
+            ->end()
+        ;
     }
 
     private function addMatchSection(NodeBuilder $rules)

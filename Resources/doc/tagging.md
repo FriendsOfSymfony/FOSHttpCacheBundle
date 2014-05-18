@@ -2,8 +2,9 @@ Tagged Cache Invalidation
 =========================
 
 * [Introduction](#introduction)
-* [Configuration](#configuration)
+* [Basic Configuration](#basic-configuration)
 * [Tagging with the Cache Manager](#tagging-with-the-cache-manager)
+* [Tagging with Configuration](#tagging-with-configuration)
 * [Tagging with Annotations](#tagging-with-annotations)
   * [Expressions](#expressions)
   * [Invalidate Tags](#invalidate-tags)
@@ -24,8 +25,8 @@ Tagged Cache Invalidation allows you to:
 * [invalidate the responses by tag](https://github.com/FriendsOfSymfony/FOSHttpCache/blob/master/doc/cache-invalidator.md#tags) (e.g., invalidate all responses that are tagged
   `article-42`)
 
-Configuration
--------------
+Basic Configuration
+-------------------
 
 You need to configure your caching proxy to support cache tagging. See the FOSHttpCache
 documentation’s [Varnish Configuration chapter](https://github.com/FriendsOfSymfony/FOSHttpCache/blob/master/doc/varnish-configuration.md#tagging)
@@ -48,6 +49,34 @@ Tagging with the Cache Manager
 
 See the [Cache Manager chapter](cache-manager.md#tags) for more information on how
 to manually set and invalidate tags.
+
+Tagging with Configuration
+--------------------------
+
+The `rules` section of the configuration can also be used to define cache tags
+on paths. You can set either or both headers and tags for each match. For the
+request matching rules, see the ["match" section in "Caching Headers"](caching-headers-configuration.md#match).
+
+When the request matches all criteria, the tags are applied. If the request was
+a GET or HEAD request, the response will get the specified tags in its header.
+On all other operations, those tags will be invalidated.
+
+```yaml
+fos_http_cache:
+    rules:
+        -
+            match:
+                path: ^/news
+            tags: [news-section]
+```
+
+When a request goes to any URL starting with news, e.g. `/news/42`, the
+response will be tagged with "news-section", in addition to any tags set by the
+code or through annotations.
+
+When a POST goes to `/news/3`, the tag "news-section" is invalidated, in
+addition to any other invalidation requests done with the cache manager or
+through annotations.
 
 Tagging with Annotations
 ------------------------

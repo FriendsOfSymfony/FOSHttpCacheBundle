@@ -13,9 +13,9 @@ test_one:
   methods:  [GET,POST]
 
 test_cached:
-  pattern:  /cachetest/cached
+  pattern:  /cached
   defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }
 
 test_noncached:
-  pattern:  /cachetest/noncached
+  pattern:  /noncached
   defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }

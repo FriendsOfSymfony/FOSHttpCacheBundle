@@ -145,9 +145,9 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function testDebugHeader()
     {
-        $subscriber = \Mockery::mock('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber[getOptions]', array('X-Cache-Debug'))
+        $subscriber = \Mockery::mock('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber[matchConfiguration]', array('X-Cache-Debug'))
             ->shouldAllowMockingProtectedMethods()
-            ->shouldReceive('getOptions')->once()->andReturn(false)
+            ->shouldReceive('matchConfiguration')->once()->andReturn(false)
             ->getMock()
         ;
         $event = $this->buildEvent();
@@ -182,7 +182,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         ;
 
         $subscriber = new CacheControlSubscriber();
-        $subscriber->add(
+        $subscriber->addRule(
             $mockMatcher,
             $headers
         );
@@ -202,11 +202,11 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testUnsafeMethod()
     {
         $subscriber = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
-            ->setMethods(array('getOptions'))
+            ->setMethods(array('matchConfiguration'))
             ->getMock()
         ;
         $subscriber->expects($this->never())
-            ->method('getOptions')
+            ->method('matchConfiguration')
         ;
         $event = $this->buildEvent('POST');
 
@@ -232,20 +232,20 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * We mock the getOptions method for tests about applying the rules.
+     * We mock the matchConfiguration method for tests about applying the rules.
      *
-     * @param array $headers The headers to return in getOptions
+     * @param array $headers The headers to return in matchConfiguration
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|CacheControlSubscriber
      */
     protected function getCacheControl(array $headers)
     {
         $subscriber = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
-            ->setMethods(array('getOptions'))
+            ->setMethods(array('matchConfiguration'))
             ->getMock()
         ;
 
-        $subscriber->expects($this->once())->method('getOptions')->will($this->returnValue($headers));
+        $subscriber->expects($this->once())->method('matchConfiguration')->will($this->returnValue($headers));
 
         return $subscriber;
     }
