@@ -10,7 +10,7 @@ class CacheControlSubscriberTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/cachetest/cached');
+        $client->request('GET', '/cached');
         $response = $client->getResponse();
         $this->assertEquals('public', $response->headers->get('Cache-Control'));
     }
@@ -19,7 +19,7 @@ class CacheControlSubscriberTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/cachetest/noncached');
+        $client->request('GET', '/noncached');
         $response = $client->getResponse();
         $this->assertEquals('no-cache', $response->headers->get('Cache-Control'));
     }

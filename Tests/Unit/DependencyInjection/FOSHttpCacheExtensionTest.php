@@ -79,9 +79,11 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                             'cache_control' => array('etag' => '42'),
                             'reverse_proxy_ttl' => 42,
                             'vary' => array('Cookie', 'Accept-Language')
-                        )
+                        ),
+                        'tags' => array('tag-a', 'tag-b')
                     )
-                )
+                ),
+                'proxy_client' => true,
             )
         );
 
@@ -90,13 +92,15 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
         // Extract the corresponding definition
         $matcherDefinition = null;
-        foreach ($container->getDefinitions() as $definition) {
+        $matcherId = null;
+        foreach ($container->getDefinitions() as $id => $definition) {
             if ($definition instanceof DefinitionDecorator &&
                 $definition->getParent() === 'fos_http_cache.request_matcher'
             ) {
                 if ($matcherDefinition) {
                     $this->fail('More then one request matcher was created');
                 }
+                $matcherId = $id;
                 $matcherDefinition = $definition;
             }
         }
@@ -104,8 +108,28 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         // definition should exist
         $this->assertNotNull($matcherDefinition);
 
-        // 4th argument should contain the controller name value
+        // 5th argument should contain the controller name value
         $this->assertEquals(array('_controller' => '^AcmeBundle:Default:index$'), $matcherDefinition->getArgument(4));
+
+        $ruleDefinition = null;
+        foreach ($container->getDefinitions() as $definition) {
+            if ($definition instanceof DefinitionDecorator &&
+                $definition->getParent() === 'fos_http_cache.rule_matcher'
+            ) {
+                if ($ruleDefinition) {
+                    $this->fail('More then one rule matcher was created');
+                }
+                $ruleDefinition = $definition;
+            }
+        }
+
+        // definition should exist
+        $this->assertNotNull($ruleDefinition);
+
+        // first argument should be the reference to the matcher
+        $reference = $ruleDefinition->getArgument(0);
+        $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $reference);
+        $this->assertEquals($matcherId, (string) $reference);
     }
 
     /**

@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TagSubscriberTest extends WebTestCase
 {
-    public function testTagsAreSet()
+    public function testAnnotationTagsAreSet()
     {
         $client = static::createClient();
 
@@ -19,7 +19,7 @@ class TagSubscriberTest extends WebTestCase
         $this->assertEquals('item-123', $response->headers->get('X-Cache-Tags'));
     }
 
-    public function testTagsAreInvalidated()
+    public function testAnnotationTagsAreInvalidated()
     {
         $client = static::createClient();
 
@@ -48,6 +48,30 @@ class TagSubscriberTest extends WebTestCase
         ;
 
         $client->request('POST', '/test/error');
+    }
+
+    public function testConfigurationTagsAreSet()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/cached');
+        $response = $client->getResponse();
+        $this->assertEquals('area', $response->headers->get('X-Cache-Tags'));
+    }
+
+    public function testConfigurationTagsAreInvalidated()
+    {
+        $client = static::createClient();
+
+        $client->getContainer()->mock(
+            'fos_http_cache.cache_manager',
+            '\FOS\HttpCacheBundle\CacheManager'
+        )
+            ->shouldReceive('invalidateTags')->once()->with(array('area'))
+            ->shouldReceive('flush')->once()
+        ;
+
+        $client->request('POST', '/cached');
     }
 
     protected function tearDown()
