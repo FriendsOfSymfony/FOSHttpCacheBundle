@@ -5,15 +5,15 @@ namespace FOS\HttpCacheBundle\EventListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+
+use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 
 /**
- * Set caching settings on the response according to the configurations.
+ * Set caching settings on matching response according to the configurations.
  *
- * Allowed options are found in Symfony\Component\HttpFoundation\Response::setCache
+ * The first matching ruleset is applied.
  *
  * @author Lea Haensenberger <lea.haensenberger@gmail.com>
  * @author David Buchmann <mail@davidbu.ch>
@@ -21,22 +21,16 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 class CacheControlSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var SecurityContextInterface|null to check unless_role
+     * @var array List of arrays with RuleMatcher, header array.
      */
-    protected $securityContext;
-
-    /**
-     * @var array RequestMatcherInterface => header array.
-     */
-    protected $map = array();
+    private $map = array();
 
     /**
      * Cache control directives directly supported by Response.
      *
      * @var array
      */
-    protected $supportedDirectives = array(
-        'etag' => true,
+    private $supportedDirectives = array(
         'max_age' => true,
         's_maxage' => true,
         'private' => true,
@@ -44,20 +38,18 @@ class CacheControlSubscriber implements EventSubscriberInterface
     );
 
     /**
-     * If set, add a debug header to all responses, telling the cache proxy to
-     * add debug output.
+     * If not empty, add a debug header with that name to all responses,
+     * telling the cache proxy to add debug output.
      *
      * @var string Name of the header or false to add no header.
      */
     protected $debugHeader;
 
     /**
-     * @param SecurityContextInterface $securityContext Used to handle unless_role criteria. (optional)
-     * @param Boolean                  $debugHeader     Header to add for debugging, or false to send no header. (optional)
+     * @param string|bool $debugHeader Header to set to trigger debugging, or false to send no header.
      */
-    public function __construct(SecurityContextInterface $securityContext = null, $debugHeader = false)
+    public function __construct($debugHeader = false)
     {
-        $this->securityContext = $securityContext;
         $this->debugHeader = $debugHeader;
     }
 
@@ -72,14 +64,22 @@ class CacheControlSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Add a request matcher with a list of header directives.
+     * Add a rule matcher with a list of header directives to apply if the
+     * request and response are matched.
      *
-     * @param RequestMatcherInterface $requestMatcher The headers apply to requests matched by this.
-     * @param array                   $headers        An array of header configuration.
+     * @param RuleMatcherInterface $ruleMatcher The headers apply to responses matched by this matcher.
+     * @param array                $headers     An array of header configuration.
+     * @param int                  $priority    Optional priority of this matcher. Higher priority is applied first.
      */
-    public function add(RequestMatcherInterface $requestMatcher, array $headers = array())
-    {
-        $this->map[] = array($requestMatcher, $headers);
+    public function add(
+        RuleMatcherInterface $ruleMatcher,
+        array $headers = array(),
+        $priority = 0
+    ) {
+        if (!isset($this->map[$priority])) {
+            $this->map[$priority] = array();
+        }
+        $this->map[$priority][] = array($ruleMatcher, $headers);
     }
 
     /**
@@ -97,7 +97,7 @@ class CacheControlSubscriber implements EventSubscriberInterface
         }
 
         // do not change cache directives on unsafe requests.
-        if (!$request->isMethodSafe()) {
+        if (!$this->isRequestSafe($request)) {
             return;
         }
 
@@ -153,7 +153,19 @@ class CacheControlSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Return the cache options for the current request.
+     * Decide whether to even look for matching rules with the current request.
+     *
+     * @param Request $request
+     *
+     * @return bool True if the request is safe and headers can be set.
+     */
+    protected function isRequestSafe(Request $request)
+    {
+        return $request->isMethodSafe();
+    }
+
+    /**
+     * Return the cache options for the current request if any rule matches.
      *
      * @param Request  $request
      * @param Response $response
@@ -162,17 +174,8 @@ class CacheControlSubscriber implements EventSubscriberInterface
      */
     protected function getOptions(Request $request, Response $response)
     {
-        foreach ($this->map as $elements) {
-            if (!empty($elements[1]['unless_role'])
-                && $this->securityContext
-                && $this->securityContext->isGranted($elements[1]['unless_role'])
-            ) {
-                continue;
-            }
-
-            if ($elements[0]->matches($request)
-                && $this->isResponseHandled($response, $elements[1])
-            ) {
+        foreach ($this->getRules() as $elements) {
+            if ($elements[0]->matches($request, $response)) {
                 return $elements[1];
             }
         }
@@ -181,19 +184,18 @@ class CacheControlSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Whether this response should be handled.
+     * Get the rules ordered by priority.
      *
-     * @param Response $response
-     * @param array    $options  Configuration that might influence the decision.
-     *
-     * @return bool
+     * @return array of array with matcher, extra criteria, headers
      */
-    protected function isResponseHandled(Response $response, array $options)
+    private function getRules()
     {
-        /* We can't use Response::isCacheable because that also checks if cache
-         * headers are already set. As we are about to set them, that would
-         * always return false.
-         */
-        return in_array($response->getStatusCode(), array(200, 203, 300, 301, 302, 404, 410));
+        $sortedRules = array();
+        krsort($this->map);
+        foreach ($this->map as $rules) {
+            $sortedRules = array_merge($sortedRules, $rules);
+        }
+
+        return $sortedRules;
     }
 }

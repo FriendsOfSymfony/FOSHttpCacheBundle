@@ -5,6 +5,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use \Mockery;
+use Symfony\Component\DependencyInjection\DefinitionDecorator;
 
 class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -72,7 +73,6 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                             'attributes' => array(
                                 '_controller' => '^AcmeBundle:Default:index$',
                             ),
-                            'unless_role' => 'ROLE_NO_CACHE',
                         ),
                         'headers' => array(
                             'cache_control' => array('etag' => '42'),
@@ -86,8 +86,30 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
         $container = new ContainerBuilder();
         $this->extension->load($config, $container);
+
+        // Extract the corresponding definition
+        $matcherDefinition = null;
+        foreach ($container->getDefinitions() as $definition) {
+            if ($definition instanceof DefinitionDecorator &&
+                $definition->getParent() === 'fos_http_cache.request_matcher'
+            ) {
+                if ($matcherDefinition) {
+                    $this->fail('More then one request matcher was created');
+                }
+                $matcherDefinition = $definition;
+            }
+        }
+
+        // definition should exist
+        $this->assertNotNull($matcherDefinition);
+
+        // 4th argument should contain the controller name value
+        $this->assertEquals(array('_controller' => '^AcmeBundle:Default:index$'), $matcherDefinition->getArgument(4));
     }
 
+    /**
+     * Check if comma separated strings are parsed as expected.
+     */
     public function testConfigLoadRulesSplit()
     {
         $config = array(
@@ -109,6 +131,24 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
         $container = new ContainerBuilder();
         $this->extension->load($config, $container);
+
+        // Extract the corresponding definition
+        $matcherDefinition = null;
+        foreach ($container->getDefinitions() as $definition) {
+            if ($definition instanceof DefinitionDecorator &&
+                $definition->getParent() === 'fos_http_cache.request_matcher'
+            ) {
+                if ($matcherDefinition) {
+                    $this->fail('More then one request matcher was created');
+                }
+                $matcherDefinition = $definition;
+            }
+        }
+
+        // definition should exist
+        $this->assertNotNull($matcherDefinition);
+
+        $this->assertEquals(array('GET', 'HEAD'), $matcherDefinition->getArgument(2));
     }
 
     /**

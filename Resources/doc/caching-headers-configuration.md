@@ -10,6 +10,10 @@ set the cache rules on the response. The pattern are applied in the order
 specified, taking the first match. An example configuration could look like
 this:
 
+Rules are only checked on safe requests, as defined in
+`Request::isMethodSafe()`. This means only GET and HEAD requests get configured
+headers. Responses to other types of requests are considered uncacheable.
+
 ``` yaml
 # app/config.yml
 fos_http_cache:
@@ -26,6 +30,7 @@ fos_http_cache:
         -
             match:
                 attributes: { _controller: ^AcmeBundle:Default:.* }
+                additional_cacheable_status: [400]
             headers:
                 cache_control: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }
 
@@ -53,8 +58,9 @@ request is considered *safe* and matches *all* criteria, and the response
 is considered *cacheable*.
 
 A request is considered to be safe if `Request::isMethodSafe()` is true (GET or
-HEAD HTTP method). A response is considered to be cacheable when the status
-code is one of 200, 203, 300, 301, 302, 404, 410.
+HEAD HTTP method). By default, a response is considered to be cacheable when
+the status code is one of 200, 203, 300, 301, 302, 404, 410. This can be tuned
+with `additional_cacheable_status` or overwritten with `match_response`.
 
 ### path
 
@@ -66,10 +72,16 @@ page, use ``path: ^/$``.
 `host` is a regular expression to limit the caching rules to specific hosts,
 when you serve more than one host from this symfony application.
 
+**Tip**: To simplify caching of a site that at the same time has frontend
+editing, put the editing on a separate (sub-)domain. Then define a first rule
+matching that domain with `host` and set `max-age: 0` and make sure varnish
+never caches the editing domain.
+
 ### methods
 
 `methods` can be used to limit caching rules to specific HTTP methods like
-GET requests.
+GET requests. Note that cache headers are not applied to methods not considered
+*safe*, not even when the methods are listed in this configuration.
 
 ### ips
 
@@ -94,13 +106,25 @@ syntax or `service.id:methodName`.
 Note that even for the request attributes, your criteria are interpreted as
 regular expressions.
 
-### unless_role
+### additional_cacheable_status
 
-The ``unless_role`` makes it possible to skip rules based on whether the
-current authenticated user is granted the provided role. If there is no
-security in place, this filter will simply not be applied.
+A list of additional HTTP status codes of the response for which to also apply
+the rule.
 
-You could use this for example to never cache the requests by an admin.
+### match_response
+
+An ExpressionLanguage configuration to decide whether the response should have
+the headers applied. If not set, headers are applied if the status is in the
+list of safe status codes: 200, 203, 300, 301, 302, 404, 410, adding
+`additional_cacheable_status` if set.
+
+It is an error to set both `match_response` and `additional_cacheable_status`
+inside the same rule. `match_response` requires the ExpressionLanguage
+component available in your project.
+
+```
+response.getStatusCode() >= 400
+```
 
 headers
 -------

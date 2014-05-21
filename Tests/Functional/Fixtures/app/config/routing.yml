@@ -11,3 +11,11 @@ test_one:
   pattern:   /test/{id}
   defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::itemAction }
   methods:  [GET,POST]
+
+test_cached:
+  pattern:  /cachetest/cached
+  defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }
+
+test_noncached:
+  pattern:  /cachetest/noncached
+  defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }

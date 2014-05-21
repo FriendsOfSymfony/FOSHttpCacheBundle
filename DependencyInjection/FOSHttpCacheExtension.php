@@ -89,7 +89,7 @@ class FOSHttpCacheExtension extends Extension
 
             $match['ips'] = (empty($match['ips'])) ? null : $match['ips'];
 
-            $matcher = $this->createRequestMatcher(
+            $requestMatcher = $this->createRequestMatcher(
                 $container,
                 $match['path'],
                 $match['host'],
@@ -98,11 +98,41 @@ class FOSHttpCacheExtension extends Extension
                 $match['attributes']
             );
 
+            $extraCriteria = array();
+            foreach (array('additional_cacheable_status', 'match_response') as $extra) {
+                if (isset($match[$extra])) {
+                    $extraCriteria[$extra] = $match[$extra];
+                }
+            }
+            $ruleMatcher = $this->createRuleMatcher(
+                $container,
+                $requestMatcher,
+                $extraCriteria
+            );
+
+
             $container
                 ->getDefinition($this->getAlias() . '.event_listener.cache_control')
-                ->addMethodCall('add', array($matcher, $rule['headers']))
+                ->addMethodCall('add', array($ruleMatcher, $rule['headers']))
             ;
         }
+    }
+
+    protected function createRuleMatcher(ContainerBuilder $container, Reference $requestMatcher, array $extraCriteria)
+    {
+        $arguments = array((string) $requestMatcher, $extraCriteria);
+        $serialized = serialize($arguments);
+        $id = $this->getAlias() . '.rule_matcher.' . md5($serialized) . sha1($serialized);
+
+        if (!$container->hasDefinition($id)) {
+            $container
+                ->setDefinition($id, new DefinitionDecorator($this->getAlias().'.rule_matcher'))
+                ->replaceArgument(0, $requestMatcher)
+                ->replaceArgument(1, $extraCriteria)
+            ;
+        }
+
+        return new Reference($id);
     }
 
     protected function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null, $methods = null, $ips = null, array $attributes = array())
@@ -112,7 +142,6 @@ class FOSHttpCacheExtension extends Extension
         $id = $this->getAlias().'.request_matcher.'.md5($serialized).sha1($serialized);
 
         if (!$container->hasDefinition($id)) {
-            // only add arguments that are necessary
             $container
                 ->setDefinition($id, new DefinitionDecorator($this->getAlias().'.request_matcher'))
                 ->setArguments($arguments)

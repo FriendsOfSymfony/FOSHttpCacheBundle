@@ -8,6 +8,12 @@ fos_http_cache:
   proxy_client:
     varnish:
       servers: 127.0.0.1
+  rules:
+    -
+      match:
+        path: ^/cachetest/cached
+      headers:
+        cache_control: {public: true}
 
 monolog:
   handlers:
