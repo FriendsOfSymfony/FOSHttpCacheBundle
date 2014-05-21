@@ -12,8 +12,14 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var CacheManager|\Mockery\Mock
+     */
     protected $cacheManager;
 
+    /**
+     * @var TagSubscriber
+     */
     protected $listener;
 
     public function setUp()
@@ -43,6 +49,18 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             'item-1,item-2',
+            $event->getResponse()->headers->get($this->cacheManager->getTagsHeader())
+        );
+
+        $mockMatcher = \Mockery::mock('FOS\HttpCacheBundle\Http\RuleMatcherInterface')
+            ->shouldReceive('matches')->once()->with($request, $event->getResponse())->andReturn(true)
+            ->getMock()
+        ;
+        $this->listener->addRule($mockMatcher, array('item-2', 'configured-tag'));
+        $this->listener->onKernelResponse($event);
+
+        $this->assertEquals(
+            'item-1,item-2,configured-tag',
             $event->getResponse()->headers->get($this->cacheManager->getTagsHeader())
         );
     }
@@ -79,6 +97,17 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('invalidateTags')
             ->once()
             ->with(array('item-1', 'item-2'));
+        $this->listener->onKernelResponse($event);
+
+        $this->cacheManager
+            ->shouldReceive('invalidateTags')
+            ->once()
+            ->with(array('item-1', 'item-2', 'configured-tag'));
+        $mockMatcher = \Mockery::mock('FOS\HttpCacheBundle\Http\RuleMatcherInterface')
+            ->shouldReceive('matches')->once()->with($request, $event->getResponse())->andReturn(true)
+            ->getMock()
+        ;
+        $this->listener->addRule($mockMatcher, array('item-2', 'configured-tag'));
         $this->listener->onKernelResponse($event);
     }
 

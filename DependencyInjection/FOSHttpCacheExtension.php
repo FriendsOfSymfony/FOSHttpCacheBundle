@@ -32,10 +32,6 @@ class FOSHttpCacheExtension extends Extension
             $loader->load('cache_control_listener.xml');
         }
 
-        if (!empty($config['rules'])) {
-            $this->loadRules($container, $config);
-        }
-
         if (isset($config['proxy_client'])) {
             $container->setParameter($this->getAlias().'.invalidators', $config['invalidators']);
             $this->loadProxyClient($container, $loader, $config['proxy_client']);
@@ -48,7 +44,7 @@ class FOSHttpCacheExtension extends Extension
                     $loader->load('tag_listener.xml');
                 } elseif (true === $config['tag_listener']['enabled']) {
                     // silently skip if set to auto
-                    throw new \RuntimeException('The TagListener requires symfony/expression-language');
+                    throw new InvalidConfigurationException('The TagListener requires symfony/expression-language');
                 }
             }
 
@@ -62,6 +58,10 @@ class FOSHttpCacheExtension extends Extension
             throw new InvalidConfigurationException('You need to configure a proxy client to use the invalidators.');
         } elseif (true === $config['tag_listener']['enabled']) {
             throw new InvalidConfigurationException('You need to configure a proxy client to use the tag listener.');
+        }
+
+        if (!empty($config['rules'])) {
+            $this->loadRules($container, $config);
         }
 
         if ($config['authorization_listener']) {
@@ -82,9 +82,6 @@ class FOSHttpCacheExtension extends Extension
     protected function loadRules(ContainerBuilder $container, $config)
     {
         foreach ($config['rules'] as $rule) {
-            if (!isset($rule['headers'])) {
-                continue;
-            }
             $match = $rule['match'];
 
             $match['ips'] = (empty($match['ips'])) ? null : $match['ips'];
@@ -110,11 +107,22 @@ class FOSHttpCacheExtension extends Extension
                 $extraCriteria
             );
 
+            if (isset($rule['tags']) && count($rule['tags'])) {
+                if (!$container->hasDefinition($this->getAlias() . '.event_listener.tag')) {
+                    throw new InvalidConfigurationException('To configure tags, you need to have the tag event listener enabled, requiring symfony/expression-language');
+                }
+                $container
+                    ->getDefinition($this->getAlias() . '.event_listener.tag')
+                    ->addMethodCall('addRule', array($ruleMatcher, $rule['tags']))
+                ;
+            }
 
-            $container
-                ->getDefinition($this->getAlias() . '.event_listener.cache_control')
-                ->addMethodCall('add', array($ruleMatcher, $rule['headers']))
-            ;
+            if (isset($rule['headers'])) {
+                $container
+                    ->getDefinition($this->getAlias() . '.event_listener.cache_control')
+                    ->addMethodCall('addRule', array($ruleMatcher, $rule['headers']))
+                ;
+            }
         }
     }
 
