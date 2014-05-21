@@ -73,7 +73,6 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                             'attributes' => array(
                                 '_controller' => '^AcmeBundle:Default:index$',
                             ),
-                            'unless_role' => 'ROLE_NO_CACHE',
                         ),
                         'headers' => array(
                             'cache_control' => array('etag' => '42'),

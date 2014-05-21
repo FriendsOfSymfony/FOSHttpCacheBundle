@@ -6,11 +6,10 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 
 /**
  * This matcher wraps a Symfony2 RequestMatcher and adds some criteria for the
- * response and on the security context.
+ * response.
  *
  * @author David Buchmann <mail@davidbu.ch>
  */
@@ -32,15 +31,13 @@ class RuleMatcher implements RuleMatcherInterface
     private $expressionLanguage;
 
     /**
-     * @param RequestMatcherInterface  $requestMatcher  Strategy to match the request.
-     * @param array                    $criteria        Additional criteria not covered by request matcher.
-     * @param SecurityContextInterface $securityContext Used to handle unless_role criteria. (optional)
+     * @param RequestMatcherInterface $requestMatcher Strategy to match the request.
+     * @param array                   $criteria       Additional criteria not covered by request matcher.
      */
-    public function __construct(RequestMatcherInterface $requestMatcher, array $criteria, SecurityContextInterface $securityContext = null)
+    public function __construct(RequestMatcherInterface $requestMatcher, array $criteria)
     {
         $this->requestMatcher = $requestMatcher;
         $this->criteria = $criteria;
-        $this->securityContext = $securityContext;
     }
 
     /**
@@ -48,13 +45,6 @@ class RuleMatcher implements RuleMatcherInterface
      */
     public function matches(Request $request, Response $response)
     {
-        if (!empty($this->criteria['unless_role'])
-            && $this->securityContext
-            && $this->securityContext->isGranted($this->criteria['unless_role'])
-        ) {
-            return false;
-        }
-
         if (!$this->requestMatcher->matches($request)) {
             return false;
         }

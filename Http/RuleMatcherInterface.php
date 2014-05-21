@@ -2,11 +2,8 @@
 
 namespace FOS\HttpCacheBundle\Http;
 
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 
 /**
  * A matcher similar to the Symfony2 RequestMatcher but also considering the

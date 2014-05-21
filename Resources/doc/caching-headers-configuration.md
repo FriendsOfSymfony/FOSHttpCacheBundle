@@ -72,6 +72,11 @@ page, use ``path: ^/$``.
 `host` is a regular expression to limit the caching rules to specific hosts,
 when you serve more than one host from this symfony application.
 
+**Tip**: To simplify caching of a site that at the same time has frontend
+editing, put the editing on a separate (sub-)domain. Then define a first rule
+matching that domain with `host` and set `max-age: 0` and make sure varnish
+never caches the editing domain.
+
 ### methods
 
 `methods` can be used to limit caching rules to specific HTTP methods like
@@ -100,14 +105,6 @@ syntax or `service.id:methodName`.
 
 Note that even for the request attributes, your criteria are interpreted as
 regular expressions.
-
-### unless_role
-
-The ``unless_role`` makes it possible to skip rules based on whether the
-current authenticated user is granted the provided role. If there is no
-security in place, this filter will simply not be applied.
-
-You could use this for example to never cache the requests by an admin.
 
 ### additional_cacheable_status
 

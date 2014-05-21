@@ -20,25 +20,6 @@ class RuleMatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($ruleMatcher->matches($request, new Response()));
     }
 
-    public function testUnlessRole()
-    {
-        $security = $this->getMock('Symfony\Component\Security\Core\SecurityContextInterface');
-        $security->expects($this->at(0))
-            ->method('isGranted')
-            ->with('ROLE_NO_CACHE')
-            ->will($this->returnValue(false))
-        ;
-        $security->expects($this->at(1))
-            ->method('isGranted')
-            ->with('ROLE_NO_CACHE')
-            ->will($this->returnValue(true))
-        ;
-
-        $ruleMatcher = new RuleMatcher(new RequestMatcher(), array('unless_role' => 'ROLE_NO_CACHE'), $security);
-        $this->assertTrue($ruleMatcher->matches(new Request(), new Response()));
-        $this->assertFalse($ruleMatcher->matches(new Request(), new Response()));
-    }
-
     public function testAdditionalCacheableStatus()
     {
         $ruleMatcher = new RuleMatcher(new RequestMatcher(), array('additional_cacheable_status' => array(400, 500)));
@@ -50,7 +31,6 @@ class RuleMatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchResponse()
     {
-
         $ruleMatcher = new RuleMatcher(new RequestMatcher(), array('match_response' => 'response.getStatusCode() >= 300'));
 
         $this->assertFalse($ruleMatcher->matches(new Request(), new Response('', 100)));

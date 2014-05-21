@@ -28,7 +28,6 @@
         >
             <argument/>
             <argument/>
-            <argument type="service" id="security.context" on-invalid="ignore"/>
         </service>
     </services>
 </container>

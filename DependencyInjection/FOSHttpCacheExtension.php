@@ -99,7 +99,7 @@ class FOSHttpCacheExtension extends Extension
             );
 
             $extraCriteria = array();
-            foreach (array('unless_role', 'additional_cacheable_status', 'match_response') as $extra) {
+            foreach (array('additional_cacheable_status', 'match_response') as $extra) {
                 if (isset($match[$extra])) {
                     $extraCriteria[$extra] = $match[$extra];
                 }
