@@ -66,23 +66,7 @@ class FOSHttpCacheExtension extends Extension
         }
 
         if ($config['user_context']['enable']) {
-            $loader->load('user_context.xml');
-
-            $container->getDefinition($this->getAlias().'.user_context.request_matcher')
-                ->replaceArgument(0, $config['user_context']['pattern']['path'])
-                ->replaceArgument(1, $config['user_context']['pattern']['host'])
-                ->replaceArgument(2, $config['user_context']['pattern']['method']);
-
-            $container->getDefinition($this->getAlias().'.event_listener.user_context')
-                ->replaceArgument(2, $config['user_context']['vary_header'])
-                ->replaceArgument(3, $config['user_context']['hash_header'])
-                ->replaceArgument(4, $config['user_context']['hash_cache_ttl']);
-
-            if ($config['user_context']['role_provider']) {
-                $container->getDefinition($this->getAlias().'.user_context.role_provider')
-                    ->addTag(UserContextListenerPass::TAG_NAME)
-                    ->setAbstract(false);
-            }
+            $this->loadUserContext($container, $loader, $config['user_context']);
         }
 
         if (!empty($config['flash_message_listener']) && $config['flash_message_listener']['enabled']) {
@@ -150,6 +134,27 @@ class FOSHttpCacheExtension extends Extension
         }
 
         return new Reference($id);
+    }
+
+    protected function loadUserContext(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        $loader->load('user_context.xml');
+
+        $container->getDefinition($this->getAlias().'.user_context.request_matcher')
+            ->replaceArgument(0, $config['match']['accept'])
+            ->replaceArgument(1, $config['match']['method']);
+
+        $container->getDefinition($this->getAlias().'.event_listener.user_context')
+            ->replaceArgument(0, new Reference($config['match']['id']))
+            ->replaceArgument(2, $config['user_identifier_headers'])
+            ->replaceArgument(3, $config['user_hash_header'])
+            ->replaceArgument(4, $config['hash_cache_ttl']);
+
+        if ($config['role_provider']) {
+            $container->getDefinition($this->getAlias().'.user_context.role_provider')
+                ->addTag(UserContextListenerPass::TAG_NAME)
+                ->setAbstract(false);
+        }
     }
 
     protected function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null, $methods = null, $ips = null, array $attributes = array())

@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -29,9 +30,9 @@ class UserContextSubscriber implements EventSubscriberInterface
     private $hashGenerator;
 
     /**
-     * @var string
+     * @var string[]
      */
-    private $varyHeader;
+    private $userIdentifierHeaders;
 
     /**
      * @var string
@@ -41,15 +42,21 @@ class UserContextSubscriber implements EventSubscriberInterface
     /**
      * @var integer
      */
-    private $ttl = 0;
+    private $ttl;
 
-    public function __construct(RequestMatcherInterface $requestMatcher, HashGenerator $hashGenerator, $varyHeader, $hashHeader, $ttl = 0)
+    public function __construct(
+        RequestMatcherInterface $requestMatcher,
+        HashGenerator $hashGenerator,
+        $userIdentifierHeaders = array('Vary', 'Authorization'),
+        $hashHeader = "X-User-Context-Hash",
+        $ttl = 0
+    )
     {
-        $this->requestMatcher = $requestMatcher;
-        $this->hashGenerator  = $hashGenerator;
-        $this->varyHeader     = $varyHeader;
-        $this->hashHeader     = $hashHeader;
-        $this->ttl            = $ttl;
+        $this->requestMatcher        = $requestMatcher;
+        $this->hashGenerator         = $hashGenerator;
+        $this->userIdentifierHeaders = $userIdentifierHeaders;
+        $this->hashHeader            = $hashHeader;
+        $this->ttl                   = $ttl;
     }
 
     /**
@@ -63,20 +70,27 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
+        if ($event->getRequestType() != HttpKernelInterface::MASTER_REQUEST) {
+            return;
+        }
+
         if (!$this->requestMatcher->matches($event->getRequest())) {
             return;
         }
 
         $hash = $this->hashGenerator->generateHash();
 
-        $response = new Response('', 200);
-        $response->headers->set($this->hashHeader, $hash);
+        $response = new Response('', 200, array(
+            $this->hashHeader => $hash,
+            'Content-Type'    => 'application/vnd.fos.user-context-hash'
+        ));
 
         if ($this->ttl > 0) {
             $response->setClientTtl($this->ttl);
-            $response->setVary($this->varyHeader);
+            $response->setVary($this->userIdentifierHeaders);
         } else {
-            $response->setMaxAge(0);
+            $response->setClientTtl(0);
+            $response->headers->addCacheControlDirective('no-cache');
         }
 
         $event->setResponse($response);
@@ -93,6 +107,10 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        if ($event->getRequestType() != HttpKernelInterface::MASTER_REQUEST) {
+            return;
+        }
+
         // Only set vary header when not on the HEAD request
         if ($this->requestMatcher->matches($event->getRequest())) {
             return;

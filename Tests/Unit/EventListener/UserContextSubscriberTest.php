@@ -33,7 +33,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $response);
         $this->assertEquals($hash, $response->headers->get('X-Hash'));
         $this->assertNull($response->headers->get('Vary'));
-        $this->assertEquals('max-age=0, private', $response->headers->get('Cache-Control'));
+        $this->assertEquals('max-age=0, no-cache, private', $response->headers->get('Cache-Control'));
     }
 
     public function testOnKernelRequestCached()

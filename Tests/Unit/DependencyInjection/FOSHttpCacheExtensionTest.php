@@ -186,13 +186,13 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $config = array(
             array('user_context' => array(
                 'enable' => true,
-                'pattern'   => array(
-                    'path' => '/test',
-                    'host' => 'mydomain.com',
-                    'method' => 'AUTHENTICATE'
+                'match'   => array(
+                    'id' => 'my_request_matcher_id',
+                    'method' => 'AUTHENTICATE',
+                    'accept' => 'application/vnd.test'
                 ),
-                'vary_header' => 'X-Foo',
-                'hash_header' => 'X-Bar',
+                'user_identifier_headers' => array('X-Foo'),
+                'user_hash_header' => 'X-Bar',
                 'hash_cache_ttl' => 30,
                 'role_provider' => true
             )),
@@ -214,13 +214,13 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $config = array(
             array('user_context' => array(
                 'enable' => false,
-                'pattern'   => array(
-                    'path' => '/test',
-                    'host' => 'mydomain.com',
-                    'method' => 'AUTHENTICATE'
+                'match'   => array(
+                    'id' => 'my_request_matcher_id',
+                    'method' => 'AUTHENTICATE',
+                    'accept' => 'application/vnd.test'
                 ),
-                'vary_header' => 'X-Foo',
-                'hash_header' => 'X-Bar',
+                'user_identifier_headers' => array('X-Foo'),
+                'user_hash_header' => 'X-Bar',
                 'hash_cache_ttl' => 30,
                 'role_provider' => true
             )),

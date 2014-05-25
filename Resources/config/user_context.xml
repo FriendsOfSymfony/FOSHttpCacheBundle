@@ -8,7 +8,7 @@
         <parameter key="fos_http_cache.event_listener.user_context.class">FOS\HttpCacheBundle\EventListener\UserContextSubscriber</parameter>
         <parameter key="fos_http_cache.user_context.hash_generator.class">FOS\HttpCache\UserContext\HashGenerator</parameter>
         <parameter key="fos_http_cache.user_context.role_provider.class">FOS\HttpCacheBundle\UserContext\RoleProvider</parameter>
-        <parameter key="fos_http_cache.user_context.request_matcher.class">Symfony\Component\HttpFoundation\RequestMatcher</parameter>
+        <parameter key="fos_http_cache.user_context.request_matcher.class">FOS\HttpCacheBundle\UserContext\RequestMatcher</parameter>
     </parameters>
 
     <services>
@@ -16,7 +16,6 @@
         </service>
 
         <service id="fos_http_cache.user_context.request_matcher" class="%fos_http_cache.user_context.request_matcher.class%">
-            <argument />
             <argument />
             <argument />
         </service>
