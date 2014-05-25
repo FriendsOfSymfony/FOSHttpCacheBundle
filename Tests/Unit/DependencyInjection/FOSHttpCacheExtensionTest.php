@@ -181,15 +181,58 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->load($config, $container);
     }
 
-    public function testConfigLoadAuthorizationListener()
+    public function testConfigUserContext()
     {
         $config = array(
-            array('authorization_listener' => true,
-            ),
+            array('user_context' => array(
+                'enable' => true,
+                'match'   => array(
+                    'id' => 'my_request_matcher_id',
+                    'method' => 'AUTHENTICATE',
+                    'accept' => 'application/vnd.test'
+                ),
+                'user_identifier_headers' => array('X-Foo'),
+                'user_hash_header' => 'X-Bar',
+                'hash_cache_ttl' => 30,
+                'role_provider' => true
+            )),
         );
 
         $container = new ContainerBuilder();
         $this->extension->load($config, $container);
+
+        $this->assertTrue($container->has('fos_http_cache.event_listener.user_context'));
+        $this->assertTrue($container->has('fos_http_cache.user_context.hash_generator'));
+        $this->assertTrue($container->has('fos_http_cache.user_context.request_matcher'));
+        $this->assertTrue($container->has('fos_http_cache.user_context.role_provider'));
+
+        $this->assertEquals(array('fos_http_cache.user_context.role_provider' => array(array())), $container->findTaggedServiceIds('fos_http_cache.user_context_provider'));
+    }
+
+    public function testConfigWithtoutUserContext()
+    {
+        $config = array(
+            array('user_context' => array(
+                'enable' => false,
+                'match'   => array(
+                    'id' => 'my_request_matcher_id',
+                    'method' => 'AUTHENTICATE',
+                    'accept' => 'application/vnd.test'
+                ),
+                'user_identifier_headers' => array('X-Foo'),
+                'user_hash_header' => 'X-Bar',
+                'hash_cache_ttl' => 30,
+                'role_provider' => true
+            )),
+        );
+
+        $container = new ContainerBuilder();
+        $this->extension->load($config, $container);
+
+        $this->assertFalse($container->has('fos_http_cache.event_listener.user_context'));
+        $this->assertFalse($container->has('fos_http_cache.user_context.hash_generator'));
+        $this->assertFalse($container->has('fos_http_cache.user_context.request_matcher'));
+        $this->assertFalse($container->has('fos_http_cache.user_context.role_provider'));
     }
 
     public function testConfigLoadFlashMessageListener()
