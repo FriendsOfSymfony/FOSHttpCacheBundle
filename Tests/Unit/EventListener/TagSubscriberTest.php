@@ -42,6 +42,7 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $request = new Request();
         $request->setMethod('GET');
+        $request->attributes->set('id', 2);
         $request->attributes->set('_tag', array($tag1, $tag2));
 
         $event = $this->getEvent($request);
@@ -56,7 +57,10 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('matches')->once()->with($request, $event->getResponse())->andReturn(true)
             ->getMock()
         ;
-        $this->listener->addRule($mockMatcher, array('item-2', 'configured-tag'));
+        $this->listener->addRule($mockMatcher, array(
+            'tags' => array('configured-tag'),
+            'expressions' => array('"item-" ~ request.attributes.get("id")'),
+        ));
         $this->listener->onKernelResponse($event);
 
         $this->assertEquals(
@@ -89,6 +93,7 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $request = new Request();
         $request->setMethod('POST');
+        $request->attributes->set('id', 2);
         $request->attributes->set('_tag', array($tag));
 
         $event = $this->getEvent($request);
@@ -102,12 +107,15 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->cacheManager
             ->shouldReceive('invalidateTags')
             ->once()
-            ->with(array('item-1', 'item-2', 'configured-tag'));
+            ->with(array('item-1', 'item-2', 'configured-tag', 'item-2'));
         $mockMatcher = \Mockery::mock('FOS\HttpCacheBundle\Http\RuleMatcherInterface')
             ->shouldReceive('matches')->once()->with($request, $event->getResponse())->andReturn(true)
             ->getMock()
         ;
-        $this->listener->addRule($mockMatcher, array('item-2', 'configured-tag'));
+        $this->listener->addRule($mockMatcher, array(
+            'tags' => array('configured-tag'),
+            'expressions' => array('"item-" ~ request.attributes.get("id")'),
+        ));
         $this->listener->onKernelResponse($event);
     }
 

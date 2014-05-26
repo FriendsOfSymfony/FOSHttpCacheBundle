@@ -34,31 +34,11 @@ class FOSHttpCacheExtension extends Extension
         }
 
         if (isset($config['proxy_client'])) {
-            $container->setParameter($this->getAlias().'.invalidators', $config['invalidators']);
             $this->loadProxyClient($container, $loader, $config['proxy_client']);
+        }
 
-            $loader->load('cache_manager.xml');
-
-            if ($config['tag_listener']['enabled']) {
-                // true or auto
-                if (class_exists('\Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
-                    $loader->load('tag_listener.xml');
-                } elseif (true === $config['tag_listener']['enabled']) {
-                    // silently skip if set to auto
-                    throw new InvalidConfigurationException('The TagListener requires symfony/expression-language');
-                }
-            }
-
-            if (version_compare(Kernel::VERSION, '2.4.0', '>=')) {
-                $container
-                    ->getDefinition('fos_http_cache.command.invalidate_path')
-                    ->addTag('console.command')
-                ;
-            }
-        } elseif (!empty($config['invalidators'])) {
-            throw new InvalidConfigurationException('You need to configure a proxy client to use the invalidators.');
-        } elseif (true === $config['tag_listener']['enabled']) {
-            throw new InvalidConfigurationException('You need to configure a proxy client to use the tag listener.');
+        if ($config['cache_manager']['enabled'] && isset($config['proxy_client'])) {
+            $this->loadCacheManager($container, $loader, $config['cache_manager']);
         }
 
         if (!empty($config['rules'])) {
@@ -82,9 +62,11 @@ class FOSHttpCacheExtension extends Extension
 
     /**
      * @param ContainerBuilder $container
-     * @param $config
+     * @param array            $config
+     *
+     * @throws InvalidConfigurationException
      */
-    protected function loadRules(ContainerBuilder $container, $config)
+    protected function loadRules(ContainerBuilder $container, array $config)
     {
         foreach ($config['rules'] as $rule) {
             $match = $rule['match'];
@@ -112,13 +94,18 @@ class FOSHttpCacheExtension extends Extension
                 $extraCriteria
             );
 
-            if (isset($rule['tags']) && count($rule['tags'])) {
+            $tags = array(
+                'tags' => $rule['tags'],
+                'expressions' => $rule['tag_expressions'],
+            );
+            if (count($tags['tags']) || count($tags['expressions'])) {
                 if (!$container->hasDefinition($this->getAlias() . '.event_listener.tag')) {
                     throw new InvalidConfigurationException('To configure tags, you need to have the tag event listener enabled, requiring symfony/expression-language');
                 }
+
                 $container
                     ->getDefinition($this->getAlias() . '.event_listener.tag')
-                    ->addMethodCall('addRule', array($ruleMatcher, $rule['tags']))
+                    ->addMethodCall('addRule', array($ruleMatcher, $tags))
                 ;
             }
 
@@ -219,6 +206,37 @@ class FOSHttpCacheExtension extends Extension
         }
         $container->setParameter($this->getAlias() . '.proxy_client.varnish.servers', $config['servers']);
         $container->setParameter($this->getAlias() . '.proxy_client.varnish.base_url', $config['base_url']);
+    }
+
+    protected function loadCacheManager(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        $container->setParameter($this->getAlias().'.cache_manager.route_invalidators', $config['route_invalidators']);
+
+        $container->setParameter(
+            $this->getAlias() . '.cache_manager.additional_status',
+            isset($config['additional_status']) ? $config['additional_status'] : array()
+        );
+        $container->setParameter(
+            $this->getAlias() . '.cache_manager.match_response',
+            isset($config['match_response']) ? $config['match_response'] : null
+        );
+        $loader->load('cache_manager.xml');
+        if (version_compare(Kernel::VERSION, '2.4.0', '>=')) {
+            $container
+                ->getDefinition('fos_http_cache.command.invalidate_path')
+                ->addTag('console.command')
+            ;
+        }
+
+        if ($config['tag_listener']['enabled']) {
+            // true or auto
+            if (class_exists('\Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
+                $loader->load('tag_listener.xml');
+            } elseif (true === $config['tag_listener']['enabled']) {
+                // silently skip if set to auto
+                throw new InvalidConfigurationException('The TagListener requires symfony/expression-language');
+            }
+        }
     }
 
     private function validateUrl($url, $msg)

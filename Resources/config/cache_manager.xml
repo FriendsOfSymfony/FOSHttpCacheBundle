@@ -16,7 +16,7 @@
                  class="FOS\HttpCacheBundle\Invalidator\InvalidatorCollection"
                  factory-class="FOS\HttpCacheBundle\Invalidator\InvalidatorCollectionFactory"
                  factory-method="getInvalidatorCollection">
-            <argument>%fos_http_cache.invalidators%</argument>
+            <argument>%fos_http_cache.cache_manager.route_invalidators%</argument>
         </service>
 
         <service id="fos_http_cache.cache_manager"

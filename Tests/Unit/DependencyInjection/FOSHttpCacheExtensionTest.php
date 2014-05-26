@@ -40,19 +40,26 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     public function testConfigLoadInvalidators()
     {
         $config = $this->getBaseConfig() + array(
-            'invalidators' => array(
-                array(
-                    'name' => 'invalidator1',
-                    'origin_routes' => array(
-                        'my_route'
-                    ),
-                    'invalidate_routes' => array(
-                        array(
-                            'name' => 'invalidate_route1',
+            'cache_manager' => array(
+                'route_invalidators' => array(
+                    array(
+                        'name' => 'invalidator1',
+                        'origin_routes' => array(
+                            'my_route'
+                        ),
+                        'invalidate_routes' => array(
+                            array(
+                                'name' => 'invalidate_route1',
+                            )
                         )
                     )
                 )
-            )
+            ),
+            'proxy_client' => array(
+                'varnish' => array(
+                    'servers' => array('1.2.3.4'),
+                ),
+            ),
         );
 
         $container = new ContainerBuilder();

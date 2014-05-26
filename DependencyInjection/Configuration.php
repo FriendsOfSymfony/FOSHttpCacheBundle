@@ -9,9 +9,13 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 /**
- * This is the class that validates and merges configuration from your app/config files
+ * This class contains the configuration information for the bundle
  *
- * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html#cookbook-bundles-extension-config-class}
+ * This information is solely responsible for how the different configuration
+ * sections are normalized, and merged.
+ *
+ * @author David de Boer <david@driebit.nl>
+ * @author David Buchmann <mail@davidbu.ch>
  */
 class Configuration implements ConfigurationInterface
 {
@@ -24,6 +28,18 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('fos_http_cache');
 
         $rootNode
+            ->validate()
+                ->ifTrue(function ($v) {return $v['cache_manager']['enabled'] && !isset($v['proxy_client']);})
+                ->then(function ($v) {
+                    if ('auto' === $v['cache_manager']['enabled']) {
+                        $v['cache_manager']['enabled'] = false;
+
+                        return $v;
+                    }
+                    throw new InvalidConfigurationException('You need to configure a proxy_client to use the cache_manager.');
+                })
+            ->end()
+
             ->children()
                 ->booleanNode('debug')
                     ->defaultValue('%kernel.debug%')
@@ -39,9 +55,8 @@ class Configuration implements ConfigurationInterface
         $this->addUserContextListenerSection($rootNode);
         $this->addRulesSection($rootNode);
         $this->addProxyClientSection($rootNode);
-        $this->addTagListenerSection($rootNode);
+        $this->addCacheManager($rootNode);
         $this->addFlashMessageListenerSection($rootNode);
-        $this->addInvalidatorsSection($rootNode);
 
         return $treeBuilder;
     }
@@ -106,13 +121,18 @@ class Configuration implements ConfigurationInterface
 
         $this->addMatchSection($rules);
         $this->addHeaderSection($rules);
+        $this->addTagSection($rules);
+    }
+
+    private function addTagSection(NodeBuilder $rules)
+    {
         $rules
             ->arrayNode('tags')
                 ->prototype('scalar')
-                ->validate()
-                    ->ifTrue(function ($v) {return !count($v);})
-                    ->thenUnset()
-                ->end()
+                ->info('Tags to add to the response on safe requests, to invalidate on unsafe requests')
+            ->end()->end()
+            ->arrayNode('tag_expressions')
+                ->prototype('scalar')
                 ->info('Tags to add to the response on safe requests, to invalidate on unsafe requests')
             ->end()
         ;
@@ -231,9 +251,37 @@ class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    private function addTagListenerSection(ArrayNodeDefinition $rootNode)
+    private function addCacheManager(ArrayNodeDefinition $rootNode)
     {
-        $rootNode
+        $invalidationNode = $rootNode
+            ->children()
+                ->arrayNode('cache_manager')
+                    ->addDefaultsIfNotSet()
+                    ->beforeNormalization()
+                        ->ifArray()
+                        ->then(function ($v) {
+                            $v['enabled'] = isset($v['enabled']) ? $v['enabled'] : true;
+
+                            return $v;
+                        })
+                    ->end()
+                    ->info('Configure the cache manager. Needs a proxy_client to be configured.')
+                    ->children()
+                        ->enumNode('enabled')
+                            ->values(array(true, false, 'auto'))
+                            ->defaultValue('auto')
+                            ->info('Allows to disable the invalidation manager. Enabled by default if you configure a proxy client.')
+                        ->end()
+                    ->end()
+        ;
+
+        $this->addTagListenerSection($invalidationNode);
+        $this->addInvalidatorsSection($invalidationNode);
+    }
+
+    private function addTagListenerSection(ArrayNodeDefinition $invalidationNode)
+    {
+        $invalidationNode
             ->children()
                 ->arrayNode('tag_listener')
                     ->addDefaultsIfNotSet()
@@ -282,21 +330,24 @@ class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    private function addInvalidatorsSection(ArrayNodeDefinition $rootNode)
+    private function addInvalidatorsSection(ArrayNodeDefinition $invalidationNode)
     {
-        $rootNode
+        $invalidationNode
             ->children()
-                ->arrayNode('invalidators')
+                ->arrayNode('route_invalidators')
                     ->useAttributeAsKey('name')
+                    ->info('Groups of origin routes that invalidate target routes when a request is made')
                     ->prototype('array')
                         ->children()
                             ->arrayNode('origin_routes')
                                 ->isRequired()
                                 ->requiresAtLeastOneElement()
                                 ->prototype('scalar')->end()
+                                ->info('Invalidate the target routes in this group when one of these routes is called')
                             ->end()
                             ->arrayNode('invalidate_routes')
                                 ->useAttributeAsKey('name')
+                                ->info('Target routes to invalidate when an origin route is called')
                                 ->prototype('array')
                                     ->children()
                                         ->scalarNode('parameter_mapper')->end()

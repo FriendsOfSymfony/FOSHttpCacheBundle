@@ -58,28 +58,30 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
         if ($response->isSuccessful()) {
             $tags = $this->getAnnotationTags($request);
         }
-        $configuredTags = $this->matchConfiguration($request, $response) ?: array();
-        /*
-        foreach ($configuredTags as $id => $tag) {
-            $configuredTags[$id] = $this->expressionLanguage->evaluate($tag, array(
-                'request' => $request,
-                'response' => $response,
-            ));
+
+        $configuredTags = $this->matchConfiguration($request, $response);
+        if ($configuredTags) {
+            foreach ($configuredTags['tags'] as $tag) {
+                $tags[] = $tag;
+            }
+            foreach ($configuredTags['expressions'] as $expression) {
+                $tags[] = $this->expressionLanguage->evaluate($expression, array(
+                    'request' => $request,
+                    'response' => $response,
+                ));
+            }
         }
-        */
 
-        $uniqueTags = array_values(array_unique(array_merge($tags, $configuredTags)));
-
-        if (!count($uniqueTags)) {
+        if (!count($tags)) {
             return;
         }
 
         if ($request->isMethodSafe()) {
             // For safe requests (GET and HEAD), set cache tags on response
-            $this->cacheManager->tagResponse($response, $uniqueTags);
+            $this->cacheManager->tagResponse($response, $tags);
         } else {
             // For non-safe methods, invalidate the tags
-            $this->cacheManager->invalidateTags($uniqueTags);
+            $this->cacheManager->invalidateTags($tags);
         }
     }
 
