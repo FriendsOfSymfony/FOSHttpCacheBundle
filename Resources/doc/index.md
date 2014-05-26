@@ -11,7 +11,7 @@ This is the documentation for the FOSHttpCacheBundle. It covers:
    3. [Invalidator Configuration](invalidation-configuration.md)
    4. [Invalidating on the Command Line](invalidation-commandline.md)
 4. Event Listeners
-   1. [Authorization Listener](authorization-listener.md)
+   1. [User Context Listener](user-context.md)
    2. [Flash message Listener](flash-message-listener.md)
 5. [Varnish Debugging Configuration](varnish-debugging-configuration.md)
 6. [Testing](testing.md)

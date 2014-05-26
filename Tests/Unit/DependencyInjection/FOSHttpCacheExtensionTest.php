@@ -185,9 +185,8 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $config = array(
             array('user_context' => array(
-                'enable' => true,
                 'match'   => array(
-                    'id' => 'my_request_matcher_id',
+                    'matcher_service' => 'my_request_matcher_id',
                     'method' => 'AUTHENTICATE',
                     'accept' => 'application/vnd.test'
                 ),
@@ -209,13 +208,13 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('fos_http_cache.user_context.role_provider' => array(array())), $container->findTaggedServiceIds('fos_http_cache.user_context_provider'));
     }
 
-    public function testConfigWithtoutUserContext()
+    public function testConfigWithoutUserContext()
     {
         $config = array(
             array('user_context' => array(
-                'enable' => false,
+                'enabled' => false,
                 'match'   => array(
-                    'id' => 'my_request_matcher_id',
+                    'matcher_service' => 'my_request_matcher_id',
                     'method' => 'AUTHENTICATE',
                     'accept' => 'application/vnd.test'
                 ),

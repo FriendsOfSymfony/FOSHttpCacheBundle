@@ -111,23 +111,6 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($event->getResponse()->headers->get('Vary'));
     }
 
-    public function testOnKernelResponseOnHashRequest()
-    {
-        $request = new Request();
-        $request->setMethod('HEAD');
-        $request->headers->set('X-Hash', 'hash');
-
-        $requestMatcher = \Mockery::mock('\Symfony\Component\HttpFoundation\RequestMatcherInterface');
-        $requestMatcher->shouldReceive('matches')->with($request)->andReturn(true);
-
-        $userContextSubscriber = new UserContextSubscriber($requestMatcher, new HashGenerator(), 'X-SessionId', 'X-Hash');
-        $event = $this->getKernelResponseEvent($request);
-
-        $userContextSubscriber->onKernelResponse($event);
-
-        $this->assertNull($event->getResponse()->headers->get('Vary'));
-    }
-
     protected function getKernelRequestEvent(Request $request)
     {
         return new GetResponseEvent(

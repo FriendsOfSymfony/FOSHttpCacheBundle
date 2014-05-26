@@ -65,7 +65,7 @@ class FOSHttpCacheExtension extends Extension
             throw new InvalidConfigurationException('You need to configure a proxy client to use the tag listener.');
         }
 
-        if ($config['user_context']['enable']) {
+        if ($config['user_context']['enabled']) {
             $this->loadUserContext($container, $loader, $config['user_context']);
         }
 
@@ -145,7 +145,7 @@ class FOSHttpCacheExtension extends Extension
             ->replaceArgument(1, $config['match']['method']);
 
         $container->getDefinition($this->getAlias().'.event_listener.user_context')
-            ->replaceArgument(0, new Reference($config['match']['id']))
+            ->replaceArgument(0, new Reference($config['match']['matcher_service']))
             ->replaceArgument(2, $config['user_identifier_headers'])
             ->replaceArgument(3, $config['user_hash_header'])
             ->replaceArgument(4, $config['hash_cache_ttl']);

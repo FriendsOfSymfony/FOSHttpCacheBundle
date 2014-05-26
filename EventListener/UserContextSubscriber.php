@@ -12,7 +12,10 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * listen to HEAD requests, return response after security, but before Controller is invoked
+ * Check requests and responses with the matcher.
+ *
+ * Abort context hash requests immediately and return the hash.
+ * Add the vary information on responses to normal requests.
  *
  * @author Stefan Paschke <stefan.paschke@gmail.com>
  * @author Joel Wurtz <joel.wurtz@gmail.com>
@@ -60,11 +63,10 @@ class UserContextSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Return the response to the HEAD Request with
-     * the hash generated in a specified header
+     * Return the response to the context hash request with a header containing
+     * the generated hash.
      *
-     * If the ttl is superior to 0, cache headers
-     * will be set for this response
+     * If the ttl is bigger than 0, cache headers will be set for this response.
      *
      * @param GetResponseEvent $event
      */
@@ -80,6 +82,7 @@ class UserContextSubscriber implements EventSubscriberInterface
 
         $hash = $this->hashGenerator->generateHash();
 
+        // status needs to be 200 as otherwise varnish will not cache the response.
         $response = new Response('', 200, array(
             $this->hashHeader => $hash,
             'Content-Type'    => 'application/vnd.fos.user-context-hash'
@@ -97,11 +100,8 @@ class UserContextSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Add a vary on the hash header to the response
-     * when this header is present in the request
-     *
-     * If the response is not successful, the hash is not present,
-     * or we are in the head request, the vary will not be set
+     * Add the context hash header to the headers to vary on if the header was
+     * present in the request.
      *
      * @param FilterResponseEvent $event
      */
@@ -111,22 +111,12 @@ class UserContextSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // Only set vary header when not on the HEAD request
-        if ($this->requestMatcher->matches($event->getRequest())) {
-            return;
-        }
-
         // Only set vary header if we have the hash header
         if (!$event->getRequest()->headers->has($this->hashHeader)) {
             return;
         }
 
         $response = $event->getResponse();
-
-        // Only set vary if response is successful
-        if (!$response->isSuccessful()) {
-            return;
-        }
 
         $vary = $response->getVary();
 
