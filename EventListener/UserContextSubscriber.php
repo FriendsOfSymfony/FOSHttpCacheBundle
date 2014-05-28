@@ -50,11 +50,14 @@ class UserContextSubscriber implements EventSubscriberInterface
     public function __construct(
         RequestMatcherInterface $requestMatcher,
         HashGenerator $hashGenerator,
-        $userIdentifierHeaders = array('Vary', 'Authorization'),
+        array $userIdentifierHeaders = array('Cookie', 'Authorization'),
         $hashHeader = "X-User-Context-Hash",
         $ttl = 0
     )
     {
+        if (!count($userIdentifierHeaders)) {
+            throw new \InvalidArgumentException('The user context must vary on some request headers');
+        }
         $this->requestMatcher        = $requestMatcher;
         $this->hashGenerator         = $hashGenerator;
         $this->userIdentifierHeaders = $userIdentifierHeaders;
@@ -111,17 +114,19 @@ class UserContextSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // Only set vary header if we have the hash header
-        if (!$event->getRequest()->headers->has($this->hashHeader)) {
-            return;
-        }
-
         $response = $event->getResponse();
-
         $vary = $response->getVary();
 
-        if (!in_array($this->hashHeader, $vary)) {
-            $vary[] = $this->hashHeader;
+        if ($event->getRequest()->headers->has($this->hashHeader)) {
+            if (!in_array($this->hashHeader, $vary)) {
+                $vary[] = $this->hashHeader;
+            }
+        } else {
+            foreach ($this->userIdentifierHeaders as $header) {
+                if (!in_array($header, $vary)) {
+                    $vary[] = $header;
+                }
+            }
         }
 
         $response->setVary($vary, true);

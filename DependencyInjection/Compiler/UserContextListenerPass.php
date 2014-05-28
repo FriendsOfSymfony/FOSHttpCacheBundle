@@ -2,6 +2,7 @@
 
 namespace FOS\HttpCacheBundle\DependencyInjection\Compiler;
 
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -24,8 +25,15 @@ class UserContextListenerPass implements CompilerPassInterface
 
         $definition = $container->getDefinition('fos_http_cache.user_context.hash_generator');
 
+        $providers = array();
         foreach ($container->findTaggedServiceIds(self::TAG_NAME) as $id => $parameters) {
-            $definition->addMethodCall('registerProvider', array(new Reference($id)));
+            $providers[] = new Reference($id);
         }
+
+        if (!count($providers)) {
+            throw new InvalidConfigurationException('No user context providers found. Either tag providers or disable fos_http_cache.user_context');
+        }
+
+        $definition->addArgument($providers);
     }
 }

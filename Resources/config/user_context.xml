@@ -30,7 +30,7 @@
         </service>
 
         <service id="fos_http_cache.user_context.role_provider" class="%fos_http_cache.user_context.role_provider.class%" abstract="true">
-            <argument type="service" id="security.context" />
+            <argument type="service" id="security.context" on-invalid="ignore" />
         </service>
     </services>
 </container>

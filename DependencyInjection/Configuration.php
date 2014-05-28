@@ -79,7 +79,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('user_identifier_headers')
                             ->prototype('scalar')->end()
-                            ->treatNullLike(array('Cookie', 'Authentication'))
+                            ->defaultValue(array('Cookie', 'Authorization'))
                             ->info('List of headers that contains the unique identifier for the user in the hash request.')
                         ->end()
                         ->scalarNode('user_hash_header')

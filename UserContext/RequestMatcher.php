@@ -22,7 +22,7 @@ class RequestMatcher implements RequestMatcherInterface
      */
     public function matches(Request $request)
     {
-        if ($this->accept != $request->headers->get('accept', null)) {
+        if ($this->accept !== null && $this->accept != $request->headers->get('accept', null)) {
             return false;
         }
 
@@ -32,4 +32,4 @@ class RequestMatcher implements RequestMatcherInterface
 
         return true;
     }
-} 
+}

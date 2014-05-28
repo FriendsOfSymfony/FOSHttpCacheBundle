@@ -4,30 +4,50 @@ namespace FOS\HttpCacheBundle\UserContext;
 
 use FOS\HttpCache\UserContext\ContextProviderInterface;
 use FOS\HttpCache\UserContext\UserContext;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Security\Core\Role\RoleInterface;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 
 /**
- * RoleProvider add roles to the UserContext for the hash generation
+ * The RoleProvider adds roles to the UserContext for the hash generation.
  */
 class RoleProvider implements ContextProviderInterface
 {
+    /**
+     * @var SecurityContextInterface|null
+     */
     private $context;
 
-    public function __construct(SecurityContextInterface $context)
+    /**
+     * Create the role provider with a security context.
+     *
+     * The security context is optional to not fail on routes that have no
+     * firewall. It is however not valid to call updateUserContext when not in
+     * a firewall context.
+     *
+     * @param SecurityContextInterface|null $context
+     */
+    public function __construct(SecurityContextInterface $context = null)
     {
         $this->context = $context;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @throws InvalidConfigurationException when called without a security context being set.
      */
     public function updateUserContext(UserContext $context)
     {
+        if (null === $this->context) {
+            throw new InvalidConfigurationException('The context hash URL must be under a firewall.');
+        }
+
         if (null === $token = $this->context->getToken()) {
             return;
         }
 
-        $roles = array_map(function ($role) {
+        $roles = array_map(function (RoleInterface $role) {
             return $role->getRole();
         }, $token->getRoles());
 

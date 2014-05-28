@@ -21,20 +21,45 @@ other responses are set to vary on the hash header.
 Additionally, the bundle provides a service that builds the user context hash
 from context providers.
 
-## Configuring the Context Event Subscriber
+## Configuring the User Context Event Subscriber
+
+First you need to set up your caching proxy as explained in
+[the user context documentation](http://foshttpcache.readthedocs.org/en/latest/user-context.html)
+
+Then add the route you specified in the hash lookup request to the Symfony
+routing configuration, so that the user context event subscriber can get
+triggered:
+
+```yaml
+# app/config/routing.yml
+user_context_hash:
+    /user-context-hash
+```
+
+.. note::
+
+    This route is never actually used, as the context event subscriber will act
+    before a controller would be called. But the user context is handled only
+    after security happened. Security in turn only happens after the routing.
+    If the routing does not find a route, the request is aborted with a "not
+    found" error.
+
+.. caution::
+
+    If you are using Symfony2 security, make sure that this route is route is
+    [inside the firewall](http://symfony.com/doc/current/book/security.html) for
+    which you are doing the cache groups.
 
 Enable the event subscriber with:
 
-``` yaml
-# app/config.yml
+```yaml
+# app/config/config.yml
 fos_http_cache:
     user_context:
         enabled: true
 ```
 
-This will enable the subscriber with the default settings. You need to
-configure your caching proxy as explained in
-[the user context documentation](http://foshttpcache.readthedocs.org/en/latest/user-context.html)
+This will enable the subscriber with the default settings.
 
 Note: Enabling happens automatically if you configure any of the options on the
 user_context.
