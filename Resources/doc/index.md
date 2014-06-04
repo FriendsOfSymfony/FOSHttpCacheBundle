@@ -15,3 +15,10 @@ This is the documentation for the FOSHttpCacheBundle. It covers:
    2. [Flash message Listener](flash-message-listener.md)
 5. [Varnish Debugging Configuration](varnish-debugging-configuration.md)
 6. [Testing](testing.md)
+
+Functionality              | Annotations                                        | Configuration
+---------------------------|----------------------------------------------------|-----------------------------------------------
+Set Cache-Control headers  | (SensioFrameworkExtraBundle)                       | [rules](caching-headers-configuration.md)
+Tagging and invalidating   | [@Tag](tagging.md)                                 | [rules](tagging.md#tagging-with-configuration)
+Invalidate routes          | [@InvalidateRoute](annotations.md#invalidateroute) | [invalidators](invalidation-configuration.md)
+Invalidate paths           | [@InvalidatePath](annotations.md#invalidatepath)   | -

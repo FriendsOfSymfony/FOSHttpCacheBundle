@@ -49,10 +49,6 @@ class FOSHttpCacheExtension extends Extension
             $this->loadUserContext($container, $loader, $config['user_context']);
         }
 
-        if ($config['authorization_listener']) {
-            $loader->load('authorization_request_listener.xml');
-        }
-        
         if (!empty($config['flash_message_listener']) && $config['flash_message_listener']['enabled']) {
             $container->setParameter($this->getAlias().'.event_listener.flash_message.options', $config['flash_message_listener']);
 
