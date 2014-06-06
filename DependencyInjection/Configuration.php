@@ -33,13 +33,10 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('X-Cache-Debug')
                     ->info('The header to send if debug is true.')
                 ->end()
-                ->booleanNode('authorization_listener')
-                    ->defaultFalse()
-                    ->info('Whether to activate the authorization listener that early returns head request after the security check.')
-                ->end()
             ->end()
         ;
 
+        $this->addUserContextListenerSection($rootNode);
         $this->addRulesSection($rootNode);
         $this->addProxyClientSection($rootNode);
         $this->addTagListenerSection($rootNode);
@@ -47,6 +44,55 @@ class Configuration implements ConfigurationInterface
         $this->addInvalidatorsSection($rootNode);
 
         return $treeBuilder;
+    }
+
+    private function addUserContextListenerSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->fixXmlConfig('user_identifier_header')
+            ->children()
+                ->arrayNode('user_context')
+                    ->info('Listener that returns the request for the user context hash as early as possible.')
+                    ->addDefaultsIfNotSet()
+                    ->canBeEnabled()
+                    ->children()
+                        ->arrayNode('match')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->scalarNode('matcher_service')
+                                    ->defaultValue('fos_http_cache.user_context.request_matcher')
+                                    ->info('Service id of a request matcher that tells whether the request is a context hash request.')
+                                ->end()
+                                ->scalarNode('accept')
+                                    ->defaultValue('application/vnd.fos.user-context-hash')
+                                    ->info('Specify the accept HTTP header used for context hash requests.')
+                                ->end()
+                                ->scalarNode('method')
+                                    ->defaultNull()
+                                    ->info('Specify the HTTP method used for context hash requests.')
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->scalarNode('hash_cache_ttl')
+                            ->defaultValue(0)
+                            ->info('Cache the response for the hash for the specified number of seconds. Setting this to 0 will not cache those responses at all.')
+                        ->end()
+                        ->arrayNode('user_identifier_headers')
+                            ->prototype('scalar')->end()
+                            ->defaultValue(array('Cookie', 'Authorization'))
+                            ->info('List of headers that contains the unique identifier for the user in the hash request.')
+                        ->end()
+                        ->scalarNode('user_hash_header')
+                            ->defaultValue('X-User-Context-Hash')
+                            ->info('Name of the header that contains the hash information for the context.')
+                        ->end()
+                        ->booleanNode('role_provider')
+                            ->defaultFalse()
+                            ->info('Whether to enable a provider that automatically adds all roles of the current user to the context.')
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 
     private function addRulesSection(ArrayNodeDefinition $rootNode)

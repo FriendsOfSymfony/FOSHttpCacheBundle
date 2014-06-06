@@ -2,6 +2,7 @@
 
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
+use FOS\HttpCacheBundle\DependencyInjection\Compiler\UserContextListenerPass;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -64,8 +65,8 @@ class FOSHttpCacheExtension extends Extension
             throw new InvalidConfigurationException('You need to configure a proxy client to use the tag listener.');
         }
 
-        if ($config['authorization_listener']) {
-            $loader->load('authorization_request_listener.xml');
+        if ($config['user_context']['enabled']) {
+            $this->loadUserContext($container, $loader, $config['user_context']);
         }
 
         if (!empty($config['flash_message_listener']) && $config['flash_message_listener']['enabled']) {
@@ -133,6 +134,27 @@ class FOSHttpCacheExtension extends Extension
         }
 
         return new Reference($id);
+    }
+
+    protected function loadUserContext(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        $loader->load('user_context.xml');
+
+        $container->getDefinition($this->getAlias().'.user_context.request_matcher')
+            ->replaceArgument(0, $config['match']['accept'])
+            ->replaceArgument(1, $config['match']['method']);
+
+        $container->getDefinition($this->getAlias().'.event_listener.user_context')
+            ->replaceArgument(0, new Reference($config['match']['matcher_service']))
+            ->replaceArgument(2, $config['user_identifier_headers'])
+            ->replaceArgument(3, $config['user_hash_header'])
+            ->replaceArgument(4, $config['hash_cache_ttl']);
+
+        if ($config['role_provider']) {
+            $container->getDefinition($this->getAlias().'.user_context.role_provider')
+                ->addTag(UserContextListenerPass::TAG_NAME)
+                ->setAbstract(false);
+        }
     }
 
     protected function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null, $methods = null, $ips = null, array $attributes = array())
