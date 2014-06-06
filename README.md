@@ -1,12 +1,8 @@
 FOSHttpCacheBundle
 ==================
-[![Build Status](https://travis-ci.org/ddeboer/FOSHttpCacheBundle.png?branch=master)](https://travis-ci.org/ddeboer/FOSHttpCacheBundle)
-[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ddeboer/FOSHttpCacheBundle/badges/quality-score.png?s=023c10bc7c04be6d779bc42884f61a8ad3b17146)](https://scrutinizer-ci.com/g/ddeboer/FOSHttpCacheBundle/)
-[![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/FOSHttpCacheBundle/badges/coverage.png?s=f7424d7692b6125f36c9c29d7fd635b01d06c0df)](https://scrutinizer-ci.com/g/ddeboer/FOSHttpCacheBundle/)
-
-This is a work in progress to unite the LiipCacheControlBundle and
-DriebitHttpCacheBundle into one good bundle. We
-[hope to publish this as a FOS bundle](https://github.com/FriendsOfSymfony/friendsofsymfony.github.com/issues/42)
+[![Build Status](https://travis-ci.org/FriendsOfSymfony/FOSHttpCacheBundle.svg?branch=master)](https://travis-ci.org/FriendsOfSymfony/FOSHttpCacheBundle)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCacheBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCacheBundle/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCacheBundle/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCacheBundle/?branch=master)
 
 Introduction
 ------------

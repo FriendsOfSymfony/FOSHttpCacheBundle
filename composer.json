@@ -3,7 +3,7 @@
     "type": "symfony-bundle",
     "description": "Set path based HTTP cache headers and send invalidation requests to your HTTP cache",
     "keywords": [ "http", "caching", "purge", "invalidation", "varnish", "esi" ],
-    "homepage": "https://github.com/ddeboer/FOSHttpCacheBundle",
+    "homepage": "https://github.com/FriendsOfSymfony/FOSHttpCacheBundle",
     "license": "MIT",
     "authors": [
         {
