@@ -8,8 +8,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
-
 /**
  * Set caching settings on matching response according to the configurations.
  *
@@ -18,13 +16,8 @@ use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
  * @author Lea Haensenberger <lea.haensenberger@gmail.com>
  * @author David Buchmann <mail@davidbu.ch>
  */
-class CacheControlSubscriber implements EventSubscriberInterface
+class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var array List of arrays with RuleMatcher, header array.
-     */
-    private $map = array();
-
     /**
      * Cache control directives directly supported by Response.
      *
@@ -64,25 +57,6 @@ class CacheControlSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Add a rule matcher with a list of header directives to apply if the
-     * request and response are matched.
-     *
-     * @param RuleMatcherInterface $ruleMatcher The headers apply to responses matched by this matcher.
-     * @param array                $headers     An array of header configuration.
-     * @param int                  $priority    Optional priority of this matcher. Higher priority is applied first.
-     */
-    public function add(
-        RuleMatcherInterface $ruleMatcher,
-        array $headers = array(),
-        $priority = 0
-    ) {
-        if (!isset($this->map[$priority])) {
-            $this->map[$priority] = array();
-        }
-        $this->map[$priority][] = array($ruleMatcher, $headers);
-    }
-
-    /**
      * Apply the header rules if the request matches.
      *
      * @param FilterResponseEvent $event
@@ -101,7 +75,7 @@ class CacheControlSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $options = $this->getOptions($request, $response);
+        $options = $this->matchConfiguration($request, $response);
         if (false !== $options) {
             if (!empty($options['cache_control'])) {
                 $directives = array_intersect_key($options['cache_control'], $this->supportedDirectives);
@@ -162,40 +136,5 @@ class CacheControlSubscriber implements EventSubscriberInterface
     protected function isRequestSafe(Request $request)
     {
         return $request->isMethodSafe();
-    }
-
-    /**
-     * Return the cache options for the current request if any rule matches.
-     *
-     * @param Request  $request
-     * @param Response $response
-     *
-     * @return array|false of settings or false if nothing matched.
-     */
-    protected function getOptions(Request $request, Response $response)
-    {
-        foreach ($this->getRules() as $elements) {
-            if ($elements[0]->matches($request, $response)) {
-                return $elements[1];
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get the rules ordered by priority.
-     *
-     * @return array of array with matcher, extra criteria, headers
-     */
-    private function getRules()
-    {
-        $sortedRules = array();
-        krsort($this->map);
-        foreach ($this->map as $rules) {
-            $sortedRules = array_merge($sortedRules, $rules);
-        }
-
-        return $sortedRules;
     }
 }

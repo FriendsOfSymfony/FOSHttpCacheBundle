@@ -22,17 +22,18 @@ You can configure invalidators as follows:
 # app/config/config.yml
 
 fos_http_cache:
-  ...
-  invalidators:
-    villains:
-      origin_routes: [ villain_edit, villain_delete, villain_publish ]
-      invalidate_routes:
-        villains_index: ~    # e.g., /villains
-        villain_details: ~   # e.g., /villain/{id}
-    another_invalidator:
-      origin_routes: [ ... ]
-      invalidate_routes:
-        ...
+    ...
+    cache_manager:
+        route_invalidation:
+            villains:
+                origin_routes: [ villain_edit, villain_delete, villain_publish ]
+                invalidate_routes:
+                    villains_index: ~    # e.g., /villains
+                    villain_details: ~   # e.g., /villain/{id}
+            another_invalidator:
+                origin_routes: [ ... ]
+                invalidate_routes:
+            ...
 ```
 
 Now when a request to either one of the three origin routes returns a 200 response, both `villains_index` and

@@ -4,7 +4,10 @@ namespace FOS\HttpCacheBundle\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
+use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -14,7 +17,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  *
  * @author David de Boer <david@driebit.nl>
  */
-class TagSubscriber implements EventSubscriberInterface
+class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInterface
 {
     /**
      * @var CacheManager
@@ -47,19 +50,56 @@ class TagSubscriber implements EventSubscriberInterface
     public function onKernelResponse(FilterResponseEvent $event)
     {
         $request = $event->getRequest();
+        $response = $event->getResponse();
 
+        $tags = array();
+
+        // Only set cache tags or invalidate them if response is successful
+        if ($response->isSuccessful()) {
+            $tags = $this->getAnnotationTags($request);
+        }
+
+        $configuredTags = $this->matchConfiguration($request, $response);
+        if ($configuredTags) {
+            foreach ($configuredTags['tags'] as $tag) {
+                $tags[] = $tag;
+            }
+            foreach ($configuredTags['expressions'] as $expression) {
+                $tags[] = $this->expressionLanguage->evaluate($expression, array(
+                    'request' => $request,
+                    'response' => $response,
+                ));
+            }
+        }
+
+        if (!count($tags)) {
+            return;
+        }
+
+        if ($request->isMethodSafe()) {
+            // For safe requests (GET and HEAD), set cache tags on response
+            $this->cacheManager->tagResponse($response, $tags);
+        } else {
+            // For non-safe methods, invalidate the tags
+            $this->cacheManager->invalidateTags($tags);
+        }
+    }
+
+    /**
+     * Get the tags from the annotations on the controller that was used in the
+     * request.
+     *
+     * @param Request $request
+     *
+     * @return array List of tags affected by the request.
+     */
+    private function getAnnotationTags(Request $request)
+    {
         // Check for _tag request attribute that is set when using @Tag
         // annotation
         /** @var $tagConfigurations Tag[] */
         if (!$tagConfigurations = $request->attributes->get('_tag')) {
-            return;
-        }
-
-        $response = $event->getResponse();
-
-        // Only set cache tags or invalidate them if response is successful
-        if (!$response->isSuccessful()) {
-            return;
+            return array();
         }
 
         $tags = array();
@@ -74,15 +114,7 @@ class TagSubscriber implements EventSubscriberInterface
             }
         }
 
-        $uniqueTags = array_unique($tags);
-
-        if ($request->isMethodSafe()) {
-            // For safe requests (GET and HEAD), set cache tags on response
-            $this->cacheManager->tagResponse($response, $uniqueTags);
-        } else {
-            // For non-safe methods, invalidate the tags
-            $this->cacheManager->invalidateTags($uniqueTags);
-        }
+        return $tags;
     }
 
     /**

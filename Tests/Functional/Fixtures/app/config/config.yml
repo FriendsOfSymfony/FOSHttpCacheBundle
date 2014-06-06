@@ -11,9 +11,10 @@ fos_http_cache:
   rules:
     -
       match:
-        path: ^/cachetest/cached
+        path: ^/cached
       headers:
         cache_control: {public: true}
+      tags: [area]
 
 monolog:
   handlers:
