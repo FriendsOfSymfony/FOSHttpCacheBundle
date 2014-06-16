@@ -13,7 +13,6 @@ namespace FOS\HttpCacheBundle\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
-use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

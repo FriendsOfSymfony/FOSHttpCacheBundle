@@ -87,8 +87,8 @@ class CacheManager extends CacheInvalidator
     /**
      * Refresh a route
      *
-     * @param string $route     Route name
-     * @param array $parameters Route parameters (optional)
+     * @param string $route      Route name
+     * @param array  $parameters Route parameters (optional)
      *
      * @return $this
      */

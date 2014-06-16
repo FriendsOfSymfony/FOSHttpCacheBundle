@@ -13,7 +13,6 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection;
 
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use \Mockery;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 
 class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase

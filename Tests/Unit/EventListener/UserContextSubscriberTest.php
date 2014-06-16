@@ -38,7 +38,6 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $response = $event->getResponse();
 
-
         $this->assertNotNull($response);
         $this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $response);
         $this->assertEquals('hash', $response->headers->get('X-Hash'));

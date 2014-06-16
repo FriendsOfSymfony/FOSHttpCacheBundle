@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCacheBundle\Test\Unit\EventListener;
+namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
