@@ -11,9 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Command;
 
-use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\StreamOutput;
 
 class InvalidateTagCommandTest extends CommandTestCase
 {

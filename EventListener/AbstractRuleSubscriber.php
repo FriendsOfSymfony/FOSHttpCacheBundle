@@ -27,7 +27,7 @@ class AbstractRuleSubscriber
      * request and response are matched.
      *
      * @param RuleMatcherInterface $ruleMatcher The headers apply to responses matched by this matcher.
-     * @param array                $settings     An array of header configuration.
+     * @param array                $settings    An array of header configuration.
      * @param int                  $priority    Optional priority of this matcher. Higher priority is applied first.
      */
     public function addRule(
