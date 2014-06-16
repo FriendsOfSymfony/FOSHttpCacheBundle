@@ -20,8 +20,6 @@ matrix:
       env: SYMFONY_VERSION='2.4.*'
     - php: 5.5
       env: SYMFONY_VERSION='dev-master'
-  allow_failure:
-    - php: hhvm
 
 
 before_script:
