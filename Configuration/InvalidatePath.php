@@ -21,7 +21,7 @@ class InvalidatePath extends ConfigurationAnnotation
     /**
      * @var array
      */
-    protected $paths;
+    private $paths;
 
     public function setValue($data)
     {

@@ -19,8 +19,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
  */
 class Tag extends ConfigurationAnnotation
 {
-    protected $tags;
-    protected $expression;
+    private $tags;
+    private $expression;
 
     public function setValue($data)
     {
