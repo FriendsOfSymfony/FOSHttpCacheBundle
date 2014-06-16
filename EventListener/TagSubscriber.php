@@ -31,6 +31,11 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
      * @var CacheManager
      */
     protected $cacheManager;
+    
+    /**
+     * @var ExpressionLanguage
+     */
+    private $expressionLanguage;
 
     /**
      * Constructor
