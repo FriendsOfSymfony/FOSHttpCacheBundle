@@ -57,6 +57,13 @@ class InvalidationSubscriber implements EventSubscriberInterface
     protected $router;
 
     /**
+     * Router
+     *
+     * @var ExpressionLanguage|null
+     */
+    private $expressionLanguage;
+
+    /**
      * Constructor
      *
      * @param CacheManager          $cacheManager
