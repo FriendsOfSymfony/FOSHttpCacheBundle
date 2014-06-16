@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
@@ -209,7 +218,8 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(isset($newHeaders['x-cache-debug'][0]));
     }
 
-    public function testConfigDefineRequestMatcherWithControllerName() {
+    public function testConfigDefineRequestMatcherWithControllerName()
+    {
         $extension = new FOSHttpCacheExtension();
         $container = new ContainerBuilder();
 
@@ -291,7 +301,6 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testUnlessRole()
     {
         $security = $this->getMock('Symfony\Component\Security\Core\SecurityContextInterface');
-
 
         $listener = new CacheControlSubscriber($security);
         $listener->add(

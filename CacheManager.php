@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle;
 
 use FOS\HttpCache\CacheInvalidator;
@@ -78,8 +87,8 @@ class CacheManager extends CacheInvalidator
     /**
      * Refresh a route
      *
-     * @param string $route     Route name
-     * @param array $parameters Route parameters (optional)
+     * @param string $route      Route name
+     * @param array  $parameters Route parameters (optional)
      *
      * @return $this
      */

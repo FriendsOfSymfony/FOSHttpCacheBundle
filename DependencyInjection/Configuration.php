@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -66,13 +75,13 @@ class Configuration implements ConfigurationInterface
                                 ->info('Match on this request host name.')
                             ->end()
                             ->arrayNode('methods')
-                                ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
+                                ->beforeNormalization()->ifString()->then(function ($v) { return preg_split('/\s*,\s*/', $v); })->end()
                                 ->useAttributeAsKey('name')
                                 ->prototype('scalar')->end()
                                 ->info('Match on this HTTP method.')
                             ->end()
                             ->arrayNode('ips')
-                                ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
+                                ->beforeNormalization()->ifString()->then(function ($v) { return preg_split('/\s*,\s*/', $v); })->end()
                                 ->useAttributeAsKey('name')
                                 ->prototype('scalar')->end()
                                 ->info('Match on the list of client ips.')
@@ -96,7 +105,7 @@ class Configuration implements ConfigurationInterface
                                 ->info('Specify an X-Reverse-Proxy-TTL header with a time in seconds for a caching proxy under your control.')
                             ->end()
                             ->arrayNode('vary')
-                                ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
+                                ->beforeNormalization()->ifString()->then(function ($v) { return preg_split('/\s*,\s*/', $v); })->end()
                                 ->prototype('scalar')->end()
                             ->end()
 
@@ -120,7 +129,7 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('varnish')
                             ->children()
                                 ->arrayNode('servers')
-                                    ->beforeNormalization()->ifString()->then(function($v) { return preg_split('/\s*,\s*/', $v); })->end()
+                                    ->beforeNormalization()->ifString()->then(function ($v) { return preg_split('/\s*,\s*/', $v); })->end()
                                     ->useAttributeAsKey('name')
                                     ->isRequired()
                                     ->requiresAtLeastOneElement()
