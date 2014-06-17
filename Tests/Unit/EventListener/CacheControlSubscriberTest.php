@@ -101,8 +101,50 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('max-age=0, must-revalidate, no-cache, private, s-maxage=0', $newHeaders['cache-control'][0]);
     }
 
+    public function testMergeHeaders()
+    {
+        $event = $this->buildEvent();
+        $headers = array('cache_control' => array(
+            'max_age' => '900',
+            's_maxage' => '300',
+            'public' => true,
+            'private' => false,
+            'must_revalidate' => true,
+            'proxy_revalidate' => true,
+            'no_transform' => true,
+            'stale_if_error' => '300',
+            'stale_while_revalidate' => '400',
+        ));
+        $subscriber = $this->getCacheControl($headers);
+        $response = $event->getResponse();
+        $response->setPublic();
+        $response->setCache(array('max_age' => 0));
+        $response->headers->addCacheControlDirective('stale-if-error', 0);
+
+        $subscriber->onKernelResponse($event);
+        $newHeaders = $event->getResponse()->headers->all();
+
+        $this->assertEquals('max-age=0, must-revalidate, no-transform, proxy-revalidate, public, s-maxage=300, stale-if-error=0, stale-while-revalidate=400', $newHeaders['cache-control'][0]);
+    }
+
+    public function testMergePublicPrivate()
+    {
+        $event = $this->buildEvent();
+        $headers = array('cache_control' => array(
+            'private' => true,
+        ));
+        $subscriber = $this->getCacheControl($headers);
+        $response = $event->getResponse();
+        $response->setPublic();
+
+        $subscriber->onKernelResponse($event);
+        $newHeaders = $response->headers->all();
+
+        $this->assertEquals('public', $newHeaders['cache-control'][0]);
+    }
+
     /**
-     * Note that this has the side effect of adding "private" to the cache directives.
+     * The no_cache header is never actually called as its already set.
      */
     public function testSetOnlyNoCacheHeader()
     {
@@ -117,7 +159,25 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onKernelResponse($event);
         $newHeaders = $event->getResponse()->headers->all();
 
-        $this->assertEquals('no-cache, private', $newHeaders['cache-control'][0]);
+        $this->assertEquals('no-cache', $newHeaders['cache-control'][0]);
+    }
+
+    public function testSkip()
+    {
+        $event = $this->buildEvent();
+        $subscriber = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
+            ->setMethods(array('matchConfiguration'))
+            ->getMock()
+        ;
+        $subscriber->expects($this->never())
+            ->method('matchConfiguration')
+        ;
+
+        $subscriber->setSkip();
+        $subscriber->onKernelResponse($event);
+        $newHeaders = $event->getResponse()->headers->all();
+
+        $this->assertEquals('no-cache', $newHeaders['cache-control'][0]);
     }
 
     public function testVary()

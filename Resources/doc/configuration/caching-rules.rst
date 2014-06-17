@@ -46,9 +46,30 @@ An example configuration could look like this:
 rules
 -----
 
+.. sidebar:: Merging headers
+
+    If the response already has certain cache directives set, they are not
+    overwritten. The configuration can thus specify defaults that may be
+    changed by controllers or services that handle the response, or ``@Cache``
+    annotations.
+
+    The listener that applies the rules is triggered at priority 10, which
+    makes it handle before the ``@Cache`` annotations from the
+    SensioFrameworkExtraBundle are evaluated. Those annotations unconditionally
+    overwrite cache directives.
+
+    The only exception is responses that *only* have the ``no-cache``
+    directive. This is the default value for the cache control and there is no
+    way to determine if it was manually set. If the full header is only
+    ``no-cache``, the whole cache control is overwritten.
+
+    You can prevent the cache control on specific requests by injecting the
+    service ``fos_http_cache.event_listener.cache_control`` and calling
+    ``setSkip()`` on it. If this method is called, no cache rules are applied.
+
 The configuration contains a number of *rules*. When a request matches the
 parameters described in the ``match`` section, the headers as defined under
-``headers`` will be set on its response.
+``headers`` will be set on the response, if they are not already set.
 
 The match patterns are applied in the order specified, where the first match
 wins.
