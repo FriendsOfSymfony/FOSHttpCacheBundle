@@ -38,7 +38,7 @@ Overview
 --------
 
 ========================= ============================= ================================================ ==============================================
-Functionality             Configuration                 Annotations                                      Manually
+Functionality             Annotations                   Configuration                                    Manually
 ========================= ============================= ================================================ ==============================================
 Set Cache-Control headers (SensioFrameworkExtraBundle)  :doc:`rules <configuration/caching-rules>`       (Symfony)
 Tag and invalidate        :doc:`@Tag <tagging>`         :doc:`rules <configuration/caching-rules>`       :doc:`cache manager <reference/cache-manager>`
