@@ -2,15 +2,15 @@ User Context Subscriber
 =======================
 
 The user context subscribes allows to cache different content for different
-types of users (guest, editor, admins), without having to store cached content
-for each individual
+*types* of users (guest, editor, admins), without having to store cached content
+for each individual.
 
 User context requests are a way to cache content that depends on some
 permissions but is not fully individual.
 
 .. note::
 
-    Please read the :ref:`FOSHttpCache documentation <foshttpcache:user-context>`
+    Please read the :ref:`user context <foshttpcache:user-context>`
     chapter in the FOSHttpCache documentation before continuing.
 
 This bundle provides an *event subscriber* for the context. It aborts
@@ -43,13 +43,18 @@ triggered:
     before a controller would be called. But the user context is handled only
     after security happened. Security in turn only happens after the routing.
     If the routing does not find a route, the request is aborted with a "not
-    found" error.
+    found" error and the listener is never triggered.
+
+    The event subscriber has priority ``7`` which makes it act right after the
+    security listener which has priority ``8``. The reason to use a listener
+    here rather than a controller is that many expensive operations happen
+    later in the handling of the request. Having this listener avoids those.
 
 .. caution::
 
     If you are using `Symfony2 security <http://symfony.com/doc/current/book/security.html>`_,
-    make sure that this route is inside the firewall for which you are doing
-    the cache groups.
+    for the hash generation, make sure that this route is inside the firewall
+    for which you are doing the cache groups.
 
 Enable the subscriber with the default settings:
 
