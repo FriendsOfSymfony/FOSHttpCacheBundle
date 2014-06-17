@@ -14,7 +14,7 @@ namespace FOS\HttpCacheBundle;
 use FOS\HttpCache\CacheInvalidator;
 use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * The CacheManager is a CacheInvalidator but adds symfony Route support and
@@ -25,20 +25,20 @@ use Symfony\Component\Routing\RouterInterface;
 class CacheManager extends CacheInvalidator
 {
     /**
-     * @var RouterInterface
+     * @var UrlGeneratorInterface
      */
-    private $router;
+    private $urlGenerator;
 
     /**
      * Constructor
      *
-     * @param ProxyClientInterface $cache  HTTP cache
-     * @param RouterInterface      $router Symfony router
+     * @param ProxyClientInterface  $cache        HTTP cache proxy client
+     * @param UrlGeneratorInterface $urlGenerator Symfony route generator
      */
-    public function __construct(ProxyClientInterface $cache, RouterInterface $router)
+    public function __construct(ProxyClientInterface $cache, UrlGeneratorInterface $urlGenerator)
     {
         parent::__construct($cache);
-        $this->router = $router;
+        $this->urlGenerator = $urlGenerator;
     }
 
     /**
@@ -79,7 +79,7 @@ class CacheManager extends CacheInvalidator
      */
     public function invalidateRoute($name, array $parameters = array())
     {
-        $this->invalidatePath($this->router->generate($name, $parameters));
+        $this->invalidatePath($this->urlGenerator->generate($name, $parameters));
 
         return $this;
     }
@@ -94,7 +94,7 @@ class CacheManager extends CacheInvalidator
      */
     public function refreshRoute($route, array $parameters = array())
     {
-        $this->refreshPath($this->router->generate($route, $parameters));
+        $this->refreshPath($this->urlGenerator->generate($route, $parameters));
 
         return $this;
     }

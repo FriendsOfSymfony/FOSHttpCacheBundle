@@ -104,7 +104,7 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('flush')->once()
         ;
 
-        $router = \Mockery::mock('\Symfony\Component\Routing\RouterInterface');
+        $router = \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
         $invalidator = new InvalidatorCollection();
 
@@ -184,7 +184,7 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
         return new InvalidationSubscriber(
             $this->cacheManager,
             $this->invalidators,
-            \Mockery::mock('\Symfony\Component\Routing\RouterInterface')
+            \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface')
         );
     }
 }

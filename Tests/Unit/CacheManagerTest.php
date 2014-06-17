@@ -32,7 +32,7 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('flush')->once()
             ->getMock();
 
-        $router = \Mockery::mock('\Symfony\Component\Routing\RouterInterface')
+        $router = \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface')
             ->shouldReceive('generate')
             ->with('my_route', array())
             ->andReturn('/my/route')
@@ -57,7 +57,7 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('flush')->never()
             ->getMock();
 
-        $router = \Mockery::mock('\Symfony\Component\Routing\RouterInterface')
+        $router = \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface')
             ->shouldReceive('generate')
             ->with('my_route', array())
             ->andReturn('/my/route')
@@ -78,7 +78,7 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
     public function testTagResponse()
     {
         $ban = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface');
-        $router = \Mockery::mock('\Symfony\Component\Routing\RouterInterface');
+        $router = \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
         $tags1 = array('post-1', 'posts');
         $tags2 = array('post-2');
