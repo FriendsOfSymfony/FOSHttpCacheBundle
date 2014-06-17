@@ -40,6 +40,7 @@ class AbstractRuleSubscriber
         }
         $this->rulesMap[$priority][] = array($ruleMatcher, $settings);
     }
+
     /**
      * Return the settings for the current request if any rule matches.
      *

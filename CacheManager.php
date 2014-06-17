@@ -27,7 +27,7 @@ class CacheManager extends CacheInvalidator
     /**
      * @var RouterInterface
      */
-    protected $router;
+    private $router;
 
     /**
      * Constructor

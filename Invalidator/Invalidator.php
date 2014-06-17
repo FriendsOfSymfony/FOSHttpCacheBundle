@@ -21,14 +21,14 @@ class Invalidator implements InvalidatorInterface
      *
      * @var array
      */
-    protected $invalidatorRoutes = array();
+    private $invalidatorRoutes = array();
 
     /**
      * Array of invalidated routes
      *
      * @var array
      */
-    protected $invalidatedRoutes = array();
+    private $invalidatedRoutes = array();
 
     /**
      * {@inheritdoc}

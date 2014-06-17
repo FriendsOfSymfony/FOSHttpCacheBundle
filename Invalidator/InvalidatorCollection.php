@@ -23,14 +23,14 @@ class InvalidatorCollection
      *
      * @var InvalidatorInterface[]
      */
-    protected $invalidators = array();
+    private $invalidators = array();
 
     /**
      * Array of invalidator routes for quick lookup
      *
      * @var array
      */
-    protected $invalidatorRoutes = array();
+    private $invalidatorRoutes = array();
 
     public function addInvalidator(InvalidatorInterface $invalidator)
     {

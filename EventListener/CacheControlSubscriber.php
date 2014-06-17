@@ -45,7 +45,7 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
      *
      * @var string Name of the header or false to add no header.
      */
-    protected $debugHeader;
+    private $debugHeader;
 
     /**
      * @param string|bool $debugHeader Header to set to trigger debugging, or false to send no header.
@@ -117,7 +117,7 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
      * @param Response $response
      * @param array    $controls
      */
-    protected function setExtraCacheDirectives(Response $response, array $controls)
+    private function setExtraCacheDirectives(Response $response, array $controls)
     {
         $flags = array('must_revalidate', 'proxy_revalidate', 'no_transform', 'no_cache');
         $options = array('stale_if_error', 'stale_while_revalidate');

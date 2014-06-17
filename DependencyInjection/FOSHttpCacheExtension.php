@@ -71,7 +71,7 @@ class FOSHttpCacheExtension extends Extension
      *
      * @throws InvalidConfigurationException
      */
-    protected function loadRules(ContainerBuilder $container, array $config)
+    private function loadRules(ContainerBuilder $container, array $config)
     {
         foreach ($config['rules'] as $rule) {
             $match = $rule['match'];
@@ -123,7 +123,7 @@ class FOSHttpCacheExtension extends Extension
         }
     }
 
-    protected function createRuleMatcher(ContainerBuilder $container, Reference $requestMatcher, array $extraCriteria)
+    private function createRuleMatcher(ContainerBuilder $container, Reference $requestMatcher, array $extraCriteria)
     {
         $arguments = array((string) $requestMatcher, $extraCriteria);
         $serialized = serialize($arguments);
@@ -140,7 +140,7 @@ class FOSHttpCacheExtension extends Extension
         return new Reference($id);
     }
 
-    protected function loadUserContext(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    private function loadUserContext(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
         $loader->load('user_context.xml');
 
@@ -161,7 +161,7 @@ class FOSHttpCacheExtension extends Extension
         }
     }
 
-    protected function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null, $methods = null, $ips = null, array $attributes = array())
+    private function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null, $methods = null, $ips = null, array $attributes = array())
     {
         $arguments = array($path, $host, $methods, $ips, $attributes);
         $serialized = serialize($arguments);
@@ -177,12 +177,7 @@ class FOSHttpCacheExtension extends Extension
         return new Reference($id);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @param $loader
-     * @param $config
-     */
-    protected function loadProxyClient(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    private function loadProxyClient(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
         $default = empty($config['default']) ? false : $config['default'];
         if (isset($config['varnish'])) {
@@ -195,12 +190,7 @@ class FOSHttpCacheExtension extends Extension
         $container->setAlias($this->getAlias() . '.default_proxy_client', $this->getAlias() . '.proxy_client.' . $default);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @param $loader
-     * @param $config
-     */
-    protected function loadVarnish(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    private function loadVarnish(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
         $loader->load('varnish.xml');
         foreach ($config['servers'] as $url) {
@@ -213,7 +203,7 @@ class FOSHttpCacheExtension extends Extension
         $container->setParameter($this->getAlias() . '.proxy_client.varnish.base_url', $config['base_url']);
     }
 
-    protected function loadCacheManager(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    private function loadCacheManager(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
         $container->setParameter($this->getAlias().'.cache_manager.route_invalidators', $config['route_invalidators']);
 

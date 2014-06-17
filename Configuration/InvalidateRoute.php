@@ -21,12 +21,12 @@ class InvalidateRoute extends ConfigurationAnnotation
     /**
      * @var string
      */
-    protected $name;
+    private $name;
 
     /**
      * @var array
      */
-    protected $params;
+    private $params;
 
     public function setValue($value)
     {

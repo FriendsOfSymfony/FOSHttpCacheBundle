@@ -40,21 +40,21 @@ class InvalidationSubscriber implements EventSubscriberInterface
      *
      * @var CacheManager
      */
-    protected $cacheManager;
+    private $cacheManager;
 
     /**
      * Invalidator collection
      *
      * @var InvalidatorCollection
      */
-    protected $invalidators;
+    private $invalidators;
 
     /**
      * Router
      *
      * @var RouterInterface
      */
-    protected $router;
+    private $router;
 
     /**
      * Router
@@ -159,7 +159,7 @@ class InvalidationSubscriber implements EventSubscriberInterface
      *
      * @param Request $request
      */
-    protected function handleInvalidation(Request $request)
+    private function handleInvalidation(Request $request)
     {
         // Check controller annotations
         if ($paths = $request->attributes->get('_invalidate_path')) {
@@ -201,7 +201,7 @@ class InvalidationSubscriber implements EventSubscriberInterface
      *
      * @param array|InvalidatePath[] $pathConfigurations
      */
-    protected function invalidatePaths(array $pathConfigurations)
+    private function invalidatePaths(array $pathConfigurations)
     {
         foreach ($pathConfigurations as $pathConfiguration) {
             foreach ($pathConfiguration->getPaths() as $path) {
@@ -216,7 +216,7 @@ class InvalidationSubscriber implements EventSubscriberInterface
      * @param array|InvalidateRoute[] $routes
      * @param Request                 $request
      */
-    protected function invalidateRoutes(array $routes, Request $request)
+    private function invalidateRoutes(array $routes, Request $request)
     {
         foreach ($routes as $route) {
             $params = array();
