@@ -24,7 +24,7 @@ Features
 Documentation
 -------------
 
-Documentation is included in the [Resources/doc](Resources/doc/index.md) directory.
+Documentation is available at [Readthedocs](http://foshttpcachebundle.readthedocs.org/).
 
 License
 -------
