@@ -17,6 +17,7 @@ Contents
     :maxdepth: 2
 
     installation
+    configuration/index
     configuration/caching-rules
     configuration/proxy-client
     invalidation

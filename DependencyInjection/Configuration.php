@@ -61,10 +61,10 @@ class Configuration implements ConfigurationInterface
             ->end()
         ;
 
-        $this->addUserContextListenerSection($rootNode);
         $this->addRulesSection($rootNode);
         $this->addProxyClientSection($rootNode);
         $this->addCacheManager($rootNode);
+        $this->addUserContextListenerSection($rootNode);
         $this->addFlashMessageListenerSection($rootNode);
 
         return $treeBuilder;
@@ -240,6 +240,7 @@ class Configuration implements ConfigurationInterface
                             ->info('If you configure more than one proxy client, specify which client is the default.')
                         ->end()
                         ->arrayNode('varnish')
+                            ->fixXmlConfig('server')
                             ->children()
                                 ->arrayNode('servers')
                                     ->beforeNormalization()->ifString()->then(function ($v) { return preg_split('/\s*,\s*/', $v); })->end()
@@ -257,6 +258,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
 
                         ->arrayNode('nginx')
+                            ->fixXmlConfig('server')
                             ->children()
                                 ->arrayNode('servers')
                                     ->beforeNormalization()->ifString()->then(function ($v) { return preg_split('/\s*,\s*/', $v); })->end()
