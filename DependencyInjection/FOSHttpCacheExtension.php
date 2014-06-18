@@ -186,6 +186,12 @@ class FOSHttpCacheExtension extends Extension
                 $default = 'varnish';
             }
         }
+        if (isset($config['nginx'])) {
+            $this->loadNginx($container, $loader, $config['nginx']);
+            if (!$default) {
+                $default = 'nginx';
+            }
+        }
 
         $container->setAlias($this->getAlias() . '.default_proxy_client', $this->getAlias() . '.proxy_client.' . $default);
     }
@@ -201,6 +207,20 @@ class FOSHttpCacheExtension extends Extension
         }
         $container->setParameter($this->getAlias() . '.proxy_client.varnish.servers', $config['servers']);
         $container->setParameter($this->getAlias() . '.proxy_client.varnish.base_url', $config['base_url']);
+    }
+
+    private function loadNginx(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        $loader->load('nginx.xml');
+        foreach ($config['servers'] as $url) {
+            $this->validateUrl($url, 'Not a valid nginx server address: "%s"');
+        }
+        if (!empty($config['base_url'])) {
+            $this->validateUrl($config['base_url'], 'Not a valid base path: "%s"');
+        }
+        $container->setParameter($this->getAlias() . '.proxy_client.nginx.servers', $config['servers']);
+        $container->setParameter($this->getAlias() . '.proxy_client.nginx.base_url', $config['base_url']);
+        $container->setParameter($this->getAlias() . '.proxy_client.nginx.purge_location', $config['purge_location']);
     }
 
     private function loadCacheManager(ContainerBuilder $container, XmlFileLoader $loader, array $config)

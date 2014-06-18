@@ -33,6 +33,29 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->load(array($this->getBaseConfig()), $container);
 
         $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
+        $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.nginx'));
+        $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
+    }
+
+    public function testConfigLoadNginx()
+    {
+        $container = new ContainerBuilder();
+        $this->extension->load(array(
+            array(
+                'proxy_client' => array(
+                    'nginx' => array(
+                        'base_url' => 'my_hostname',
+                        'servers' => array(
+                            '127.0.0.1'
+                        )
+                    )
+                )
+            )
+        ), $container);
+
+        $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.nginx'));
         $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
     }
