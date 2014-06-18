@@ -31,12 +31,12 @@ class FOSHttpCacheExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration();
+        $configuration = new Configuration($container->getParameter('kernel.debug'));
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-        if (($config['debug']) || (!empty($config['rules']))) {
+        if ($config['debug'] || (!empty($config['rules']))) {
             $debugHeader = $config['debug'] ? $config['debug_header'] : false;
             $container->setParameter($this->getAlias().'.debug_header', $debugHeader);
             $loader->load('cache_control_listener.xml');

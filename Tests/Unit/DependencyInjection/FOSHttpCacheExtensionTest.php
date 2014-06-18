@@ -14,6 +14,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,7 +30,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigLoadVarnish()
     {
-        $container = new ContainerBuilder();
+        $container = $this->createContainer();
         $this->extension->load(array($this->getBaseConfig()), $container);
 
         $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
@@ -41,7 +42,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $config = array();
 
-        $container = new ContainerBuilder();
+        $container = $this->createContainer();
         $this->extension->load(array($config), $container);
     }
 
@@ -70,7 +71,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $container = new ContainerBuilder();
+        $container = $this->createContainer();
         $this->extension->load(array($config), $container);
     }
 
@@ -101,7 +102,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $container = new ContainerBuilder();
+        $container = $this->createContainer();
         $this->extension->load($config, $container);
 
         // Extract the corresponding definition
@@ -168,7 +169,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
             ))
         );
 
-        $container = new ContainerBuilder();
+        $container = $this->createContainer();
         $this->extension->load($config, $container);
 
         // Extract the corresponding definition
@@ -208,15 +209,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $container = new ContainerBuilder();
-        $this->extension->load($config, $container);
-    }
-
-    public function testConfigLoadRulesDefaults()
-    {
-        $config = array();
-
-        $container = new ContainerBuilder();
+        $container = $this->createContainer();
         $this->extension->load($config, $container);
     }
 
@@ -236,7 +229,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
             )),
         );
 
-        $container = new ContainerBuilder();
+        $container = $this->createContainer();
         $this->extension->load($config, $container);
 
         $this->assertTrue($container->has('fos_http_cache.event_listener.user_context'));
@@ -264,7 +257,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
             )),
         );
 
-        $container = new ContainerBuilder();
+        $container = $this->createContainer();
         $this->extension->load($config, $container);
 
         $this->assertFalse($container->has('fos_http_cache.event_listener.user_context'));
@@ -285,7 +278,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
             )),
         );
 
-        $container = new ContainerBuilder();
+        $container = $this->createContainer();
         $this->extension->load($config, $container);
     }
 
@@ -296,8 +289,15 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $container = new ContainerBuilder();
+        $container = $this->createContainer();
         $this->extension->load($config, $container);
+    }
+
+    protected function createContainer()
+    {
+        return new ContainerBuilder(new ParameterBag(array(
+            'kernel.debug'       => false,
+        )));
     }
 
     protected function getBaseConfig()
