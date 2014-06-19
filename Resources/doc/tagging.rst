@@ -58,8 +58,8 @@ On all other operations, those tags will be invalidated.
       rules:
         -
           match:
-          path: ^/news
-          tags: [news-section]
+            path: ^/news
+            tags: [news-section]
 
 When a request goes to any URL starting with news, e.g. ``/news/42``, the
 response will be tagged with ``news-section`` (in addition to any tags set by
