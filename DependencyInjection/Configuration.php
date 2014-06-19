@@ -29,6 +29,19 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 class Configuration implements ConfigurationInterface
 {
     /**
+     * @var bool
+     */
+    private $debug;
+
+    /**
+     * @param Boolean $debug Whether to use the debug mode
+     */
+    public function __construct($debug)
+    {
+        $this->debug = $debug;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getConfigTreeBuilder()
@@ -51,8 +64,8 @@ class Configuration implements ConfigurationInterface
 
             ->children()
                 ->booleanNode('debug')
-                    ->defaultValue('%kernel.debug%')
-                    ->info('Whether to send a debug header with the response to trigger a caching proxy to send debug information.')
+                    ->defaultValue($this->debug)
+                    ->info('Whether to send a debug header with the response to trigger a caching proxy to send debug information. If not set, defaults to kernel.debug.')
                 ->end()
                 ->scalarNode('debug_header')
                     ->defaultValue('X-Cache-Debug')
