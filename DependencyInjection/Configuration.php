@@ -74,10 +74,10 @@ class Configuration implements ConfigurationInterface
             ->end()
         ;
 
-        $this->addUserContextListenerSection($rootNode);
         $this->addRulesSection($rootNode);
         $this->addProxyClientSection($rootNode);
         $this->addCacheManager($rootNode);
+        $this->addUserContextListenerSection($rootNode);
         $this->addFlashMessageListenerSection($rootNode);
 
         return $treeBuilder;
@@ -253,6 +253,7 @@ class Configuration implements ConfigurationInterface
                             ->info('If you configure more than one proxy client, specify which client is the default.')
                         ->end()
                         ->arrayNode('varnish')
+                            ->fixXmlConfig('server')
                             ->children()
                                 ->arrayNode('servers')
                                     ->beforeNormalization()->ifString()->then(function ($v) { return preg_split('/\s*,\s*/', $v); })->end()
@@ -268,6 +269,29 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
+
+                        ->arrayNode('nginx')
+                            ->fixXmlConfig('server')
+                            ->children()
+                                ->arrayNode('servers')
+                                    ->beforeNormalization()->ifString()->then(function ($v) { return preg_split('/\s*,\s*/', $v); })->end()
+                                    ->useAttributeAsKey('name')
+                                    ->isRequired()
+                                    ->requiresAtLeastOneElement()
+                                    ->prototype('scalar')->end()
+                                    ->info('Addresses of the hosts varnish is running on. May be hostname or ip, and with :port if not the default port 6081.')
+                                ->end()
+                                ->scalarNode('base_url')
+                                    ->defaultNull()
+                                    ->info('Default host name and optional path for path based invalidation.')
+                                ->end()
+                                ->scalarNode('purge_location')
+                                    ->defaultValue('')
+                                    ->info('Path to trigger the purge on nginx for different location purge.')
+                                ->end()
+                            ->end()
+                        ->end()
+
                     ->end()
                 ->end()
             ->end();

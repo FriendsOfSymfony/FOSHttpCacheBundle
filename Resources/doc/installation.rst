@@ -49,5 +49,8 @@ later, you need to explicitly add the component:
 
     $ composer require symfony/expression-language
 
+Now you can configure the bundle under the ``fos_http_cache`` key as explained
+in the :doc:`configuration/index` section.
+
 .. _SensioFrameworkExtraBundle: http://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/index.html
 .. _ExpressionLanguage: http://symfony.com/doc/current/components/expression_language/introduction.html

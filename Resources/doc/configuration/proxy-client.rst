@@ -2,21 +2,9 @@ Proxy Client Configuration
 ==========================
 
 Usually, your application will interact with the caching proxy through the
-:doc:`Cache Manager </reference/cache-manager>`. You need to configure a proxy client for
-the cache manager to work. The proxy client is also available as a service
-(``fos_http_cache.proxy_client``) that you can use directly.
-
-Bundle Configuration
---------------------
-
-.. code-block:: yaml
-
-    # app/config/config.yml
-    fos_http_cache:
-      proxy_client:
-        varnish:
-          servers: 123.123.123.1:6060, 123.123.123.2
-          base_url: yourwebsite.com
+:doc:`Cache Manager </reference/cache-manager>`. You need to configure a proxy
+client for the cache manager to work. The proxy client is also available as a
+service (``fos_http_cache.proxy_client``) that you can use directly.
 
 .. glossary::
 
@@ -42,33 +30,45 @@ Bundle Configuration
     use HttpKernel::generateInternalUri with the parameters as in the twig
     ``render`` tag.
 
-Proxy Client Configuration
---------------------------
+Configure for Varnish
+---------------------
+
+.. code-block:: yaml
+
+    # app/config/config.yml
+    fos_http_cache:
+      proxy_client:
+        varnish:
+          servers: 123.123.123.1:6060, 123.123.123.2
+          base_url: yourwebsite.com
+
+Configure for Nginx
+-------------------
+
+.. code-block:: yaml
+
+    # app/config/config.yml
+    fos_http_cache:
+      proxy_client:
+        nginx:
+          servers: 123.123.123.1:6060, 123.123.123.2
+          base_url: yourwebsite.com
+          purge_location: /purge
+
+The options are the same as for Varnish with the addition of the
+``purge_location`` used for the "different location" concept of Nginx.
+
+.. tip::
+
+    Although its not a common scenario, you can **use Nginx and Varnish in
+    parallel**. If you need to cache and invalidate pages in both, you can
+    configure both in this bundle. The CacheManager will however only use the
+    default client. You can set the default with
+    ``fos_http_client.proxy_client.default: nginx`` (resp. ``varnish``).
+
+Caching Proxy Configuration
+---------------------------
 
 You need to configure your caching proxy (Varnish or Nginx) to work with this
 bundle. Please refer to the :ref:`FOSHttpCache library’s documentation <foshttpcache:proxy-configuration>`
 for more information.
-
-Debug Header
-~~~~~~~~~~~~
-
-Enable the ``debug`` parameter to set a ``X-Cache-Debug`` header on each
-response. You can then :ref:`configure your caching proxy <foshttpcache:varnish_debugging>`
-to add debug information when that header is present:
-
-.. code-block:: yaml
-
-    # app/config/config.yml
-    fos_http_cache:
-      debug: true
-
-The default value is ``%kernel.debug%``, triggering the header when you are in
-dev mode but not in prod mode. You can change the header with the
-``debug_header`` option:
-
-.. code-block:: yaml
-
-    # app/config/config.yml
-    fos_http_cache:
-      debug_header: Please-Send-Debug-Infos
-
