@@ -41,7 +41,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigLoadNginx()
     {
-        $container = new ContainerBuilder();
+        $container = $this->createContainer();
         $this->extension->load(array(
             array(
                 'proxy_client' => array(
