@@ -28,6 +28,13 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubscriberInterface
 {
     /**
+     * Whether to skip this response and not set any cache headers.
+     *
+     * @var bool
+     */
+    private $skip = false;
+
+    /**
      * Cache control directives directly supported by Response.
      *
      * @var array
@@ -61,8 +68,23 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
     public static function getSubscribedEvents()
     {
         return array(
-            KernelEvents::RESPONSE => 'onKernelResponse',
+            KernelEvents::RESPONSE => array('onKernelResponse', 10),
         );
+    }
+
+    /**
+     * Set whether to skip this response completely.
+     *
+     * This can be called when other parts of the application took care of all
+     * cache headers. No attempt to merge cache headers is made anymore.
+     *
+     * The debug header is still added if configured.
+     *
+     * @param bool $skip
+     */
+    public function setSkip($skip = true)
+    {
+        $this->skip = $skip;
     }
 
     /**
@@ -80,7 +102,7 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
         }
 
         // do not change cache directives on unsafe requests.
-        if (!$this->isRequestSafe($request)) {
+        if ($this->skip || !$this->isRequestSafe($request)) {
             return;
         }
 
@@ -90,14 +112,17 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
                 $directives = array_intersect_key($options['cache_control'], $this->supportedDirectives);
                 $extraDirectives = array_diff_key($options['cache_control'], $directives);
                 if (!empty($directives)) {
-                    $response->setCache($directives);
+                    $this->setCache($response, $directives);
                 }
                 if (!empty($extraDirectives)) {
                     $this->setExtraCacheDirectives($response, $extraDirectives);
                 }
             }
 
-            if (isset($options['reverse_proxy_ttl']) && null !== $options['reverse_proxy_ttl']) {
+            if (isset($options['reverse_proxy_ttl'])
+                && null !== $options['reverse_proxy_ttl']
+                && !$response->headers->has('X-Reverse-Proxy-TTL')
+            ) {
                 $response->headers->set('X-Reverse-Proxy-TTL', (int) $options['reverse_proxy_ttl'], false);
             }
 
@@ -111,6 +136,30 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
         }
     }
 
+    private function setCache(Response $response, array $directives)
+    {
+        if ('no-cache' === $response->headers->get('cache-control')) {
+            // this single header is set by default. if its the only thing, we override it.
+            $response->setCache($directives);
+
+            return;
+        }
+
+        foreach (array_keys($this->supportedDirectives) as $key) {
+            $directive = str_replace('_', '-', $key);
+            if ($response->headers->hasCacheControlDirective($directive)) {
+                $directives[$key] = $response->headers->getCacheControlDirective($directive);
+            }
+            if ('public' === $directive && $response->headers->hasCacheControlDirective('private')
+                || 'private' === $directive && $response->headers->hasCacheControlDirective('public')
+            ) {
+                unset($directives[$key]);
+            }
+        }
+
+        $response->setCache($directives);
+    }
+
     /**
      * Add extra cache control directives.
      *
@@ -122,15 +171,21 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
         $flags = array('must_revalidate', 'proxy_revalidate', 'no_transform', 'no_cache');
         $options = array('stale_if_error', 'stale_while_revalidate');
 
-        foreach ($flags as $flag) {
-            if (!empty($controls[$flag])) {
-                $response->headers->addCacheControlDirective(str_replace('_', '-', $flag));
+        foreach ($flags as $key) {
+            $flag = str_replace('_', '-', $key);
+            if (!empty($controls[$key])
+                && !$response->headers->hasCacheControlDirective($flag)
+            ) {
+                $response->headers->addCacheControlDirective($flag);
             }
         }
 
-        foreach ($options as $option) {
-            if (!empty($controls[$option])) {
-                $response->headers->addCacheControlDirective(str_replace('_', '-', $option), $controls[$option]);
+        foreach ($options as $key) {
+            $option = str_replace('_', '-', $key);
+            if (isset($controls[$key])
+                && !$response->headers->hasCacheControlDirective($option)
+            ) {
+                $response->headers->addCacheControlDirective($option, $controls[$key]);
             }
         }
     }
