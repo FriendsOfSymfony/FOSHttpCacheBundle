@@ -106,7 +106,7 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
             return;
         }
 
-        $options = $this->matchConfiguration($request, $response);
+        $options = $this->matchRule($request, $response);
         if (false !== $options) {
             if (!empty($options['cache_control'])) {
                 $directives = array_intersect_key($options['cache_control'], $this->supportedDirectives);

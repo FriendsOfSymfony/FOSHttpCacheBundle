@@ -61,106 +61,103 @@ class Configuration implements ConfigurationInterface
                     throw new InvalidConfigurationException('You need to configure a proxy_client to use the cache_manager.');
                 })
             ->end()
+            ->validate()
+                ->ifTrue(function ($v) {return $v['tags']['enabled'] && !$v['cache_manager']['enabled'];})
+                ->then(function ($v) {
+                    if ('auto' === $v['tags']['enabled']) {
+                        $v['tags']['enabled'] = false;
 
-            ->children()
-                ->booleanNode('debug')
-                    ->defaultValue($this->debug)
-                    ->info('Whether to send a debug header with the response to trigger a caching proxy to send debug information. If not set, defaults to kernel.debug.')
-                ->end()
-                ->scalarNode('debug_header')
-                    ->defaultValue('X-Cache-Debug')
-                    ->info('The header to send if debug is true.')
-                ->end()
+                        return $v;
+                    }
+                    throw new InvalidConfigurationException('You need to configure a proxy_client to use the cache_manager.');
+                })
+            ->end()
+            ->validate()
+                ->ifTrue(function ($v) {return $v['tags']['rules'] && !$v['tags']['enabled'];})
+                ->thenInvalid('You need to enable the cache_manager and tags to use rules.')
+            ->end()
+            ->validate()
+                ->ifTrue(function ($v) {return $v['invalidation']['enabled'] && !$v['cache_manager']['enabled'];})
+                ->then(function ($v) {
+                    if ('auto' === $v['invalidation']['enabled']) {
+                        $v['invalidation']['enabled'] = false;
+
+                        return $v;
+                    }
+                    throw new InvalidConfigurationException('You need to configure a proxy_client to use the cache_manager.');
+                })
+            ->end()
+            ->validate()
+                ->ifTrue(function ($v) {return $v['invalidation']['rules'] && !$v['invalidation']['enabled'];})
+                ->thenInvalid('You need to enable the cache_manager and invalidation to use rules.')
             ->end()
         ;
 
-        $this->addRulesSection($rootNode);
+        $this->addCacheControlSection($rootNode);
         $this->addProxyClientSection($rootNode);
-        $this->addCacheManager($rootNode);
+        $this->addCacheManagerSection($rootNode);
+        $this->addTagSection($rootNode);
+        $this->addInvalidationSection($rootNode);
         $this->addUserContextListenerSection($rootNode);
         $this->addFlashMessageListenerSection($rootNode);
+        $this->addDebugSection($rootNode);
 
         return $treeBuilder;
     }
 
-    private function addUserContextListenerSection(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
-            ->fixXmlConfig('user_identifier_header')
-            ->children()
-                ->arrayNode('user_context')
-                    ->info('Listener that returns the request for the user context hash as early as possible.')
-                    ->addDefaultsIfNotSet()
-                    ->canBeEnabled()
-                    ->children()
-                        ->arrayNode('match')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('matcher_service')
-                                    ->defaultValue('fos_http_cache.user_context.request_matcher')
-                                    ->info('Service id of a request matcher that tells whether the request is a context hash request.')
-                                ->end()
-                                ->scalarNode('accept')
-                                    ->defaultValue('application/vnd.fos.user-context-hash')
-                                    ->info('Specify the accept HTTP header used for context hash requests.')
-                                ->end()
-                                ->scalarNode('method')
-                                    ->defaultNull()
-                                    ->info('Specify the HTTP method used for context hash requests.')
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->scalarNode('hash_cache_ttl')
-                            ->defaultValue(0)
-                            ->info('Cache the response for the hash for the specified number of seconds. Setting this to 0 will not cache those responses at all.')
-                        ->end()
-                        ->arrayNode('user_identifier_headers')
-                            ->prototype('scalar')->end()
-                            ->defaultValue(array('Cookie', 'Authorization'))
-                            ->info('List of headers that contains the unique identifier for the user in the hash request.')
-                        ->end()
-                        ->scalarNode('user_hash_header')
-                            ->defaultValue('X-User-Context-Hash')
-                            ->info('Name of the header that contains the hash information for the context.')
-                        ->end()
-                        ->booleanNode('role_provider')
-                            ->defaultFalse()
-                            ->info('Whether to enable a provider that automatically adds all roles of the current user to the context.')
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    private function addRulesSection(ArrayNodeDefinition $rootNode)
+    /**
+     * Cache header control main section.
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addCacheControlSection(ArrayNodeDefinition $rootNode)
     {
         $rules = $rootNode
-            ->fixXmlConfig('rule')
             ->children()
-                ->arrayNode('rules')
-                    ->prototype('array')
-                        ->children();
+                ->arrayNode('cache_control')
+                    ->children()
+                        ->arrayNode('rules')
+                            ->prototype('array')
+                                ->children();
 
-        $this->addMatchSection($rules);
-        $this->addHeaderSection($rules);
-        $this->addTagSection($rules);
-    }
-
-    private function addTagSection(NodeBuilder $rules)
-    {
+        $this->addMatch($rules);
         $rules
-            ->arrayNode('tags')
-                ->prototype('scalar')
-                ->info('Tags to add to the response on safe requests, to invalidate on unsafe requests')
-            ->end()->end()
-            ->arrayNode('tag_expressions')
-                ->prototype('scalar')
-                ->info('Tags to add to the response on safe requests, to invalidate on unsafe requests')
+            ->arrayNode('headers')
+                ->isRequired()
+                // todo validate there is some header defined
+                ->children()
+                    ->arrayNode('cache_control')
+                        ->useAttributeAsKey('name')
+                        ->prototype('scalar')->end()
+                        ->info('Add the specified cache control directives.')
+                    ->end()
+                    ->scalarNode('last_modified')
+                        ->validate()
+                            ->ifString()
+                            ->then(function ($v) {new \DateTime($v);})
+                        ->end()
+                        ->info('Set a default last modified timestamp if none is set yet. Value must be parseable by DateTime')
+                    ->end()
+                    ->scalarNode('reverse_proxy_ttl')
+                        ->defaultNull()
+                        ->info('Specify an X-Reverse-Proxy-TTL header with a time in seconds for a caching proxy under your control.')
+                    ->end()
+                    ->arrayNode('vary')
+                        ->beforeNormalization()->ifString()->then(function ($v) { return preg_split('/\s*,\s*/', $v); })->end()
+                        ->prototype('scalar')->end()
+                        ->info('Define a list of additional headers on which the response varies.')
+                    ->end()
+                ->end()
             ->end()
         ;
     }
 
-    private function addMatchSection(NodeBuilder $rules)
+    /**
+     * Shared configuration between cache control, tags and invalidation.
+     *
+     * @param NodeBuilder $rules
+     */
+    private function addMatch(NodeBuilder $rules)
     {
         $rules
             ->arrayNode('match')
@@ -169,7 +166,7 @@ class Configuration implements ConfigurationInterface
                 ->fixXmlConfig('method')
                 ->validate()
                     ->ifTrue(function ($v) {return !empty($v['additional_cacheable_status']) && !empty($v['match_response']);})
-                    ->thenInvalid('You may not set both additional_cacheable_status and match_response')
+                    ->thenInvalid('You may not set both additional_cacheable_status and match_response.')
                 ->end()
                 ->children()
                     ->scalarNode('path')
@@ -199,43 +196,11 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->arrayNode('additional_cacheable_status')
                         ->prototype('scalar')->end()
-                        ->info('Additional response HTTP status codes that will get the headers of this rule.')
+                        ->info('Additional response HTTP status codes that will match.')
                     ->end()
                     ->scalarNode('match_response')
                         ->defaultValue(array())
                         ->info('Expression to decide whether response should be matched. Replaces HTTP code check and additional_cacheable_status.')
-                    ->end()
-                ->end()
-            ->end()
-        ;
-    }
-
-    private function addHeaderSection(NodeBuilder $rules)
-    {
-        $rules
-            ->arrayNode('headers')
-                ->treatNullLike(array())
-                ->children()
-                    ->arrayNode('cache_control')
-                        ->useAttributeAsKey('name')
-                        ->prototype('scalar')->end()
-                        ->info('Add the specified cache control directives.')
-                    ->end()
-                    ->scalarNode('last_modified')
-                        ->validate()
-                            ->ifString()
-                            ->then(function ($v) {new \DateTime($v);})
-                        ->end()
-                        ->info('Set a default last modified timestamp if none is set yet. Value must be parseable by DateTime')
-                    ->end()
-                    ->scalarNode('reverse_proxy_ttl')
-                        ->defaultNull()
-                        ->info('Specify an X-Reverse-Proxy-TTL header with a time in seconds for a caching proxy under your control.')
-                    ->end()
-                    ->arrayNode('vary')
-                        ->beforeNormalization()->ifString()->then(function ($v) { return preg_split('/\s*,\s*/', $v); })->end()
-                        ->prototype('scalar')->end()
-                        ->info('Define a list of additional headers on which the response varies.')
                     ->end()
                 ->end()
             ->end()
@@ -297,9 +262,14 @@ class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    private function addCacheManager(ArrayNodeDefinition $rootNode)
+    /**
+     * Cache manager main section
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addCacheManagerSection(ArrayNodeDefinition $rootNode)
     {
-        $invalidationNode = $rootNode
+        $rootNode
             ->children()
                 ->arrayNode('cache_manager')
                     ->addDefaultsIfNotSet()
@@ -320,26 +290,128 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
         ;
-
-        $this->addTagListenerSection($invalidationNode);
-        $this->addInvalidatorsSection($invalidationNode);
     }
 
-    private function addTagListenerSection(ArrayNodeDefinition $invalidationNode)
+    private function addTagSection(ArrayNodeDefinition $rootNode)
     {
-        $invalidationNode
+        $rules = $rootNode
             ->children()
-                ->arrayNode('tag_listener')
+                ->arrayNode('tags')
+                    ->fixXmlConfig('rule')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->enumNode('enabled')
                             ->values(array(true, false, 'auto'))
                             ->defaultValue('auto')
-                            ->info('Allows to disable the listener for tag annotations when your project does not use the annotations. Enabled by default if you configure a proxy client.')
+                            ->info('Allows to disable the listener for tag annotations when your project does not use the annotations. Enabled by default if you have expression language and the cache manager.')
                         ->end()
+                        ->arrayNode('rules')
+                            ->fixXmlConfig('tag')
+                            ->fixXmlConfig('tag_expression')
+                            ->prototype('array')
+                                ->children();
+
+        $this->addMatch($rules);
+
+        $rules
+            ->arrayNode('tags')
+                ->prototype('scalar')
+                ->info('Tags to add to the response on safe requests, to invalidate on unsafe requests')
+            ->end()->end()
+            ->arrayNode('tag_expressions')
+                ->prototype('scalar')
+                ->info('Tags to add to the response on safe requests, to invalidate on unsafe requests')
+            ->end()
+        ;
+    }
+
+    private function addInvalidationSection(ArrayNodeDefinition $rootNode)
+    {
+        $rules = $rootNode
+            ->children()
+                ->arrayNode('invalidation')
+                    ->fixXmlConfig('rule')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->enumNode('enabled')
+                            ->values(array(true, false, 'auto'))
+                            ->defaultValue('auto')
+                            ->info('Allows to disable the listener for invalidation annotations when your project does not use the annotations. Enabled by default if you have expression language and the cache manager.')
+                        ->end()
+                        ->arrayNode('rules')
+                            ->info('Set what requests should invalidate which target routes.')
+                            ->fixXmlConfig('route')
+                            ->prototype('array')
+                                ->children();
+
+        $this->addMatch($rules);
+        $rules
+            ->arrayNode('routes')
+                ->isRequired()
+                ->requiresAtLeastOneElement()
+                ->useAttributeAsKey('name')
+                ->info('Target routes to invalidate when request is matched')
+                ->prototype('array')
+                    ->children()
+                        ->booleanNode('ignore_extra_params')->defaultTrue()->end()
                     ->end()
                 ->end()
             ->end();
+    }
+
+    /**
+     * User context main section.
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addUserContextListenerSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->fixXmlConfig('user_identifier_header')
+            ->children()
+                ->arrayNode('user_context')
+                    ->info('Listener that returns the request for the user context hash as early as possible.')
+                    ->addDefaultsIfNotSet()
+                    ->canBeEnabled()
+                    ->children()
+                        ->arrayNode('match')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->scalarNode('matcher_service')
+                                    ->defaultValue('fos_http_cache.user_context.request_matcher')
+                                    ->info('Service id of a request matcher that tells whether the request is a context hash request.')
+                                ->end()
+                                ->scalarNode('accept')
+                                    ->defaultValue('application/vnd.fos.user-context-hash')
+                                    ->info('Specify the accept HTTP header used for context hash requests.')
+                                ->end()
+                                ->scalarNode('method')
+                                    ->defaultNull()
+                                    ->info('Specify the HTTP method used for context hash requests.')
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->scalarNode('hash_cache_ttl')
+                            ->defaultValue(0)
+                            ->info('Cache the response for the hash for the specified number of seconds. Setting this to 0 will not cache those responses at all.')
+                        ->end()
+                        ->arrayNode('user_identifier_headers')
+                            ->prototype('scalar')->end()
+                            ->defaultValue(array('Cookie', 'Authorization'))
+                            ->info('List of headers that contains the unique identifier for the user in the hash request.')
+                        ->end()
+                        ->scalarNode('user_hash_header')
+                            ->defaultValue('X-User-Context-Hash')
+                            ->info('Name of the header that contains the hash information for the context.')
+                        ->end()
+                        ->booleanNode('role_provider')
+                            ->defaultFalse()
+                            ->info('Whether to enable a provider that automatically adds all roles of the current user to the context.')
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
     }
 
     private function addFlashMessageListenerSection(ArrayNodeDefinition $rootNode)
@@ -376,32 +448,20 @@ class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    private function addInvalidatorsSection(ArrayNodeDefinition $invalidationNode)
+    private function addDebugSection(ArrayNodeDefinition $rootNode)
     {
-        $invalidationNode
+        $rootNode
             ->children()
-                ->arrayNode('route_invalidators')
-                    ->useAttributeAsKey('name')
-                    ->info('Groups of origin routes that invalidate target routes when a request is made')
-                    ->prototype('array')
-                        ->children()
-                            ->arrayNode('origin_routes')
-                                ->isRequired()
-                                ->requiresAtLeastOneElement()
-                                ->prototype('scalar')->end()
-                                ->info('Invalidate the target routes in this group when one of these routes is called')
-                            ->end()
-                            ->arrayNode('invalidate_routes')
-                                ->useAttributeAsKey('name')
-                                ->info('Target routes to invalidate when an origin route is called')
-                                ->prototype('array')
-                                    ->children()
-                                        ->scalarNode('parameter_mapper')->end()
-                                        ->booleanNode('ignore_extra_params')->defaultTrue()->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
+                ->arrayNode('debug')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->booleanNode('enabled')
+                        ->defaultValue($this->debug)
+                        ->info('Whether to send a debug header with the response to trigger a caching proxy to send debug information. If not set, defaults to kernel.debug.')
+                    ->end()
+                    ->scalarNode('header')
+                        ->defaultValue('X-Cache-Debug')
+                        ->info('The header to send if debug is true.')
                     ->end()
                 ->end()
             ->end()

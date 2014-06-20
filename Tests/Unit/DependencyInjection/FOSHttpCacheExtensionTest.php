@@ -69,39 +69,66 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->load(array($config), $container);
     }
 
-    public function testConfigLoadInvalidators()
+    public function testConfigLoadTagRules()
     {
         $config = $this->getBaseConfig() + array(
-            'cache_manager' => array(
-                'route_invalidators' => array(
+            'tags' => array(
+                'rules' => array(
                     array(
-                        'name' => 'invalidator1',
-                        'origin_routes' => array(
-                            'my_route'
+                        'match' => array(
+                            'path' => '^/$',
+                            'host' => 'fos.lo',
+                            'methods' => array('GET', 'HEAD'),
+                            'ips' => array('1.1.1.1', '2.2.2.2'),
+                            'attributes' => array(
+                                '_controller' => '^AcmeBundle:Default:index$',
+                            ),
                         ),
-                        'invalidate_routes' => array(
-                            array(
-                                'name' => 'invalidate_route1',
-                            )
-                        )
+                        'tags' => array('tag-a', 'tag-b')
                     )
                 )
-            ),
-            'proxy_client' => array(
-                'varnish' => array(
-                    'servers' => array('1.2.3.4'),
-                ),
             ),
         );
 
         $container = $this->createContainer();
         $this->extension->load(array($config), $container);
+
+        $this->assertMatcherCreated($container, array('_controller' => '^AcmeBundle:Default:index$'));
+        $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.tag');
     }
 
-    public function testConfigLoadRules()
+    public function testConfigLoadInvalidatorRules()
+    {
+        $config = $this->getBaseConfig() + array(
+            'invalidation' => array(
+                'rules' => array(
+                    array(
+                        'match' => array(
+                            'attributes' => array(
+                                '_route' => 'my_route',
+                            ),
+                        ),
+                        'routes' => array(
+                            array(
+                                'name' => 'invalidate_route1',
+                            )
+                        ),
+                    )
+                )
+            ),
+        );
+
+        $container = $this->createContainer();
+        $this->extension->load(array($config), $container);
+
+        $this->assertMatcherCreated($container, array('_route' => 'my_route'));
+        $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.invalidation');
+    }
+
+    public function testConfigLoadCacheControl()
     {
         $config = array(
-            array(
+            'cache_control' => array(
                 'rules' => array(
                     array(
                         'match' => array(
@@ -118,99 +145,46 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                             'reverse_proxy_ttl' => 42,
                             'vary' => array('Cookie', 'Accept-Language')
                         ),
-                        'tags' => array('tag-a', 'tag-b')
                     )
                 ),
-                'proxy_client' => true,
-            )
+            ),
         );
 
         $container = $this->createContainer();
-        $this->extension->load($config, $container);
+        $this->extension->load(array($config), $container);
 
-        // Extract the corresponding definition
-        $matcherDefinition = null;
-        $matcherId = null;
-        foreach ($container->getDefinitions() as $id => $definition) {
-            if ($definition instanceof DefinitionDecorator &&
-                $definition->getParent() === 'fos_http_cache.request_matcher'
-            ) {
-                if ($matcherDefinition) {
-                    $this->fail('More then one request matcher was created');
-                }
-                $matcherId = $id;
-                $matcherDefinition = $definition;
-            }
-        }
-
-        // definition should exist
-        $this->assertNotNull($matcherDefinition);
-
-        // 5th argument should contain the controller name value
-        $this->assertEquals(array('_controller' => '^AcmeBundle:Default:index$'), $matcherDefinition->getArgument(4));
-
-        $ruleDefinition = null;
-        foreach ($container->getDefinitions() as $definition) {
-            if ($definition instanceof DefinitionDecorator &&
-                $definition->getParent() === 'fos_http_cache.rule_matcher'
-            ) {
-                if ($ruleDefinition) {
-                    $this->fail('More then one rule matcher was created');
-                }
-                $ruleDefinition = $definition;
-            }
-        }
-
-        // definition should exist
-        $this->assertNotNull($ruleDefinition);
-
-        // first argument should be the reference to the matcher
-        $reference = $ruleDefinition->getArgument(0);
-        $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $reference);
-        $this->assertEquals($matcherId, (string) $reference);
+        $this->assertMatcherCreated($container, array('_controller' => '^AcmeBundle:Default:index$'));
+        $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.cache_control');
     }
 
     /**
      * Check if comma separated strings are parsed as expected.
      */
-    public function testConfigLoadRulesSplit()
+    public function testConfigLoadCacheControlSplit()
     {
         $config = array(
-            array('rules' => array(
-                array(
-                    'match' => array(
-                        'methods' => 'GET,HEAD',
-                        'ips' => '1.1.1.1,2.2.2.2',
-                        'attributes' => array(
-                            '_controller' => '^AcmeBundle:Default:index$',
+            'cache_control' => array(
+                'rules' => array(
+                    array(
+                        'match' => array(
+                            'methods' => 'GET,HEAD',
+                            'ips' => '1.1.1.1,2.2.2.2',
+                            'attributes' => array(
+                                '_controller' => '^AcmeBundle:Default:index$',
+                            ),
+                        ),
+                        'headers' => array(
+                            'vary' => 'Cookie, Accept-Language',
                         ),
                     ),
-                    'headers' => array(
-                        'vary' => 'Cookie, Accept-Language',
-                    )
-                )
-            ))
+                ),
+            ),
         );
 
         $container = $this->createContainer();
-        $this->extension->load($config, $container);
+        $this->extension->load(array($config), $container);
 
-        // Extract the corresponding definition
-        $matcherDefinition = null;
-        foreach ($container->getDefinitions() as $definition) {
-            if ($definition instanceof DefinitionDecorator &&
-                $definition->getParent() === 'fos_http_cache.request_matcher'
-            ) {
-                if ($matcherDefinition) {
-                    $this->fail('More then one request matcher was created');
-                }
-                $matcherDefinition = $definition;
-            }
-        }
-
-        // definition should exist
-        $this->assertNotNull($matcherDefinition);
-
+        $matcherDefinition = $this->assertMatcherCreated($container, array('_controller' => '^AcmeBundle:Default:index$'));
         $this->assertEquals(array('GET', 'HEAD'), $matcherDefinition->getArgument(2));
     }
 
@@ -221,7 +195,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $config = array(
             array(
-                'rules' => array(
+                'cache_control' => array(
                     array(
                         'match' => array(),
                         'headers' => array(
@@ -335,5 +309,71 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                 )
             )
         );
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param array            $attributes
+     *
+     * @return DefinitionDecorator
+     */
+    private function assertMatcherCreated(ContainerBuilder $container, array $attributes)
+    {
+        // Extract the corresponding definition
+        $matcherDefinition = null;
+        $matcherId = null;
+        foreach ($container->getDefinitions() as $id => $definition) {
+            if ($definition instanceof DefinitionDecorator &&
+                $definition->getParent() === 'fos_http_cache.request_matcher'
+            ) {
+                if ($matcherDefinition) {
+                    $this->fail('More then one request matcher was created');
+                }
+                $matcherId = $id;
+                $matcherDefinition = $definition;
+            }
+        }
+
+        // definition should exist
+        $this->assertNotNull($matcherDefinition);
+
+        // 5th argument should contain the request attribute criteria
+        $this->assertEquals($attributes, $matcherDefinition->getArgument(4));
+
+        $ruleDefinition = null;
+        foreach ($container->getDefinitions() as $definition) {
+            if ($definition instanceof DefinitionDecorator &&
+                $definition->getParent() === 'fos_http_cache.rule_matcher'
+            ) {
+                if ($ruleDefinition) {
+                    $this->fail('More then one rule matcher was created');
+                }
+                $ruleDefinition = $definition;
+            }
+        }
+
+        // definition should exist
+        $this->assertNotNull($ruleDefinition);
+
+        // first argument should be the reference to the matcher
+        $reference = $ruleDefinition->getArgument(0);
+        $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $reference);
+        $this->assertEquals($matcherId, (string)$reference);
+
+        return $matcherDefinition;
+    }
+
+    /**
+     * Assert that the service $id exists and has a method call mapped onto it.
+     *
+     * @param ContainerBuilder $container
+     * @param string           $id        The service id to investigate
+     */
+    private function assertListenerHasRule(ContainerBuilder $container, $id)
+    {
+        $this->assertTrue($container->hasDefinition($id));
+        $listener = $container->getDefinition($id);
+        $this->assertTrue($listener->hasMethodCall('addRule'));
+        $this->assertCount(1, $listener->getMethodCalls());
     }
 }

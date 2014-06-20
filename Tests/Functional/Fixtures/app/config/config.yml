@@ -5,16 +5,22 @@ framework:
   test: ~
 
 fos_http_cache:
+  cache_control:
+    rules:
+      -
+        match:
+          path: ^/cached
+        headers:
+          cache_control: {public: true}
   proxy_client:
     varnish:
       servers: 127.0.0.1
-  rules:
-    -
-      match:
-        path: ^/cached
-      headers:
-        cache_control: {public: true}
-      tags: [area]
+  tags:
+    rules:
+      -
+        match:
+          path: ^/cached
+        tags: [area]
 
 monolog:
   handlers:

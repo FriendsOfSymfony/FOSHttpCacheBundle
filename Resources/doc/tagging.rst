@@ -30,9 +30,9 @@ be notified if your setup is broken:
 .. code-block:: yaml
 
     fos_http_cache:
-      cache_manager:
-        tag_listener:
-          enabled: true
+        cache_manager:
+            tags:
+                enabled: true
 
 Tagging with the Cache Manager
 ------------------------------
@@ -55,11 +55,12 @@ On all other operations, those tags will be invalidated.
 .. code-block:: yaml
 
     fos_http_cache:
-      rules:
-        -
-          match:
-            path: ^/news
-            tags: [news-section]
+        tags:
+            rules:
+                -
+                    match:
+                        path: ^/news
+                    tags: [news-section]
 
 When a request goes to any URL starting with news, e.g. ``/news/42``, the
 response will be tagged with ``news-section`` (in addition to any tags set by
