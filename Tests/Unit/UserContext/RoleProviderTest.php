@@ -50,4 +50,13 @@ class RoleProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEmpty($userContext->getParameters());
     }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testNotUnderFirewall()
+    {
+        $roleProvider = new RoleProvider();
+        $roleProvider->updateUserContext(new UserContext());
+    }
 }
