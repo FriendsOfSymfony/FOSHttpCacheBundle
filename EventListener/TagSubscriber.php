@@ -72,7 +72,7 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
             $tags = $this->getAnnotationTags($request);
         }
 
-        $configuredTags = $this->matchConfiguration($request, $response);
+        $configuredTags = $this->matchRule($request, $response);
         if ($configuredTags) {
             foreach ($configuredTags['tags'] as $tag) {
                 $tags[] = $tag;

@@ -12,13 +12,6 @@
     </parameters>
 
     <services>
-        <service id="fos_http_cache.invalidator.collection"
-                 class="FOS\HttpCacheBundle\Invalidator\InvalidatorCollection"
-                 factory-class="FOS\HttpCacheBundle\Invalidator\InvalidatorCollectionFactory"
-                 factory-method="getInvalidatorCollection">
-            <argument>%fos_http_cache.cache_manager.route_invalidators%</argument>
-        </service>
-
         <service id="fos_http_cache.cache_manager"
                  class="%fos_http_cache.cache_manager.class%">
             <argument type="service" id="fos_http_cache.default_proxy_client" />
@@ -32,14 +25,6 @@
                  class="%fos_http_cache.event_listener.log.class%"
                  abstract="true">
             <argument type="service" id="logger" />
-        </service>
-
-        <service id="fos_http_cache.event_listener.invalidation"
-                 class="%fos_http_cache.event_listener.invalidation.class%">
-            <argument type="service" id="fos_http_cache.cache_manager" />
-            <argument type="service" id="fos_http_cache.invalidator.collection" />
-            <argument type="service" id="router" />
-            <tag name="kernel.event_subscriber" />
         </service>
 
         <service id="fos_http_cache.command.invalidate_path" class="%fos_http_cache.command.invalidate_path.class%">

@@ -1,29 +1,6 @@
 Configuration
 =============
 
-Debug Header
-------------
-
-Enable the ``debug`` parameter to set a ``X-Cache-Debug`` header on each
-response. You can then :ref:`configure your caching proxy <foshttpcache:varnish_debugging>`
-to add debug information when that header is present:
-
-.. code-block:: yaml
-
-    # app/config/config.yml
-    fos_http_cache:
-      debug: true
-
-The default value is ``%kernel.debug%``, triggering the header when you are in
-dev mode but not in prod mode. You can change the header with the
-``debug_header`` option:
-
-.. code-block:: yaml
-
-    # app/config/config.yml
-    fos_http_cache:
-      debug_header: Please-Send-Debug-Infos
-
 Cache Header Rules
 ------------------
 
@@ -44,7 +21,27 @@ convenient abstractions.
 
 .. todo::
 
-    This doc is missing.
+    Config reference is missing.
+
+Tags
+----
+
+Tags allow to use controller annotations and configuration rules to set a tag
+header and invalidate tags.
+
+.. todo::
+
+    Config reference is missing.
+
+Invalidator
+-----------
+
+Invalidators use controller annotations and configuration rules to invalidate
+certain routes and paths when a route is matched.
+
+.. todo::
+
+    Config reference is missing.
 
 User Context
 ------------
@@ -58,3 +55,10 @@ Flash Message Listener
 The :doc:`flash message listener <../event-subscribers/flash-message>` is a
 tool to avoid rendering the flash message into the content of a page. It is
 another building brick for caching logged in pages.
+
+Debug
+-----
+
+The :doc:`debug options <debug>` can be used to control whether a special
+header should be set to tell the caching proxy that it has to output debug
+information.

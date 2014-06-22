@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="fos_http_cache.event_listener.invalidation.class">FOS\HttpCacheBundle\EventListener\InvalidationSubscriber</parameter>
+    </parameters>
+
+    <services>
+        <service id="fos_http_cache.event_listener.invalidation"
+                 class="%fos_http_cache.event_listener.invalidation.class%">
+            <argument type="service" id="fos_http_cache.cache_manager" />
+            <argument type="service" id="router" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+    </services>
+</container>

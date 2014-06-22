@@ -29,16 +29,15 @@ You can configure invalidation rules as follows:
     # app/config/config.yml
 
     fos_http_cache:
-      cache_manager:
-        route_invalidation:
-          villains:
-            origin_routes: [ villain_edit, villain_delete, villain_publish ]
-            invalidate_routes:
-              villains_index: ~    # e.g., /villains
-              villain_details: ~   # e.g., /villain/{id}
-          another_invalidator:
-            origin_routes: [ ... ]
-            invalidate_routes: [ ... ]
+        invalidation:
+            rules:
+                -
+                    match:
+                        attributes:
+                            _route: "villain_edit|villain_delete|villain_publish"
+                    routes:
+                        villains_index: ~    # e.g., /villains
+                        villain_details: ~   # e.g., /villain/{id}
 
 Now when a request to either one of the three origin routes returns a 200
 response, both ``villains_index`` and ``villain_details`` will be purged.

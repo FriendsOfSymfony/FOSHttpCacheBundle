@@ -36,22 +36,49 @@ class FOSHttpCacheExtension extends Extension
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-        if ($config['debug'] || (!empty($config['rules']))) {
-            $debugHeader = $config['debug'] ? $config['debug_header'] : false;
+        if ($config['debug']['enabled'] || (!empty($config['cache_control']))) {
+            $debugHeader = $config['debug']['enabled'] ? $config['debug']['header'] : false;
             $container->setParameter($this->getAlias().'.debug_header', $debugHeader);
             $loader->load('cache_control_listener.xml');
+        }
+
+        if (!empty($config['cache_control'])) {
+            $this->loadCacheControl($container, $config['cache_control']);
         }
 
         if (isset($config['proxy_client'])) {
             $this->loadProxyClient($container, $loader, $config['proxy_client']);
         }
 
-        if ($config['cache_manager']['enabled'] && isset($config['proxy_client'])) {
+        if ($config['cache_manager']['enabled']) {
             $this->loadCacheManager($container, $loader, $config['cache_manager']);
         }
 
-        if (!empty($config['rules'])) {
-            $this->loadRules($container, $config);
+
+        if ($config['tags']['enabled']) {
+            // true or auto
+            if (class_exists('\Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
+                $loader->load('tag_listener.xml');
+                if (!empty($config['tags']['rules'])) {
+                    $this->loadTagRules($container, $config['tags']['rules']);
+                }
+            } elseif (true === $config['tag_listener']['enabled']) {
+                // silently skip if set to auto
+                throw new InvalidConfigurationException('The TagListener requires symfony/expression-language and needs the cache_manager to be configured');
+            }
+        }
+
+        if ($config['invalidation']['enabled']) {
+            // true or auto
+            if (class_exists('\Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
+                $loader->load('invalidation_listener.xml');
+                if (!empty($config['invalidation']['rules'])) {
+                    $this->loadInvalidatorRules($container, $config['invalidation']['rules']);
+                }
+            } elseif (true === $config['tag_listener']['enabled']) {
+                // silently skip if set to auto
+                throw new InvalidConfigurationException('The InvalidationListener requires symfony/expression-language and needs the cache_manager to be configured');
+            }
         }
 
         if ($config['user_context']['enabled']) {
@@ -71,56 +98,42 @@ class FOSHttpCacheExtension extends Extension
      *
      * @throws InvalidConfigurationException
      */
-    private function loadRules(ContainerBuilder $container, array $config)
+    private function loadCacheControl(ContainerBuilder $container, array $config)
     {
+        $controlDefinition = $container->getDefinition($this->getAlias() . '.event_listener.cache_control');
+
         foreach ($config['rules'] as $rule) {
-            $match = $rule['match'];
+            $ruleMatcher = $this->parseRuleMatcher($container, $rule['match']);
+            $controlDefinition->addMethodCall('addRule', array($ruleMatcher, $rule['headers']))
+            ;
+        }
+    }
 
-            $match['ips'] = (empty($match['ips'])) ? null : $match['ips'];
+    private function parseRuleMatcher(ContainerBuilder $container, array $match)
+    {
+        $match['ips'] = (empty($match['ips'])) ? null : $match['ips'];
 
-            $requestMatcher = $this->createRequestMatcher(
-                $container,
-                $match['path'],
-                $match['host'],
-                $match['methods'],
-                $match['ips'],
-                $match['attributes']
-            );
+        $requestMatcher = $this->createRequestMatcher(
+            $container,
+            $match['path'],
+            $match['host'],
+            $match['methods'],
+            $match['ips'],
+            $match['attributes']
+        );
 
-            $extraCriteria = array();
-            foreach (array('additional_cacheable_status', 'match_response') as $extra) {
-                if (isset($match[$extra])) {
-                    $extraCriteria[$extra] = $match[$extra];
-                }
-            }
-            $ruleMatcher = $this->createRuleMatcher(
-                $container,
-                $requestMatcher,
-                $extraCriteria
-            );
-
-            $tags = array(
-                'tags' => $rule['tags'],
-                'expressions' => $rule['tag_expressions'],
-            );
-            if (count($tags['tags']) || count($tags['expressions'])) {
-                if (!$container->hasDefinition($this->getAlias() . '.event_listener.tag')) {
-                    throw new InvalidConfigurationException('To configure tags, you need to have the tag event listener enabled, requiring symfony/expression-language');
-                }
-
-                $container
-                    ->getDefinition($this->getAlias() . '.event_listener.tag')
-                    ->addMethodCall('addRule', array($ruleMatcher, $tags))
-                ;
-            }
-
-            if (isset($rule['headers'])) {
-                $container
-                    ->getDefinition($this->getAlias() . '.event_listener.cache_control')
-                    ->addMethodCall('addRule', array($ruleMatcher, $rule['headers']))
-                ;
+        $extraCriteria = array();
+        foreach (array('additional_cacheable_status', 'match_response') as $extra) {
+            if (isset($match[$extra])) {
+                $extraCriteria[$extra] = $match[$extra];
             }
         }
+
+        return $this->createRuleMatcher(
+            $container,
+            $requestMatcher,
+            $extraCriteria
+        );
     }
 
     private function createRuleMatcher(ContainerBuilder $container, Reference $requestMatcher, array $extraCriteria)
@@ -225,16 +238,6 @@ class FOSHttpCacheExtension extends Extension
 
     private function loadCacheManager(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
-        $container->setParameter($this->getAlias().'.cache_manager.route_invalidators', $config['route_invalidators']);
-
-        $container->setParameter(
-            $this->getAlias() . '.cache_manager.additional_status',
-            isset($config['additional_status']) ? $config['additional_status'] : array()
-        );
-        $container->setParameter(
-            $this->getAlias() . '.cache_manager.match_response',
-            isset($config['match_response']) ? $config['match_response'] : null
-        );
         $loader->load('cache_manager.xml');
         if (version_compare(Kernel::VERSION, '2.4.0', '>=')) {
             $container
@@ -242,15 +245,31 @@ class FOSHttpCacheExtension extends Extension
                 ->addTag('console.command')
             ;
         }
+    }
 
-        if ($config['tag_listener']['enabled']) {
-            // true or auto
-            if (class_exists('\Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
-                $loader->load('tag_listener.xml');
-            } elseif (true === $config['tag_listener']['enabled']) {
-                // silently skip if set to auto
-                throw new InvalidConfigurationException('The TagListener requires symfony/expression-language');
-            }
+    private function loadTagRules(ContainerBuilder $container, array $config)
+    {
+        $tagDefinition = $container->getDefinition($this->getAlias() . '.event_listener.tag');
+
+        foreach ($config as $rule) {
+            $ruleMatcher = $this->parseRuleMatcher($container, $rule['match']);
+
+            $tags = array(
+                'tags' => $rule['tags'],
+                'expressions' => $rule['tag_expressions'],
+            );
+
+            $tagDefinition->addMethodCall('addRule', array($ruleMatcher, $tags));
+        }
+    }
+
+    private function loadInvalidatorRules(ContainerBuilder $container, array $config)
+    {
+        $tagDefinition = $container->getDefinition($this->getAlias() . '.event_listener.invalidation');
+
+        foreach ($config as $rule) {
+            $ruleMatcher = $this->parseRuleMatcher($container, $rule['match']);
+            $tagDefinition->addMethodCall('addRule', array($ruleMatcher, $rule['routes']));
         }
     }
 

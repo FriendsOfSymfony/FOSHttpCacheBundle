@@ -49,7 +49,7 @@ class AbstractRuleSubscriber
      *
      * @return array|false Settings to apply or false if no rule matched.
      */
-    protected function matchConfiguration(Request $request, Response $response)
+    protected function matchRule(Request $request, Response $response)
     {
         foreach ($this->getRules() as $elements) {
             if ($elements[0]->matches($request, $response)) {

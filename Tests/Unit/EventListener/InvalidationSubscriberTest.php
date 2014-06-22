@@ -14,10 +14,12 @@ namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use FOS\HttpCacheBundle\EventListener\InvalidationSubscriber;
+use FOS\HttpCacheBundle\Http\RuleMatcher;
 use FOS\HttpCacheBundle\Invalidator\Invalidator;
 use FOS\HttpCacheBundle\Invalidator\InvalidatorCollection;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Symfony\Component\Routing\Route;
@@ -27,12 +29,10 @@ use \Mockery;
 class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     protected $cacheManager;
-    protected $invalidators;
 
     public function setUp()
     {
         $this->cacheManager = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager');
-        $this->invalidators = new InvalidatorCollection();
     }
 
     public function testNoRoutesInvalidatedWhenResponseIsUnsuccessful()
@@ -79,15 +79,19 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
             ->andReturn('/retrieve/something/123/bla')
             ->getMock();
 
-        $invalidator = new Invalidator();
-        $invalidator->addInvalidatorRoute('route_invalidator');
-        $invalidator->addInvalidatedRoute('route_invalidated');
-        $invalidator->addInvalidatedRoute('route_invalidated_special');
+        $ruleMatcher = new RuleMatcher(new RequestMatcher(
+            null,
+            null,
+            null,
+            null,
+            array('_route' => 'route_invalidator')
+        ), array());
 
-        $invalidators = new InvalidatorCollection();
-        $invalidators->addInvalidator($invalidator);
-
-        $listener = new InvalidationSubscriber($cacheManager, $invalidators, $router);
+        $listener = new InvalidationSubscriber($cacheManager, $router);
+        $listener->addRule($ruleMatcher, array(
+            'route_invalidated' => array('ignore_extra_params' => true),
+            'route_invalidated_special' => array('ignore_extra_params' => true),
+        ));
 
         $request = new Request();
         $request->attributes->set('_route', 'route_invalidator');
@@ -106,9 +110,7 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $router = \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
-        $invalidator = new InvalidatorCollection();
-
-        $listener = new InvalidationSubscriber($cacheManager, $invalidator, $router);
+        $listener = new InvalidationSubscriber($cacheManager, $router);
 
         $request = new Request();
 
@@ -183,7 +185,6 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         return new InvalidationSubscriber(
             $this->cacheManager,
-            $this->invalidators,
             \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface')
         );
     }

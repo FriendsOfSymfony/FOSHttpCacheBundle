@@ -12,36 +12,37 @@ An example configuration could look like this:
 
     # app/config/config.yml
     fos_http_cache:
-      rules:
-        # only match login.example.com
-        -
-          match:
-            host: ^login.example.com$
-          headers:
-            cache_control: { public: false, max_age: 0, s_maxage: 0, last_modified: "-1 hour" }
-            vary: [Accept-Encoding, Accept-Language]
+        cache_control:
+            rules:
+                # only match login.example.com
+                -
+                    match:
+                        host: ^login.example.com$
+                    headers:
+                        cache_control: { public: false, max_age: 0, s_maxage: 0, last_modified: "-1 hour" }
+                        vary: [Accept-Encoding, Accept-Language]
 
-        # match all actions of a specific controller
-        -
-          match:
-            attributes: { _controller: ^AcmeBundle:Default:.* }
-            additional_cacheable_status: [400]
-          headers:
-            cache_control: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }
+                # match all actions of a specific controller
+                -
+                    match:
+                        attributes: { _controller: ^AcmeBundle:Default:.* }
+                        additional_cacheable_status: [400]
+                    headers:
+                        cache_control: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }
 
-        -
-          match:
-            path: ^/$
-          headers:
-            cache_control: { public: true, max_age: 64000, s_maxage: 64000, last_modified: "-1 hour" }
-            vary: [Accept-Encoding, Accept-Language]
+                -
+                    match:
+                        path: ^/$
+                    headers:
+                        cache_control: { public: true, max_age: 64000, s_maxage: 64000, last_modified: "-1 hour" }
+                        vary: [Accept-Encoding, Accept-Language]
 
-        # match everything to set defaults
-        -
-          match:
-            path: ^/
-          headers:
-            cache_control: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }
+                # match everything to set defaults
+                -
+                    match:
+                      path: ^/
+                    headers:
+                        cache_control: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }
 
 rules
 -----
@@ -189,13 +190,14 @@ You can use the standard cache control directives:
 
     # app/config/config.yml
     fos_http_cache:
-      rules:
-        -
-          headers:
-            cache_control:
-              public: true
-              max_age: 64000
-              s_maxage: 64000
+        cache_control:
+            rules:
+                -
+                    headers:
+                        cache_control:
+                            public: true
+                            max_age: 64000
+                            s_maxage: 64000
 
 If you use ``no_cache``, you should *not set any other options*. This will make
 Symfony properly handle HTTP 1.0, setting the ``Pragma: no-cache`` and
@@ -227,16 +229,17 @@ directives are flags that are included when set to true.
 
     # app/config/config.yml
     fos_http_cache:
-      rules:
-        -
-          path: ^/$
-          headers:
-            cache_control:
-              stale_while_revalidate: 9000
-              stale_if_error: 3000
-              must_revalidate: true
-              proxy_revalidate: true
-              no_transform: true
+        cache_control:
+            rules:
+                -
+                    path: ^/$
+                    headers:
+                        cache_control:
+                            stale_while_revalidate: 9000
+                            stale_if_error: 3000
+                            must_revalidate: true
+                            proxy_revalidate: true
+                            no_transform: true
 
 last_modified
 ~~~~~~~~~~~~~
@@ -253,10 +256,11 @@ This value must be a valid input to ``DateTime``.
 
     # app/config/config.yml
     fos_http_cache:
-      rules:
-        -
-          headers:
-            last_modified: "-1 hour"
+        cache_control:
+            rules:
+                -
+                    headers:
+                        last_modified: "-1 hour"
 
 vary
 ~~~~
@@ -264,6 +268,16 @@ vary
 You can set the `vary` option to an array that defines the contents of the
 `Vary` header when matching the request. This adds to existing Vary headers,
 keeping previously set Vary options.
+
+.. code-block:: yaml
+
+    # app/config/config.yml
+    fos_http_cache:
+        cache_control:
+            rules:
+                -
+                    headers:
+                        vary: My-Custom-Header
 
 X-Reverse-Proxy-TTL for Custom Reverse Proxy Time-Outs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -289,11 +303,12 @@ then use on the reverse proxy:
 
     # app/config/config.yml
     fos_http_cache:
-      rules:
-        -
-          headers:
-            reverse_proxy_ttl: 3600
-            cache_control: { public: true, s_maxage: 60 }
+        cache_control:
+            rules:
+                -
+                    headers:
+                        reverse_proxy_ttl: 3600
+                        cache_control: { public: true, s_maxage: 60 }
 
 This example adds the header ``X-Reverse-Proxy-TTL: 3600`` to your responses.
 Varnish by default knows nothing about this header. To make this solution work,
@@ -312,9 +327,9 @@ you need to extend your varnish ``vcl_fetch`` configuration:
         }
     }
 
-Note that there is a beresp.ttl field in VCL but unfortunately it can only be
-set to absolute values and not dynamically. Thus we have to revert to a C code
-fragment.
+Note that there is a ``beresp.ttl`` field in VCL but unfortunately it can only
+be set to absolute values and not dynamically. Thus we have to revert to a C
+code fragment.
 
 .. _Trusting Proxies: http://symfony.com/doc/current/components/http_foundation/trusting_proxies.html
 .. _controllers as services: http://symfony.com/doc/current/cookbook/controller/service.html
