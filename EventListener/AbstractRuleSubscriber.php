@@ -63,7 +63,7 @@ class AbstractRuleSubscriber
     /**
      * Get the rules ordered by priority.
      *
-     * @return array of array with rule matcher, settings
+     * @return RuleMatcherInterface[] of array with rule matcher, settings
      */
     private function getRules()
     {
