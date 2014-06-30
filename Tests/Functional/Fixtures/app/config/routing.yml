@@ -19,3 +19,6 @@ test_cached:
 test_noncached:
   pattern:  /noncached
   defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }
+
+test_logout:
+  pattern:  /secured_area/logout
