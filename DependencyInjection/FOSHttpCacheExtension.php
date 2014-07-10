@@ -167,6 +167,10 @@ class FOSHttpCacheExtension extends Extension
             ->replaceArgument(3, $config['user_hash_header'])
             ->replaceArgument(4, $config['hash_cache_ttl']);
 
+        $container->getDefinition($this->getAlias().'.user_context.logout_handler')
+            ->replaceArgument(1, $config['user_identifier_headers'])
+            ->replaceArgument(2, $config['match']['accept']);
+
         if ($config['role_provider']) {
             $container->getDefinition($this->getAlias().'.user_context.role_provider')
                 ->addTag(UserContextListenerPass::TAG_NAME)

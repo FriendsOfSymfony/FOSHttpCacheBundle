@@ -3,6 +3,8 @@ framework:
   router:
     resource: "%kernel.root_dir%/config/routing.yml"
   test: ~
+  session:
+    storage_id:  session.test_storage
 
 fos_http_cache:
   cache_control:
@@ -21,9 +23,31 @@ fos_http_cache:
         match:
           path: ^/cached
         tags: [area]
+  user_context:
+    user_identifier_headers:
+      - Cookie
+      - Authorization
+    role_provider: ~
 
 monolog:
   handlers:
     main:
       type: stream
       level: debug
+
+security:
+  providers:
+    in_memory:
+      memory:
+        users:
+          user:  { password: user, roles: 'ROLE_USER' }
+  encoders:
+    Symfony\Component\Security\Core\User\User: plaintext
+  firewalls:
+    secured_area:
+      pattern:    ^/secured_area
+      anonymous:
+      logout:
+        path:     /secured_area/logout
+        handlers:
+          - fos_http_cache.user_context.logout_handler

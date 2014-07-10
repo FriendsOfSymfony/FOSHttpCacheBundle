@@ -9,6 +9,7 @@
         <parameter key="fos_http_cache.user_context.hash_generator.class">FOS\HttpCache\UserContext\HashGenerator</parameter>
         <parameter key="fos_http_cache.user_context.role_provider.class">FOS\HttpCacheBundle\UserContext\RoleProvider</parameter>
         <parameter key="fos_http_cache.user_context.request_matcher.class">FOS\HttpCacheBundle\UserContext\RequestMatcher</parameter>
+        <parameter key="fos_http_cache.user_context.logout_handler.class">FOS\HttpCacheBundle\Security\Http\Logout\ContextInvalidationLogoutHandler</parameter>
     </parameters>
 
     <services>
@@ -31,6 +32,12 @@
 
         <service id="fos_http_cache.user_context.role_provider" class="%fos_http_cache.user_context.role_provider.class%" abstract="true">
             <argument type="service" id="security.context" on-invalid="ignore" />
+        </service>
+
+        <service id="fos_http_cache.user_context.logout_handler" class="%fos_http_cache.user_context.logout_handler.class%">
+            <argument type="service" id="fos_http_cache.default_proxy_client" />
+            <argument />
+            <argument />
         </service>
     </services>
 </container>

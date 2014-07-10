@@ -125,6 +125,31 @@ If the hash only depends on the ``Authorization`` header and should be cached fo
           - Authorization
         hash_cache_ttl: 900
 
+You will need to invalidate this cache when the user context will change (e.g. on
+login, logout, ...)
+
+With the default configuration of security in Symfony, the session id is regenerated
+for the login and logout action. You have to be sure that the ``invalidate_session``
+configuration key is set to true in your firewall configuration.
+
+To invalidate the cache on the caching proxy, a logout handler named
+``fos_http_cache.user_context.logout_handler`` can be add in your firewall.
+Your caching proxy needs to support BAN operations for this to work.
+
+.. code-block:: yaml
+
+    # app/config/security.yml
+    security:
+      firewalls:
+        secured_area:
+          logout:
+            invalidate_session: true
+            handlers:
+              - fos_http_cache.user_context.logout_handler
+
+This handler will automatically send requests to ban the hash cache of the user
+on logout.
+
 The User Context
 ----------------
 
