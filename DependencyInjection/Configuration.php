@@ -99,7 +99,7 @@ class Configuration implements ConfigurationInterface
         $this->addTagSection($rootNode);
         $this->addInvalidationSection($rootNode);
         $this->addUserContextListenerSection($rootNode);
-        $this->addFlashMessageListenerSection($rootNode);
+        $this->addFlashMessageSection($rootNode);
         $this->addDebugSection($rootNode);
 
         return $treeBuilder;
@@ -417,11 +417,11 @@ class Configuration implements ConfigurationInterface
         ;
     }
 
-    private function addFlashMessageListenerSection(ArrayNodeDefinition $rootNode)
+    private function addFlashMessageSection(ArrayNodeDefinition $rootNode)
     {
         $rootNode
             ->children()
-                ->arrayNode('flash_message_listener')
+                ->arrayNode('flash_message')
                     ->canBeUnset()
                     ->canBeEnabled()
                     ->info('Activate the flash message listener that puts flash messages into a cookie.')

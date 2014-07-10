@@ -240,26 +240,10 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($container->has('fos_http_cache.user_context.role_provider'));
     }
 
-    public function testConfigLoadFlashMessageListener()
+    public function testConfigLoadFlashMessageSubscriber()
     {
         $config = array(
-            array('flash_message_listener' => array(
-                'name' => 'myflashes',
-                'path' => '/test',
-                'host' => '*.fos.lo',
-                'secure' => true,
-                'httpOnly' => false,
-            )),
-        );
-
-        $container = $this->createContainer();
-        $this->extension->load($config, $container);
-    }
-
-    public function testConfigLoadFlashMessageListenerDefaults()
-    {
-        $config = array(
-            array('flash_message_listener' => true,
+            array('flash_message' => true,
             ),
         );
 
