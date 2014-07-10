@@ -26,6 +26,11 @@ Documentation
 
 Documentation is available at [Readthedocs](http://foshttpcachebundle.readthedocs.org/).
 
+Roadmap
+-------
+
+See the [github milestones](https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/issues/milestones).
+
 License
 -------
 
