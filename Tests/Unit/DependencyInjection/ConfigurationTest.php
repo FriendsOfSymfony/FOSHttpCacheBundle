@@ -36,7 +36,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, array(
             'config/empty.yml',
-            //'config/empty.xml',
+            'config/empty.xml',
             'config/empty.php',
         ));
 
@@ -156,7 +156,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, array(
             'config/full.yml',
-            // TODO 'config/full.xml',
+            'config/full.xml',
             'config/full.php',
         ));
 
@@ -183,7 +183,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, array(
             'config/nginx.yml',
-            // TODO 'config/nginx.xml',
+            'config/nginx.xml',
             'config/nginx.php',
         ));
 
@@ -199,7 +199,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, array(
             'config/cachemanager_noclient.yml',
-            //'config/cachemanager_noclient.xml',
+            'config/cachemanager_noclient.xml',
             'config/cachemanager_noclient.php',
         ));
 
@@ -219,7 +219,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, array(
             'config/tags_nocachemanager.yml',
-            //'config/tags_nocachemanager.xml',
+            'config/tags_nocachemanager.xml',
             'config/tags_nocachemanager.php',
         ));
 
@@ -239,7 +239,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, array(
             'config/invalidation_nocachemanager.yml',
-            //'config/invalidation_nocachemanager.xml',
+            'config/invalidation_nocachemanager.xml',
             'config/invalidation_nocachemanager.php',
         ));
 
@@ -260,7 +260,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, array(
             'config/tags_rules.yml',
-            //'config/tags_rules.xml',
+            'config/tags_rules.xml',
             'config/tags_rules.php',
         ));
 
@@ -281,7 +281,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, array(
             'config/invalidation_rules.yml',
-            // TODO 'config/invalidation_rules.xml',
+            'config/invalidation_rules.xml',
             'config/invalidation_rules.php',
         ));
 
@@ -301,7 +301,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, array(
             'config/invalid_date.yml',
-            // TODO 'config/invalid_date.xml',
+            'config/invalid_date.xml',
             'config/invalid_date.php',
         ));
 
@@ -324,7 +324,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, array(
             'config/rules_matchstatusandexpression.yml',
-            // TODO 'config/rules_matchstatusandexpression.xml',
+            'config/rules_matchstatusandexpression.xml',
             'config/rules_matchstatusandexpression.php',
         ));
 

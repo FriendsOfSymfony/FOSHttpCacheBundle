@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services">
+
+    <config xmlns="http://example.org/schema/dic/fos_http_cache">
+        <cache-control>
+            <rule>
+                <match path="/abc"/>
+                <headers last-modified="this is not a valid date"/>
+            </rule>
+        </cache-control>
+
+    </config>
+</container>

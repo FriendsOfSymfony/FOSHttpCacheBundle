@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services">
+
+    <config xmlns="http://example.org/schema/dic/fos_http_cache">
+        <cache-control>
+            <rule>
+                <match>
+                    <additional-cacheable-status>100</additional-cacheable-status>
+                    <additional-cacheable-status>500</additional-cacheable-status>
+                    <match-response>status</match-response>
+                </match>
+                <headers>
+                    <cache-control public="true"/>
+                </headers>
+            </rule>
+        </cache-control>
+    </config>
+</container>

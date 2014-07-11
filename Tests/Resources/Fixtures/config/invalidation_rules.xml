@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services">
+
+    <config xmlns="http://example.org/schema/dic/fos_http_cache">
+        <invalidation enabled="false">
+            <rule>
+                <match path="/def"/>
+                <route name="routename"/>
+            </rule>
+        </invalidation>
+    </config>
+
+</container>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services">
+
+    <config xmlns="http://example.org/schema/dic/fos_http_cache">
+        <cache-control>
+            <rule>
+                <match
+                    path="/abc"
+                    host="fos"
+                >
+                    <method>GET</method>
+                    <method>POST</method>
+                    <ip>1.2.3.4</ip>
+                    <ip>1.1.1.1</ip>
+                    <attribute name="_controller">fos.user_bundle.*</attribute>
+                    <additional-cacheable-status>100</additional-cacheable-status>
+                    <additional-cacheable-status>500</additional-cacheable-status>
+                </match>
+                <headers last-modified="-1 hour" reverse-proxy-ttl="42">
+                    <cache-control public="true"/>
+                    <vary>Cookie</vary>
+                </headers>
+            </rule>
+        </cache-control>
+        <proxy-client>
+            <varnish base-url="/test">
+                <server>22.22.22.22</server>
+            </varnish>
+        </proxy-client>
+
+        <cache-manager enabled="true"/>
+
+        <tags>
+            <rule>
+                <match path="/def" host="friends">
+                    <method>PUT</method>
+                    <method>DELETE</method>
+                    <ip>99.99.99.99</ip>
+                    <attribute name="_foo">bar</attribute>
+                    <additional-cacheable-status>501</additional-cacheable-status>
+                    <additional-cacheable-status>502</additional-cacheable-status>
+                </match>
+                <tag>a</tag>
+                <tag>b</tag>
+                <tag-expression>"a"</tag-expression>
+                <tag-expression>"b"</tag-expression>
+            </rule>
+        </tags>
+
+        <invalidation>
+            <rule>
+                <match path="/hij" host="symfony">
+                    <method>PATCH</method>
+                    <ip>42.42.42.42</ip>
+                    <attribute name="_format">json</attribute>
+                    <additional-cacheable-status>404</additional-cacheable-status>
+                    <additional-cacheable-status>403</additional-cacheable-status>
+                </match>
+                <route name="invalidate_route1" ignore-extra-params="false"/>
+            </rule>
+        </invalidation>
+
+        <user-context hash-cache-ttl="300" role-provider="true" user-hash-header="FOS-User-Context-Hash">
+            <match method="GET"/>
+            <user-identifier-header>Cookie</user-identifier-header>
+            <user-identifier-header>Authorization</user-identifier-header>
+        </user-context>
+
+        <flash-message-listener name="flashtest" path="/x" host="y" secure="true" httpOnly="false"/>
+
+        <debug header="FOS-Cache-Debug"/>
+
+    </config>
+</container>
