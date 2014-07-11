@@ -32,7 +32,8 @@
         "symfony/symfony": "~2.3",
         "symfony/expression-language": "~2.4",
         "symfony/monolog-bundle": "~2.3",
-        "polishsymfonycommunity/symfony-mocker-container": "~1.0"
+        "polishsymfonycommunity/symfony-mocker-container": "~1.0",
+        "matthiasnoback/symfony-dependency-injection-test": "0.*"
     },
     "suggest": {
         "sensio/framework-extra-bundle": "For Tagged Cache Invalidation",

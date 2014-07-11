@@ -1,0 +1,8 @@
+fos_http_cache:
+
+    proxy_client:
+        nginx:
+            servers: 22.22.22.22
+            base_url: /test
+            purge_location: /purge
+

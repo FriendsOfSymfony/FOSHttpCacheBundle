@@ -1,0 +1,4 @@
+fos_http_cache:
+
+    cache_manager:
+        enabled: true

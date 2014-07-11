@@ -1,0 +1,9 @@
+fos_http_cache:
+    tags:
+        enabled: false
+        rules:
+            -
+                match:
+                    path: /def
+                tags:
+                    - a

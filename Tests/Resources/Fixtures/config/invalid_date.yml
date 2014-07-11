@@ -1,0 +1,9 @@
+fos_http_cache:
+
+    cache_control:
+        rules:
+            -
+                match:
+                    path: /abc
+                headers:
+                    last_modified: this is no date

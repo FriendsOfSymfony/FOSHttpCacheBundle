@@ -1,0 +1,91 @@
+fos_http_cache:
+
+    cache_control:
+        rules:
+            -
+                match:
+                    path: /abc
+                    host: fos
+                    methods:
+                        - GET
+                        - POST
+                    ips:
+                        - 1.2.3.4
+                        - 1.1.1.1
+                    attributes:
+                        _controller: fos.user_bundle.*
+                    additional_cacheable_status:
+                        - 100
+                        - 500
+                headers:
+                    cache_control:
+                        public: true
+                    last_modified: -1 hour
+                    reverse_proxy_ttl: 42
+                    vary: Cookie
+    proxy_client:
+        varnish:
+            servers: 22.22.22.22
+            base_url: /test
+
+    cache_manager:
+        enabled: true
+
+    tags:
+        rules:
+            -
+                match:
+                    path: /def
+                    host: friends
+                    methods:
+                        - PUT
+                        - DELETE
+                    ips: 99.99.99.99
+                    attributes:
+                        _foo: bar
+                    additional_cacheable_status:
+                        - 501
+                        - 502
+                tags:
+                    - a
+                    - b
+                tag_expressions:
+                    - '"a"'
+                    - '"b"'
+
+    invalidation:
+        rules:
+            -
+                match:
+                    path: /hij
+                    host: symfony
+                    methods: PATCH
+                    ips: 42.42.42.42
+                    attributes:
+                        _format: json
+                    additional_cacheable_status:
+                        - 404
+                        - 403
+                routes:
+                    invalidate_route1:
+                        ignore_extra_params: false
+
+    user_context:
+        match:
+            method: GET
+        hash_cache_ttl: 300
+        role_provider: true
+        user_identifier_headers:
+            - Cookie
+            - Authorization
+        user_hash_header: FOS-User-Context-Hash
+
+    flash_message_listener:
+        name: flashtest
+        path: /x
+        host: y
+        secure: true
+        httpOnly: false
+
+    debug:
+        header: FOS-Cache-Debug

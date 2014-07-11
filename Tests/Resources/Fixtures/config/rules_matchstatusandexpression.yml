@@ -1,0 +1,13 @@
+fos_http_cache:
+
+    cache_control:
+        rules:
+            -
+                match:
+                    additional_cacheable_status:
+                        - 100
+                        - 500
+                    match_response: "status"
+                headers:
+                    cache_control:
+                        public: true
