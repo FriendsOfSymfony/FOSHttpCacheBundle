@@ -85,7 +85,7 @@ $container->loadFromExtension('fos_http_cache', array(
         'user_hash_header' => 'FOS-User-Context-Hash',
         'role_provider' => true,
     ),
-    'flash_message_listener' => array(
+    'flash_message' => array(
         'enabled' => true,
         'name' => 'flashtest',
         'path' => '/x',

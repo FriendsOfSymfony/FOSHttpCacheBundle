@@ -138,7 +138,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'user_hash_header' => 'FOS-User-Context-Hash',
                 'role_provider' => true,
             ),
-            'flash_message_listener' => array(
+            'flash_message' => array(
                 'enabled' => true,
                 'name' => 'flashtest',
                 'path' => '/x',
@@ -367,7 +367,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'user_hash_header' => 'X-User-Context-Hash',
                 'role_provider' => false,
             ),
-            'flash_message_listener' => array(
+            'flash_message' => array(
                 'enabled' => false,
                 'name' => 'flashes',
                 'path' => '/',

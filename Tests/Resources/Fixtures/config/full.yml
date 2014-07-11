@@ -80,7 +80,7 @@ fos_http_cache:
             - Authorization
         user_hash_header: FOS-User-Context-Hash
 
-    flash_message_listener:
+    flash_message:
         name: flashtest
         path: /x
         host: y

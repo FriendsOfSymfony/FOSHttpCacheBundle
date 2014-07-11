@@ -29,9 +29,17 @@ class FOSHttpCacheExtension extends Extension
     /**
      * {@inheritDoc}
      */
+    public function getConfiguration(array $config, ContainerBuilder $container)
+    {
+        return new Configuration($container->getParameter('kernel.debug'));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration($container->getParameter('kernel.debug'));
+        $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
@@ -85,10 +93,10 @@ class FOSHttpCacheExtension extends Extension
             $this->loadUserContext($container, $loader, $config['user_context']);
         }
 
-        if (!empty($config['flash_message_listener']) && $config['flash_message_listener']['enabled']) {
-            $container->setParameter($this->getAlias().'.event_listener.flash_message.options', $config['flash_message_listener']);
+        if (!empty($config['flash_message']) && $config['flash_message']['enabled']) {
+            $container->setParameter($this->getAlias().'.event_listener.flash_message.options', $config['flash_message']);
 
-            $loader->load('flash_message_listener.xml');
+            $loader->load('flash_message.xml');
         }
     }
 

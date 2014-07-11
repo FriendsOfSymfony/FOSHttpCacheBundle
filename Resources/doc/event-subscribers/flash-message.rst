@@ -2,18 +2,21 @@ Flash Message Subscriber
 ========================
 
 When flash messages are rendered into the content of a page, you can't cache
-the page anymore. This listener reads all flash messages into a cookie, leading
-to them not being there anymore when rendering the template. This will return
-the page with a set-cookie header which you of course must make sure to not
-cache in varnish. By default, varnish will simply not cache the whole response
-when there is a set-cookie header. (Maybe you could do something more clever -
-if you do, please provide a VCL example.)
+the page anymore. When enabled, this subscriber reads all flash messages into a
+cookie, leading to them not being there anymore when rendering the template.
+This will return the page with a set-cookie header which you of course must
+make sure to not cache in varnish. By default, varnish will simply not cache
+the whole response when there is a set-cookie header. (Maybe you could do
+something more clever - if you do, please provide a VCL example.)
+
+The flash message subscriber is automatically enabled if you configure any of
+the options under ``flash_message``.
 
 .. code-block:: yaml
 
     # app/config.yml
     fos_http_cache:
-      flash_message_listener:
+      flash_message:
         name: flashes
         path: /
         host: null
@@ -42,7 +45,7 @@ show the flash message once. This could look along these lines:
 
     function showFlash()
     {
-        var cookie = getCookie("flashes"); // fos_http_cache.flash_message_listener.name
+        var cookie = getCookie("flashes"); // fos_http_cache.flash_message.name
 
         if (!cookie) {
             return;
