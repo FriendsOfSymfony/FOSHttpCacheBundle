@@ -1,10 +1,10 @@
 Caching Rules
 =============
 
-You can configure HTTP caching headers based on request and response properties.
-The configuration approach is more convenient than manually setting the cache
-rules in your controller. This part works even without having configured a
-caching proxy.
+You can configure default HTTP caching headers based on request and response
+properties. The configuration approach is more convenient than manually setting
+the cache rules in your controller. This part works even without having
+configured a caching proxy.
 
 An example configuration could look like this:
 
@@ -168,6 +168,34 @@ inside the same rule.
 headers
 -------
 
+.. sidebar:: YAML alias for same headers for different matches
+
+    If you have many rules that should end up with the same headers, you
+    can use YAML "aliases" *within the same configuration file* to avoid
+    redundant configuration. The ``&alias`` notation creates an alias, the
+    ``<< : *alias`` notation inserts the aliased configuration. You can then
+    still overwrite parts of the aliased configuration. An example would be:
+
+    .. code-block:: yaml
+
+        rules:
+            -
+                match:
+                    path: ^/products.*
+                headers: &public
+                    cache_control:
+                        public: true
+                        max_age: 600
+                        s_maxage: 300
+                    reverse_proxy_ttl: 3600
+            -
+                match:
+                    path: ^/brands.*
+                headers:
+                    << : *public
+                    cache_control:
+                        max_age: 1800
+
 In the ``headers`` section, you define what headers to set on the response if
 the request was matched.
 
@@ -210,7 +238,7 @@ default. If you want it respected, add your own logic to ``vcl_fetch``.
     The cache-control headers are described in detail in :rfc:`2616#section-14.9`.
 
 Extra cache control directives
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+""""""""""""""""""""""""""""""
 
 You can also set headers that Symfony considers non-standard, some coming from
 RFCs extending HTTP/1.1. The following options are supported:
@@ -247,11 +275,6 @@ last_modified
 The input to the ``last_modified`` is used for the ``Last-Modified`` header.
 This value must be a valid input to ``DateTime``.
 
-.. note::
-
-    This option will only be set if no last modified information is set on the
-    response yet.
-
 .. code-block:: yaml
 
     # app/config/config.yml
@@ -261,6 +284,12 @@ This value must be a valid input to ``DateTime``.
                 -
                     headers:
                         last_modified: "-1 hour"
+
+.. hint::
+
+    Setting an arbitrary last modified time allows clients to send
+    ``If-Modified-Since`` requests. Varnish can handle these to serve data
+    from the cache if it was not invalidated since the client requested it.
 
 vary
 ~~~~
@@ -279,8 +308,8 @@ keeping previously set Vary options.
                     headers:
                         vary: My-Custom-Header
 
-X-Reverse-Proxy-TTL for Custom Reverse Proxy Time-Outs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+reverse_proxy_ttl for X-Reverse-Proxy-TTL for Custom Reverse Proxy Time-Outs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default, reverse proxies use the ``s-maxage`` of your ``Cache-Control`` header
 to know how long it should cache a page. But by default, the s-maxage is also

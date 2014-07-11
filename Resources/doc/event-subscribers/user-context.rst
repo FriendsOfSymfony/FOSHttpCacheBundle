@@ -52,7 +52,7 @@ triggered:
 
 .. caution::
 
-    If you are using `Symfony2 security <http://symfony.com/doc/current/book/security.html>`_,
+    If you are using `Symfony2 security <http://symfony.com/doc/current/book/security.html>`_
     for the hash generation, make sure that this route is inside the firewall
     for which you are doing the cache groups.
 
@@ -67,7 +67,7 @@ Enable the subscriber with the default settings:
 
 .. note::
 
-    The subscriber will be automatically enabled if you configure any of the
+    The user context is automatically enabled if you configure any of the
     ``user_context`` options.
 
 Tweaking the Naming
