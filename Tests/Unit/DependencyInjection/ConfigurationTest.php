@@ -63,7 +63,15 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                         ),
                         'headers' => array(
                             'cache_control' => array(
+                                'max_age' => 1,
+                                's_maxage' => 2,
                                 'public' => true,
+                                'must_revalidate' => true,
+                                'proxy_revalidate' => false,
+                                'no_transform' => true,
+                                'no_cache' => false,
+                                'stale_if_error' => 3,
+                                'stale_while_revalidate' => 4,
                             ),
                             'last_modified' => '-1 hour',
                             'reverse_proxy_ttl' => 42,

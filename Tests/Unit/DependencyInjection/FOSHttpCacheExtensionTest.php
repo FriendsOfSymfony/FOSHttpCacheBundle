@@ -140,7 +140,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                             ),
                         ),
                         'headers' => array(
-                            'cache_control' => array('etag' => '42'),
+                            'cache_control' => array('public' => true),
                             'reverse_proxy_ttl' => 42,
                             'vary' => array('Cookie', 'Accept-Language'),
                         ),
