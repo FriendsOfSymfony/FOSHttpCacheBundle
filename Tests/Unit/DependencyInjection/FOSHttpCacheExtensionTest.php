@@ -109,9 +109,8 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                             ),
                         ),
                         'routes' => array(
-                            array(
-                                'name' => 'invalidate_route1',
-                            )
+                            'invalidate_route1' => array(
+                            ),
                         ),
                     )
                 )
@@ -143,7 +142,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                         'headers' => array(
                             'cache_control' => array('etag' => '42'),
                             'reverse_proxy_ttl' => 42,
-                            'vary' => array('Cookie', 'Accept-Language')
+                            'vary' => array('Cookie', 'Accept-Language'),
                         ),
                     )
                 ),
@@ -186,28 +185,6 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
         $matcherDefinition = $this->assertMatcherCreated($container, array('_controller' => '^AcmeBundle:Default:index$'));
         $this->assertEquals(array('GET', 'HEAD'), $matcherDefinition->getArgument(2));
-    }
-
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     */
-    public function testInvalidDate()
-    {
-        $config = array(
-            array(
-                'cache_control' => array(
-                    array(
-                        'match' => array(),
-                        'headers' => array(
-                            'last_modified' => 'no valid date',
-                        )
-                    )
-                )
-            )
-        );
-
-        $container = $this->createContainer();
-        $this->extension->load($config, $container);
     }
 
     public function testConfigUserContext()

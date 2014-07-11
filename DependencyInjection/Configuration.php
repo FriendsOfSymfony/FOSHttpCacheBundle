@@ -69,7 +69,7 @@ class Configuration implements ConfigurationInterface
 
                         return $v;
                     }
-                    throw new InvalidConfigurationException('You need to configure a proxy_client to use the cache_manager.');
+                    throw new InvalidConfigurationException('You need to configure a proxy_client to get the cache_manager needed for tag handling.');
                 })
             ->end()
             ->validate()
@@ -84,7 +84,7 @@ class Configuration implements ConfigurationInterface
 
                         return $v;
                     }
-                    throw new InvalidConfigurationException('You need to configure a proxy_client to use the cache_manager.');
+                    throw new InvalidConfigurationException('You need to configure a proxy_client to get the cache_manager needed for invalidation handling.');
                 })
             ->end()
             ->validate()
@@ -115,6 +115,7 @@ class Configuration implements ConfigurationInterface
         $rules = $rootNode
             ->children()
                 ->arrayNode('cache_control')
+                    ->fixXmlConfig('rule')
                     ->children()
                         ->arrayNode('rules')
                             ->prototype('array')
@@ -133,8 +134,8 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->scalarNode('last_modified')
                         ->validate()
-                            ->ifString()
-                            ->then(function ($v) {new \DateTime($v);})
+                            ->ifTrue(function ($v) {if (is_string($v)) {new \DateTime($v);} return false;})
+                            ->thenInvalid('') // this will never happen as new DateTime will throw an exception if $v is no date
                         ->end()
                         ->info('Set a default last modified timestamp if none is set yet. Value must be parseable by DateTime')
                     ->end()
@@ -164,6 +165,8 @@ class Configuration implements ConfigurationInterface
                 ->cannotBeOverwritten()
                 ->isRequired()
                 ->fixXmlConfig('method')
+                ->fixXmlConfig('ip')
+                ->fixXmlConfig('attribute')
                 ->validate()
                     ->ifTrue(function ($v) {return !empty($v['additional_cacheable_status']) && !empty($v['match_response']);})
                     ->thenInvalid('You may not set both additional_cacheable_status and match_response.')
@@ -297,8 +300,8 @@ class Configuration implements ConfigurationInterface
         $rules = $rootNode
             ->children()
                 ->arrayNode('tags')
-                    ->fixXmlConfig('rule')
                     ->addDefaultsIfNotSet()
+                    ->fixXmlConfig('rule')
                     ->children()
                         ->enumNode('enabled')
                             ->values(array(true, false, 'auto'))
@@ -306,9 +309,9 @@ class Configuration implements ConfigurationInterface
                             ->info('Allows to disable the listener for tag annotations when your project does not use the annotations. Enabled by default if you have expression language and the cache manager.')
                         ->end()
                         ->arrayNode('rules')
-                            ->fixXmlConfig('tag')
-                            ->fixXmlConfig('tag_expression')
                             ->prototype('array')
+                                ->fixXmlConfig('tag')
+                                ->fixXmlConfig('tag_expression')
                                 ->children();
 
         $this->addMatch($rules);
@@ -454,6 +457,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->arrayNode('debug')
                 ->addDefaultsIfNotSet()
+                ->canBeEnabled()
                 ->children()
                     ->booleanNode('enabled')
                         ->defaultValue($this->debug)

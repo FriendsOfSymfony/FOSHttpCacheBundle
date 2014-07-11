@@ -1,0 +1,9 @@
+fos_http_cache:
+    invalidation:
+        enabled: false
+        rules:
+            -
+                match:
+                    path: /def
+                routes:
+                    routename: ~

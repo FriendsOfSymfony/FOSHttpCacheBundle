@@ -1,0 +1,6 @@
+fos_http_cache:
+
+    cache_manager:
+        enabled: false
+    tags:
+        enabled: true
