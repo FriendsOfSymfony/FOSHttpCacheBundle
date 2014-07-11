@@ -26,7 +26,7 @@ $container->loadFromExtension('fos_http_cache', array(
                     ),
                     'last_modified' => '-1 hour',
                     'reverse_proxy_ttl' => 42,
-                    'vary' => 'Cookie',
+                    'vary' => 'Cookie,Authorization',
                 ),
             ),
         ),

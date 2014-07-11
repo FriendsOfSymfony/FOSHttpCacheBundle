@@ -30,7 +30,9 @@ fos_http_cache:
                         stale_while_revalidate: 4
                     last_modified: -1 hour
                     reverse_proxy_ttl: 42
-                    vary: Cookie
+                    vary:
+                        - Cookie
+                        - Authorization
     proxy_client:
         varnish:
             servers: 22.22.22.22

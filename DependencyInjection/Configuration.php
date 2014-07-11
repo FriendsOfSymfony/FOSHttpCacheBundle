@@ -353,8 +353,8 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('rules')
                             ->info('Set what requests should invalidate which target routes.')
-                            ->fixXmlConfig('route')
                             ->prototype('array')
+                                ->fixXmlConfig('route')
                                 ->children();
 
         $this->addMatch($rules);
@@ -380,12 +380,12 @@ class Configuration implements ConfigurationInterface
     private function addUserContextListenerSection(ArrayNodeDefinition $rootNode)
     {
         $rootNode
-            ->fixXmlConfig('user_identifier_header')
             ->children()
                 ->arrayNode('user_context')
                     ->info('Listener that returns the request for the user context hash as early as possible.')
                     ->addDefaultsIfNotSet()
                     ->canBeEnabled()
+                    ->fixXmlConfig('user_identifier_header')
                     ->children()
                         ->arrayNode('match')
                             ->addDefaultsIfNotSet()

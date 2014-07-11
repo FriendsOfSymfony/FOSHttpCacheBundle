@@ -75,7 +75,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                             ),
                             'last_modified' => '-1 hour',
                             'reverse_proxy_ttl' => 42,
-                            'vary' => array('Cookie'),
+                            'vary' => array('Cookie', 'Authorization'),
                         ),
                     ),
                 ),
