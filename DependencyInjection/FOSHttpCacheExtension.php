@@ -59,7 +59,7 @@ class FOSHttpCacheExtension extends Extension
         }
 
         if ($config['cache_manager']['enabled']) {
-            $this->loadCacheManager($container, $loader, $config['cache_manager']);
+            $loader->load('cache_manager.xml');
         }
 
 
@@ -246,17 +246,6 @@ class FOSHttpCacheExtension extends Extension
         $container->setParameter($this->getAlias() . '.proxy_client.nginx.servers', $config['servers']);
         $container->setParameter($this->getAlias() . '.proxy_client.nginx.base_url', $config['base_url']);
         $container->setParameter($this->getAlias() . '.proxy_client.nginx.purge_location', $config['purge_location']);
-    }
-
-    private function loadCacheManager(ContainerBuilder $container, XmlFileLoader $loader, array $config)
-    {
-        $loader->load('cache_manager.xml');
-        if (version_compare(Kernel::VERSION, '2.4.0', '>=')) {
-            $container
-                ->getDefinition('fos_http_cache.command.invalidate_path')
-                ->addTag('console.command')
-            ;
-        }
     }
 
     private function loadTagRules(ContainerBuilder $container, array $config)
