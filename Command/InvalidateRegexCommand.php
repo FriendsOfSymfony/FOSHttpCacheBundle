@@ -54,7 +54,7 @@ class InvalidateRegexCommand extends BaseInvalidateCommand
             ->addArgument(
                 'regex',
                 InputArgument::REQUIRED,
-                'Regular expression for the paths to match, defaults to "." to match everything'
+                'Regular expression for the paths to match.'
             )
             ->setHelp(<<<EOF
 The <info>%command.name%</info> command invalidates all cached content matching a regular expression on the configured caching proxies.
