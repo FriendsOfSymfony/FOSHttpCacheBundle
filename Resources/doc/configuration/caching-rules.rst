@@ -160,9 +160,17 @@ match_response
 
 An ExpressionLanguage expression to decide whether the response should have
 the headers applied. If not set, headers are applied if the request is
-:term:`safe`.
+:term:`safe`. The expression can access the ``Response`` object with the
+``response`` variable. For example, to handle all failed requests, you can do:
 
-You should not set both ``match_response`` and ``additional_cacheable_status``
+.. code-block:: yaml
+
+    -
+        match:
+            match_response: response.getStatusCode() >= 400
+        # ...
+
+You can not set both ``match_response`` and ``additional_cacheable_status``
 inside the same rule.
 
 headers
