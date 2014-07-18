@@ -24,7 +24,7 @@ Features
 Documentation
 -------------
 
-Documentation is available at [Readthedocs](http://foshttpcachebundle.readthedocs.org/).
+Documentation is available at [Read the Docs](http://foshttpcachebundle.readthedocs.org/).
 
 Roadmap
 -------
