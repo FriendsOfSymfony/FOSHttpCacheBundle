@@ -128,9 +128,19 @@ class Configuration implements ConfigurationInterface
                 // todo validate there is some header defined
                 ->children()
                     ->arrayNode('cache_control')
-                        ->useAttributeAsKey('name')
-                        ->prototype('scalar')->end()
                         ->info('Add the specified cache control directives.')
+                        ->children()
+                            ->scalarNode('max_age')->end()
+                            ->scalarNode('s_maxage')->end()
+                            ->booleanNode('private')->end()
+                            ->booleanNode('public')->end()
+                            ->booleanNode('must_revalidate')->end()
+                            ->booleanNode('proxy_revalidate')->end()
+                            ->booleanNode('no_transform')->end()
+                            ->booleanNode('no_cache')->end()
+                            ->scalarNode('stale_if_error')->end()
+                            ->scalarNode('stale_while_revalidate')->end()
+                        ->end()
                     ->end()
                     ->scalarNode('last_modified')
                         ->validate()
@@ -351,8 +361,8 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('rules')
                             ->info('Set what requests should invalidate which target routes.')
-                            ->fixXmlConfig('route')
                             ->prototype('array')
+                                ->fixXmlConfig('route')
                                 ->children();
 
         $this->addMatch($rules);
@@ -378,12 +388,12 @@ class Configuration implements ConfigurationInterface
     private function addUserContextListenerSection(ArrayNodeDefinition $rootNode)
     {
         $rootNode
-            ->fixXmlConfig('user_identifier_header')
             ->children()
                 ->arrayNode('user_context')
                     ->info('Listener that returns the request for the user context hash as early as possible.')
                     ->addDefaultsIfNotSet()
                     ->canBeEnabled()
+                    ->fixXmlConfig('user_identifier_header')
                     ->children()
                         ->arrayNode('match')
                             ->addDefaultsIfNotSet()

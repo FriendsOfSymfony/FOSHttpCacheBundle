@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services">
+
+    <config xmlns="http://example.org/schema/dic/fos_http_cache">
+        <tags enabled="false">
+            <rule>
+                <match path="/def"/>
+                <tag>a</tag>
+            </rule>
+        </tags>
+    </config>
+
+</container>
