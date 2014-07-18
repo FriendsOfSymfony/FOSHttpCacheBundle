@@ -66,9 +66,27 @@ The options are the same as for Varnish with the addition of the
     default client. You can set the default with
     ``fos_http_client.proxy_client.default: nginx`` (resp. ``varnish``).
 
+Custom Guzzle Client
+--------------------
+
+By default, the proxy client instantiates a Guzzle_ object to talk with the
+caching proxy. If you need to customize the requests, for example to send a
+basic authentication header, you can configure a service and specify that in
+the ``guzzle_client`` option. A sample service definition for using basic
+authentication looks like this:
+
+.. code-block:: yaml
+
+    acme.varnish.guzzle.client:
+        class: Guzzle\Service\Client
+        calls:
+            - [setDefaultOption, [auth, [%varnish.username%, %varnish.password%, basic ]]]
+
 Caching Proxy Configuration
 ---------------------------
 
 You need to configure your caching proxy (Varnish or Nginx) to work with this
 bundle. Please refer to the :ref:`FOSHttpCache library’s documentation <foshttpcache:proxy-configuration>`
 for more information.
+
+.. _Guzzle: http://guzzle3.readthedocs.org/

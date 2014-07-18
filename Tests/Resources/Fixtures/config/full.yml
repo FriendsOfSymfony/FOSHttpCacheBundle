@@ -27,6 +27,7 @@ fos_http_cache:
         varnish:
             servers: 22.22.22.22
             base_url: /test
+            guzzle_client: acme.guzzle.varnish
 
     cache_manager:
         enabled: true

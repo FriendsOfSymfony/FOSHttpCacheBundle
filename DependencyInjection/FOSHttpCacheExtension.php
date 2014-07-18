@@ -232,6 +232,13 @@ class FOSHttpCacheExtension extends Extension
         }
         $container->setParameter($this->getAlias() . '.proxy_client.varnish.servers', $config['servers']);
         $container->setParameter($this->getAlias() . '.proxy_client.varnish.base_url', $config['base_url']);
+        if ($config['guzzle_client']) {
+            $container->getDefinition($this->getAlias() . '.proxy_client.varnish')
+                ->addArgument(
+                    new Reference($config['guzzle_client'])
+                )
+            ;
+        }
     }
 
     private function loadNginx(ContainerBuilder $container, XmlFileLoader $loader, array $config)

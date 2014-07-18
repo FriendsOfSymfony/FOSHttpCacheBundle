@@ -76,6 +76,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'varnish' => array(
                     'servers' => array('22.22.22.22'),
                     'base_url' => '/test',
+                    'guzzle_client' => 'acme.guzzle.varnish',
                 ),
             ),
             'cache_manager' => array(
@@ -172,6 +173,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             'nginx' => array(
                 'servers' => array('22.22.22.22'),
                 'base_url' => '/test',
+                'guzzle_client' => 'acme.guzzle.nginx',
                 'purge_location' => '/purge',
             ),
         );
