@@ -58,7 +58,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                             'ips' => array('1.2.3.4', '1.1.1.1'),
                             'attributes' => array('_controller' => 'fos.user_bundle.*'),
                             'additional_cacheable_status' => array(100, 500),
-                            'match_response' => array(),
+                            'match_response' => '',
                             // TODO 'match_response' => '',
                         ),
                         'headers' => array(
@@ -103,7 +103,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                                 '_foo' => 'bar',
                             ),
                             'additional_cacheable_status' => array(501, 502),
-                            'match_response' => array(),
+                            'match_response' => '',
                             // TODO match_response
                         ),
                         'tags' => array('a', 'b'),
@@ -124,7 +124,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                                 '_format' => 'json',
                             ),
                             'additional_cacheable_status' => array(404, 403),
-                            'match_response' => array(),
+                            'match_response' => '',
                             // TODO match_response
                         ),
                         'routes' => array(
@@ -202,6 +202,57 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
+    public function testSplitOptions()
+    {
+        $expectedConfiguration = $this->getEmptyConfig();
+        $expectedConfiguration['cache_control'] = array(
+            'rules' => array(
+                array(
+                    'match' => array(
+                        'path' => null,
+                        'host' => null,
+                        'attributes' => array(),
+                        'additional_cacheable_status' => array(),
+                        'match_response' => null,
+                        'methods' => array('GET', 'POST'),
+                        'ips' => array('1.2.3.4', '1.1.1.1'),
+                    ),
+                    'headers' => array(
+                        'reverse_proxy_ttl' => null,
+                        'vary' => array('Cookie', 'Authorization'),
+                    ),
+                ),
+            ),
+        );
+        $expectedConfiguration['proxy_client'] = array(
+            'varnish' => array(
+                'base_url' => null,
+                'guzzle_client' => null,
+                'servers' => array('1.1.1.1:80', '2.2.2.2:80'),
+            ),
+            'nginx' => array(
+                'base_url' => null,
+                'guzzle_client' => null,
+                'purge_location' => '',
+                'servers' => array('1.1.1.1:81', '2.2.2.2:81'),
+            ),
+        );
+        $expectedConfiguration['cache_manager']['enabled'] = 'auto';
+        $expectedConfiguration['tags']['enabled'] = 'auto';
+        $expectedConfiguration['invalidation']['enabled'] = 'auto';
+
+        $formats = array_map(function ($path) {
+            return __DIR__.'/../../Resources/Fixtures/'.$path;
+        }, array(
+            'config/split.yml',
+            'config/split.xml',
+            'config/split.php',
+        ));
+
+        foreach ($formats as $format) {
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, array($format));
+        }
+    }
 
     public function testCacheManagerNoClient()
     {

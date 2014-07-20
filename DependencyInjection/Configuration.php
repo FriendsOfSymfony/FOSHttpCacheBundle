@@ -212,7 +212,7 @@ class Configuration implements ConfigurationInterface
                         ->info('Additional response HTTP status codes that will match.')
                     ->end()
                     ->scalarNode('match_response')
-                        ->defaultValue(array())
+                        ->defaultNull()
                         ->info('Expression to decide whether response should be matched. Replaces HTTP code check and additional_cacheable_status.')
                     ->end()
                 ->end()

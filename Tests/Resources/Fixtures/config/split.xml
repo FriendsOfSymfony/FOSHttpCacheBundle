@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services">
+
+    <config xmlns="http://example.org/schema/dic/fos_http_cache">
+        <cache-control>
+            <rule>
+                <match>
+                    <methods>GET,POST</methods>
+                    <ips>1.2.3.4,1.1.1.1</ips>
+                </match>
+                <headers vary="Cookie,Authorization" />
+            </rule>
+        </cache-control>
+        <proxy-client>
+            <varnish>
+                <servers>1.1.1.1:80,2.2.2.2:80</servers>
+            </varnish>
+            <nginx>
+                <servers>1.1.1.1:81,2.2.2.2:81</servers>
+            </nginx>
+        </proxy-client>
+    </config>
+
+</container>
