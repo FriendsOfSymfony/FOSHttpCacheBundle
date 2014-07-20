@@ -225,8 +225,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'FOSHttptpCacheBundle', 'FOSHttptpCacheBundle Documentation',
-   'David de Boer, David Buchmann', 'FOSHttptpCacheBundle', 'One line description of project.',
+  ('index', 'FOSHttpCacheBundle', 'FOSHttpCacheBundle Documentation',
+   'David de Boer, David Buchmann', 'FOSHttpCacheBundle', 'A Symfony bundle to help with HTTP caching and invalidation',
    'Miscellaneous'),
 ]
 
