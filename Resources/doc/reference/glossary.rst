@@ -14,3 +14,5 @@ Glossary
         only retrieve data and do not change the application state, and
         therefore can be served with a response from the cache.
 
+
+

@@ -1,12 +1,12 @@
-Caching Rules
-=============
+Caching Headers
+===============
 
-You can configure default HTTP caching headers based on request and response
-properties. The configuration approach is more convenient than manually setting
-the cache rules in your controller. This part works even without having
-configured a caching proxy.
+The configuration contains a number of *rules*. When a request matches the
+parameters described in the ``match`` section, the headers as defined under
+``headers`` will be set on its response.
 
-An example configuration could look like this:
+The match patterns are applied in the order specified, where the first match
+wins:
 
 .. code-block:: yaml
 

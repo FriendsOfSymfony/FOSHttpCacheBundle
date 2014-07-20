@@ -17,8 +17,8 @@ By *refreshing* a piece of content, a fresh copy will be fetched right away.
 
 .. _cache manager invalidation:
 
-Invalidating
-------------
+invalidatePath
+--------------
 
 .. important::
 
@@ -56,9 +56,6 @@ The cache manager offers a fluent interface::
         ->invalidateRoute('villain_details', array('name' => 'Dr. No')
     ;
 
-
-
-
 .. _cache manager refreshing:
 
 Refreshing
@@ -83,17 +80,10 @@ Refresh a Route::
     $cacheManager = $container->get('fos_http_cache.cache_manager');
     $cacheManager->refreshRoute('user_details', array('id' => 123));
 
-Tags
-----
-
-Tags can be an efficient way to invalidate whole ranges of content without
-needing to figure out the exact URLs. See :doc:`../tagging` for more
-information and configuration.
-
 .. _cache_manager_tags:
 
-Tag Responses
-~~~~~~~~~~~~~
+tagResponse()
+-------------
 
 Use the Cache Manager to tag responses::
 
@@ -105,8 +95,8 @@ option to true::
 
     $cacheManager->tagResponse($response, array('different'), true);
 
-Invalidate Tags
-~~~~~~~~~~~~~~~
+invalidateTags()
+----------------
 
 Invalidate cache tags::
 

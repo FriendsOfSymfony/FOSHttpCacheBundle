@@ -1,9 +1,8 @@
-User Context Subscriber
-=======================
+User Context
+------------
 
-The user context subscribes allows to cache different content for different
-*types* of users (guest, editor, admins), without having to store cached content
-for each individual.
+This chapter describes how to configure user context caching. See
+:doc:`/features/user-context` for an introduction to user context caching.
 
 User context requests are a way to cache content that depends on some
 permissions but is not fully individual.
