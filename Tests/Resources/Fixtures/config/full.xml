@@ -34,7 +34,7 @@
             </rule>
         </cache-control>
         <proxy-client>
-            <varnish base-url="/test">
+            <varnish base-url="/test" guzzle-client="acme.guzzle.varnish">
                 <server>22.22.22.22</server>
             </varnish>
         </proxy-client>
