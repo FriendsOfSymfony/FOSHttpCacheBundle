@@ -35,12 +35,26 @@ Then add the bundle to your application:
 Requirements
 ------------
 
-If you want to use this bundle’s annotations, include the
-SensioFrameworkExtraBundle_ in your project:
+If you want to use this bundle’s annotations, install the
+SensioFrameworkExtraBundle_:
 
 .. code-block:: bash
 
     $ composer require sensio/framework-extra-bundle
+
+And include it in your project::
+
+     <?php
+    // app/AppKernel.php
+
+    public function registerBundles()
+    {
+        $bundles = array(
+            // ...
+            new FOS\HttpCacheBundle\FOSHttpCacheBundle(),
+            new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
+            // ...
+        );
 
 If you wish to use expressions_ in your annotations , you also need Symfony’s
 ExpressionLanguage_ component. If you’re not using full-stack Symfony 2.4 or
@@ -58,14 +72,14 @@ Functionality
 
 This table shows where you can find specific functions.
 
-========================= ==================================== ================================================ ==============================================
-Functionality             Annotations                          Configuration                                    Manually
-========================= ==================================== ================================================ ==============================================
-Set Cache-Control headers (SensioFrameworkExtraBundle_)        :doc:`rules <configuration/caching-rules>`       (Symfony_)
-Tag and invalidate        :doc:`@Tag <features/tagging>`       :doc:`rules <configuration/caching-rules>`       :doc:`cache manager <reference/cache-manager>`
-Invalidate routes         :ref:`invalidateroute`               :ref:`invalidators <invalidation configuration>` :doc:`cache manager <reference/cache-manager>`
-Invalidate paths          :ref:`invalidatepath`                :ref:`invalidators <invalidation configuration>` :doc:`cache manager <reference/cache-manager>`
-========================= ==================================== ================================================ ==============================================
+========================= ==================================== ==================================================== ==============================================
+Functionality             Annotations                          Configuration                                        Manually
+========================= ==================================== ==================================================== ==============================================
+Set Cache-Control headers (SensioFrameworkExtraBundle_)        :doc:`rules <reference/configuration/headers>`       (Symfony_)
+Tag and invalidate        :doc:`@Tag </features/tagging>`      :doc:`rules <reference/configuration/headers>`       :doc:`cache manager <reference/cache-manager>`
+Invalidate routes         :ref:`invalidateroute`               :ref:`invalidators <invalidation configuration>`     :doc:`cache manager <reference/cache-manager>`
+Invalidate paths          :ref:`invalidatepath`                :ref:`invalidators <invalidation configuration>`     :doc:`cache manager <reference/cache-manager>`
+========================= ==================================== ==================================================== ==============================================
 
 License
 -------
