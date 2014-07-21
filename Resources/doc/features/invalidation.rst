@@ -103,5 +103,5 @@ and will automatically talk to all configured cache instances.
   cache entries matching any of those tags. See :doc:`tagging`.
 
 If you need more complex interaction with the cache manager, best write your
-own commands and use the :doc:`cache manager <reference/cache-manager>` to implement
+own commands and use the :doc:`cache manager </reference/cache-manager>` to implement
 your specific logic.

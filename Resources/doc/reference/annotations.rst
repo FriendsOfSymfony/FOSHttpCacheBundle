@@ -63,7 +63,19 @@ See :doc:`/features/invalidation` for more information.
 @Tag
 ----
 
-Set a tag::
+You can make this bundle tag your response automatically using the ``@Tag``
+annotation. :term:`Safe <safe>` operations like GET that produce a successful
+response will lead to that response being tagged; modifying operations like
+POST, PUT, or DELETE will lead to the tags being invalidated.
+
+When ``indexAction()`` returns a successful response for a safe (GET or HEAD)
+request, the response will get the tag ``news``. The tag is set in a custom
+HTTP header (``X-Cache-Tags``, by default).
+
+Any non-safe request to the ``editAction`` that returns a successful response
+will trigger invalidation of both the ``news`` and the ``news-123`` tags.
+
+Set/invalidate a tag::
 
     /**
      * @Tag("news-article")
@@ -72,6 +84,8 @@ Set a tag::
     {
         // ...
     }
+
+``GET /news/show`` will
 
 Multiple tags are possible::
 
@@ -111,40 +125,8 @@ Or, using a `param converter`_::
         // Assume $article->getId() returns 123
     }
 
-.. todo::
+See :doc:`/features/tagging` for an introduction to tagging.
+If you wish to change the HTTP header used for storing tags, see
+:doc:`/reference/configuration/tags`.
 
-Tagging with Annotations
-------------------------
-
-You can make this bundle tag your response automatically using the ``@Tag``
-annotation. GET operations will lead to the response being tagged; modifying
-operations like POST, PUT, or DELETE will lead to the tags being invalidated.
-
-When ``indexAction()`` returns a successful response for a safe (GET or HEAD)
-request, the response will get the tag ``news``. The tag is set in a custom
-HTTP header (``X-Cache-Tags``, by default).
-
-Invalidate tags
-~~~~~~~~~~~~~~~
-
-Invalidate with annotations works just the same. Annotate your modifying
-actions just like you did when setting tags::
-
-    use FOS\HttpCacheBundle\Configuration\Tag;
-
-    class NewsController extends Controller
-    {
-        /**
-         * @Tag(expression="'news-'~article.id")
-         * @Tag("posts")
-         */
-        public function editAction(Article $article)
-        {
-            // Assume $article->getId() returns 123
-        }
-    }
-
-Any non-safe request to the ``editAction`` that returns a successful response
-will trigger invalidation of both the ``news`` and the ``news-123`` tags.
-
-See :doc:`/features/tagging` for an introduction to Tagging.
+.. _param converter: http://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/converters.html
