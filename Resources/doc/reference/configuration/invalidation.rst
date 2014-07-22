@@ -3,65 +3,63 @@ Invalidation Configuration
 
 .. code-block:: yaml
 
-        # Allows to disable the listener for invalidation annotations when your project does not use the annotations. Enabled by default if you have expression language and the cache manager.
-        enabled:              ~ # One of true; false; "auto"
+    # app/config/config.yml
+    fos_http_cache:
+        invalidation:
+            enabled: true                    # Defaults to 'auto'
+            rules:
+                -
+                    match:
+                        attributes:
+                            _route: "villain_edit|villain_delete"
+                    routes:
+                        villains_index: ~    # e.g., /villains
+                        villain_details:     # e.g., /villain/{id}
+                            ignore_extra_params: false    # Defaults to true
 
-        # Set what requests should invalidate which target routes.
-        rules:
-            match: # Required
+enabled
+-------
 
-                # Request path.
-                path:                 null
+**type**: ``enum`` **default**: ``auto`` **options**: ``true``, ``false``, ``auto``
 
-                # Request host name.
-                host:                 null
+Enabled by default if ExpressionLanguage is installed and you have configured
+the Cache Manager.
 
-                # Request HTTP methods.
-                methods:
+rules
+-----
 
-                    # Prototype
-                    name:                 ~
+**type**: ``array``
 
-                # List of client IPs.
-                ips:
+A set of invalidation rules. Each rule consists of a matcher and one or more
+routes that will be invalidated. The routes are only invalidated when:
 
-                    # Prototype
-                    name:                 ~
+.. include:: match.rst
 
-                # Regular expressions on request attributes.
-                attributes:
+routes
+~~~~~~
 
-                    # Prototype
-                    name:                 ~
+**type**: ``array``
 
-                # Additional response HTTP status codes that will match.
-                additional_cacheable_status:  []
-
-                # Expression to decide whether response should be matched. Replaces HTTP code check and additional_cacheable_status.
-                match_response:       []
-
-            # Target routes to invalidate when request is matched
-            routes:               # Required
-
-                # Prototype
-                name:
-                    ignore_extra_params:  true
-
-match
-~~~~~
-
-See ...
+A list of route names that will be invalidated.
 
 ignore_extra_params
-~~~~~~~~~~~~~~~~~~~
+"""""""""""""""""""
 
-Assume route ``villain_edit`` resolves to ``/villain/{id}/edit``. When a client
-successfully edits the details for villain with id 123 (at
+**type**: ``boolean`` **default**: ``true``
+
+Parameters from the request are mapped by name onto the route to be
+invalidated. By default, any request parameters that are not part of the
+invalidated route are ignored. Set ``ignore_extra_params`` to ``false``
+to set those parameters anyway.
+
+Some more explanation.
+
+Assume route ``villain_edit`` resolves to ``/villain/{id}/edit``.
+When a client successfully edits the details for villain with id 123 (at
 ``/villain/123/edit``), the index of villains (at ``/villains``) can be
 invalidated (purged) without trouble. But which villain details page should we
 purge? The current request parameters are automatically matched against
 invalidate route parameters of the same name. In the request to
 ``/villain/123/edit``, the value of the ``id`` parameter is ``123``. This value
-is then used as the value for the `id` parameter of the `villain_details`
+is then used as the value for the ``id`` parameter of the ``villain_details``
 route. In the end, the page ``villain/123`` will be purged.
-

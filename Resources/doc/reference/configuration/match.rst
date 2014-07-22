@@ -1,46 +1,26 @@
-Rules
-=====
-
-Configure the bundle under the ``fos_http_cache`` key. The configuration
-contains rules that determine caching and invalidation behaviour. There are
-three types of rules:
-
-1. Cache control rules
-2. Tag rules
-3. Invalidator rules
-
-Each rule consists of:
-
-* a matcher
-* the rule effect
-
-.. _match:
-
-Matchers
-~~~~~~~~
-
-A matcher consists of criteria that determine whether the rule should be
-applied. The rule is only applied when:
-
-* the HTTP request matches *all* the matcher’s criteria
+* the HTTP request matches *all* criteria defined under ``match``
 * the HTTP request is :term:`safe` (GET or HEAD)
 * the HTTP response is considered :term:`cacheable` (override with
   :ref:`additional_cacheable_status` and :ref:`match_response`).
+
+
+match
+~~~~~
+
+**type**: ``array``
+
+Defines the matching part of a rule. It contains one or more match criteria for
+requests. All criteria are regular expressions. They are checked in the order
+specified, where the first match wins.
+
 
 All matching criteria are regular expressions. For instance:
 
 .. code-block:: yaml
 
-    # app/config/config.yml
-    fos_http_cache:
-        cache_control
-            rules:
-                # only match login.example.com
-                -
-                    match:
-                        host: ^login.example.com$
-                        path: ^/$
-                    # ...
+    match:
+        host: ^login.example.com$
+        path: ^/$
 
 host
 """"
@@ -62,15 +42,19 @@ For example, ``path: ^/`` will match every request. To only match the home
 page, use ``path: ^/$``.
 
 methods
-~~~~~~~
+"""""""
 
 Can be used to limit caching rules to specific HTTP methods like GET requests.
+Note that the rule effect is not applied to :term:`unsafe <safe>` methods, not
+even when you set the methods here:
 
-Note that cache headers are not applied to methods not considered *safe*, not
-even when the methods are listed in this configuration.
+.. code-block:: yaml
+
+    match:
+        methods: [PUT, DELETE]
 
 ips
-~~~
+"""
 
 An array that can be used to limit the rules to a specified set of request
 client IP addresses.
@@ -83,7 +67,7 @@ client IP addresses.
     documentation.
 
 attributes
-~~~~~~~~~~
+""""""""""
 
 An array to filter on route attributes. the most common use case would be
 ``_controller`` when you need caching rules applied to a controller. Note that
@@ -94,27 +78,47 @@ configuration whether you need ``Bundle:Name:action`` or
 Note that even for the request attributes, your criteria are interpreted as
 regular expressions.
 
+.. code-block:: yaml
+
+    match:
+        attributes: { _controller: ^AcmeBundle:Default:.* }
+
 .. _additional_cacheable_status:
 
 additional_cacheable_status
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""""""""""""""""""""""""""
 
 A list of additional HTTP status codes of the response for which to also apply
 the rule.
 
+.. code-block:: yaml
+
+    match:
+        additional_cacheable_status: [400, 403]
+
 .. _match_response:
 
 match_response
-~~~~~~~~~~~~~~
+""""""""""""""
 
 .. note::
 
     ``match_response`` :ref:`requires the ExpressionLanguage component <requirements>`.
 
 An ExpressionLanguage expression to decide whether the response should have
-the headers applied. If not set, headers are applied if the request is
-:term:`safe`.
+the effect applied. If not set, headers are applied if the request is
+:term:`safe`. The expression can access the ``Response`` object with the
+``response`` variable. For example, to handle all failed requests, you can do:
 
-You should not set both ``match_response`` and ``additional_cacheable_status``
+.. code-block:: yaml
+
+    -
+        match:
+            match_response: response.getStatusCode() >= 400
+        # ...
+
+You cannot set both ``match_response`` and ``additional_cacheable_status``
 inside the same rule.
 
+.. _Trusting Proxies: http://symfony.com/doc/current/components/http_foundation/trusting_proxies.html
+.. _controllers as services: http://symfony.com/doc/current/cookbook/controller/service.html
