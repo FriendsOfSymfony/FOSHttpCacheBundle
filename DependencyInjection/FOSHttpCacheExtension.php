@@ -72,7 +72,7 @@ class FOSHttpCacheExtension extends Extension
                 }
             } elseif (true === $config['tags']['enabled']) {
                 // silently skip if set to auto
-                throw new InvalidConfigurationException('The TagListener requires symfony/expression-language and needs the cache_manager to be configured');
+                throw new InvalidConfigurationException('The TagSubscriber requires symfony/expression-language and needs the cache_manager to be configured');
             }
         }
 
@@ -83,9 +83,9 @@ class FOSHttpCacheExtension extends Extension
                 if (!empty($config['invalidation']['rules'])) {
                     $this->loadInvalidatorRules($container, $config['invalidation']['rules']);
                 }
-            } elseif (true === $config['tags']['enabled']) {
+            } elseif (true === $config['invalidation']['enabled']) {
                 // silently skip if set to auto
-                throw new InvalidConfigurationException('The InvalidationListener requires symfony/expression-language and needs the cache_manager to be configured');
+                throw new InvalidConfigurationException('The InvalidationSubscriber requires symfony/expression-language and needs the cache_manager to be configured');
             }
         }
 
