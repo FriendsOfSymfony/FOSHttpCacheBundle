@@ -35,6 +35,9 @@ Then add the bundle to your application:
 Requirements
 ------------
 
+SensioFrameworkExtraBundle
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 If you want to use this bundle’s annotations, install the
 SensioFrameworkExtraBundle_:
 
@@ -55,6 +58,9 @@ And include it in your project::
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             // ...
         );
+
+ExpressionLanguage
+~~~~~~~~~~~~~~~~~~
 
 If you wish to use expressions_ in your annotations , you also need Symfony’s
 ExpressionLanguage_ component. If you’re not using full-stack Symfony 2.4 or
