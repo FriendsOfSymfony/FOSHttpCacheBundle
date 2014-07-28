@@ -7,7 +7,7 @@ cookie, leading to them not being there anymore when rendering the template.
 This will return the page with a set-cookie header which you of course must
 make sure to not cache in varnish. By default, varnish will simply not cache
 the whole response when there is a set-cookie header. (Maybe you could do
-something more clever - if you do, please provide a VCL example.)
+something more clever — if you do, please provide a VCL example.)
 
 The flash message subscriber is automatically enabled if you configure any of
 the options under ``flash_message``.
@@ -16,16 +16,16 @@ the options under ``flash_message``.
 
     # app/config.yml
     fos_http_cache:
-      flash_message:
-        name: flashes
-        path: /
-        host: null
-        secure: false
-        httpOnly: false
+        flash_message:
+            name: flashes
+            path: /
+            host: null
+            secure: false
+            httpOnly: false
 
-On client side, you need some javascript code that reads out the flash messages
-from the cookie and writes them into the DOM, then deletes the cookie to only
-show the flash message once. This could look along these lines:
+On the client side, you need some JavaScript code that reads out the flash
+messages from the cookie and writes them into the DOM, then deletes the cookie
+to only show the flash message once. Something along these lines:
 
 .. code-block:: javascript
 
@@ -61,4 +61,4 @@ show the flash message once. This could look along these lines:
     // register showFlash on the page ready event.
 
 Your VCL configuration should `filter out this cookie <https://www.varnish-cache.org/trac/wiki/VCLExampleRemovingSomeCookies>`_
-on subsequent requests, in case the Javascript-side failed to remove it.
+on subsequent requests, in case the JavaScript failed to remove it.
