@@ -52,9 +52,8 @@ invalidated. By default, any request parameters that are not part of the
 invalidated route are ignored. Set ``ignore_extra_params`` to ``false``
 to set those parameters anyway.
 
-Some more explanation.
-
-Assume route ``villain_edit`` resolves to ``/villain/{id}/edit``.
+A more detailed explanation:
+assume route ``villain_edit`` resolves to ``/villain/{id}/edit``.
 When a client successfully edits the details for villain with id 123 (at
 ``/villain/123/edit``), the index of villains (at ``/villains``) can be
 invalidated (purged) without trouble. But which villain details page should we
