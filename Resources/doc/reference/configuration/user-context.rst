@@ -1,30 +1,21 @@
-User Context
-------------
+User Context Configuration
+==========================
 
 This chapter describes how to configure user context caching. See
-:doc:`/features/user-context` for an introduction to user context caching.
-
-User context requests are a way to cache content that depends on some
-permissions but is not fully individual.
-
-.. note::
-
-    Please read the :ref:`user context <foshttpcache:user-context>`
-    chapter in the FOSHttpCache documentation before continuing.
-
-This bundle provides an *event subscriber* for the context. It aborts
-requests for the context hash right after the security firewall was applied and
-replies with the hash in the header (by default ``X-User-Context-Hash``). All
-other responses are set to vary on the hash header.
-
-Additionally, the bundle provides a service that builds the user context hash
-from context providers.
+the :doc:`User Context Feature chapter </features/user-context>` for
+an introduction to the subject.
 
 Configuration
 -------------
 
+Caching Proxy Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 First you need to set up your caching proxy as explained in the
 :ref:`user context documentation <foshttpcache:user-context>`.
+
+Context Hash Route
+~~~~~~~~~~~~~~~~~~
 
 Then add the route you specified in the hash lookup request to the Symfony2
 routing configuration, so that the user context event subscriber can get
@@ -34,28 +25,34 @@ triggered:
 
     # app/config/routing.yml
     user_context_hash:
-      /user-context-hash
+        /user-context-hash
+
+.. important::
+
+    If you are using `Symfony2 security <http://symfony.com/doc/current/book/security.html>`_
+    for the hash generation, make sure that this route is inside the firewall
+    for which you are doing the cache groups.
 
 .. note::
 
     This route is never actually used, as the context event subscriber will act
     before a controller would be called. But the user context is handled only
     after security happened. Security in turn only happens after the routing.
-    If the routing does not find a route, the request is aborted with a "not
-    found" error and the listener is never triggered.
+    If the routing does not find a route, the request is aborted with a ‘not
+    found’ error and the listener is never triggered.
 
     The event subscriber has priority ``7`` which makes it act right after the
     security listener which has priority ``8``. The reason to use a listener
     here rather than a controller is that many expensive operations happen
     later in the handling of the request. Having this listener avoids those.
 
-.. caution::
+enabled
+~~~~~~~
 
-    If you are using `Symfony2 security <http://symfony.com/doc/current/book/security.html>`_
-    for the hash generation, make sure that this route is inside the firewall
-    for which you are doing the cache groups.
+**type**: ``enum`` **default**: ``auto`` **options**: ``true``, ``false``, ``auto``
 
-Enable the subscriber with the default settings:
+Set to ``true`` to explicitly enable the subscriber. The subscriber is
+automatically enabled if you configure any of the ``user_context`` options.
 
 .. code-block:: yaml
 
@@ -64,56 +61,86 @@ Enable the subscriber with the default settings:
       user_context:
         enabled: true
 
-.. note::
+hash_header
+~~~~~~~~~~~
 
-    The user context is automatically enabled if you configure any of the
-    ``user_context`` options.
+**type**: ``string`` **default**: ``X-User-Context-Hash``
 
-Tweaking the Naming
-~~~~~~~~~~~~~~~~~~~
+The name of the HTTP header that the event subscriber will store the
+context hash in when responding to hash requests. Every other response will
+vary on this header.
 
-You can configure a couple of things:
+match
+~~~~~
 
-* ``hash_header``: The header that will be used to communicate the context hash
-  in the answer to the context hash request, and that every other response will
-  ``Vary`` on;
-* ``match.accept``, ``match.method``: Criteria to detect the request for getting
-  the context hash. You can set ``accept`` to configure the ``Accept`` header and
-  the ``method`` to configure the HTTP method;
-* ``match.matcher_service``: Instead of defining the accept header or HTTP
-  method, can specify your own matcher service implementing
-  ``Symfony\Component\HttpFoundation\RequestMatcherInterface``. If you do, the
-  other options in the ``match`` section are ignored.
+accept
+""""""
 
-The configuration with the *default values* looks like this:
+**type**: ``string`` **default**: ``application/vnd.fos.user-context-hash``
+
+HTTP Accept header that hash requests use to get the context hash. This must
+correspond to your caching proxy configuration.
+
+method
+""""""
+
+**type**: ``string``
+
+HTTP method used by context hash requests, most probably either ``GET`` or
+``HEAD``. This must correspond to your caching proxy configuration.
+
+matcher_service
+"""""""""""""""
+
+**type**: ``string`` **default**: ``fos_http_cache.user_context.request_matcher``
+
+Id of a service that determines whether a request is a context hash request.
+The service must implement ``Symfony\Component\HttpFoundation\RequestMatcherInterface``.
+If set, ``accept`` and ``method`` will be ignored.
+
+hash_cache_ttl
+~~~~~~~~~~~~~~
+
+**type**: ``integer`` **default**: `0`
+
+Time in seconds that context hash responses will be cached. Value `0` means
+caching is disabled. For performance reasons, it makes sense to cache the hash
+generation response; after all, each content request may trigger a hash
+request. However, when you decide to cache hash responses, you must invalidate
+them when the user context changes, particularly when the user logs in or out.
+This bundle provides a logout handler that takes care of this for you.
+
+Logout Handler
+""""""""""""""
+
+For the handler to work:
+
+* your caching proxy should be :ref:`configured for BANs <foshttpcache:proxy-configuration>`
+* Symfony’s default behaviour of regenerating the session id when users log in
+  and out must be enabled (``invalidate_session``).
+
+Add the handler to your firewall configuration:
 
 .. code-block:: yaml
 
-    # app/config/config.yml
-    fos_http_cache:
-      user_context:
-        hash_header: X-User-Context-Hash
-        match:
-          id: fos_http_cache.user_context.request_matcher
-          accept: 'application/vnd.fos.user-context-hash'
-          # could be HEAD or GET
-          method: ~
+    # app/config/security.yml
+    security:
+        firewalls:
+            secured_area:
+                logout:
+                    invalidate_session: true
+                    handlers:
+                        - fos_http_cache.user_context.logout_handler
 
-.. important::
+user_identifier_headers
+~~~~~~~~~~~~~~~~~~~~~~~
 
-    Remember that you need to make your caching proxy configuration correspond
-    to these values.
+**type**: ``array`` **default**: ``['Cookie', 'Authorization']``
 
-Context Hash Request Cache
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Determines which HTTP request headers the context hash responses will vary on.
 
-Context hash responses can be configured with a time to live (ttl) and ``Vary``
-information. Usually it is enough to set ``hash_cache_ttl``. But if you use other
-headers than ``Authorization`` and ``Cookies``, you need to also configure the
-``user_identifier_headers`` to list all headers the context depends on.
-
-If the hash only depends on the ``Authorization`` header and should be cached for
-15 minutes, configure:
+If the hash only depends on the ``Authorization`` header and should be cached
+for 15 minutes, configure:
 
 .. code-block:: yaml
 
@@ -124,44 +151,15 @@ If the hash only depends on the ``Authorization`` header and should be cached fo
           - Authorization
         hash_cache_ttl: 900
 
-You will need to invalidate this cache when the user context will change (e.g. on
-login, logout, ...)
-
-With the default configuration of security in Symfony, the session id is regenerated
-for the login and logout action. You have to be sure that the ``invalidate_session``
-configuration key is set to true in your firewall configuration.
-
-To invalidate the cache on the caching proxy, a logout handler named
-``fos_http_cache.user_context.logout_handler`` can be add in your firewall.
-Your caching proxy needs to support BAN operations for this to work.
-
-.. code-block:: yaml
-
-    # app/config/security.yml
-    security:
-      firewalls:
-        secured_area:
-          logout:
-            invalidate_session: true
-            handlers:
-              - fos_http_cache.user_context.logout_handler
-
-This handler will automatically send requests to ban the hash cache of the user
-on logout.
-
-The User Context
-----------------
-
-When a context hash request is received, a ``HashGenerator`` is used to build
-the context information. You can implement your own providers or configure the
-provided role provider that adds the Symfony roles of the current user.
-
-Role Provider
+role_provider
 ~~~~~~~~~~~~~
 
+**type**: ``boolean`` **default**: ``false``
+
 One of the most common scenarios is to differentiate the content based on the
-roles of the user. This bundle provides a service for this. It is disabled by
-default. Enable it with:
+roles of the user. Set ``role_provider`` to ``true`` to determine the hash from
+the user’s roles. If there is a security context that can provide the roles,
+all roles are added to the hash:
 
 .. code-block:: yaml
 
@@ -170,18 +168,18 @@ default. Enable it with:
       user_context:
         role_provider: true
 
-If there is a security context that can provide the roles, all roles are added
-to the hash.
+.. _custom-context-providers:
 
-Implement a Custom Context Provider
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Custom Context Providers
+------------------------
 
 Custom providers need to:
 
 * implement ``FOS\HttpCache\UserContext\ContextProviderInterface``
 * be tagged with ``fos_http_cache.user_context_provider``.
 
-The ``updateUserContext`` method is called when the hash needs to be generated.
+The ``updateUserContext(UserContext $context)`` method is called when the hash
+is generated.
 
 .. code-block:: yaml
 
