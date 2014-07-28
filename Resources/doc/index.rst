@@ -2,7 +2,6 @@ FOSHttpCacheBundle
 ==================
 
 This is the documentation for the `FOSHttpCacheBundle <https://github.com/FriendsOfSymfony/FOSHttpCacheBundle>`_.
-
 Use the FOSHttpCacheBundle to:
 
 * set HTTP caching headers in your application configuration based on request
