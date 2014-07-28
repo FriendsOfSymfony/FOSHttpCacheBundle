@@ -76,7 +76,9 @@ default
 **type**: ``enum`` **options**: ``varnish``, ``nginx``
 
 .. code-block:: yaml
-fos_http_cache:
+
+    # app/config/config.yml
+    fos_http_cache:
         proxy_client:
             default: varnish
 
@@ -96,6 +98,7 @@ authentication looks like this:
 
 .. code-block:: yaml
 
+    # app/config/config.yml
     acme.varnish.guzzle.client:
         class: Guzzle\Service\Client
         calls:
