@@ -6,7 +6,9 @@ actions are executed.
 
 .. note::
 
-    Make sure to :ref:`install the dependencies first <requirements>`.
+    Annotations need the SensioFrameworkExtraBundle. Some features also need
+    the ExpressionLanguage. Make sure to
+    :ref:`installed the dependencies first <requirements>`.
 
 .. _invalidatepath:
 

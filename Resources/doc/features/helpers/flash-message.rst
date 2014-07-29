@@ -1,6 +1,8 @@
 Flash Message Subscriber
 ========================
 
+**Prerequisites**: *None*
+
 When flash messages are rendered into the content of a page, you can't cache
 the page anymore. When enabled, this subscriber reads all flash messages into a
 cookie, leading to them not being there anymore when rendering the template.
@@ -17,11 +19,7 @@ the options under ``flash_message``.
     # app/config.yml
     fos_http_cache:
         flash_message:
-            name: flashes
-            path: /
-            host: null
-            secure: false
-            httpOnly: false
+            enabled: true
 
 On the client side, you need some JavaScript code that reads out the flash
 messages from the cookie and writes them into the DOM, then deletes the cookie

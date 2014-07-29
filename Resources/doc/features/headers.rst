@@ -1,6 +1,8 @@
 Caching Headers
 ===============
 
+**Prerequisites**: *None*
+
 You can configure HTTP caching headers based on request and response properties.
 This configuration approach is more convenient than `manually setting cache headers`_
 and an alternative to `setting caching headers through annotations`_.

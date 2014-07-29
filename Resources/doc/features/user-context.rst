@@ -1,8 +1,10 @@
 User Context
 ============
 
+**Prerequisites**: :ref:`Configure caching proxy for user context <foshttpcache:varnish-configuration#user-context>` (only supported with Varnish).
+
 If your application serves different content depending on the user’s group
-or context (guest, editor, admin), you can can that content by user context.
+or context (guest, editor, admin), you can cache that content per user context.
 Each user context (group) gets its own unique hash, which is then used to vary
 content on. The event subscriber responds to hash requests and sets the Vary
 header. This way, you can differentiate your content between user groups while

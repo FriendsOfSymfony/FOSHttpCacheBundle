@@ -97,7 +97,6 @@ fos_http_cache:
         path: /x
         host: y
         secure: true
-        httpOnly: false
 
     debug:
         header: FOS-Cache-Debug

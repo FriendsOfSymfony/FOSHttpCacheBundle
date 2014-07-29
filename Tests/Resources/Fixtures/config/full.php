@@ -101,7 +101,6 @@ $container->loadFromExtension('fos_http_cache', array(
         'path' => '/x',
         'host' => 'y',
         'secure' => true,
-        'httpOnly' => false,
     ),
     'debug' => array(
         'header' => 'FOS-Cache-Debug',

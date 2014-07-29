@@ -30,6 +30,8 @@ Then add the bundle to your application:
         );
     }
 
+For most features, you also need to :ref:`configure a caching proxy <foshttpcache:proxy-configuration>`.
+
 .. _requirements:
 
 Requirements
@@ -72,8 +74,12 @@ later, you need to explicitly add the component:
 
     $ composer require symfony/expression-language
 
-Now you can configure the bundle under the ``fos_http_cache`` key as explained
-in the :doc:`reference/configuration` section.
+Configuration
+-------------
+
+Now you can configure the bundle under the ``fos_http_cache`` key. The
+:doc:`features` section contains configuration examples, for
+a reference see the :doc:`reference/configuration` section.
 
 Functionality
 -------------
