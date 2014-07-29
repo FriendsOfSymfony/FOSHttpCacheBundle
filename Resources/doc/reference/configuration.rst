@@ -1,6 +1,9 @@
 Configuration
 =============
 
+The configuration reference describes all ``app/config/config.yml`` options
+for the bundle.
+
 .. toctree::
     :maxdepth: 2
 
