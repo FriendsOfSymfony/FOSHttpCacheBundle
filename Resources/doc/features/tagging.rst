@@ -5,10 +5,8 @@ If your application has many intricate relationships between cached items,
 which makes it complex to invalidate them by route, cache tagging will be
 useful.
 
-Cache tagging, or more precisely `Tagged Cache Invalidation`_, is a simpler
-version of `Linked Cache Invalidation`_ (LCI).
-
-Tagged Cache Invalidation allows you to:
+Cache tagging, or more precisely `Tagged Cache Invalidation`_, a simpler
+version of `Linked Cache Invalidation`_ (LCI), allows you to:
 
 * assign tags to your applications’s responses (e.g., ``articles``, ``article-42``)
 * :ref:`invalidate the responses by tag <foshttpcache:tags>` (e.g., invalidate
@@ -74,7 +72,8 @@ See the :ref:`Cache Manager reference <cache_manager_tags>` for full details.
 Configuration
 ~~~~~~~~~~~~~
 
-Alternatively, you can configure rules for setting and invalidating tags:
+Alternatively, you can :doc:`configure rules </reference/configuration/tags>`
+for setting and invalidating tags:
 
 .. code-block:: yaml
 
@@ -90,8 +89,6 @@ Alternatively, you can configure rules for setting and invalidating tags:
 Now if a :term:`safe` request matches the criteria under ``match``, the response
 will be tagged with ``news``. When an unsafe request matches, the tag ``news``
 will be invalidated.
-
-See the :doc:`tags configuration reference </reference/configuration/tags>` for full details.
 
 Annotations
 ~~~~~~~~~~~

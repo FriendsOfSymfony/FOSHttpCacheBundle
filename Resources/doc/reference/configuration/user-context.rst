@@ -1,5 +1,5 @@
-User Context Configuration
-==========================
+user_context
+============
 
 This chapter describes how to configure user context caching. See
 the :doc:`User Context Feature chapter </features/user-context>` for

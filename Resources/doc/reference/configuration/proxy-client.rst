@@ -1,5 +1,5 @@
-Proxy Client Configuration
-==========================
+proxy_client
+============
 
 The proxy client sends invalidation requests to your caching proxy. It must be
 configured for the :doc:`Cache Manager </reference/cache-manager>` to work,
@@ -7,7 +7,7 @@ which wraps the proxy client and is the usual entry point for application
 interaction with the caching proxy. The proxy client is also available as a
 service (``fos_http_cache.proxy_client``) that you can use directly.
 
-Varnish
+varnish
 -------
 
 .. code-block:: yaml
@@ -45,7 +45,7 @@ application. Used for invalidation with paths.
 See the :ref:`FOSHttpCache library docs <foshttpcache:varnish configuration>`
 on how to configure Varnish.
 
-Nginx
+nginx
 -----
 
 .. code-block:: yaml

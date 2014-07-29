@@ -14,3 +14,4 @@ for the bundle.
     configuration/user-context
     configuration/flash-message
     configuration/debug
+    configuration/match

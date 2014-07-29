@@ -1,5 +1,5 @@
-Debug Header
-============
+debug
+=====
 
 Enable the ``debug`` parameter to set a custom header (``X-Cache-Debug``)
 header on each response. You can then
@@ -26,7 +26,7 @@ dev mode but not in prod mode.
 header
 ------
 
-**type**: ``string`` **default**: ``X-Cache-Debug**
+**type**: ``string`` **default**: ``X-Cache-Debug``
 
 Custom HTTP header that triggers the caching proxy to set debugging information
 on the response.

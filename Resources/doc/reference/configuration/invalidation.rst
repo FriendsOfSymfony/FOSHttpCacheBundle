@@ -1,12 +1,15 @@
-Invalidation Configuration
-==========================
+invalidation
+============
+
+Configure :ref:`invalidation<invalidation configuration>` to invalidate
+routes when some other routes are requested.
 
 .. code-block:: yaml
 
     # app/config/config.yml
     fos_http_cache:
         invalidation:
-            enabled: true                    # Defaults to 'auto'
+            enabled: true    # Defaults to 'auto'
             rules:
                 -
                     match:
@@ -17,26 +20,23 @@ Invalidation Configuration
                         villain_details:     # e.g., /villain/{id}
                             ignore_extra_params: false    # Defaults to true
 
-enabled
--------
-
-**type**: ``enum`` **default**: ``auto`` **options**: ``true``, ``false``, ``auto``
-
-Enabled by default if ExpressionLanguage is installed and you have configured
-the Cache Manager.
+.. include:: /includes/enabled.rst
 
 rules
 -----
 
 **type**: ``array``
 
-A set of invalidation rules. Each rule consists of a matcher and one or more
-routes that will be invalidated. The routes are only invalidated when:
+A set of invalidation rules. Each rule consists of a match definition and
+one or more routes that will be invalidated. The routes are invalidated when:
 
-.. include:: match.rst
+1. the HTTP request matches *all* criteria defined under ``match``
+2. the HTTP response is successful.
+
+.. include:: /includes/match.rst
 
 routes
-~~~~~~
+^^^^^^
 
 **type**: ``array``
 

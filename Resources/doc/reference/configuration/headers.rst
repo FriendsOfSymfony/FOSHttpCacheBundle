@@ -1,12 +1,9 @@
-Caching Headers
-===============
+cache_control
+=============
 
 The configuration contains a number of *rules*. When a request matches the
 parameters described in the ``match`` section, the headers as defined under
-``headers`` will be set on its response.
-
-The match patterns are applied in the order specified, where the first match
-wins:
+``headers`` will be set on the response, if they are not already set.
 
 .. code-block:: yaml
 
@@ -40,12 +37,18 @@ wins:
                 # match everything to set defaults
                 -
                     match:
-                      path: ^/
+                        path: ^/
                     headers:
                         cache_control: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }
 
 rules
 -----
+
+**type**: ``array``
+
+A set of cache control rules.
+
+.. include:: /includes/match.rst
 
 .. sidebar:: Merging headers
 
@@ -68,113 +71,10 @@ rules
     service ``fos_http_cache.event_listener.cache_control`` and calling
     ``setSkip()`` on it. If this method is called, no cache rules are applied.
 
-The configuration contains a number of *rules*. When a request matches the
-parameters described in the ``match`` section, the headers as defined under
-``headers`` will be set on the response, if they are not already set.
-
-The match patterns are applied in the order specified, where the first match
-wins.
-
-.. _match:
-
-match
------
-
-The headers are only set if all of these are true:
-
-* the request matches *all* criteria defined under ``match``
-* the request is :term:`safe` (GET or HEAD)
-* the response is considered :term:`cacheable` (override with
-  :ref:`additional_cacheable_status` and :ref:`match_response`).
-
-All matching criteria are regular expressions.
-
-path
-~~~~
-
-For example, ``path: ^/`` will match every request. To only match the home
-page, use ``path: ^/$``.
-
-host
-~~~~
-
-A regular expression to limit the caching rules to specific hosts, when you
-serve more than one host from your Symfony application.
-
-.. tip::
-
-    To simplify caching of a site that at the same time has frontend
-    editing, put the editing on a separate (sub-)domain. Then define a first
-    rule matching that domain with ``host`` and set ``max-age: 0`` to make sure
-    your caching proxy never caches the editing domain.
-
-methods
-~~~~~~~
-
-Can be used to limit caching rules to specific HTTP methods like GET requests.
-
-Note that cache headers are not applied to methods not considered *safe*, not
-even when the methods are listed in this configuration.
-
-ips
-~~~
-
-An array that can be used to limit the rules to a specified set of request
-client IP addresses.
-
-.. note::
-
-    If you use a caching proxy and want specific IPs to see different headers,
-    you need to forward the client IP to the backend. Otherwise, the backend
-    only sees the caching proxy IP. See `Trusting Proxies`_ in the Symfony
-    documentation.
-
-attributes
-~~~~~~~~~~
-
-An array to filter on route attributes. the most common use case would be
-``_controller`` when you need caching rules applied to a controller. Note that
-this is the controller name used in the route, so it depends on your route
-configuration whether you need ``Bundle:Name:action`` or
-``service.id:methodName`` (if you defined your `controllers as services`_).
-
-Note that even for the request attributes, your criteria are interpreted as
-regular expressions.
-
-.. _additional_cacheable_status:
-
-additional_cacheable_status
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-A list of additional HTTP status codes of the response for which to also apply
-the rule.
-
-.. _match_response:
-
-match_response
-~~~~~~~~~~~~~~
-
-.. note::
-
-    ``match_response`` :ref:`requires the ExpressionLanguage component <requirements>`.
-
-An ExpressionLanguage expression to decide whether the response should have
-the headers applied. If not set, headers are applied if the request is
-:term:`safe`. The expression can access the ``Response`` object with the
-``response`` variable. For example, to handle all failed requests, you can do:
-
-.. code-block:: yaml
-
-    -
-        match:
-            match_response: response.getStatusCode() >= 400
-        # ...
-
-You can not set both ``match_response`` and ``additional_cacheable_status``
-inside the same rule.
-
 headers
--------
+^^^^^^^
+
+**type**: ``array``
 
 .. sidebar:: YAML alias for same headers for different matches
 
@@ -208,7 +108,9 @@ In the ``headers`` section, you define what headers to set on the response if
 the request was matched.
 
 cache_control
-~~~~~~~~~~~~~
+"""""""""""""
+
+**type**: ``array``
 
 The map under ``cache_control`` is set in a call to ``Response::setCache()``.
 The names are specified with underscores in yml, but translated to ``-`` for
@@ -245,7 +147,7 @@ default. If you want it respected, add your own logic to ``vcl_fetch``.
 
     The cache-control headers are described in detail in :rfc:`2616#section-14.9`.
 
-Extra cache control directives
+Extra Cache Control Directives
 """"""""""""""""""""""""""""""
 
 You can also set headers that Symfony considers non-standard, some coming from
@@ -278,7 +180,9 @@ directives are flags that are included when set to true.
                             no_transform: true
 
 last_modified
-~~~~~~~~~~~~~
+"""""""""""""
+
+**type**: ``string``
 
 The input to the ``last_modified`` is used for the ``Last-Modified`` header.
 This value must be a valid input to ``DateTime``.
@@ -300,7 +204,9 @@ This value must be a valid input to ``DateTime``.
     from the cache if it was not invalidated since the client requested it.
 
 vary
-~~~~
+""""
+
+**type**: ``string``
 
 You can set the `vary` option to an array that defines the contents of the
 `Vary` header when matching the request. This adds to existing Vary headers,
@@ -316,8 +222,12 @@ keeping previously set Vary options.
                     headers:
                         vary: My-Custom-Header
 
-reverse_proxy_ttl for X-Reverse-Proxy-TTL for Custom Reverse Proxy Time-Outs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+reverse_proxy_ttl
+"""""""""""""""""
+
+**type**: ``integer``
+
+For X-Reverse-Proxy-TTL for Custom Reverse Proxy Time-Outs
 
 By default, reverse proxies use the ``s-maxage`` of your ``Cache-Control`` header
 to know how long it should cache a page. But by default, the s-maxage is also
@@ -367,6 +277,3 @@ you need to extend your varnish ``vcl_fetch`` configuration:
 Note that there is a ``beresp.ttl`` field in VCL but unfortunately it can only
 be set to absolute values and not dynamically. Thus we have to revert to a C
 code fragment.
-
-.. _Trusting Proxies: http://symfony.com/doc/current/components/http_foundation/trusting_proxies.html
-.. _controllers as services: http://symfony.com/doc/current/cookbook/controller/service.html

@@ -1,63 +1,63 @@
-Tag Rules
----------
+tags
+====
 
-The ``rules`` section of the configuration can also be used to define cache tags
-on paths. You can set either or both headers and tags for each match. For the
-request matching rules, see the :ref:`match section <match>` in the Caching
-Headers chapter.
+Create tag rules in your application configuration to set tags on responses
+and invalidate them.
 
-When the request matches all criteria, the tags are applied. If the request was
-a GET or HEAD request, the response will get the specified tags in its header.
-On all other operations, those tags will be invalidated.
+.. include:: /includes/enabled.rst
 
-
-
-When a request goes to any URL starting with news, e.g. ``/news/42``, the
-response will be tagged with ``news-section`` (in addition to any tags set by
-the code or through annotations).
-
-When a POST goes to ``/news/3``, the tag ``news-section`` is invalidated, in
-addition to any other invalidation requests done with the cache manager or
-through annotations.
-
-enabled
-~~~~~~~
-
-By default, tagging is enabled if you have
-:doc:`configured a proxy client </reference/configuration/proxy-client>` and
-``symfony/expression-language`` is available in your project. If you want
-to use tagging, it is recommended to enable is explicitly so you are notified
-of missing dependencies:
+Enables tag annotations and rules. If you want to use tagging, it is recommended
+that you set this to ``true`` so you are notified of missing dependencies:
 
 .. code-block:: yaml
 
     # app/config/config.yml
     fos_http_cache:
-      cache_manager:
-        tags:
-          enabled: true
+        cache_manager:
+            tags:
+                enabled: true
 
 header
-~~~~~~
+------
 
-Name of the HTTP header that the tags are stored in. Defaults to ``X-Tags``.
+**type**: ``string`` **default**: ``X-Cache-Tags``
+
+Custom HTTP header that tags are stored in.
 
 rules
-~~~~~
+-----
 
-Define your tagging rules by combining a :ref:`match definition <match>` with a
-``tags`` array:
+**type**: ``array``
+
+Write your tagging rules by combining a ``match`` definition with a ``tags``
+array. These tags will be set on the response when all of the following are true:
+
+.. include:: /includes/safe.rst
+
+When the definition matches an unsafe request (so 2 is false), the tags will be
+invalidated instead.
+
+.. include:: /includes/match.rst
 
 .. code-block:: yaml
 
+    # app/config/config.yml
     fos_http_cache:
-      tags:
-        rule`docs:
-          -
-            match:
-              path: ^/news
-            tags: [news-section]
+        tags:
+            rules:
+                -
+                    match:
+                        path: ^/news
+                    tags: [news-section]
 
 .. note::
 
-    See further: doc:`/features/tagging`.
+    See further the :doc:`tagging feature description </features/tagging>`.
+
+tags
+^^^^
+
+**type**: ``array``
+
+Tags that should be set on responses to safe requests; or invalidated for
+unsafe requests.

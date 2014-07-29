@@ -1,18 +1,12 @@
-* the HTTP request matches *all* criteria defined under ``match``
-* the HTTP request is :term:`safe` (GET or HEAD)
-* the HTTP response is considered :term:`cacheable` (override with
-  :ref:`additional_cacheable_status` and :ref:`match_response`).
-
-
 match
-~~~~~
+=====
 
 **type**: ``array``
 
-Defines the matching part of a rule. It contains one or more match criteria for
+Defines the matching part of a :doc:`cache <headers>`, :doc:`invalidation <invalidation>`
+or :doc:`tag rule <tags>`. It contains one or more match criteria for
 requests. All criteria are regular expressions. They are checked in the order
 specified, where the first match wins.
-
 
 All matching criteria are regular expressions. For instance:
 
@@ -24,6 +18,8 @@ All matching criteria are regular expressions. For instance:
 
 host
 """"
+
+**type**: ``string``
 
 A regular expression to limit the caching rules to specific hosts, when you
 serve more than one host from your Symfony application.
@@ -38,11 +34,15 @@ serve more than one host from your Symfony application.
 path
 """"
 
+**type**: ``string``
+
 For example, ``path: ^/`` will match every request. To only match the home
 page, use ``path: ^/$``.
 
 methods
 """""""
+
+**type**: ``array``
 
 Can be used to limit caching rules to specific HTTP methods like GET requests.
 Note that the rule effect is not applied to :term:`unsafe <safe>` methods, not
@@ -56,6 +56,8 @@ even when you set the methods here:
 ips
 """
 
+**type**: ``array``
+
 An array that can be used to limit the rules to a specified set of request
 client IP addresses.
 
@@ -68,6 +70,8 @@ client IP addresses.
 
 attributes
 """"""""""
+
+**type**: ``array``
 
 An array to filter on route attributes. the most common use case would be
 ``_controller`` when you need caching rules applied to a controller. Note that
@@ -88,6 +92,8 @@ regular expressions.
 additional_cacheable_status
 """""""""""""""""""""""""""
 
+**type**: ``array``
+
 A list of additional HTTP status codes of the response for which to also apply
 the rule.
 
@@ -100,6 +106,8 @@ the rule.
 
 match_response
 """"""""""""""
+
+**type**: ``string``
 
 .. note::
 
