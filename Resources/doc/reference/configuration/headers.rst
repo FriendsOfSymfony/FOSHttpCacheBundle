@@ -3,7 +3,8 @@ cache_control
 
 The configuration contains a number of *rules*. When a request matches the
 parameters described in the ``match`` section, the headers as defined under
-``headers`` will be set on the response, if they are not already set.
+``headers`` will be set on the response, if they are not already set. Rules are
+checked in the order specified, where the first match wins.
 
 .. code-block:: yaml
 
@@ -16,7 +17,11 @@ parameters described in the ``match`` section, the headers as defined under
                     match:
                         host: ^login.example.com$
                     headers:
-                        cache_control: { public: false, max_age: 0, s_maxage: 0, last_modified: "-1 hour" }
+                        cache_control:
+                            public: false
+                            max_age: 0
+                            s_maxage: 0
+                            last_modified: "-1 hour"
                         vary: [Accept-Encoding, Accept-Language]
 
                 # match all actions of a specific controller
@@ -25,13 +30,21 @@ parameters described in the ``match`` section, the headers as defined under
                         attributes: { _controller: ^AcmeBundle:Default:.* }
                         additional_cacheable_status: [400]
                     headers:
-                        cache_control: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }
+                        cache_control:
+                            public: true
+                            max_age: 15
+                            s_maxage: 30
+                            last_modified: "-1 hour"
 
                 -
                     match:
                         path: ^/$
                     headers:
-                        cache_control: { public: true, max_age: 64000, s_maxage: 64000, last_modified: "-1 hour" }
+                        cache_control:
+                            public: true
+                            max_age: 64000
+                            s_maxage: 64000
+                            last_modified: "-1 hour"
                         vary: [Accept-Encoding, Accept-Language]
 
                 # match everything to set defaults
@@ -39,37 +52,20 @@ parameters described in the ``match`` section, the headers as defined under
                     match:
                         path: ^/
                     headers:
-                        cache_control: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }
+                        cache_control:
+                            public: true
+                            max_age: 15
+                            s_maxage: 30
+                            last_modified: "-1 hour"
 
 rules
 -----
 
 **type**: ``array``
 
-A set of cache control rules.
+A set of cache control rules consisting of *match* criteria and *header* instructions.
 
 .. include:: /includes/match.rst
-
-.. sidebar:: Merging headers
-
-    If the response already has certain cache directives set, they are not
-    overwritten. The configuration can thus specify defaults that may be
-    changed by controllers or services that handle the response, or ``@Cache``
-    annotations.
-
-    The listener that applies the rules is triggered at priority 10, which
-    makes it handle before the ``@Cache`` annotations from the
-    SensioFrameworkExtraBundle are evaluated. Those annotations unconditionally
-    overwrite cache directives.
-
-    The only exception is responses that *only* have the ``no-cache``
-    directive. This is the default value for the cache control and there is no
-    way to determine if it was manually set. If the full header is only
-    ``no-cache``, the whole cache control is overwritten.
-
-    You can prevent the cache control on specific requests by injecting the
-    service ``fos_http_cache.event_listener.cache_control`` and calling
-    ``setSkip()`` on it. If this method is called, no cache rules are applied.
 
 headers
 ^^^^^^^
@@ -106,6 +102,25 @@ headers
 
 In the ``headers`` section, you define what headers to set on the response if
 the request was matched.
+
+Headers are **merged**. If the response already has certain cache directives
+set, they are not overwritten. The configuration can thus specify defaults
+that may be changed by controllers or services that handle the response, or
+``@Cache`` annotations.
+
+The listener that applies the rules is triggered at priority 10, which
+makes it handle before the ``@Cache`` annotations from the
+SensioFrameworkExtraBundle are evaluated. Those annotations unconditionally
+overwrite cache directives.
+
+The only exception is responses that *only* have the ``no-cache``
+directive. This is the default value for the cache control and there is no
+way to determine if it was manually set. If the full header is only
+``no-cache``, the whole cache control is overwritten.
+
+You can prevent the cache control on specific requests by injecting the
+service ``fos_http_cache.event_listener.cache_control`` and calling
+``setSkip()`` on it. If this method is called, no cache rules are applied.
 
 cache_control
 """""""""""""
@@ -227,7 +242,7 @@ reverse_proxy_ttl
 
 **type**: ``integer``
 
-For X-Reverse-Proxy-TTL for Custom Reverse Proxy Time-Outs
+Set a X-Reverse-Proxy-TTL header for reverse proxy time-outs not driven by ``s-maxage``.
 
 By default, reverse proxies use the ``s-maxage`` of your ``Cache-Control`` header
 to know how long it should cache a page. But by default, the s-maxage is also
@@ -255,7 +270,9 @@ then use on the reverse proxy:
                 -
                     headers:
                         reverse_proxy_ttl: 3600
-                        cache_control: { public: true, s_maxage: 60 }
+                        cache_control:
+                            public: true
+                            s_maxage: 60
 
 This example adds the header ``X-Reverse-Proxy-TTL: 3600`` to your responses.
 Varnish by default knows nothing about this header. To make this solution work,

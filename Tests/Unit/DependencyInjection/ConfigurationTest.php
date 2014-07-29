@@ -153,7 +153,6 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'path' => '/x',
                 'host' => 'y',
                 'secure' => true,
-                'httpOnly' => false,
             ),
             'debug' => array(
                 'enabled' => true,
@@ -434,7 +433,6 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'path' => '/',
                 'host' => null,
                 'secure' => false,
-                'httpOnly' => true,
             ),
             'debug' => array(
                 'enabled' => false,

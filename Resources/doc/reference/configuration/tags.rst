@@ -30,7 +30,8 @@ rules
 **type**: ``array``
 
 Write your tagging rules by combining a ``match`` definition with a ``tags``
-array. These tags will be set on the response when all of the following are true:
+array.  Rules are checked in the order specified, where the first match wins.
+These tags will be set on the response when all of the following are true:
 
 .. include:: /includes/safe.rst
 

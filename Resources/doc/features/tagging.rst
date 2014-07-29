@@ -1,6 +1,8 @@
 Tagging
 =======
 
+**Prerequisites**: :ref:`Configure caching proxy for banning <foshttpcache:varnish-configuration#ban>` (only supported with Varnish).
+
 If your application has many intricate relationships between cached items,
 which makes it complex to invalidate them by route, cache tagging will be
 useful.

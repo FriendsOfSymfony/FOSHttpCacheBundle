@@ -28,7 +28,8 @@ rules
 **type**: ``array``
 
 A set of invalidation rules. Each rule consists of a match definition and
-one or more routes that will be invalidated. The routes are invalidated when:
+one or more routes that will be invalidated. Rules are checked in the order
+specified, where the first match wins. The routes are invalidated when:
 
 1. the HTTP request matches *all* criteria defined under ``match``
 2. the HTTP response is successful.

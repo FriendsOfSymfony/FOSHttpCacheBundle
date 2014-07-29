@@ -1,8 +1,8 @@
 Features
 ========
 
-This part introduces the bundle’s features. Each feature links to the Reference
-chapter for a fuller explanation.
+This part introduces the bundle’s features. Each feature section links to the
+corresponding reference section.
 
 .. toctree::
 
