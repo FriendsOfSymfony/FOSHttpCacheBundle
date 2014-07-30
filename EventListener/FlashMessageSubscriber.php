@@ -98,7 +98,7 @@ class FlashMessageSubscriber implements EventSubscriberInterface
             $this->options['path'],
             $this->options['host'],
             $this->options['secure'],
-            $this->options['httpOnly']
+            false
         );
 
         $response->headers->setCookie($cookie);

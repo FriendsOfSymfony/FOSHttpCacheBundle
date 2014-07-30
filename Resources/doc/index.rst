@@ -2,13 +2,13 @@ FOSHttpCacheBundle
 ==================
 
 This is the documentation for the `FOSHttpCacheBundle <https://github.com/FriendsOfSymfony/FOSHttpCacheBundle>`_.
+Use the FOSHttpCacheBundle to:
 
-The FOSHttpCacheBundle offers tools to improve HTTP caching with Symfony2:
-
-* global configuration options to set caching headers based on path, controller
-  and other aspects of the request
-* services for the FOSHttpCache_ library to actively invalidate caching proxies
-* additional tools
+* set HTTP caching headers in your application configuration based on request
+  properties such as path and controller;
+* tag your response caches with annotations;
+* invalidate cached paths, routes and tags with the FOSHttpCache_ library;
+* differentiate cached content per user type.
 
 Contents
 --------
@@ -16,33 +16,7 @@ Contents
 .. toctree::
     :maxdepth: 2
 
-    installation
-    configuration/index
-    configuration/caching-rules
-    configuration/proxy-client
-    invalidation
-    tagging
-    event-subscribers
+    overview
+    features
+    reference
     testing
-
-Reference
----------
-
-.. toctree::
-    :maxdepth: 2
-
-    reference/cache-manager
-    reference/annotations
-    reference/glossary
-
-Overview
---------
-
-========================= ============================= ================================================ ==============================================
-Functionality             Annotations                   Configuration                                    Manually
-========================= ============================= ================================================ ==============================================
-Set Cache-Control headers (SensioFrameworkExtraBundle)  :doc:`rules <configuration/caching-rules>`       (Symfony)
-Tag and invalidate        :doc:`@Tag <tagging>`         :doc:`rules <configuration/caching-rules>`       :doc:`cache manager <reference/cache-manager>`
-Invalidate routes         :ref:`invalidateroute`        :ref:`invalidators <invalidation configuration>` :doc:`cache manager <reference/cache-manager>`
-Invalidate paths          :ref:`invalidatepath`          -                                               :doc:`cache manager <reference/cache-manager>`
-========================= ============================= ================================================ ==============================================

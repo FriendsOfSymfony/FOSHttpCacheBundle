@@ -77,7 +77,7 @@
             <user-identifier-header>Authorization</user-identifier-header>
         </user-context>
 
-        <flash-message name="flashtest" path="/x" host="y" secure="true" httpOnly="false"/>
+        <flash-message name="flashtest" path="/x" host="y" secure="true" />
 
         <debug header="FOS-Cache-Debug"/>
 
