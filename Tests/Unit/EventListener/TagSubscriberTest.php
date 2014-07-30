@@ -68,7 +68,7 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
         ;
         $this->listener->addRule($mockMatcher, array(
             'tags' => array('configured-tag'),
-            'expressions' => array('"item-" ~ request.attributes.get("id")'),
+            'expressions' => array('"item-" ~ id'),
         ));
         $this->listener->onKernelResponse($event);
 
@@ -123,7 +123,7 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
         ;
         $this->listener->addRule($mockMatcher, array(
             'tags' => array('configured-tag'),
-            'expressions' => array('"item-" ~ request.attributes.get("id")'),
+            'expressions' => array('"item-" ~ id'),
         ));
         $this->listener->onKernelResponse($event);
     }

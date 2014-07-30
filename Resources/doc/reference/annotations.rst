@@ -114,7 +114,7 @@ response::
      */
     public function showAction($id)
     {
-        // Assume $id equals 123
+        // Assume request parameter $id equals 123
     }
 
 Or, using a `param converter`_::
