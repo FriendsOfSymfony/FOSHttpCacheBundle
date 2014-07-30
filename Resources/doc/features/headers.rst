@@ -49,7 +49,7 @@ For instance:
                     headers:
                         cache_control: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }
 
-See :doc:`/reference/configuration/headers`.
+See the :doc:`/reference/configuration/headers` configuration reference.
 
 .. _manually setting cache headers: http://symfony.com/doc/current/book/http_cache.html#the-cache-control-header
 .. _setting caching headers through annotations: http://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/cache.html

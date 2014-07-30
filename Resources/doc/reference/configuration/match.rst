@@ -1,17 +1,12 @@
-Matching
-========
-
-Several parts of the configuration use ``match`` sections to limit
-configuration to specific requests and responses. Matches are used for
-:doc:`caching headers <headers>`, :doc:`invalidation <invalidation>` and
-:doc:`tag rules <tags>`.
 match
------
+=====
 
-**type**: ``array``
+The :doc:`cache <headers>`, :doc:`invalidation <invalidation>` and
+:doc:`tag rule <tags>` configurations all use ``match`` sections
+to limit the configuration to specific requests and responses.
 
-A match contains one or more match criteria for requests. All matching criteria
-are regular expressions. For instance:
+Each ``match`` section contains one or more match criteria for requests.
+All criteria are regular expressions. For instance:
 
 .. code-block:: yaml
 

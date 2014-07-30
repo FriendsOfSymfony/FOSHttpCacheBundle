@@ -1,7 +1,7 @@
 User Context
 ============
 
-**Prerequisites**: :ref:`Configure caching proxy for user context <foshttpcache:varnish-configuration#user-context>` (only supported with Varnish).
+**Prerequisites**: :ref:`configure caching proxy for user context <foshttpcache:varnish user context>` (Varnish only).
 
 If your application serves different content depending on the user’s group
 or context (guest, editor, admin), you can cache that content per user context.

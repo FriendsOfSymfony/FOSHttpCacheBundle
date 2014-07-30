@@ -1,7 +1,7 @@
 Invalidation
 ============
 
-**Prerequisites**: :ref:`Configure caching proxy <foshttpcache:proxy-configuration>`.
+**Prerequisites**: :ref:`configure caching proxy <foshttpcache:proxy-configuration>`.
 
 By *invalidating* a piece of content, you tell your HTTP caching proxy (Varnish
 or Nginx) to no longer serve it to clients. When next requested, the proxy will
@@ -64,8 +64,8 @@ You can add invalidation rules to your application configuration:
 
 Now when a request to either route ``villain_edit`` or route ``villain_delete``
 returns a succesful response, both routes ``vilains_index`` and
-``villain_details`` will be purged. See
-:doc:`/reference/configuration/invalidation` for more.
+``villain_details`` will be purged. See the
+:doc:`/reference/configuration/invalidation` configuration reference.
 
 Annotations
 -----------
@@ -84,7 +84,7 @@ invalidation from your controllers::
     {
     }
 
-See further :doc:`/reference/annotations`.
+See the :doc:`/reference/annotations` reference.
 
 Console Commands
 ----------------
@@ -100,7 +100,8 @@ and will automatically talk to all configured cache instances.
   them. See :ref:`cache manager refreshing`.
 * ``fos:httpcache:invalidate:regex`` expects a regular expression and invalidates
   all cache entries matching that expression. To invalidate your entire cache,
-  you can specify ``.`` which will match everything. See :ref:`cache manager invalidation`.
+  you can specify ``.`` (dot) which will match everything.
+  See :ref:`cache manager invalidation`.
 * ``fos:httpcache:invalidate:tag`` accepts one or more tags and invalidates all
   cache entries matching any of those tags. See :doc:`tagging`.
 

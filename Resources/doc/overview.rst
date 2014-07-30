@@ -78,8 +78,8 @@ Configuration
 -------------
 
 Now you can configure the bundle under the ``fos_http_cache`` key. The
-:doc:`features` section contains configuration examples, for
-a reference see the :doc:`reference/configuration` section.
+:doc:`features` section introduces the bundle’s features. The
+:doc:`reference/configuration` section lists all configuration options.
 
 Functionality
 -------------

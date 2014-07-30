@@ -1,7 +1,7 @@
 Flash Message Subscriber
 ========================
 
-**Prerequisites**: *None*
+**Prerequisites**: *none*
 
 When flash messages are rendered into the content of a page, you can't cache
 the page anymore. When enabled, this subscriber reads all flash messages into a

@@ -1,11 +1,13 @@
 Tagging
 =======
 
-**Prerequisites**: :ref:`Configure caching proxy for banning <foshttpcache:varnish-configuration#ban>` (only supported with Varnish).
+**Prerequisites**: :ref:`configure caching proxy for tagging <foshttpcache:varnish_tagging>`
+(Varnish only).
 
 If your application has many intricate relationships between cached items,
 which makes it complex to invalidate them by route, cache tagging will be
-useful.
+useful. It helps you with invalidating many-to-many relationships between
+content items.
 
 Cache tagging, or more precisely `Tagged Cache Invalidation`_, a simpler
 version of `Linked Cache Invalidation`_ (LCI), allows you to:
