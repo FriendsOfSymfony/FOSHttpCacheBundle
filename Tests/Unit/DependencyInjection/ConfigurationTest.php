@@ -92,6 +92,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ),
             'tags' => array(
                 'enabled' => 'auto',
+                'header' => 'FOS-Tags',
                 'rules' => array(
                     array(
                         'match' => array(
@@ -410,6 +411,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ),
             'tags' => array(
                 'enabled' => false,
+                'header' => 'X-Cache-Tags',
                 'rules' => array(),
             ),
             'invalidation' => array(

@@ -41,7 +41,7 @@
 
         <cache-manager enabled="true"/>
 
-        <tags>
+        <tags header="FOS-Tags">
             <rule>
                 <match path="/def" host="friends">
                     <method>PUT</method>

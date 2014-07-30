@@ -19,7 +19,6 @@ use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * {@inheritdoc}
@@ -74,6 +73,11 @@ class FOSHttpCacheExtension extends Extension
                 // silently skip if set to auto
                 throw new InvalidConfigurationException('The TagSubscriber requires symfony/expression-language and needs the cache_manager to be configured');
             }
+
+            $tagsHeader = $config['tags']['header'];
+            $container->getDefinition($this->getAlias().'.cache_manager')
+                ->addMethodCall('setTagsHeader', array($tagsHeader))
+            ;
         }
 
         if ($config['invalidation']['enabled']) {

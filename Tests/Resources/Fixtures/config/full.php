@@ -43,6 +43,7 @@ $container->loadFromExtension('fos_http_cache', array(
         'enabled' => true,
     ),
     'tags' => array(
+        'header' => 'FOS-Tags',
         'rules' => array(
             array(
                 'match' => array(

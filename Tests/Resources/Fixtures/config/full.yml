@@ -43,6 +43,7 @@ fos_http_cache:
         enabled: true
 
     tags:
+        header: FOS-Tags
         rules:
             -
                 match:
