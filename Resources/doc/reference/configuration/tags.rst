@@ -2,7 +2,8 @@ tags
 ====
 
 Create tag rules in your application configuration to set tags on responses
-and invalidate them.
+and invalidate them. See the :doc:`tagging feature chapter </features/tagging>`
+for an introduction.
 
 .. include:: /includes/enabled.rst
 
@@ -40,6 +41,14 @@ invalidated instead.
 
 .. include:: /includes/match.rst
 
+tags
+^^^^
+
+**type**: ``array``
+
+Tags that should be set on responses to safe requests; or invalidated for
+unsafe requests.
+
 .. code-block:: yaml
 
     # app/config/config.yml
@@ -51,14 +60,27 @@ invalidated instead.
                         path: ^/news
                     tags: [news-section]
 
-.. note::
 
-    See further the :doc:`tagging feature description </features/tagging>`.
-
-tags
-^^^^
+tag_expressions
+~~~~~~~~~~~~~~~
 
 **type**: ``array``
 
-Tags that should be set on responses to safe requests; or invalidated for
-unsafe requests.
+You can dynamically refer to request attributes using
+:ref:`expressions <expression language requirement>`. Assume a route
+``/articles/{id}``. A request to path ``/articles/123`` will set/invalidate
+tag ``articles-123`` with the following configuration:
+
+.. code-block:: yaml
+
+    # app/config/config.yml
+    fos_http_cache:
+        tags:
+            rules:
+                -
+                    match:
+                        path: ^/articles
+                    tags: [articles]
+                    tag_expressions: ["'article-'~id"]
+
+You can combine ``tags`` and ``tag_expression`` in one rule.

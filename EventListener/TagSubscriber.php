@@ -15,7 +15,6 @@ use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -78,10 +77,7 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
                 $tags[] = $tag;
             }
             foreach ($configuredTags['expressions'] as $expression) {
-                $tags[] = $this->expressionLanguage->evaluate($expression, array(
-                    'request' => $request,
-                    'response' => $response,
-                ));
+                $tags[] = $this->evaluateTag($expression, $request);
             }
         }
 
@@ -96,6 +92,16 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
             // For non-safe methods, invalidate the tags
             $this->cacheManager->invalidateTags($tags);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return array(
+            KernelEvents::RESPONSE => 'onKernelResponse'
+        );
     }
 
     /**
@@ -118,9 +124,9 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
         $tags = array();
         foreach ($tagConfigurations as $tagConfiguration) {
             if (null !== $tagConfiguration->getExpression()) {
-                $tags[] = $this->expressionLanguage->evaluate(
+                $tags[] = $this->evaluateTag(
                     $tagConfiguration->getExpression(),
-                    $request->attributes->all()
+                    $request
                 );
             } else {
                 $tags = array_merge($tags, $tagConfiguration->getTags());
@@ -131,12 +137,19 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
     }
 
     /**
-     * {@inheritdoc}
+     * Evaluate a tag that contains expressions
+     *
+     * @param string  $expression
+     * @param Request $request
+     *
+     * @return string Evaluaated tag
      */
-    public static function getSubscribedEvents()
+    private function evaluateTag($expression, Request $request)
     {
-        return array(
-            KernelEvents::RESPONSE => 'onKernelResponse'
+        return $this->expressionLanguage->evaluate(
+            $expression,
+            $request->attributes->all()
         );
     }
+
 }

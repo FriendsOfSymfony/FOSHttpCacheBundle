@@ -19,7 +19,7 @@ class CacheControlSubscriberTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/cached');
+        $client->request('GET', '/cached/42');
         $response = $client->getResponse();
         $this->assertEquals('public', $response->headers->get('Cache-Control'));
     }

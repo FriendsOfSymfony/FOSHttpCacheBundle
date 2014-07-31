@@ -63,9 +63,9 @@ class TagSubscriberTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/cached');
+        $client->request('GET', '/cached/51');
         $response = $client->getResponse();
-        $this->assertEquals('area', $response->headers->get('X-Cache-Tags'));
+        $this->assertEquals('area,area-51', $response->headers->get('X-Cache-Tags'));
     }
 
     public function testConfigurationTagsAreInvalidated()
@@ -76,11 +76,11 @@ class TagSubscriberTest extends WebTestCase
             'fos_http_cache.cache_manager',
             '\FOS\HttpCacheBundle\CacheManager'
         )
-            ->shouldReceive('invalidateTags')->once()->with(array('area'))
+            ->shouldReceive('invalidateTags')->once()->with(array('area', 'area-51'))
             ->shouldReceive('flush')->once()
         ;
 
-        $client->request('POST', '/cached');
+        $client->request('PUT', '/cached/51');
     }
 
     protected function tearDown()

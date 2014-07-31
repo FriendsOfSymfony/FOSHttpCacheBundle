@@ -23,6 +23,7 @@ fos_http_cache:
         match:
           path: ^/cached
         tags: [area]
+        tag_expressions: ["'area-'~id"]
   user_context:
     user_identifier_headers:
       - Cookie
