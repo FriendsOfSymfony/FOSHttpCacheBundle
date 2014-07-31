@@ -47,8 +47,8 @@ class TestController extends Controller
         return new Response('Forbidden', 403);
     }
 
-    public function contentAction()
+    public function contentAction($id = null)
     {
-        return new Response('content');
+        return new Response('content ' . $id);
     }
 }

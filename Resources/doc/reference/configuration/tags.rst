@@ -81,6 +81,6 @@ tag ``articles-123`` with the following configuration:
                     match:
                         path: ^/articles
                     tags: [articles]
-                    tag_expressions: ["article-"~id]
+                    tag_expressions: ["'article-'~id"]
 
 You can combine ``tags`` and ``tag_expression`` in one rule.

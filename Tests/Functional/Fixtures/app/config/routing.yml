@@ -1,24 +1,25 @@
 test_list:
-  pattern:   /test/list
-  defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::listAction }
+  pattern:  /test/list
+  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::listAction }
   methods:  [GET]
 
 test_error:
-  pattern:   /test/error
-  defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::errorAction }
+  pattern:  /test/error
+  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::errorAction }
 
 test_one:
-  pattern:   /test/{id}
-  defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::itemAction }
+  pattern:  /test/{id}
+  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::itemAction }
   methods:  [GET,POST]
 
 test_cached:
-  pattern:  /cached
-  defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }
+  pattern:  /cached/{id}
+  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }
+  methods:  [GET,PUT]
 
 test_noncached:
   pattern:  /noncached
-  defaults:  { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }
+  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }
 
 test_logout:
   pattern:  /secured_area/logout
