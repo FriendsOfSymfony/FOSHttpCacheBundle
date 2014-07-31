@@ -19,11 +19,11 @@ class TagSubscriberTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/test/list');
+        $client->request('GET', '/tag/list');
         $response = $client->getResponse();
         $this->assertEquals('all-items,item-123', $response->headers->get('X-Cache-Tags'));
 
-        $client->request('GET', '/test/123');
+        $client->request('GET', '/tag/123');
         $response = $client->getResponse();
         $this->assertEquals('item-123', $response->headers->get('X-Cache-Tags'));
     }
@@ -41,7 +41,7 @@ class TagSubscriberTest extends WebTestCase
             ->shouldReceive('flush')->once()
         ;
 
-        $client->request('POST', '/test/123');
+        $client->request('POST', '/tag/123');
     }
 
     public function testErrorIsNotInvalidated()
@@ -56,7 +56,7 @@ class TagSubscriberTest extends WebTestCase
             ->shouldReceive('flush')->once()
         ;
 
-        $client->request('POST', '/test/error');
+        $client->request('POST', '/tag/error');
     }
 
     public function testConfigurationTagsAreSet()

@@ -1,15 +1,15 @@
-test_list:
-  pattern:  /test/list
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::listAction }
+tag_list:
+  pattern:  /tag/list
+  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController::listAction }
   methods:  [GET]
 
-test_error:
-  pattern:  /test/error
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::errorAction }
+tag_error:
+  pattern:  /tag/error
+  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController::errorAction }
 
-test_one:
-  pattern:  /test/{id}
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::itemAction }
+tag_one:
+  pattern:  /tag/{id}
+  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController::itemAction }
   methods:  [GET,POST]
 
 test_cached:
