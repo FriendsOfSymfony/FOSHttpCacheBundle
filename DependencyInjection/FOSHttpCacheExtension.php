@@ -64,14 +64,9 @@ class FOSHttpCacheExtension extends Extension
 
         if ($config['tags']['enabled']) {
             // true or auto
-            if (class_exists('\Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
-                $loader->load('tag_listener.xml');
-                if (!empty($config['tags']['rules'])) {
-                    $this->loadTagRules($container, $config['tags']['rules']);
-                }
-            } elseif (true === $config['tags']['enabled']) {
-                // silently skip if set to auto
-                throw new InvalidConfigurationException('The TagSubscriber requires symfony/expression-language and needs the cache_manager to be configured');
+            $loader->load('tag_listener.xml');
+            if (!empty($config['tags']['rules'])) {
+                $this->loadTagRules($container, $config['tags']['rules']);
             }
 
             $tagsHeader = $config['tags']['header'];
@@ -81,15 +76,9 @@ class FOSHttpCacheExtension extends Extension
         }
 
         if ($config['invalidation']['enabled']) {
-            // true or auto
-            if (class_exists('\Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
-                $loader->load('invalidation_listener.xml');
-                if (!empty($config['invalidation']['rules'])) {
-                    $this->loadInvalidatorRules($container, $config['invalidation']['rules']);
-                }
-            } elseif (true === $config['invalidation']['enabled']) {
-                // silently skip if set to auto
-                throw new InvalidConfigurationException('The InvalidationSubscriber requires symfony/expression-language and needs the cache_manager to be configured');
+            $loader->load('invalidation_listener.xml');
+            if (!empty($config['invalidation']['rules'])) {
+                $this->loadInvalidatorRules($container, $config['invalidation']['rules']);
             }
         }
 

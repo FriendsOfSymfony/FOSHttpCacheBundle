@@ -209,11 +209,8 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
             if (null !== $route->getParams()) {
                 // Iterate over route params and try to evaluate their values
                 foreach ($route->getParams() as $key => $value) {
-                    try {
-                        $value = $this->getExpressionLanguage()->evaluate($value, $request->attributes->all());
-                    } catch (SyntaxError $e) {
-                        // If a syntax error occurred, we assume the param was
-                        // no expression
+                    if (is_array($value)) {
+                        $value = $this->getExpressionLanguage()->evaluate($value['expression'], $request->attributes->all());
                     }
 
                     $params[$key] = $value;

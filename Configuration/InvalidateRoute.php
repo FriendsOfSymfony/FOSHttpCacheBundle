@@ -12,6 +12,7 @@
 namespace FOS\HttpCacheBundle\Configuration;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 /**
  * @Annotation
@@ -54,6 +55,27 @@ class InvalidateRoute extends ConfigurationAnnotation
      */
     public function setParams($params)
     {
+        if (!is_array($params)) {
+            throw new \RuntimeException('InvalidateRoute params must be an array');
+        }
+        foreach ($params as $name => $value) {
+            if (is_array($value)) {
+                if (1 !== count($value) || !isset($value['expression'])) {
+                    throw new \RuntimeException(sprintf(
+                        '@InvalidateRoute param %s must be string or {"expression"="<expression>"}',
+                        $name,
+                        print_r($value, true)
+                    ));
+                }
+                if (!class_exists('Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
+                    throw new InvalidConfigurationException(sprintf(
+                        '@InvalidateRoute param %s uses an expression but the ExpressionLanguage is not available.',
+                        $name
+                    ));
+                }
+            }
+        }
+
         $this->params = $params;
     }
 

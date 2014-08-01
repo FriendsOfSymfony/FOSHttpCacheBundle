@@ -19,8 +19,9 @@ use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 class InvalidationController extends Controller
 {
     /**
+     * @InvalidateRoute("test_noncached")
      * @InvalidateRoute("test_cached", params={"id" = "myhardcodedid"})
-     * @InvalidateRoute("tag_one", params={"id" = "id"})
+     * @InvalidateRoute("tag_one", params={"id" = {"expression"="id"}})
      */
     public function itemAction($id)
     {
