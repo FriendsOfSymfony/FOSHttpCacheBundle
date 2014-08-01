@@ -12,6 +12,18 @@ tag_one:
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController::itemAction }
   methods:  [GET,POST]
 
+invalidation_route:
+  pattern: /invalidate/route/{id}
+  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::itemAction }
+
+invalidation_path:
+  pattern: /invalidate/path
+  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::otherAction }
+
+invalidation_error:
+  pattern: /invalidate/error
+  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::errorAction }
+
 test_cached:
   pattern:  /cached/{id}
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }
