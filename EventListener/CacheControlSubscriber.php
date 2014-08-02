@@ -50,7 +50,7 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
      * If not empty, add a debug header with that name to all responses,
      * telling the cache proxy to add debug output.
      *
-     * @var string Name of the header or false to add no header.
+     * @var string|bool Name of the header or false to add no header.
      */
     private $debugHeader;
 
