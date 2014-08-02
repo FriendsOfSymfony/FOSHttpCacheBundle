@@ -15,7 +15,6 @@ use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
-use FOS\HttpCacheBundle\Invalidator\InvalidatorCollection;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleEvent;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -210,11 +209,8 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
             if (null !== $route->getParams()) {
                 // Iterate over route params and try to evaluate their values
                 foreach ($route->getParams() as $key => $value) {
-                    try {
-                        $value = $this->getExpressionLanguage()->evaluate($value, $request->attributes->all());
-                    } catch (SyntaxError $e) {
-                        // If a syntax error occurred, we assume the param was
-                        // no expression
+                    if (is_array($value)) {
+                        $value = $this->getExpressionLanguage()->evaluate($value['expression'], $request->attributes->all());
                     }
 
                     $params[$key] = $value;

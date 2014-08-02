@@ -47,7 +47,7 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
         ExpressionLanguage $expressionLanguage = null
     ) {
         $this->cacheManager = $cacheManager;
-        $this->expressionLanguage = $expressionLanguage ?: new ExpressionLanguage();
+        $this->expressionLanguage = $expressionLanguage;
     }
 
     /**
@@ -146,10 +146,24 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
      */
     private function evaluateTag($expression, Request $request)
     {
-        return $this->expressionLanguage->evaluate(
+        return $this->getExpressionLanguage()->evaluate(
             $expression,
             $request->attributes->all()
         );
     }
 
+    /**
+     * Delay instantiating the expression language instance until we need it,
+     * to support a setup with only symfony 2.3.
+     *
+     * @return ExpressionLanguage
+     */
+    private function getExpressionLanguage()
+    {
+        if (!$this->expressionLanguage) {
+            $this->expressionLanguage = new ExpressionLanguage();
+        }
+
+        return $this->expressionLanguage;
+    }
 }

@@ -143,7 +143,7 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
         $request->attributes->set('request_id', 123);
         $request->attributes->set('_invalidate_route', array(
             new InvalidateRoute(array('name' => 'some_route')),
-            new InvalidateRoute(array('name' => 'other_route', 'params' => array('id' => 'request_id')))
+            new InvalidateRoute(array('name' => 'other_route', 'params' => array('id' => array('expression' => 'request_id'))))
         ));
 
         $event = $this->getEvent($request);

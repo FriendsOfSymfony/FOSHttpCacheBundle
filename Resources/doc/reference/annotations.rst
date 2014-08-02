@@ -6,8 +6,9 @@ actions are executed.
 
 .. note::
 
-    Annotations need the SensioFrameworkExtraBundle. Some features also need
-    the ExpressionLanguage. Make sure to
+    Annotations need the SensioFrameworkExtraBundle including registering the
+    Doctrine AnnotationsRegistry. Some features also need the
+    ExpressionLanguage. Make sure to
     :ref:`installed the dependencies first <requirements>`.
 
 .. _invalidatepath:
@@ -20,8 +21,8 @@ Invalidate a path::
     use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 
     /**
-     * @InvalidatePath("/posts")
-     * @InvalidatePath("/posts/latest")
+     * @InvalidatePath("/articles")
+     * @InvalidatePath("/articles/latest")
      */
     public function editAction()
     {
@@ -39,24 +40,24 @@ Invalidate a route with parameters::
     use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 
     /**
-     * @InvalidateRoute("posts")
-     * @InvalidateRoute("posts", params={"type" = "latest"})
+     * @InvalidateRoute("articles")
+     * @InvalidateRoute("articles", params={"type" = "latest"})
      */
     public function editAction()
     {
     }
 
-You can also use expressions_ in the route parameter values::
+You can also use expressions_ in the route parameter values. This obviously
+:ref:`requires the ExpressionLanguage component <requirements>`. To invalidate
+route ``articles`` with the ``number`` parameter set to ``123``, do::
 
     /**
-     * @InvalidateRoute("posts", params={"number" = "id"})
+     * @InvalidateRoute("articles", params={"number" = {"expression"="id"}})
      */
-    public function editAction(Request $request)
+    public function editAction(Request $request, $id)
     {
         // Assume $request->attributes->get('id') returns 123
     }
-
-Route ``posts`` will now be invalidated with value ``123`` for param ``number``.
 
 See :doc:`/features/invalidation` for more information.
 
@@ -106,8 +107,9 @@ If you prefer, you can combine tags in one annotation::
      * @Tag({"news", "news-list"})
      */
 
-You can also use expressions_ in tags. This will set tag ``news-123`` on the
-response::
+You can also use expressions_ in tags. This obviously
+:ref:`requires the ExpressionLanguage component <requirements>`. The following
+example sets the tag ``news-123`` on the Response::
 
     /**
      * @Tag(expression="'news-'~id")

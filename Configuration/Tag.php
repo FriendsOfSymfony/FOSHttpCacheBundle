@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Configuration;
 
 use FOS\HttpCacheBundle\Exception\InvalidTagException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 /**
  * @Annotation
@@ -32,6 +33,9 @@ class Tag extends ConfigurationAnnotation
      */
     public function setExpression($expression)
     {
+        if (!class_exists('Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
+            throw new InvalidConfigurationException('@Tag param %s uses an expression but the ExpressionLanguage is not available.');
+        }
         $this->expression = $expression;
     }
 

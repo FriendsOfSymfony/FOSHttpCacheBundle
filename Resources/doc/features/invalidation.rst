@@ -76,11 +76,12 @@ invalidation from your controllers::
     use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 
     /**
-     * @InvalidatePath("/posts")
-     * @InvalidatePath("/posts/latest")
+     * @InvalidatePath("/articles")
+     * @InvalidatePath("/articles/latest")
      * @InvalidateRoute("overview", params={"type" = "latest"})")
+     * @InvalidateRoute("detail", params={"id" = {"expression"="id"}})")
      */
-    public function editAction()
+    public function editAction($id)
     {
     }
 
