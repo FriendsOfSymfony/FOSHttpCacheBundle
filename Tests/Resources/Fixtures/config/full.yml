@@ -3,6 +3,7 @@ fos_http_cache:
     cache_control:
         rules:
             -
+                priority: 100
                 match:
                     path: /abc
                     host: fos

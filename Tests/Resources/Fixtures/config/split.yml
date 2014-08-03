@@ -3,6 +3,7 @@ fos_http_cache:
     cache_control:
         rules:
             -
+                priority: 0
                 match:
                     methods: GET,POST
                     ips: 1.2.3.4,1.1.1.1

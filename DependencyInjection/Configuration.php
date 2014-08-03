@@ -123,6 +123,10 @@ class Configuration implements ConfigurationInterface
 
         $this->addMatch($rules);
         $rules
+            ->scalarNode('priority')
+                ->defaultValue(0)
+                ->info('Rule Priority.')
+            ->end()
             ->arrayNode('headers')
                 ->isRequired()
                 // todo validate there is some header defined

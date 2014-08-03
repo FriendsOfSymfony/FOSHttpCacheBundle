@@ -4,6 +4,7 @@
     <config xmlns="http://example.org/schema/dic/fos_http_cache">
         <cache-control>
             <rule>
+                <priority>100</priority>
                 <match
                     path="/abc"
                     host="fos"

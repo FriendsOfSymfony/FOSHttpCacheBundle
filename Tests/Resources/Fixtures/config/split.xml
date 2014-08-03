@@ -4,6 +4,7 @@
     <config xmlns="http://example.org/schema/dic/fos_http_cache">
         <cache-control>
             <rule>
+                <priority>0</priority>
                 <match>
                     <methods>GET,POST</methods>
                     <ips>1.2.3.4,1.1.1.1</ips>

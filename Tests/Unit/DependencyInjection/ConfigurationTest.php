@@ -51,6 +51,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             'cache_control' => array(
                 'rules' => array(
                     array(
+                        'priority' => 100,
                         'match' => array(
                             'path' => '/abc',
                             'host' => 'fos',
@@ -208,6 +209,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['cache_control'] = array(
             'rules' => array(
                 array(
+                    'priority' => 0,
                     'match' => array(
                         'path' => null,
                         'host' => null,
