@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="fos_http_cache.test.client.class">Guzzle\Http\Client</parameter>
+        <parameter key="fos_http_cache.test.client.curlopt_forbid_reuse" type="constant">CURLOPT_FORBID_REUSE</parameter>
+    </parameters>
+
+    <services>
+        <service id="fos_http_cache.test.client.abstract"
+                 class="%fos_http_cache.test.client.class%"
+                 abstract="true">
+            <argument /><!-- base_url -->
+            <argument type="collection">
+                <argument key="%fos_http_cache.test.client.curlopt_forbid_reuse%">true</argument>
+            </argument>
+        </service>
+    </services>
+
+</container>

@@ -11,3 +11,4 @@ corresponding reference section.
     features/tagging
     features/user-context
     features/helpers
+    features/testing

@@ -15,3 +15,4 @@ for the bundle.
     configuration/flash-message
     configuration/debug
     configuration/match
+    configuration/test

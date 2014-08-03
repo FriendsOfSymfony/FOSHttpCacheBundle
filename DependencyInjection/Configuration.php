@@ -91,6 +91,36 @@ class Configuration implements ConfigurationInterface
                 ->ifTrue(function ($v) {return $v['invalidation']['rules'] && !$v['invalidation']['enabled'];})
                 ->thenInvalid('You need to enable the cache_manager and invalidation to use rules.')
             ->end()
+            ->validate()
+                ->ifTrue(function ($v) {
+                    return isset($v['test'])
+                        && $v['test']['client']['varnish']['enabled']
+                        && !isset($v['proxy_client']['varnish']);
+                    })
+                ->then(function ($v) {
+                    if ('auto' === $v['test']['client']['varnish']['enabled']) {
+                        $v['test']['client']['varnish']['enabled'] = false;
+
+                        return $v;
+                    }
+                    throw new InvalidConfigurationException('You need to configure the Varnish proxy_client to use the Varnish test client');
+                })
+            ->end()
+            ->validate()
+                ->ifTrue(function ($v) {
+                    if (isset($v['test'])) {
+                        return $v['test']['client']['nginx']['enabled'] && !isset($v['proxy_client']['nginx']);
+                    }
+                })
+                ->then(function ($v) {
+                    if ('auto' === $v['test']['client']['nginx']['enabled']) {
+                        $v['test']['client']['nginx']['enabled'] = false;
+
+                        return $v;
+                    }
+                    throw new InvalidConfigurationException('You need to configure the Nginx proxy_client to use the Nginx test client');
+                })
+            ->end()
         ;
 
         $this->addCacheControlSection($rootNode);
@@ -100,6 +130,7 @@ class Configuration implements ConfigurationInterface
         $this->addInvalidationSection($rootNode);
         $this->addUserContextListenerSection($rootNode);
         $this->addFlashMessageSection($rootNode);
+        $this->addTestSection($rootNode);
         $this->addDebugSection($rootNode);
 
         return $treeBuilder;
@@ -282,6 +313,77 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
 
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    private function addTestSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('test')
+                    ->children()
+                        ->scalarNode('cache_header')
+                            ->defaultValue('X-Cache')
+                            ->info('HTTP cache hit/miss header')
+                        ->end()
+                        ->arrayNode('proxy_server')
+                            ->info('Configure how caching proxy will be run in your tests')
+                            ->children()
+                                ->enumNode('default')
+                                    ->values(array('varnish', 'nginx'))
+                                    ->info('If you configure more than one proxy server, specify which client is the default.')
+                                ->end()
+                                ->arrayNode('varnish')
+                                    ->children()
+                                        ->scalarNode('config_file')->isRequired()->end()
+                                        ->scalarNode('binary')->defaultValue('varnishd')->end()
+                                        ->integerNode('port')->defaultValue(6181)->end()
+                                        ->scalarNode('ip')->defaultValue('127.0.0.1')->end()
+                                    ->end()
+                                ->end()
+                                ->arrayNode('nginx')
+                                    ->children()
+                                        ->scalarNode('config_file')->isRequired()->end()
+                                        ->scalarNode('binary')->defaultValue('nginx')->end()
+                                        ->integerNode('port')->defaultValue(8080)->end()
+                                        ->scalarNode('ip')->defaultValue('127.0.0.1')->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('client')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->enumNode('default')
+                                    ->values(array('varnish', 'nginx'))
+                                    ->info('If you configure more than one proxy client, specify which client is the default.')
+                                ->end()
+                                ->arrayNode('varnish')
+                                    ->addDefaultsIfNotSet()
+                                    ->canBeEnabled()
+                                    ->children()
+                                        ->enumNode('enabled')
+                                            ->values(array(true, false, 'auto'))
+                                            ->defaultValue('auto')
+                                            ->info('Whether to enable the Varnish test client.')
+                                        ->end()
+                                    ->end()
+                                ->end()
+                                ->arrayNode('nginx')
+                                    ->addDefaultsIfNotSet()
+                                    ->canBeEnabled()
+                                    ->children()
+                                        ->enumNode('enabled')
+                                            ->values(array(true, false, 'auto'))
+                                            ->defaultValue('auto')
+                                            ->info('Whether to enable the Nginx test client.')
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end();

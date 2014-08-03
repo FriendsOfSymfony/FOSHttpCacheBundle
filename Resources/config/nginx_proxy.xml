@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="fos_http_cache.test.proxy_server.nginx.class">FOS\HttpCache\Test\Proxy\NginxProxy</parameter>
+    </parameters>
+
+    <services>
+        <service id="fos_http_cache.test.proxy_server.nginx"
+                 class="%fos_http_cache.test.proxy_server.nginx.class%">
+            <argument on-invalid="ignore">%fos_http_cache.test.proxy_server.nginx.config_file%</argument>
+            <call method="setBinary">
+                <argument on-invalid="ignore">%fos_http_cache.test.proxy_server.nginx.binary%</argument>
+            </call>
+            <call method="setPort">
+                <argument>%fos_http_cache.test.proxy_server.nginx.port%</argument>
+            </call>
+            <call method="setIp">
+                <argument>%fos_http_cache.test.proxy_server.nginx.ip%</argument>
+            </call>
+        </service>
+    </services>
+
+</container>

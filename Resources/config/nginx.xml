@@ -15,6 +15,12 @@
             <argument>%fos_http_cache.proxy_client.nginx.base_url%</argument>
             <argument>%fos_http_cache.proxy_client.nginx.purge_location%</argument>
         </service>
+
+        <service id="fos_http_cache.test.client.nginx"
+                 parent="fos_http_cache.test.client.abstract"
+                 abstract="true">
+            <argument index="0">%fos_http_cache.proxy_client.nginx.base_url%</argument>
+        </service>
     </services>
 
 </container>
