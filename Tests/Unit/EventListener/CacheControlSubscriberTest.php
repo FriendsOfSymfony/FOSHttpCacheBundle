@@ -265,6 +265,47 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('no-cache', $newHeaders['cache-control'][0]);
     }
 
+    public function testPrioritisedMatchRule()
+    {
+        $event = $this->buildEvent();
+        $request = $event->getRequest();
+        $response = $event->getResponse();
+
+        $headers = array('cache_control' => array(
+            'max_age' => '900',
+            's_maxage' => '300',
+            'public' => true,
+            'private' => false
+        ));
+
+        $highPriorityMockMatcher = \Mockery::mock('FOS\HttpCacheBundle\Http\RuleMatcherInterface')
+            ->shouldReceive('matches')->once()->with($request, $response)->andReturn(true)
+            ->getMock()
+        ;
+
+        $lowPriorityMockMatcher = \Mockery::mock('FOS\HttpCacheBundle\Http\RuleMatcherInterface')
+            ->shouldReceive('matches')->never()->with($request, $response)
+            ->getMock()
+        ;
+
+        $subscriber = new CacheControlSubscriber();
+
+        $subscriber->addRule(
+            $lowPriorityMockMatcher,
+            $headers
+        );
+
+        $subscriber->addRule(
+            $highPriorityMockMatcher,
+            $headers,
+            100
+        );
+
+        $subscriber->onKernelResponse($event);
+        $newHeaders = $response->headers->all();
+        $this->assertEquals('max-age=900, public, s-maxage=300', $newHeaders['cache-control'][0]);
+    }
+
     /**
      * Unsafe methods should abort before even attempting to match rules.
      */

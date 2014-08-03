@@ -9,7 +9,9 @@ and an alternative to `setting caching headers through annotations`_.
 
 Set caching headers under under the ``cache_control`` configuration section,
 which consists of a set of rules. When the request matches all criteria under
-``match``, the headers under ``headers`` will be set on the response.
+``match``, the headers under ``headers`` will be set on the response. Rules are
+matched in order of definition, unless a priority value is provided, in which case
+higher priority rules take precedence over lower priority rules.
 
 For instance:
 
@@ -34,6 +36,14 @@ For instance:
                         additional_cacheable_status: [400]
                     headers:
                         cache_control: { public: true, max_age: 15, s_maxage: 30, last_modified: "-1 hour" }
+
+                # use priority to override, for example, a wildcard match on a specific controller
+                -
+                    priority: 100
+                    match:
+                        attributes: { _controller: ^AcmeBundle:Default:myUncacheableAction }
+                    headers:
+                        cache_control: { public: false, max_age: 0, s_maxage: 0, last_modified: "-1 hour" }
 
                 -
                     match:

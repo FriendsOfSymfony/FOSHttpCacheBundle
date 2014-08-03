@@ -4,6 +4,7 @@ $container->loadFromExtension('fos_http_cache', array(
     'cache_control' => array(
         'rules' => array(
             array(
+                'priority' => 0,
                 'match' => array(
                     'methods' => 'GET,POST',
                     'ips' => '1.2.3.4, 1.1.1.1',

@@ -3,8 +3,9 @@ cache_control
 
 The configuration contains a number of *rules*. When a request matches the
 parameters described in the ``match`` section, the headers as defined under
-``headers`` will be set on the response, if they are not already set. Rules are
-checked in the order specified, where the first match wins.
+``headers`` will be set on the response, if they are not already set. By default, rules are
+checked in the order specified, where the first match wins. If required, the matching can
+be fine-tuned by providing a priority (higher values have higher priority, defaults to 0)
 
 .. code-block:: yaml
 
@@ -34,6 +35,18 @@ checked in the order specified, where the first match wins.
                             public: true
                             max_age: 15
                             s_maxage: 30
+                            last_modified: "-1 hour"
+
+                # use priority to override, for example, a wildcard match on a specific controller
+                -
+                    priority: 100
+                    match:
+                        attributes: { _controller: ^AcmeBundle:Default:myUncacheableAction }
+                    headers:
+                        cache_control:
+                            public: false
+                            max_age: 0
+                            s_maxage: 0
                             last_modified: "-1 hour"
 
                 -
