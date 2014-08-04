@@ -39,6 +39,31 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
     }
 
+    public function testConfigLoadVarnishCustomGuzzle()
+    {
+        $container = $this->createContainer();
+
+        $config = $this->getBaseConfig();
+        $config['proxy_client']['varnish']['guzzle_client'] = 'my_guzzle';
+        $this->extension->load(array($config), $container);
+
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
+        $def = $container->getDefinition('fos_http_cache.proxy_client.varnish');
+        $this->assertEquals('my_guzzle', $def->getArgument(2));
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testConfigLoadVarnishInvalidUrl()
+    {
+        $container = $this->createContainer();
+        $config = $this->getBaseConfig();
+        $config['proxy_client']['varnish']['base_url'] = 'ftp:not a valid url';
+
+        $this->extension->load(array($config), $container);
+    }
+
     public function testConfigLoadNginx()
     {
         $container = $this->createContainer();

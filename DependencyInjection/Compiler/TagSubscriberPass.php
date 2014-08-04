@@ -15,20 +15,20 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Check for required ControllerListener if TagListener is enabled
+ * Check for required ControllerListener if TagSubscriber is enabled
  */
-class TagListenerPass implements CompilerPassInterface
+class TagSubscriberPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->has('fos_http_cache.tag_listener')
+        if ($container->has('fos_http_cache.event_listener.tag')
             && !$container->has('sensio_framework_extra.controller.listener')
         ) {
             throw new \RuntimeException(
-                'The TagListener requires SensioFrameworkExtraBundle’s ControllerListener. '
+                'Tag support requires SensioFrameworkExtraBundle’s ControllerListener for the annotations. '
                 . 'Please install sensio/framework-extra-bundle and add it to your AppKernel.'
             );
         }

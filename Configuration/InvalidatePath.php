@@ -23,6 +23,11 @@ class InvalidatePath extends ConfigurationAnnotation
      */
     private $paths;
 
+    /**
+     * Handle path given without explicit key.
+     *
+     * @param string $data
+     */
     public function setValue($data)
     {
         $this->setPaths((is_array($data) ? $data: array($data)));
