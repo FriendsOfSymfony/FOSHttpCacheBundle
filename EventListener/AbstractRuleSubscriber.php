@@ -28,17 +28,12 @@ class AbstractRuleSubscriber
      *
      * @param RuleMatcherInterface $ruleMatcher The headers apply to responses matched by this matcher.
      * @param array                $settings    An array of header configuration.
-     * @param int                  $priority    Optional priority of this matcher. Higher priority is applied first.
      */
     public function addRule(
         RuleMatcherInterface $ruleMatcher,
-        array $settings = array(),
-        $priority = 0
+        array $settings = array()
     ) {
-        if (!isset($this->rulesMap[$priority])) {
-            $this->rulesMap[$priority] = array();
-        }
-        $this->rulesMap[$priority][] = array($ruleMatcher, $settings);
+        $this->rulesMap[] = array($ruleMatcher, $settings);
     }
 
     /**
@@ -51,28 +46,12 @@ class AbstractRuleSubscriber
      */
     protected function matchRule(Request $request, Response $response)
     {
-        foreach ($this->getRules() as $elements) {
+        foreach ($this->rulesMap as $elements) {
             if ($elements[0]->matches($request, $response)) {
                 return $elements[1];
             }
         }
 
         return false;
-    }
-
-    /**
-     * Get the rules ordered by priority.
-     *
-     * @return RuleMatcherInterface[] of array with rule matcher, settings
-     */
-    private function getRules()
-    {
-        $sortedRules = array();
-        krsort($this->rulesMap);
-        foreach ($this->rulesMap as $rules) {
-            $sortedRules = array_merge($sortedRules, $rules);
-        }
-
-        return $sortedRules;
     }
 }
