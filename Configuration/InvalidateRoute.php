@@ -29,6 +29,11 @@ class InvalidateRoute extends ConfigurationAnnotation
      */
     private $params;
 
+    /**
+     * Handle route name given without explicit key.
+     *
+     * @param string $value The route name.
+     */
     public function setValue($value)
     {
         $this->setName($value);
@@ -67,12 +72,14 @@ class InvalidateRoute extends ConfigurationAnnotation
                         print_r($value, true)
                     ));
                 }
+                // @codeCoverageIgnoreStart
                 if (!class_exists('Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
                     throw new InvalidConfigurationException(sprintf(
                         '@InvalidateRoute param %s uses an expression but the ExpressionLanguage is not available.',
                         $name
                     ));
                 }
+                // @codeCoverageIgnoreEnd
             }
         }
 

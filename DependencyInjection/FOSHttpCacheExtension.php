@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
-use FOS\HttpCacheBundle\DependencyInjection\Compiler\UserContextListenerPass;
+use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -174,7 +174,7 @@ class FOSHttpCacheExtension extends Extension
 
         if ($config['role_provider']) {
             $container->getDefinition($this->getAlias().'.user_context.role_provider')
-                ->addTag(UserContextListenerPass::TAG_NAME)
+                ->addTag(HashGeneratorPass::TAG_NAME)
                 ->setAbstract(false);
         }
     }

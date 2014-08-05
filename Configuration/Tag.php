@@ -23,6 +23,11 @@ class Tag extends ConfigurationAnnotation
     private $tags;
     private $expression;
 
+    /**
+     * Handle tags given without explicit key.
+     *
+     * @param string|array $data
+     */
     public function setValue($data)
     {
         $this->setTags(is_array($data) ? $data: array($data));
@@ -33,9 +38,11 @@ class Tag extends ConfigurationAnnotation
      */
     public function setExpression($expression)
     {
+        // @codeCoverageIgnoreStart
         if (!class_exists('Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
             throw new InvalidConfigurationException('@Tag param %s uses an expression but the ExpressionLanguage is not available.');
         }
+        // @codeCoverageIgnoreEnd
         $this->expression = $expression;
     }
 
