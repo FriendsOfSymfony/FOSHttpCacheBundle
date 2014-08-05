@@ -11,10 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\Configuration;
 
-use FOS\HttpCacheBundle\Command\InvalidatePathCommand;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
-use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Tester\CommandTester;
 
 /**
  * Test the @InvalidateRoute annotation.

@@ -6,4 +6,3 @@ fos_http_cache:
             base_url: /test
             purge_location: /purge
             guzzle_client: acme.guzzle.nginx
-

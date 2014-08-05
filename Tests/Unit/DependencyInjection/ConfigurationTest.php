@@ -268,7 +268,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             try {
                 $this->assertProcessedConfigurationEquals(array(), array($format));
                 $this->fail('No exception thrown on invalid configuration');
-            } catch(InvalidConfigurationException $e) {
+            } catch (InvalidConfigurationException $e) {
                 $this->assertContains('need to configure a proxy_client', $e->getMessage());
             }
         }
@@ -288,7 +288,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             try {
                 $this->assertProcessedConfigurationEquals(array(), array($format));
                 $this->fail('No exception thrown on invalid configuration');
-            } catch(InvalidConfigurationException $e) {
+            } catch (InvalidConfigurationException $e) {
                 $this->assertContains('cache_manager needed for tag handling', $e->getMessage());
             }
         }
@@ -308,7 +308,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             try {
                 $this->assertProcessedConfigurationEquals(array(), array($format));
                 $this->fail('No exception thrown on invalid configuration');
-            } catch(InvalidConfigurationException $e) {
+            } catch (InvalidConfigurationException $e) {
                 $this->assertContains('cache_manager needed for invalidation handling', $e->getMessage());
             }
         }
@@ -329,7 +329,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             try {
                 $this->assertProcessedConfigurationEquals(array(), array($format));
                 $this->fail('No exception thrown on invalid configuration');
-            } catch(InvalidConfigurationException $e) {
+            } catch (InvalidConfigurationException $e) {
                 $this->assertContains('need to enable the cache_manager and tags to use rules', $e->getMessage());
             }
         }
@@ -350,7 +350,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             try {
                 $this->assertProcessedConfigurationEquals(array(), array($format));
                 $this->fail('No exception thrown on invalid configuration');
-            } catch(InvalidConfigurationException $e) {
+            } catch (InvalidConfigurationException $e) {
                 $this->assertContains('need to enable the cache_manager and invalidation to use rules', $e->getMessage());
             }
         }
@@ -370,7 +370,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             try {
                 $this->assertProcessedConfigurationEquals(array(), array($format));
                 $this->fail('No exception thrown on invalid configuration');
-            } catch(InvalidConfigurationException $e) {
+            } catch (InvalidConfigurationException $e) {
                 $this->assertContains('Failed to parse time string', $e->getMessage());
             }
         }
@@ -393,7 +393,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             try {
                 $this->assertProcessedConfigurationEquals(array(), array($format));
                 $this->fail('No exception thrown on invalid configuration');
-            } catch(InvalidConfigurationException $e) {
+            } catch (InvalidConfigurationException $e) {
                 $this->assertContains('may not set both additional_cacheable_status and match_response', $e->getMessage());
             }
         }

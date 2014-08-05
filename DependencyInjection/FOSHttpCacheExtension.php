@@ -61,7 +61,6 @@ class FOSHttpCacheExtension extends Extension
             $loader->load('cache_manager.xml');
         }
 
-
         if ($config['tags']['enabled']) {
             // true or auto
             $loader->load('tag_listener.xml');

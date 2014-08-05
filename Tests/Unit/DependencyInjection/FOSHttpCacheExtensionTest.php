@@ -344,7 +344,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         // first argument should be the reference to the matcher
         $reference = $ruleDefinition->getArgument(0);
         $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $reference);
-        $this->assertEquals($matcherId, (string)$reference);
+        $this->assertEquals($matcherId, (string) $reference);
 
         return $matcherDefinition;
     }
