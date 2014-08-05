@@ -29,7 +29,7 @@ Documentation is available at [Read the Docs](http://foshttpcachebundle.readthed
 Roadmap
 -------
 
-See the [GitHub milestones](https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/issues/milestones).
+See the [GitHub milestones](https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/milestones).
 
 License
 -------
