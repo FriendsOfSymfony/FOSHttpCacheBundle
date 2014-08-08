@@ -29,17 +29,9 @@
 
     <listeners>
         <listener class="\Mockery\Adapter\Phpunit\TestListener" />
-        <listener class="\FOS\HttpCacheBundle\Tests\Functional\WebServerListener">
-            <arguments>
-                <string>functional</string>
-            </arguments>
-        </listener>
     </listeners>
 
     <php>
         <server name="KERNEL_DIR" value="./Tests/Functional/Fixtures/app" />
-        <const name="WEB_SERVER_HOST" value="localhost" />
-        <const name="WEB_SERVER_PORT" value="8000" />
-        <const name="WEB_SERVER_DOCROOT" value="./Tests/Functional/Fixtures/web" />
     </php>
 </phpunit>
