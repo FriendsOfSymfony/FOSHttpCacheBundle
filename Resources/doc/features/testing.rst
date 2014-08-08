@@ -41,7 +41,7 @@ methods for cache testing::
 Test Client
 ^^^^^^^^^^^
 
-The ``getResponse()`` method calls ``getClient()`` to retrieve a test client. You
+The ``getResponse()`` method calls ``getHttpClient()`` to retrieve a test client. You
 can use this client yourself to customise the requests. Note that the test
 client must be :doc:`enabled in your configuration </reference/configuration/test>`.
 By default, it is enabled when you access your application in debug mode and

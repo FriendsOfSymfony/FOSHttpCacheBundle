@@ -12,7 +12,6 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\Test;
 
 use FOS\HttpCacheBundle\Test\ProxyTestCase;
-use Symfony\Bundle\FrameworkBundle\Tests\Functional\WebTestCase;
 
 class ProxyTestCaseTest extends ProxyTestCase
 {
@@ -26,12 +25,12 @@ class ProxyTestCaseTest extends ProxyTestCase
         parent::setUp();
     }
 
-    public function testGetProxyClient()
+    public function testGetHttpClient()
     {
-        $this->assertInstanceOf(
-            '\FOS\HttpCache\ProxyClient\ProxyClientInterface',
-            $this->getProxyClient()
-        );
+        $client = $this->getHttpClient();
+
+        $this->assertInstanceOf('\Guzzle\Http\Client', $client);
+        $this->assertEquals('http://localhost:8080', $client->getBaseUrl());
     }
 
     public function testAssertHit()

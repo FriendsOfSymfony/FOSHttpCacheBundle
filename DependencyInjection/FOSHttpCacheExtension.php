@@ -217,13 +217,16 @@ class FOSHttpCacheExtension extends Extension
     {
         $loader->load('varnish.xml');
         foreach ($config['servers'] as $url) {
-            $this->validateUrl($url, 'Not a valid varnish server address: "%s"');
+            $this->validateUrl($url, 'Not a valid Varnish server address: "%s"');
         }
         if (!empty($config['base_url'])) {
-            $this->validateUrl($config['base_url'], 'Not a valid base path: "%s"');
+            $baseUrl = $this->prefixSchema($config['base_url'], 'Not a valid base path: "%s"');
+            $this->validateUrl($baseUrl, 'Not a valid base path: "%s"');
+        } else {
+            $baseUrl = null;
         }
         $container->setParameter($this->getAlias() . '.proxy_client.varnish.servers', $config['servers']);
-        $container->setParameter($this->getAlias() . '.proxy_client.varnish.base_url', $config['base_url']);
+        $container->setParameter($this->getAlias() . '.proxy_client.varnish.base_url', $baseUrl);
         if ($config['guzzle_client']) {
             $container->getDefinition($this->getAlias() . '.proxy_client.varnish')
                 ->addArgument(
@@ -237,13 +240,15 @@ class FOSHttpCacheExtension extends Extension
     {
         $loader->load('nginx.xml');
         foreach ($config['servers'] as $url) {
-            $this->validateUrl($url, 'Not a valid nginx server address: "%s"');
+            $this->validateUrl($url, 'Not a valid Nginx server address: "%s"');
         }
         if (!empty($config['base_url'])) {
-            $this->validateUrl($config['base_url'], 'Not a valid base path: "%s"');
+            $baseUrl = $this->prefixSchema($config['base_url'], 'Not a valid base path: "%s"');
+        } else {
+            $baseUrl = null;
         }
         $container->setParameter($this->getAlias() . '.proxy_client.nginx.servers', $config['servers']);
-        $container->setParameter($this->getAlias() . '.proxy_client.nginx.base_url', $config['base_url']);
+        $container->setParameter($this->getAlias() . '.proxy_client.nginx.base_url', $baseUrl);
         $container->setParameter($this->getAlias() . '.proxy_client.nginx.purge_location', $config['purge_location']);
     }
 
@@ -342,13 +347,21 @@ class FOSHttpCacheExtension extends Extension
 
     private function validateUrl($url, $msg)
     {
+        $prefixed = $this->prefixSchema($url);
+
+        if (!$parts = parse_url($prefixed)) {
+            throw new InvalidConfigurationException(sprintf($msg, $url));
+        }
+    }
+
+
+    private function prefixSchema($url)
+    {
         if (false === strpos($url, '://')) {
             $url = sprintf('%s://%s', 'http', $url);
         }
 
-        if (!$parts = parse_url($url)) {
-            throw new InvalidConfigurationException(sprintf($msg, $url));
-        }
+        return $url;
     }
 
     private function getDefault(array $config)

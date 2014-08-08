@@ -4,9 +4,11 @@ namespace FOS\HttpCacheBundle\Test;
 
 use FOS\HttpCache\Test\PHPUnit\IsCacheHitConstraint;
 use FOS\HttpCache\Test\PHPUnit\IsCacheMissConstraint;
-use FOS\HttpCache\Test\ProxyTestCaseInterface;
+use FOS\HttpCache\Test\Proxy\ProxyInterface;
+use Guzzle\Http\ClientInterface;
 use Guzzle\Http\Message\Response;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class that you can extend to run integration tests against a live
@@ -57,21 +59,28 @@ abstract class ProxyTestCase extends WebTestCase
     }
 
     /**
-     * Get test client
+     * Get HTTP test client for making requests to your application through a
+     * live caching proxy
      *
-     * @return \Guzzle\Http\Client
+     * @return ClientInterface
      */
-    public function getClient()
+    protected function getHttpClient()
     {
         return static::getContainer()->get('fos_http_cache.test.default_client');
     }
 
     /**
-     * {@inheritdoc}
+     * Get a response from your application through a live caching proxy
+     *
+     * @param string $url     Request URL (absolute or relative)
+     * @param array  $headers Request HTTP headers
+     * @param array  $options Request options
+     *
+     * @return Response
      */
-    public function getResponse($url, array $headers = array(), $options = array())
+    protected function getResponse($url, array $headers = array(), $options = array())
     {
-        return $this->getClient()->get($url, $headers, $options)->send();
+        return $this->getHttpClient()->get($url, $headers, $options)->send();
     }
 
     /**
@@ -94,7 +103,7 @@ abstract class ProxyTestCase extends WebTestCase
     /**
      * Get proxy server
      *
-     * @return \FOS\HttpCache\Test\Proxy\ProxyInterface
+     * @return ProxyInterface
      *
      * @throws \RuntimeException If proxy server is not configured
      */
@@ -110,16 +119,6 @@ abstract class ProxyTestCase extends WebTestCase
     }
 
     /**
-     * Get default caching proxy client
-     *
-     * @return \FOS\HttpCache\ProxyClient\ProxyClientInterface
-     */
-    protected function getProxyClient()
-    {
-        return static::getContainer()->get('fos_http_cache.default_proxy_client');
-    }
-
-    /**
      * Get HTTP header that shows whether the response was a cache hit or miss
      *
      * @return string
@@ -132,7 +131,7 @@ abstract class ProxyTestCase extends WebTestCase
     /**
      * Get container
      *
-     * @return \Symfony\Component\DependencyInjection\ContainerInterface
+     * @return ContainerInterface
      */
     protected static function getContainer()
     {
