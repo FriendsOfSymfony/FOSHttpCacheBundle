@@ -57,6 +57,10 @@ class FOSHttpCacheExtension extends Extension
             $this->loadProxyClient($container, $loader, $config['proxy_client']);
         }
 
+        if (isset($config['test'])) {
+            $this->loadTest($container, $loader, $config['test']);
+        }
+
         if ($config['cache_manager']['enabled']) {
             $loader->load('cache_manager.xml');
         }
@@ -196,34 +200,33 @@ class FOSHttpCacheExtension extends Extension
 
     private function loadProxyClient(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
-        $default = empty($config['default']) ? false : $config['default'];
         if (isset($config['varnish'])) {
             $this->loadVarnish($container, $loader, $config['varnish']);
-            if (!$default) {
-                $default = 'varnish';
-            }
         }
         if (isset($config['nginx'])) {
             $this->loadNginx($container, $loader, $config['nginx']);
-            if (!$default) {
-                $default = 'nginx';
-            }
         }
 
-        $container->setAlias($this->getAlias() . '.default_proxy_client', $this->getAlias() . '.proxy_client.' . $default);
+        $container->setAlias(
+            $this->getAlias() . '.default_proxy_client',
+            $this->getAlias() . '.proxy_client.' . $this->getDefault($config)
+        );
     }
 
     private function loadVarnish(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
         $loader->load('varnish.xml');
         foreach ($config['servers'] as $url) {
-            $this->validateUrl($url, 'Not a valid varnish server address: "%s"');
+            $this->validateUrl($url, 'Not a valid Varnish server address: "%s"');
         }
         if (!empty($config['base_url'])) {
-            $this->validateUrl($config['base_url'], 'Not a valid base path: "%s"');
+            $baseUrl = $this->prefixSchema($config['base_url'], 'Not a valid base path: "%s"');
+            $this->validateUrl($baseUrl, 'Not a valid base path: "%s"');
+        } else {
+            $baseUrl = null;
         }
         $container->setParameter($this->getAlias() . '.proxy_client.varnish.servers', $config['servers']);
-        $container->setParameter($this->getAlias() . '.proxy_client.varnish.base_url', $config['base_url']);
+        $container->setParameter($this->getAlias() . '.proxy_client.varnish.base_url', $baseUrl);
         if ($config['guzzle_client']) {
             $container->getDefinition($this->getAlias() . '.proxy_client.varnish')
                 ->addArgument(
@@ -237,14 +240,83 @@ class FOSHttpCacheExtension extends Extension
     {
         $loader->load('nginx.xml');
         foreach ($config['servers'] as $url) {
-            $this->validateUrl($url, 'Not a valid nginx server address: "%s"');
+            $this->validateUrl($url, 'Not a valid Nginx server address: "%s"');
         }
         if (!empty($config['base_url'])) {
-            $this->validateUrl($config['base_url'], 'Not a valid base path: "%s"');
+            $baseUrl = $this->prefixSchema($config['base_url'], 'Not a valid base path: "%s"');
+        } else {
+            $baseUrl = null;
         }
         $container->setParameter($this->getAlias() . '.proxy_client.nginx.servers', $config['servers']);
-        $container->setParameter($this->getAlias() . '.proxy_client.nginx.base_url', $config['base_url']);
+        $container->setParameter($this->getAlias() . '.proxy_client.nginx.base_url', $baseUrl);
         $container->setParameter($this->getAlias() . '.proxy_client.nginx.purge_location', $config['purge_location']);
+    }
+
+    private function loadTest(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        $container->setParameter($this->getAlias() . '.test.cache_header', $config['cache_header']);
+
+        if ($config['proxy_server']) {
+            $this->loadProxyServer($container, $loader, $config['proxy_server']);
+        }
+
+        if (isset($config['client']['varnish']['enabled'])
+            || isset($config['client']['nginx']['enabled'])) {
+            $loader->load('test_client.xml');
+
+            if ($config['client']['varnish']['enabled']) {
+                $container->getDefinition($this->getAlias() . '.test.client.varnish')
+                    ->setAbstract(false);
+            }
+
+            if ($config['client']['nginx']['enabled']) {
+                $container->getDefinition($this->getAlias() . '.test.client.nginx')
+                    ->setAbstract(false);
+            }
+
+            $container->setAlias(
+                $this->getAlias() . '.test.default_client',
+                $this->getAlias() . '.test.client.' . $this->getDefault($config['client'])
+            );
+        }
+    }
+
+    private function loadProxyServer(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        if (isset($config['varnish'])) {
+            $this->loadVarnishProxyServer($container, $loader, $config['varnish']);
+        }
+
+        if (isset($config['nginx'])) {
+            $this->loadNginxProxyServer($container, $loader, $config['varnish']);
+        }
+
+        $container->setAlias(
+            $this->getAlias() . '.test.default_proxy_server',
+            $this->getAlias() . '.test.proxy_server.' . $this->getDefault($config)
+        );
+    }
+
+    private function loadVarnishProxyServer(ContainerBuilder $container, XmlFileLoader $loader, $config)
+    {
+        $loader->load('varnish_proxy.xml');
+        foreach ($config as $key => $value) {
+            $container->setParameter(
+                $this->getAlias() . '.test.proxy_server.varnish.' . $key,
+                $value
+            );
+        }
+    }
+
+    private function loadNginxProxyServer(ContainerBuilder $container, XmlFileLoader $loader, $config)
+    {
+        $loader->load('nginx_proxy.xml');
+        foreach ($config as $key => $value) {
+            $container->setParameter(
+                $this->getAlias() . '.test.proxy_server.nginx.' . $key,
+                $value
+            );
+        }
     }
 
     private function loadTagRules(ContainerBuilder $container, array $config)
@@ -275,12 +347,35 @@ class FOSHttpCacheExtension extends Extension
 
     private function validateUrl($url, $msg)
     {
+        $prefixed = $this->prefixSchema($url);
+
+        if (!$parts = parse_url($prefixed)) {
+            throw new InvalidConfigurationException(sprintf($msg, $url));
+        }
+    }
+
+
+    private function prefixSchema($url)
+    {
         if (false === strpos($url, '://')) {
             $url = sprintf('%s://%s', 'http', $url);
         }
 
-        if (!$parts = parse_url($url)) {
-            throw new InvalidConfigurationException(sprintf($msg, $url));
+        return $url;
+    }
+
+    private function getDefault(array $config)
+    {
+        if (isset($config['default'])) {
+            return $config['default'];
+        }
+
+        if (isset($config['varnish'])) {
+            return 'varnish';
+        }
+
+        if (isset($config['nginx'])) {
+            return 'nginx';
         }
     }
 }

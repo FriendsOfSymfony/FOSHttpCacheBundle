@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="fos_http_cache.test.proxy_server.varnish.class">FOS\HttpCache\Test\Proxy\VarnishProxy</parameter>
+    </parameters>
+
+    <services>
+        <service id="fos_http_cache.test.proxy_server.varnish"
+                 class="%fos_http_cache.test.proxy_server.varnish.class%">
+            <argument>%fos_http_cache.test.proxy_server.varnish.config_file%</argument>
+            <call method="setBinary">
+                <argument>%fos_http_cache.test.proxy_server.varnish.binary%</argument>
+            </call>
+            <call method="setPort">
+                <argument>%fos_http_cache.test.proxy_server.varnish.port%</argument>
+            </call>
+            <call method="setIp">
+                <argument>%fos_http_cache.test.proxy_server.varnish.ip%</argument>
+            </call>
+        </service>
+    </services>
+
+</container>

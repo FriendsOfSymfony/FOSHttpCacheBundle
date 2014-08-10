@@ -33,9 +33,17 @@ base_url
 
 **type**: ``string``
 
-This must match the web host name clients are using when connecting
-to the caching proxy. Optionally can contain a base path to your
-application. Used for invalidation with paths.
+The hostname (or base URL) where users access your web application. The base
+URL may contain a path. If you access your web application on a port other than
+80, include that port:
+
+.. code-block:: yaml
+
+    # app/config/config.yml
+    fos_http_cache:
+        proxy_client:
+            varnish:
+                base_url: yourwebsite.com:8000
 
 .. warning::
 

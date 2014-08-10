@@ -17,6 +17,7 @@ fos_http_cache:
   proxy_client:
     varnish:
       servers: 127.0.0.1
+      base_url: localhost:8080
   tags:
     rules:
       -
@@ -29,6 +30,10 @@ fos_http_cache:
       - Cookie
       - Authorization
     role_provider: ~
+  test:
+    proxy_server:
+      varnish:
+        config_file: varnish.vcl
 
 monolog:
   handlers:

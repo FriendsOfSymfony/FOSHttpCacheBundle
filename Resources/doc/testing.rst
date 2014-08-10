@@ -1,6 +1,9 @@
 Testing
 =======
 
+Testing the Bundle
+------------------
+
 To run this bundle’s tests, clone the repository, install vendors, and invoke
 PHPUnit:
 
