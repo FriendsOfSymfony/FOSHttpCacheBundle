@@ -74,12 +74,13 @@ class CacheManager extends CacheInvalidator
      *
      * @param string $name       Route name
      * @param array  $parameters Route parameters (optional)
+     * @param array  $headers    Extra HTTP headers to send to the caching proxy (optional)
      *
      * @return $this
      */
-    public function invalidateRoute($name, array $parameters = array())
+    public function invalidateRoute($name, array $parameters = array(), array $headers = array())
     {
-        $this->invalidatePath($this->urlGenerator->generate($name, $parameters));
+        $this->invalidatePath($this->urlGenerator->generate($name, $parameters), $headers);
 
         return $this;
     }
@@ -89,12 +90,13 @@ class CacheManager extends CacheInvalidator
      *
      * @param string $route      Route name
      * @param array  $parameters Route parameters (optional)
+     * @param array  $headers    Extra HTTP headers to send to the caching proxy (optional)
      *
      * @return $this
      */
-    public function refreshRoute($route, array $parameters = array())
+    public function refreshRoute($route, array $parameters = array(), array $headers = array())
     {
-        $this->refreshPath($this->urlGenerator->generate($route, $parameters));
+        $this->refreshPath($this->urlGenerator->generate($route, $parameters), $headers);
 
         return $this;
     }

@@ -18,7 +18,7 @@ Cache Manager
 -------------
 
 To invalidate single paths, URLs and routes manually, use the
-``invalidatePath($path)`` and ``invalidateRoute($route, $params)`` methods on
+``invalidatePath($path, $headers)`` and ``invalidateRoute($route, $params, $headers)`` methods on
 the cache manager::
 
     $cacheManager = $container->get('fos_http_cache.cache_manager');
@@ -32,6 +32,10 @@ the cache manager::
     // Invalidate a route
     $cacheManager->invalidateRoute('user_details', array('id' => 123))->flush();
 
+    // Invalidate a route or path with headers
+    $cacheManager->invalidatePath('/users', array('X-Foo' => 'bar'))->flush();
+    $cacheManager->invalidateRoute('user_details', array('id' => 123), array('X-Foo' => 'bar'))->flush();
+
 To invalidate multiple representations matching a regular expression, call
 ``invalidateRegex($path, $contentType, $hosts)``::
 
@@ -40,6 +44,13 @@ To invalidate multiple representations matching a regular expression, call
 To refresh paths and routes, you can use ``refreshPath($path)`` and
 ``refreshRoute($route, $params)`` in a similar manner. See
 :doc:`/reference/cache-manager` for more information.
+
+
+By default, the proxy clients instantiate a `Guzzle client`_ to communicate
+with the caching proxy. If you need to customize the requests, for example to
+send a basic authentication header, you can inject a custom Guzzle client::
+See the
+:doc:`/reference/configuration/proxy-client#custom-guzzle-client` configuration reference.
 
 .. _invalidation configuration:
 
