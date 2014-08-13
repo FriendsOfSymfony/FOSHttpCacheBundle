@@ -27,8 +27,9 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
     public function testInvalidateRoute()
     {
         $httpCache = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface')
-            ->shouldReceive('purge')->once()->with('/my/route')
-            ->shouldReceive('purge')->once()->with('/route/with/params/id/123')
+            ->shouldReceive('purge')->once()->with('/my/route', array())
+            ->shouldReceive('purge')->once()->with('/route/with/params/id/123', array())
+            ->shouldReceive('purge')->once()->with('/route/with/params/id/123', array('X-Foo' => 'bar'))
             ->shouldReceive('flush')->once()
             ->getMock();
 
@@ -46,6 +47,7 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
 
         $cacheManager->invalidateRoute('my_route')
             ->invalidateRoute('route_with_params', array('id' => 123))
+            ->invalidateRoute('route_with_params', array('id' => 123), array('X-Foo' => 'bar'))
             ->flush();
     }
 
@@ -54,6 +56,7 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
         $httpCache = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface')
             ->shouldReceive('refresh')->once()->with('/my/route', null)
             ->shouldReceive('refresh')->once()->with('/route/with/params/id/123', null)
+            ->shouldReceive('refresh')->once()->with('/route/with/params/id/123', array('X-Foo' => 'bar'))
             ->shouldReceive('flush')->never()
             ->getMock();
 
@@ -72,6 +75,7 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
         $cacheManager
             ->refreshRoute('my_route')
             ->refreshRoute('route_with_params', array('id' => 123))
+            ->refreshRoute('route_with_params', array('id' => 123), array('X-Foo' => 'bar'))
         ;
     }
 
