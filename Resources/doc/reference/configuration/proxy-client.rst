@@ -26,7 +26,7 @@ servers
 
 Comma-separated list of IP addresses or host names of your
 caching proxy servers. The port those servers will be contacted
-defaults to 6081, you can specify a different port with ``:<port>``.
+defaults to 80; you can specify a different port with ``:<port>``.
 
 base_url
 """"""""
