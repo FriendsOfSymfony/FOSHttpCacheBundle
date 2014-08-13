@@ -21,7 +21,7 @@ checked in the order specified, where the first match wins.
                             public: false
                             max_age: 0
                             s_maxage: 0
-                            last_modified: "-1 hour"
+                        last_modified: "-1 hour"
                         vary: [Accept-Encoding, Accept-Language]
 
                 # match all actions of a specific controller
@@ -34,7 +34,7 @@ checked in the order specified, where the first match wins.
                             public: true
                             max_age: 15
                             s_maxage: 30
-                            last_modified: "-1 hour"
+                        last_modified: "-1 hour"
 
                 -
                     match:
@@ -44,7 +44,7 @@ checked in the order specified, where the first match wins.
                             public: true
                             max_age: 64000
                             s_maxage: 64000
-                            last_modified: "-1 hour"
+                        last_modified: "-1 hour"
                         vary: [Accept-Encoding, Accept-Language]
 
                 # match everything to set defaults
@@ -56,7 +56,7 @@ checked in the order specified, where the first match wins.
                             public: true
                             max_age: 15
                             s_maxage: 30
-                            last_modified: "-1 hour"
+                        last_modified: "-1 hour"
 
 rules
 -----
