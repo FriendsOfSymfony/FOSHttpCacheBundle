@@ -15,7 +15,7 @@ All criteria are regular expressions. For instance:
         path: ^/$
 
 host
-""""
+----
 
 **type**: ``string``
 
@@ -30,7 +30,7 @@ serve more than one host from your Symfony application.
     your caching proxy never caches the editing domain.
 
 path
-""""
+----
 
 **type**: ``string``
 
@@ -38,7 +38,7 @@ For example, ``path: ^/`` will match every request. To only match the home
 page, use ``path: ^/$``.
 
 methods
-"""""""
+-------
 
 **type**: ``array``
 
@@ -52,7 +52,7 @@ even when you set the methods here:
         methods: [PUT, DELETE]
 
 ips
-"""
+---
 
 **type**: ``array``
 
@@ -67,15 +67,43 @@ client IP addresses.
     documentation.
 
 attributes
-""""""""""
+----------
 
 **type**: ``array``
 
-An array to filter on route attributes. the most common use case would be
-``_controller`` when you need caching rules applied to a controller. Note that
-this is the controller name used in the route, so it depends on your route
-configuration whether you need ``Bundle:Name:action`` or
-``service.id:methodName`` (if you defined your `controllers as services`_).
+An array of request attributes to match against. Each attribute is interpreted
+as a regular expression.
+
+_controller
+^^^^^^^^^^^
+
+**type**: ``string``
+
+Controller name regular expression. Note that this is the controller name used
+in the route, so it depends on your route configuration whether you need
+``Bundle:Name:action`` or ``service.id:methodName`` (if you defined your
+`controllers as services`_).
+
+_route
+^^^^^^
+
+**type**: ``string``
+
+Route name regular expression. To match a single route:
+
+.. code-block:: yaml
+
+    match:
+        attributes:
+            route: ^articles_index$
+
+To match multiple routes:
+
+.. code-block:: yaml
+
+    match:
+        attributes:
+            route: ^articles.*|news$
 
 Note that even for the request attributes, your criteria are interpreted as
 regular expressions.
@@ -88,7 +116,7 @@ regular expressions.
 .. _additional_cacheable_status:
 
 additional_cacheable_status
-"""""""""""""""""""""""""""
+---------------------------
 
 **type**: ``array``
 
@@ -103,7 +131,7 @@ the rule.
 .. _match_response:
 
 match_response
-""""""""""""""
+--------------
 
 **type**: ``string``
 
