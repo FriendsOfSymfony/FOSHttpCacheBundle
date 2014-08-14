@@ -28,7 +28,9 @@ before_script:
   - sh -c 'if [ "$SYMFONY_VERSION" != "" ]; then composer require --dev --no-update symfony/symfony=$SYMFONY_VERSION; fi;'
   - composer install
 
-script: phpunit --coverage-clover=coverage.clover
+script:
+  - phpunit --coverage-clover=coverage.clover
+  - make -C Resources/doc SPHINXOPTS='-nW' html
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
