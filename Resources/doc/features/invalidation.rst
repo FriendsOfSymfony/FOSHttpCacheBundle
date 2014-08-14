@@ -45,13 +45,6 @@ To refresh paths and routes, you can use ``refreshPath($path)`` and
 ``refreshRoute($route, $params)`` in a similar manner. See
 :doc:`/reference/cache-manager` for more information.
 
-
-By default, the proxy clients instantiate a `Guzzle client`_ to communicate
-with the caching proxy. If you need to customize the requests, for example to
-send a basic authentication header, you can inject a custom Guzzle client::
-See the
-:doc:`/reference/configuration/proxy-client#custom-guzzle-client` configuration reference.
-
 .. _invalidation configuration:
 
 Configuration
