@@ -41,9 +41,15 @@ To invalidate multiple representations matching a regular expression, call
 
     $cacheManager->invalidateRegex('.*', 'image/png', array('example.com'));
 
-To refresh paths and routes, you can use ``refreshPath($path)`` and
-``refreshRoute($route, $params)`` in a similar manner. See
+To refresh paths and routes, you can use ``refreshPath($path, $headers)`` and
+``refreshRoute($route, $params, $headers)`` in a similar manner. See
 :doc:`/reference/cache-manager` for more information.
+
+.. tip::
+
+    If you want to add a header (such as ``Authorization``) to *all*
+    invalidation requests, you can use a
+    :ref:`custom Guzzle client <custom guzzle client>` instead.
 
 .. _invalidation configuration:
 
