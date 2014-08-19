@@ -146,10 +146,11 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
      */
     private function evaluateTag($expression, Request $request)
     {
-        return $this->getExpressionLanguage()->evaluate(
-            $expression,
-            $request->attributes->all()
-        );
+        $values = $request->attributes->all();
+        // if there is an attribute called "request", it needs to be accessed through the request.
+        $values['request'] = $request;
+
+        return $this->getExpressionLanguage()->evaluate($expression, $values);
     }
 
     /**

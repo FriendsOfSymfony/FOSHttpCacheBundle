@@ -59,6 +59,9 @@ route ``articles`` with the ``number`` parameter set to ``123``, do::
         // Assume $request->attributes->get('id') returns 123
     }
 
+The expression has access to all request attributes and the request itself
+under the name ``request``.
+
 See :doc:`/features/invalidation` for more information.
 
 .. _tag:

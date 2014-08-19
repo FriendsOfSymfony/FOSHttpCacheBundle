@@ -83,4 +83,7 @@ tag ``articles-123`` with the following configuration:
                     tags: [articles]
                     tag_expressions: ["'article-'~id"]
 
+The expression has access to all request attributes and the request itself
+under the name ``request``.
+
 You can combine ``tags`` and ``tag_expression`` in one rule.
