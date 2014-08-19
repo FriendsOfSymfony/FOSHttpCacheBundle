@@ -27,7 +27,7 @@ checked in the order specified, where the first match wins.
                 # match all actions of a specific controller
                 -
                     match:
-                        attributes: { _controller: ^AcmeBundle:Default:.* }
+                        attributes: { _controller: ^Acme\\TestBundle\\Controller\\DefaultController::.* }
                         additional_cacheable_status: [400]
                     headers:
                         cache_control:

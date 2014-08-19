@@ -81,8 +81,16 @@ _controller
 
 Controller name regular expression. Note that this is the controller name used
 in the route, so it depends on your route configuration whether you need
-``Bundle:Name:action`` or ``service.id:methodName`` (if you defined your
-`controllers as services`_).
+``Acme\\TestBundle\\Controller\\NameController::hello`` or ``acme_test.controller.name:helloAction``
+for `controllers as services`_.
+
+.. warning::
+
+    Symfony always expands the short notation in route definitions. Even if you
+    define your route as ``AcmeTestBundle:Name:hello`` you still need to use
+    the long form here. If you use a service however, the compiled route still
+    uses the service name and you need to match on that. If you mixed both, you
+    can do a regular expression like ``^(Acme\\TestBundle|acme_test.controller)``.
 
 _route
 ^^^^^^
