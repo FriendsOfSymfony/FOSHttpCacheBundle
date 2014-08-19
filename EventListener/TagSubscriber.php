@@ -142,7 +142,7 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
      * @param string  $expression
      * @param Request $request
      *
-     * @return string Evaluaated tag
+     * @return string Evaluated tag
      */
     private function evaluateTag($expression, Request $request)
     {
