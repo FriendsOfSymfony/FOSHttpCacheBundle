@@ -4,11 +4,12 @@ FOSHttpCacheBundle
 This is the documentation for the `FOSHttpCacheBundle <https://github.com/FriendsOfSymfony/FOSHttpCacheBundle>`_.
 Use the FOSHttpCacheBundle to:
 
-* set HTTP caching headers in your application configuration based on request
-  properties such as path and controller;
-* tag your response caches with annotations;
-* invalidate cached paths, routes and tags with the FOSHttpCache_ library;
-* differentiate cached content per user type.
+* Set path-based cache expiration headers via your app configuration;
+* Set up an invalidation scheme without writing PHP code;
+* Tag your responses and invalidate cache based on tags;
+* Send invalidation requests with minimal impact on performance with the FOSHttpCache_ library;
+* Differentiate caches based on user *type* (e.g. roles);
+* Easily implement your own HTTP cache client.
 
 Contents
 --------

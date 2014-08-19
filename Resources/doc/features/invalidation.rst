@@ -14,6 +14,14 @@ fetch a fresh copy from the backend application and serve that instead. By
     So for the following examples to work you must first
     :ref:`configure your proxy <foshttpcache:proxy-configuration>`.
 
+.. tip::
+
+    Invalidation can result in better performance compared to the validation
+    caching model, but is more complex. Read the
+    :ref:`Introduction to Cache Invalidation <foshttpcache:invalidation introduction>`
+    of the FOSHttpCache documentation to learn about the differences and decide
+    which model is right for you.
+
 Cache Manager
 -------------
 
