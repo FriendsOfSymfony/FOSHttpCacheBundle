@@ -214,7 +214,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->validate()
                     ->ifTrue(function ($v) {return !empty($v['match_response']) && !class_exists('Symfony\Component\ExpressionLanguage\ExpressionLanguage');})
-                    ->thenInvalid('Configured a match_response but ExpressionLanugage is not available')
+                    ->thenInvalid('Configured a match_response but ExpressionLanguage is not available')
                 ->end()
                 ->children()
                     ->scalarNode('path')
