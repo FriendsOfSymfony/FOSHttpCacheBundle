@@ -6,13 +6,9 @@ Installation
 
 This bundle is available on Packagist_. You can install it using Composer:
 
-.. todo::
-
-    Change version requirement to @stable.
-
 .. code-block:: bash
 
-    $ composer require friendsofsymfony/http-cache-bundle:@alpha
+    $ composer require friendsofsymfony/http-cache-bundle:~1.0
 
 Then add the bundle to your application:
 
