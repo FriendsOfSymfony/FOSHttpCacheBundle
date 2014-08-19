@@ -205,7 +205,6 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
         $values = $request->attributes->all();
         // if there is an attribute called "request", it needs to be accessed through the request.
         $values['request'] = $request;
-        $expressionLanguage = $this->getExpressionLanguage();
 
         foreach ($routes as $route) {
             $params = array();
@@ -214,7 +213,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
                 // Iterate over route params and try to evaluate their values
                 foreach ($route->getParams() as $key => $value) {
                     if (is_array($value)) {
-                        $value = $expressionLanguage->evaluate($value['expression'], $values);
+                        $value = $this->getExpressionLanguage()->evaluate($value['expression'], $values);
                     }
 
                     $params[$key] = $value;
