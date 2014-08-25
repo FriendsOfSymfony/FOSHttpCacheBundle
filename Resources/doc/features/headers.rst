@@ -7,7 +7,7 @@ You can configure HTTP caching headers based on request and response properties.
 This configuration approach is more convenient than `manually setting cache headers`_
 and an alternative to `setting caching headers through annotations`_.
 
-Set caching headers under under the ``cache_control`` configuration section,
+Set caching headers under the ``cache_control`` configuration section,
 which consists of a set of rules. When the request matches all criteria under
 ``match``, the headers under ``headers`` will be set on the response.
 
