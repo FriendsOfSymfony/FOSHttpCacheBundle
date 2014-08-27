@@ -14,9 +14,8 @@ that you set this to ``true`` so you are notified of missing dependencies:
 
     # app/config/config.yml
     fos_http_cache:
-        cache_manager:
-            tags:
-                enabled: true
+        tags:
+            enabled: true
 
 header
 ------
