@@ -8,6 +8,7 @@ for the bundle.
     :maxdepth: 2
 
     configuration/proxy-client
+    configuration/cache-manager
     configuration/headers
     configuration/invalidation
     configuration/tags
