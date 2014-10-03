@@ -49,6 +49,9 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     {
         $expectedConfiguration = array(
             'cache_control' => array(
+                'defaults' => array(
+                    'overwrite' => true,
+                ),
                 'rules' => array(
                     array(
                         'match' => array(
@@ -62,6 +65,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                             // TODO 'match_response' => '',
                         ),
                         'headers' => array(
+                            'overwrite' => false,
                             'cache_control' => array(
                                 'max_age' => 1,
                                 's_maxage' => 2,
@@ -220,8 +224,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     'headers' => array(
                         'reverse_proxy_ttl' => null,
                         'vary' => array('Cookie', 'Authorization'),
+                        'overwrite' => 'default',
                     ),
                 ),
+            ),
+            'defaults' => array(
+                'overwrite' => false,
             ),
         );
         $expectedConfiguration['proxy_client'] = array(
