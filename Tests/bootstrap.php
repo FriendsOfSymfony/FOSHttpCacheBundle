@@ -5,5 +5,5 @@ if (!file_exists($file)) {
     throw new RuntimeException("Install dependencies using composer to run the test suite.");
 }
 
-$autoload = require_once $file;
+$autoload = require $file;
 Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($autoload, 'loadClass'));
