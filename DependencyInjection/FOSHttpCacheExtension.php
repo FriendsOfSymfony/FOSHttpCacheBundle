@@ -66,6 +66,10 @@ class FOSHttpCacheExtension extends Extension
         }
 
         if ($config['tags']['enabled']) {
+            $bundles = $container->getParameter('kernel.bundles');
+            if (!isset($bundles['SensioFrameworkExtraBundle']) && true === $config['tags']['enabled']) {
+                throw new InvalidConfigurationException('Tag support requires the SensioFrameworkExtraBundle for annotations');
+            }
             // true or auto
             $loader->load('tag_listener.xml');
             if (!empty($config['tags']['rules'])) {
