@@ -6,7 +6,7 @@ parameters described in the ``match`` section, the headers as defined under
 ``headers`` will be set on the response, if they are not already set. Rules are
 checked in the order specified, where the first match wins.
 
-A global setting and a per rule basis ``overwrite`` setting allows to overwrite the
+A global setting and a per rule ``overwrite`` option allow to overwrite the
 cache headers even if they are already set.
 
 .. code-block:: yaml
