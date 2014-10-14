@@ -108,6 +108,11 @@ class FOSHttpCacheExtension extends Extension
 
         foreach ($config['rules'] as $rule) {
             $ruleMatcher = $this->parseRuleMatcher($container, $rule['match']);
+
+            if ($rule['headers']['defaults']['overwrite'] === 'default') {
+                $rule['headers']['defaults']['overwrite'] = $config['defaults']['overwrite'];
+            }
+
             $controlDefinition->addMethodCall('addRule', array($ruleMatcher, $rule['headers']))
             ;
         }

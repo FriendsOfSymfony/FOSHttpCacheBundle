@@ -1,6 +1,8 @@
 fos_http_cache:
 
     cache_control:
+        defaults:
+            overwrite: true
         rules:
             -
                 match:
@@ -18,6 +20,7 @@ fos_http_cache:
                         - 100
                         - 500
                 headers:
+                    overwrite: false
                     cache_control:
                         max_age: 1
                         s_maxage: 2

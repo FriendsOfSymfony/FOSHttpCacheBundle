@@ -22,6 +22,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->buildEvent();
         $headers = array(
+            'overwrite' => false,
             'last_modified' => '13.07.2003',
             'cache_control' => array(
                 'max_age' => '900',
@@ -43,7 +44,8 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testExtraHeaders()
     {
         $event = $this->buildEvent();
-        $headers = array('cache_control' => array(
+        $headers = array('overwrite' => false,
+                         'cache_control' => array(
             'must_revalidate' => true,
             'proxy_revalidate' => true,
             'no_transform' => true,
@@ -61,7 +63,8 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testCompoundHeaders()
     {
         $event = $this->buildEvent();
-        $headers = array('cache_control' => array(
+        $headers = array('overwrite' => false,
+                         'cache_control' => array(
             'max_age' => '900',
             's_maxage' => '300',
             'public' => true,
@@ -84,6 +87,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->buildEvent();
         $headers = array(
+            'overwrite'     => false,
             'cache_control' => array(
                 'max_age' => '0',
                 's_maxage' => '0',
@@ -104,7 +108,8 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testMergeHeaders()
     {
         $event = $this->buildEvent();
-        $headers = array('cache_control' => array(
+        $headers = array('overwrite' => false,
+                         'cache_control' => array(
             'max_age' => '900',
             's_maxage' => '300',
             'public' => true,
@@ -130,8 +135,10 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testMergePublicPrivate()
     {
         $event = $this->buildEvent();
-        $headers = array('cache_control' => array(
-            'private' => true,
+        $headers = array(
+            'overwrite'     => false,
+            'cache_control' => array(
+                'private' => true,
         ));
         $subscriber = $this->getCacheControl($headers);
         $response = $event->getResponse();
@@ -150,6 +157,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->buildEvent();
         $headers = array(
+            'overwrite'     => false,
             'cache_control' => array(
                 'no_cache' => true,
             ),
@@ -237,7 +245,9 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $request2 = $event2->getRequest();
         $response2 = $event2->getResponse();
 
-        $headers = array('cache_control' => array(
+        $headers = array(
+            'overwrite' => false,
+            'cache_control' => array(
             'max_age' => '900',
             's_maxage' => '300',
             'public' => true,
