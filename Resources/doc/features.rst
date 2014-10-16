@@ -12,3 +12,4 @@ corresponding reference section.
     features/user-context
     features/helpers
     features/testing
+    features/symfony-http-cache
