@@ -22,6 +22,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->buildEvent();
         $headers = array(
+            'overwrite' => false,
             'last_modified' => '13.07.2003',
             'cache_control' => array(
                 'max_age' => '900',
@@ -43,7 +44,8 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testExtraHeaders()
     {
         $event = $this->buildEvent();
-        $headers = array('cache_control' => array(
+        $headers = array('overwrite' => false,
+                         'cache_control' => array(
             'must_revalidate' => true,
             'proxy_revalidate' => true,
             'no_transform' => true,
@@ -61,17 +63,20 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testCompoundHeaders()
     {
         $event = $this->buildEvent();
-        $headers = array('cache_control' => array(
-            'max_age' => '900',
-            's_maxage' => '300',
-            'public' => true,
-            'private' => false,
-            'must_revalidate' => true,
-            'proxy_revalidate' => true,
-            'no_transform' => true,
-            'stale_if_error' => '300',
-            'stale_while_revalidate' => '400',
-        ));
+        $headers = array(
+            'overwrite' => false,
+            'cache_control' => array(
+                'max_age' => '900',
+                's_maxage' => '300',
+                'public' => true,
+                'private' => false,
+                'must_revalidate' => true,
+                'proxy_revalidate' => true,
+                'no_transform' => true,
+                'stale_if_error' => '300',
+                'stale_while_revalidate' => '400',
+            )
+        );
         $subscriber = $this->getCacheControl($headers);
 
         $subscriber->onKernelResponse($event);
@@ -84,6 +89,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->buildEvent();
         $headers = array(
+            'overwrite'     => false,
             'cache_control' => array(
                 'max_age' => '0',
                 's_maxage' => '0',
@@ -104,34 +110,84 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testMergeHeaders()
     {
         $event = $this->buildEvent();
-        $headers = array('cache_control' => array(
-            'max_age' => '900',
-            's_maxage' => '300',
-            'public' => true,
-            'private' => false,
-            'must_revalidate' => true,
-            'proxy_revalidate' => true,
-            'no_transform' => true,
-            'stale_if_error' => '300',
-            'stale_while_revalidate' => '400',
-        ));
+        $headers = array(
+            'overwrite' => false,
+            'cache_control' => array(
+                'max_age' => '900',
+                's_maxage' => '300',
+                'public' => true,
+                'private' => false,
+                'must_revalidate' => true,
+                'proxy_revalidate' => true,
+                'no_transform' => true,
+                'stale_if_error' => '300',
+                'stale_while_revalidate' => '400',
+            ),
+            'vary' => array(
+                'Cookie',
+            ),
+            'last_modified' => '2014-10-10 GMT',
+        );
         $subscriber = $this->getCacheControl($headers);
         $response = $event->getResponse();
         $response->setPublic();
         $response->setCache(array('max_age' => 0));
         $response->headers->addCacheControlDirective('stale-if-error', 0);
+        $response->setVary('Encoding');
+        $response->setLastModified(new \DateTime('2013-09-09 GMT'));
 
         $subscriber->onKernelResponse($event);
         $newHeaders = $event->getResponse()->headers->all();
 
         $this->assertEquals('max-age=0, must-revalidate, no-transform, proxy-revalidate, public, s-maxage=300, stale-if-error=0, stale-while-revalidate=400', $newHeaders['cache-control'][0]);
+        $this->assertEquals(array('Encoding', 'Cookie'), $newHeaders['vary']);
+        $this->assertEquals('Mon, 09 Sep 2013 00:00:00 GMT', $newHeaders['last-modified'][0]);
+    }
+
+    public function testOverwriteHeaders()
+    {
+        $event = $this->buildEvent();
+        $headers = array(
+            'overwrite' => true,
+            'cache_control' => array(
+                'max_age' => '900',
+                's_maxage' => '300',
+                'public' => true,
+                'private' => false,
+                'must_revalidate' => true,
+                'proxy_revalidate' => true,
+                'no_transform' => true,
+                'stale_if_error' => '300',
+                'stale_while_revalidate' => '400',
+            ),
+            'vary' => array(
+                'Cookie',
+            ),
+            'last_modified' => '2014-10-10 GMT',
+        );
+        $subscriber = $this->getCacheControl($headers);
+        $response = $event->getResponse();
+        $response->setPublic();
+        $response->setCache(array('max_age' => 0));
+        $response->headers->addCacheControlDirective('stale-if-error', 0);
+        $response->setVary('Encoding');
+        $response->setLastModified(new \DateTime('2013-09-09 GMT'));
+
+        $subscriber->onKernelResponse($event);
+        $newHeaders = $event->getResponse()->headers->all();
+
+        $this->assertEquals('max-age=900, must-revalidate, no-transform, proxy-revalidate, public, s-maxage=300, stale-if-error=300, stale-while-revalidate=400', $newHeaders['cache-control'][0]);
+        $this->assertEquals(array('Cookie'), $newHeaders['vary']);
+        $this->assertEquals('Fri, 10 Oct 2014 00:00:00 GMT', $newHeaders['last-modified'][0]);
     }
 
     public function testMergePublicPrivate()
     {
         $event = $this->buildEvent();
-        $headers = array('cache_control' => array(
-            'private' => true,
+        $headers = array(
+            'overwrite' => false,
+            'cache_control' => array(
+                'private' => true,
         ));
         $subscriber = $this->getCacheControl($headers);
         $response = $event->getResponse();
@@ -150,6 +206,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->buildEvent();
         $headers = array(
+            'overwrite' => false,
             'cache_control' => array(
                 'no_cache' => true,
             ),
@@ -183,11 +240,14 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testVary()
     {
         $event = $this->buildEvent();
-        $headers = array('vary' => array(
-            'Cookie',
-            'Accept-Language',
-            'Encoding',
-        ));
+        $headers = array(
+            'overwrite' => false,
+            'vary' => array(
+                'Cookie',
+                'Accept-Language',
+                'Encoding',
+            )
+        );
         $subscriber = $this->getCacheControl($headers);
 
         $subscriber->onKernelResponse($event);
@@ -237,7 +297,9 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $request2 = $event2->getRequest();
         $response2 = $event2->getResponse();
 
-        $headers = array('cache_control' => array(
+        $headers = array(
+            'overwrite' => false,
+            'cache_control' => array(
             'max_age' => '900',
             's_maxage' => '300',
             'public' => true,

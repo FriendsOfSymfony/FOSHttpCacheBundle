@@ -3,6 +3,9 @@
 
     <config xmlns="http://example.org/schema/dic/fos_http_cache">
         <cache-control>
+            <defaults>
+                <overwrite>true</overwrite>
+            </defaults>
             <rule>
                 <match
                     path="/abc"
@@ -17,6 +20,7 @@
                     <additional-cacheable-status>500</additional-cacheable-status>
                 </match>
                 <headers last-modified="-1 hour" reverse-proxy-ttl="42">
+                    <overwrite>false</overwrite>
                     <cache-control
                         max-age="1"
                         s-maxage="2"

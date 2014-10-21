@@ -6,17 +6,23 @@ parameters described in the ``match`` section, the headers as defined under
 ``headers`` will be set on the response, if they are not already set. Rules are
 checked in the order specified, where the first match wins.
 
+A global setting and a per rule ``overwrite`` option allow to overwrite the
+cache headers even if they are already set.
+
 .. code-block:: yaml
 
     # app/config/config.yml
     fos_http_cache:
         cache_control:
+            defaults:
+                overwrite: false
             rules:
                 # only match login.example.com
                 -
                     match:
                         host: ^login.example.com$
                     headers:
+                        overwrite: true
                         cache_control:
                             public: false
                             max_age: 0

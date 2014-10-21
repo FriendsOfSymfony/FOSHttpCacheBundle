@@ -112,10 +112,10 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
                 $directives = array_intersect_key($options['cache_control'], $this->supportedDirectives);
                 $extraDirectives = array_diff_key($options['cache_control'], $directives);
                 if (!empty($directives)) {
-                    $this->setCache($response, $directives);
+                    $this->setCache($response, $directives, $options['overwrite']);
                 }
                 if (!empty($extraDirectives)) {
-                    $this->setExtraCacheDirectives($response, $extraDirectives);
+                    $this->setExtraCacheDirectives($response, $extraDirectives, $options['overwrite']);
                 }
             }
 
@@ -127,17 +127,32 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
             }
 
             if (!empty($options['vary'])) {
-                $response->setVary(array_merge($response->getVary(), $options['vary']), true); //update if already has vary
+                $response->setVary($options['vary'], $options['overwrite']);
             }
 
-            if (isset($options['last_modified']) && null === $response->getLastModified()) {
+            if (isset($options['last_modified'])
+                && ($options['overwrite'] || null === $response->getLastModified())
+            ) {
                 $response->setLastModified(new \DateTime($options['last_modified']));
             }
         }
     }
 
-    private function setCache(Response $response, array $directives)
+    /**
+     * Set cache headers on response.
+     *
+     * @param Response $response
+     * @param array    $directives
+     * @param boolean  $overwrite  Whether to keep existing cache headers or to overwrite them.
+     */
+    private function setCache(Response $response, array $directives, $overwrite)
     {
+        if ($overwrite) {
+            $response->setCache($directives);
+
+            return;
+        }
+
         if ('no-cache' === $response->headers->get('cache-control')) {
             // this single header is set by default. if its the only thing, we override it.
             $response->setCache($directives);
@@ -165,8 +180,9 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
      *
      * @param Response $response
      * @param array    $controls
+     * @param boolean  $overwrite Whether to keep existing cache headers or to overwrite them.
      */
-    private function setExtraCacheDirectives(Response $response, array $controls)
+    private function setExtraCacheDirectives(Response $response, array $controls, $overwrite)
     {
         $flags = array('must_revalidate', 'proxy_revalidate', 'no_transform', 'no_cache');
         $options = array('stale_if_error', 'stale_while_revalidate');
@@ -174,7 +190,7 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
         foreach ($flags as $key) {
             $flag = str_replace('_', '-', $key);
             if (!empty($controls[$key])
-                && !$response->headers->hasCacheControlDirective($flag)
+                && ($overwrite || !$response->headers->hasCacheControlDirective($flag))
             ) {
                 $response->headers->addCacheControlDirective($flag);
             }
@@ -183,9 +199,10 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
         foreach ($options as $key) {
             $option = str_replace('_', '-', $key);
             if (isset($controls[$key])
-                && !$response->headers->hasCacheControlDirective($option)
+                && ($overwrite || !$response->headers->hasCacheControlDirective($option))
             ) {
                 $response->headers->addCacheControlDirective($option, $controls[$key]);
+
             }
         }
     }

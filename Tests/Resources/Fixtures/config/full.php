@@ -2,6 +2,9 @@
 
 $container->loadFromExtension('fos_http_cache', array(
     'cache_control' => array(
+        'defaults' => array(
+            'overwrite' => true
+        ),
         'rules' => array(
             array(
                 'match' => array(
@@ -13,6 +16,7 @@ $container->loadFromExtension('fos_http_cache', array(
                     'additional_cacheable_status' => array(100, 500),
                 ),
                 'headers' => array(
+                    'overwrite' => false,
                     'cache_control' => array(
                         'max_age' => 1,
                         's_maxage' => 2,

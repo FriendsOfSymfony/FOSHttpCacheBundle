@@ -11,6 +11,12 @@ Set caching headers under the ``cache_control`` configuration section,
 which consists of a set of rules. When the request matches all criteria under
 ``match``, the headers under ``headers`` will be set on the response.
 
+A Response may already have cache headers set, e.g. by the controller method.
+By default, the options that already exist are not overwritten, but additional
+headers are added. You can force to overwrite the headers globally by setting
+``cache_control.defaults.overwrite: true`` to true, or on a per rule basis with
+``overwrite: true`` under ``headers``.
+
 For instance:
 
 .. code-block:: yaml
@@ -18,6 +24,8 @@ For instance:
     # app/config/config.yml
     fos_http_cache:
         cache_control:
+            defaults:
+                overwrite: true
             rules:
                 # only match login.example.com
                 -
@@ -48,8 +56,9 @@ For instance:
                 # match everything to set defaults
                 -
                     match:
-                      path: ^/
+                        path: ^/
                     headers:
+                        overwrite: false
                         cache_control: { public: true, max_age: 15, s_maxage: 30 }
                         last_modified: "-1 hour"
 
