@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.1.0
+-----
+
+* **2014-10-14** Allow cache headers overwrite.
+* **2014-10-29** Added support for the user context lookup with Symfony built-in
+  reverse proxy, aka `HttpCache`.
+
 1.0.0
 -----
 
