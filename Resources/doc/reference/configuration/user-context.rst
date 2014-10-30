@@ -11,8 +11,16 @@ Configuration
 Caching Proxy Configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-First you need to set up your caching proxy as explained in the
+Varnish
+"""""""
+
+Set up Varnish caching proxy as explained in the
 :ref:`user context documentation <foshttpcache:user-context>`.
+
+Symfony reverse proxy
+"""""""""""""""""""""
+
+Set up Symfony reverse proxy as explained in the :doc:`Symfony HttpCache dedicated documentation page </features/symfony-http-cache>`.
 
 Context Hash Route
 ~~~~~~~~~~~~~~~~~~

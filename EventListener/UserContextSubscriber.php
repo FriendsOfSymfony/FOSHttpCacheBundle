@@ -103,6 +103,7 @@ class UserContextSubscriber implements EventSubscriberInterface
         if ($this->ttl > 0) {
             $response->setClientTtl($this->ttl);
             $response->setVary($this->userIdentifierHeaders);
+            $response->setPublic();
         } else {
             $response->setClientTtl(0);
             $response->headers->addCacheControlDirective('no-cache');
