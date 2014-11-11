@@ -24,7 +24,7 @@ class TagSubscriberPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->has('fos_http_cache.event_listener.tag')
+        if (true === $container->getParameter('fos_http_cache.compiler_pass.tag_annotations')
             && !$container->has('sensio_framework_extra.controller.listener')
         ) {
             throw new \RuntimeException(
