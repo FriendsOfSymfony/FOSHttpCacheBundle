@@ -24,6 +24,11 @@ class InvalidatePath extends ConfigurationAnnotation
     private $paths;
 
     /**
+     * @var string
+     */
+    public $type;
+
+    /**
      * Handle path given without explicit key.
      *
      * @param string $data

@@ -30,6 +30,11 @@ class InvalidateRoute extends ConfigurationAnnotation
     private $params;
 
     /**
+     * @var string
+     */
+    public $type;
+
+    /**
      * Handle route name given without explicit key.
      *
      * @param string $value The route name.
