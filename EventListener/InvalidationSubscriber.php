@@ -212,7 +212,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
         $values['request'] = $request;
 
         foreach ($routes as $route) {
-            $params = array();
+            $params = $this->preFillParams($route);
             $typeInvalidation = "PURGE";
 
             if (null !== $route->getParams()) {
@@ -227,14 +227,6 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
             }
 
             if (null === $route->getParams()) {
-                $route = $this->router->getRouteCollection()->get($route->getName());
-                $pathVariables = $route->compile()->getPathVariables();
-                if (count($pathVariables) > 0) {
-                    foreach ($pathVariables as &$param) {
-                        $params[$param] = '.*';
-                    }
-                }
-
                 $typeInvalidation = "BAN";
             }
 
@@ -248,6 +240,27 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
 
             $this->cacheManager->invalidateRoute($route->getName(), $params);
         }
+    }
+
+    /**
+     * Set all route params as widlcard by default
+     *
+     * @param $route
+     *
+     * @return array
+     */
+    protected function preFillParams($route)
+    {
+        $params = array();
+        $route = $this->router->getRouteCollection()->get($route->getName());
+        $pathVariables = $route->compile()->getPathVariables();
+        if (count($pathVariables) > 0) {
+            foreach ($pathVariables as &$param) {
+                $params[$param] = '(.*)';
+            }
+        }
+
+        return $params;
     }
 
     /**
