@@ -9,7 +9,7 @@ actions are executed.
     Annotations need the SensioFrameworkExtraBundle including registering the
     Doctrine AnnotationsRegistry. Some features also need the
     ExpressionLanguage. Make sure to
-    :ref:`installed the dependencies first <requirements>`.
+    :ref:`install the dependencies first <requirements>`.
 
 .. _invalidatepath:
 
