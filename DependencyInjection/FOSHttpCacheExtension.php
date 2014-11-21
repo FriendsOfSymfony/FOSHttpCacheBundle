@@ -65,6 +65,7 @@ class FOSHttpCacheExtension extends Extension
             $loader->load('cache_manager.xml');
         }
 
+        $container->setParameter($this->getAlias() . '.compiler_pass.tag_annotations', $config['tags']['enabled']);
         if ($config['tags']['enabled']) {
             // true or auto
             $loader->load('tag_listener.xml');
