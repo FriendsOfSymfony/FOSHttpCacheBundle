@@ -37,9 +37,7 @@ These five steps resemble the Overview in the FOSHttpCache documentation.
 Configuration
 -------------
 
-First configure your caching proxy and application as described in the
-`:doc:/reference/configuration/user-context` chapter.
-
+First :doc:`configure your caching proxy and application </reference/configuration/user-context>`. 
 Then you can enable the subscriber with the default settings:
 
 .. code-block:: yaml
