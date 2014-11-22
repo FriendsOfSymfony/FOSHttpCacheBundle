@@ -1,37 +1,37 @@
 tag_list:
-  pattern:  /tag/list
+  path:  /tag/list
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController::listAction }
   methods:  [GET]
 
 tag_error:
-  pattern:  /tag/error
+  path:  /tag/error
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController::errorAction }
 
 tag_one:
-  pattern:  /tag/{id}
+  path:  /tag/{id}
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController::itemAction }
   methods:  [GET,POST]
 
 invalidation_route:
-  pattern: /invalidate/route/{id}
+  path: /invalidate/route/{id}
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::itemAction }
 
 invalidation_path:
-  pattern: /invalidate/path
+  path: /invalidate/path
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::otherAction }
 
 invalidation_error:
-  pattern: /invalidate/error
+  path: /invalidate/error
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::errorAction }
 
 test_cached:
-  pattern:  /cached/{id}
+  path:  /cached/{id}
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }
   methods:  [GET,PUT]
 
 test_noncached:
-  pattern:  /noncached
+  path:  /noncached
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }
 
 test_logout:
-  pattern:  /secured_area/logout
+  path:  /secured_area/logout
