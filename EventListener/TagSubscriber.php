@@ -100,7 +100,7 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
     public static function getSubscribedEvents()
     {
         return array(
-            KernelEvents::RESPONSE => 'onKernelResponse'
+            KernelEvents::RESPONSE => 'onKernelResponse',
         );
     }
 

@@ -73,10 +73,10 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
                 'varnish' => array(
                     'base_url' => 'my_hostname',
                     'servers' => array(
-                        '127.0.0.1'
-                    )
-                )
-            )
+                        '127.0.0.1',
+                    ),
+                ),
+            ),
         );
     }
 }

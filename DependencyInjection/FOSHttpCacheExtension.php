@@ -65,7 +65,7 @@ class FOSHttpCacheExtension extends Extension
             $loader->load('cache_manager.xml');
         }
 
-        $container->setParameter($this->getAlias() . '.compiler_pass.tag_annotations', $config['tags']['enabled']);
+        $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', $config['tags']['enabled']);
         if ($config['tags']['enabled']) {
             // true or auto
             $loader->load('tag_listener.xml');
@@ -105,7 +105,7 @@ class FOSHttpCacheExtension extends Extension
      */
     private function loadCacheControl(ContainerBuilder $container, array $config)
     {
-        $controlDefinition = $container->getDefinition($this->getAlias() . '.event_listener.cache_control');
+        $controlDefinition = $container->getDefinition($this->getAlias().'.event_listener.cache_control');
 
         foreach ($config['rules'] as $rule) {
             $ruleMatcher = $this->parseRuleMatcher($container, $rule['match']);
@@ -149,7 +149,7 @@ class FOSHttpCacheExtension extends Extension
     {
         $arguments = array((string) $requestMatcher, $extraCriteria);
         $serialized = serialize($arguments);
-        $id = $this->getAlias() . '.rule_matcher.' . md5($serialized) . sha1($serialized);
+        $id = $this->getAlias().'.rule_matcher.'.md5($serialized).sha1($serialized);
 
         if (!$container->hasDefinition($id)) {
             $container
@@ -217,8 +217,8 @@ class FOSHttpCacheExtension extends Extension
         }
 
         $container->setAlias(
-            $this->getAlias() . '.default_proxy_client',
-            $this->getAlias() . '.proxy_client.' . $this->getDefault($config)
+            $this->getAlias().'.default_proxy_client',
+            $this->getAlias().'.proxy_client.'.$this->getDefault($config)
         );
     }
 
@@ -234,10 +234,10 @@ class FOSHttpCacheExtension extends Extension
         } else {
             $baseUrl = null;
         }
-        $container->setParameter($this->getAlias() . '.proxy_client.varnish.servers', $config['servers']);
-        $container->setParameter($this->getAlias() . '.proxy_client.varnish.base_url', $baseUrl);
+        $container->setParameter($this->getAlias().'.proxy_client.varnish.servers', $config['servers']);
+        $container->setParameter($this->getAlias().'.proxy_client.varnish.base_url', $baseUrl);
         if ($config['guzzle_client']) {
-            $container->getDefinition($this->getAlias() . '.proxy_client.varnish')
+            $container->getDefinition($this->getAlias().'.proxy_client.varnish')
                 ->addArgument(
                     new Reference($config['guzzle_client'])
                 )
@@ -256,14 +256,14 @@ class FOSHttpCacheExtension extends Extension
         } else {
             $baseUrl = null;
         }
-        $container->setParameter($this->getAlias() . '.proxy_client.nginx.servers', $config['servers']);
-        $container->setParameter($this->getAlias() . '.proxy_client.nginx.base_url', $baseUrl);
-        $container->setParameter($this->getAlias() . '.proxy_client.nginx.purge_location', $config['purge_location']);
+        $container->setParameter($this->getAlias().'.proxy_client.nginx.servers', $config['servers']);
+        $container->setParameter($this->getAlias().'.proxy_client.nginx.base_url', $baseUrl);
+        $container->setParameter($this->getAlias().'.proxy_client.nginx.purge_location', $config['purge_location']);
     }
 
     private function loadTest(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
-        $container->setParameter($this->getAlias() . '.test.cache_header', $config['cache_header']);
+        $container->setParameter($this->getAlias().'.test.cache_header', $config['cache_header']);
 
         if ($config['proxy_server']) {
             $this->loadProxyServer($container, $loader, $config['proxy_server']);
@@ -274,18 +274,18 @@ class FOSHttpCacheExtension extends Extension
             $loader->load('test_client.xml');
 
             if ($config['client']['varnish']['enabled']) {
-                $container->getDefinition($this->getAlias() . '.test.client.varnish')
+                $container->getDefinition($this->getAlias().'.test.client.varnish')
                     ->setAbstract(false);
             }
 
             if ($config['client']['nginx']['enabled']) {
-                $container->getDefinition($this->getAlias() . '.test.client.nginx')
+                $container->getDefinition($this->getAlias().'.test.client.nginx')
                     ->setAbstract(false);
             }
 
             $container->setAlias(
-                $this->getAlias() . '.test.default_client',
-                $this->getAlias() . '.test.client.' . $this->getDefault($config['client'])
+                $this->getAlias().'.test.default_client',
+                $this->getAlias().'.test.client.'.$this->getDefault($config['client'])
             );
         }
     }
@@ -301,8 +301,8 @@ class FOSHttpCacheExtension extends Extension
         }
 
         $container->setAlias(
-            $this->getAlias() . '.test.default_proxy_server',
-            $this->getAlias() . '.test.proxy_server.' . $this->getDefault($config)
+            $this->getAlias().'.test.default_proxy_server',
+            $this->getAlias().'.test.proxy_server.'.$this->getDefault($config)
         );
     }
 
@@ -311,7 +311,7 @@ class FOSHttpCacheExtension extends Extension
         $loader->load('varnish_proxy.xml');
         foreach ($config as $key => $value) {
             $container->setParameter(
-                $this->getAlias() . '.test.proxy_server.varnish.' . $key,
+                $this->getAlias().'.test.proxy_server.varnish.'.$key,
                 $value
             );
         }
@@ -322,7 +322,7 @@ class FOSHttpCacheExtension extends Extension
         $loader->load('nginx_proxy.xml');
         foreach ($config as $key => $value) {
             $container->setParameter(
-                $this->getAlias() . '.test.proxy_server.nginx.' . $key,
+                $this->getAlias().'.test.proxy_server.nginx.'.$key,
                 $value
             );
         }
@@ -330,7 +330,7 @@ class FOSHttpCacheExtension extends Extension
 
     private function loadTagRules(ContainerBuilder $container, array $config)
     {
-        $tagDefinition = $container->getDefinition($this->getAlias() . '.event_listener.tag');
+        $tagDefinition = $container->getDefinition($this->getAlias().'.event_listener.tag');
 
         foreach ($config as $rule) {
             $ruleMatcher = $this->parseRuleMatcher($container, $rule['match']);
@@ -346,7 +346,7 @@ class FOSHttpCacheExtension extends Extension
 
     private function loadInvalidatorRules(ContainerBuilder $container, array $config)
     {
-        $tagDefinition = $container->getDefinition($this->getAlias() . '.event_listener.invalidation');
+        $tagDefinition = $container->getDefinition($this->getAlias().'.event_listener.invalidation');
 
         foreach ($config as $rule) {
             $ruleMatcher = $this->parseRuleMatcher($container, $rule['match']);
@@ -362,7 +362,6 @@ class FOSHttpCacheExtension extends Extension
             throw new InvalidConfigurationException(sprintf($msg, $url));
         }
     }
-
 
     private function prefixSchema($url)
     {

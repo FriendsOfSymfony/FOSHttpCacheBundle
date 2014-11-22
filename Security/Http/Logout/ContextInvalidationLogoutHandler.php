@@ -61,7 +61,7 @@ class ContextInvalidationLogoutHandler implements LogoutHandlerInterface
         foreach ($this->userIdentifierHeaders as $header) {
             $this->banner->ban(array(
                 'accept' => $this->acceptHeader,
-                $header => sprintf('.*%s.*', $sessionId)
+                $header => sprintf('.*%s.*', $sessionId),
             ));
         }
     }

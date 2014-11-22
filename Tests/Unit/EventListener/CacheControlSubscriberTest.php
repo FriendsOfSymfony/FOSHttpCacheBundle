@@ -28,8 +28,8 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
                 'max_age' => '900',
                 's_maxage' => '300',
                 'public' => true,
-                'private' => false
-            )
+                'private' => false,
+            ),
         );
         $subscriber = $this->getCacheControl($headers);
 
@@ -44,14 +44,16 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testExtraHeaders()
     {
         $event = $this->buildEvent();
-        $headers = array('overwrite' => false,
-                         'cache_control' => array(
-            'must_revalidate' => true,
-            'proxy_revalidate' => true,
-            'no_transform' => true,
-            'stale_if_error' => '300',
-            'stale_while_revalidate' => '400',
-        ));
+        $headers = array(
+            'overwrite' => false,
+            'cache_control' => array(
+                'must_revalidate' => true,
+                'proxy_revalidate' => true,
+                'no_transform' => true,
+                'stale_if_error' => '300',
+                'stale_while_revalidate' => '400',
+            ),
+        );
         $subscriber = $this->getCacheControl($headers);
 
         $subscriber->onKernelResponse($event);
@@ -75,7 +77,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
                 'no_transform' => true,
                 'stale_if_error' => '300',
                 'stale_while_revalidate' => '400',
-            )
+            ),
         );
         $subscriber = $this->getCacheControl($headers);
 
@@ -188,7 +190,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
             'overwrite' => false,
             'cache_control' => array(
                 'private' => true,
-        ));
+        ), );
         $subscriber = $this->getCacheControl($headers);
         $response = $event->getResponse();
         $response->setPublic();
@@ -246,7 +248,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
                 'Cookie',
                 'Accept-Language',
                 'Encoding',
-            )
+            ),
         );
         $subscriber = $this->getCacheControl($headers);
 
@@ -303,8 +305,8 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
             'max_age' => '900',
             's_maxage' => '300',
             'public' => true,
-            'private' => false
-        ));
+            'private' => false,
+        ), );
 
         $mockMatcher = \Mockery::mock('FOS\HttpCacheBundle\Http\RuleMatcherInterface')
             ->shouldReceive('matches')->once()->with($request, $response)->andReturn(true)

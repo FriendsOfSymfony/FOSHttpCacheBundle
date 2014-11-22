@@ -139,7 +139,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
             KernelEvents::TERMINATE  => 'onKernelTerminate',
             KernelEvents::EXCEPTION  => 'onKernelException',
             ConsoleEvents::TERMINATE => 'onConsoleTerminate',
-            ConsoleEvents::EXCEPTION => 'onConsoleTerminate'
+            ConsoleEvents::EXCEPTION => 'onConsoleTerminate',
         );
     }
 

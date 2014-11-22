@@ -33,7 +33,7 @@ class RoleProviderTest extends \PHPUnit_Framework_TestCase
         $provider->updateUserContext($userContext);
 
         $this->assertEquals(array(
-            'roles' => array('ROLE_USER')
+            'roles' => array('ROLE_USER'),
         ), $userContext->getParameters());
     }
 

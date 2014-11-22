@@ -112,9 +112,10 @@ abstract class ProxyTestCase extends WebTestCase
         if (!static::getContainer()->has('fos_http_cache.test.default_proxy_server')) {
             throw new \RuntimeException(
                 'Proxy server is not available. Please configure a proxy_server '
-                . 'under test in your application config.'
+                .'under test in your application config.'
             );
         }
+
         return static::getContainer()->get('fos_http_cache.test.default_proxy_server');
     }
 

@@ -3,7 +3,7 @@
 $container->loadFromExtension('fos_http_cache', array(
     'cache_control' => array(
         'defaults' => array(
-            'overwrite' => true
+            'overwrite' => true,
         ),
         'rules' => array(
             array(

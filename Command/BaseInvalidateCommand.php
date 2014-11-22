@@ -11,9 +11,8 @@
 
 namespace FOS\HttpCacheBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
 use FOS\HttpCacheBundle\CacheManager;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 /**
  * Base class for commands to trigger cache invalidation from the command line.

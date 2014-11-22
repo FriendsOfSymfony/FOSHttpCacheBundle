@@ -204,7 +204,13 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->scalarNode('last_modified')
                         ->validate()
-                            ->ifTrue(function ($v) {if (is_string($v)) {new \DateTime($v);} return false;})
+                            ->ifTrue(function ($v) {
+                                if (is_string($v)) {
+                                    new \DateTime($v);
+                                }
+
+                                return false;
+                            })
                             ->thenInvalid('') // this will never happen as new DateTime will throw an exception if $v is no date
                         ->end()
                         ->info('Set a default last modified timestamp if none is set yet. Value must be parseable by DateTime')

@@ -329,7 +329,6 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
 
     public function testTagRulesNotEnabled()
     {
-
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, array(
@@ -350,7 +349,6 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
 
     public function testInvalidationRulesNotEnabled()
     {
-
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, array(
@@ -442,7 +440,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'user_hash_header' => 'X-User-Context-Hash',
                 'role_provider' => false,
                 'logout_handler' => array(
-                    'enabled' => false
+                    'enabled' => false,
                 ),
             ),
             'flash_message' => array(

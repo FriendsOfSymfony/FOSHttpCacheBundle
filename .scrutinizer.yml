@@ -3,3 +3,49 @@ imports:
 
 tools:
   external_code_coverage: true
+  php_code_sniffer:
+    config:
+      standard: PSR2
+
+checks:
+    php:
+        verify_property_names: true
+        verify_access_scope_valid: true
+        verify_argument_usable_as_reference: true
+        uppercase_constants: true
+        switch_fallthrough_commented: true
+        spacing_of_function_arguments: true
+        spacing_around_non_conditional_operators: true
+        spacing_around_conditional_operators: true
+        space_after_cast: true
+        unused_variables: true
+        unused_properties: true
+        unused_parameters: true
+        unused_methods: true
+        unreachable_code: true
+        too_many_arguments: true
+        no_unnecessary_if: true
+        no_unnecessary_final_modifier: true
+        no_empty_statements: true
+        fix_use_statements:
+            remove_unused: true
+            preserve_multiple: false
+            preserve_blanklines: false
+            order_alphabetically: false
+        remove_trailing_whitespace: true
+        remove_php_closing_tag: true
+        remove_extra_empty_lines: true
+        fix_php_opening_tag: true
+        fix_linefeed: true
+        fix_line_ending: true
+        fix_identation_4spaces: true
+        fix_doc_comments: true
+        avoid_useless_overridden_methods: true
+        useless_calls: true
+        single_namespace_per_use: true
+        scope_indentation:
+            spaces_per_level: '4'
+        variable_existence: true
+        return_doc_comments: true
+        parameter_doc_comments: true
+        no_unnecessary_function_call_in_for_loop: true
