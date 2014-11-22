@@ -1,7 +1,8 @@
 Invalidation
 ============
 
-**Prerequisites**: :ref:`configure caching proxy <foshttpcache:proxy-configuration>`.
+**Prerequisites**: :ref:`configure caching proxy <foshttpcache:proxy-configuration>`
+and :doc:`enable proxy client </reference/configuration/proxy-client>`.
 
 By *invalidating* a piece of content, you tell your HTTP caching proxy (Varnish
 or Nginx) to no longer serve it to clients. When next requested, the proxy will
