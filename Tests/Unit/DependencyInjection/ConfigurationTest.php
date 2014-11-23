@@ -151,6 +151,9 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'user_identifier_headers' => array('Cookie', 'Authorization'),
                 'user_hash_header' => 'FOS-User-Context-Hash',
                 'role_provider' => true,
+                'logout_handler' => array(
+                    'enabled' => 'auto',
+                ),
             ),
             'flash_message' => array(
                 'enabled' => true,
@@ -192,6 +195,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['cache_manager']['enabled'] = 'auto';
         $expectedConfiguration['tags']['enabled'] = 'auto';
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
+        $expectedConfiguration['user_context']['logout_handler']['enabled'] = 'auto';
 
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
@@ -248,6 +252,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['cache_manager']['enabled'] = 'auto';
         $expectedConfiguration['tags']['enabled'] = 'auto';
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
+        $expectedConfiguration['user_context']['logout_handler']['enabled'] = 'auto';
 
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
@@ -436,6 +441,9 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'user_identifier_headers' => array('Cookie', 'Authorization'),
                 'user_hash_header' => 'X-User-Context-Hash',
                 'role_provider' => false,
+                'logout_handler' => array(
+                    'enabled' => false
+                ),
             ),
             'flash_message' => array(
                 'enabled' => false,

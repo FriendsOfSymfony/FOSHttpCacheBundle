@@ -121,6 +121,21 @@ class Configuration implements ConfigurationInterface
                     throw new InvalidConfigurationException('You need to configure the Nginx proxy_client to use the Nginx test client');
                 })
             ->end()
+            ->validate()
+                ->ifTrue(
+                    function ($v) {
+                        return $v['user_context']['logout_handler']['enabled']
+                            && !isset($v['proxy_client']);
+                    }
+                )
+                ->then(function ($v) {
+                    if ('auto' === $v['user_context']['logout_handler']['enabled']) {
+                        $v['user_context']['logout_handler']['enabled'] = false;
+
+                        return $v;
+                    }
+                    throw new InvalidConfigurationException('You need to configure a proxy_client for the logout_handler.');
+                })
         ;
 
         $this->addCacheControlSection($rootNode);
@@ -556,6 +571,17 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('role_provider')
                             ->defaultFalse()
                             ->info('Whether to enable a provider that automatically adds all roles of the current user to the context.')
+                        ->end()
+                        ->arrayNode('logout_handler')
+                            ->addDefaultsIfNotSet()
+                            ->canBeEnabled()
+                            ->children()
+                                ->enumNode('enabled')
+                                    ->values(array(true, false, 'auto'))
+                                    ->defaultValue('auto')
+                                    ->info('Whether to enable the user context logout handler.')
+                                ->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
