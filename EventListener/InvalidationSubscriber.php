@@ -148,7 +148,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
      *
      * @param Request $request
      */
-    protected function handleInvalidation(Request $request, Response $response)
+    private function handleInvalidation(Request $request, Response $response)
     {
         // Check controller annotations
         if ($paths = $request->attributes->get('_invalidate_path')) {
@@ -185,7 +185,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
      *
      * @param array|InvalidatePath[] $pathConfigurations
      */
-    protected function invalidatePaths(array $pathConfigurations)
+    private function invalidatePaths(array $pathConfigurations)
     {
         foreach ($pathConfigurations as $pathConfiguration) {
             foreach ($pathConfiguration->getPaths() as $path) {
@@ -205,7 +205,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
      * @param array|InvalidateRoute[] $routes
      * @param Request                 $request
      */
-    protected function invalidateRoutes(array $routes, Request $request)
+    private function invalidateRoutes(array $routes, Request $request)
     {
         $values = $request->attributes->all();
         // if there is an attribute called "request", it needs to be accessed through the request.
@@ -233,7 +233,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
             $typeInvalidation = $route->type ? $route->type : $typeInvalidation;
 
             if ($typeInvalidation === "BAN") {
-                $this->cacheManager->invalidateRegex($this->router->generate($route->getName(), $params));
+                $this->cacheManager->invalidateRegex($this->generateRegexPath($route->getName(), $params));
 
                 continue;
             }
@@ -245,22 +245,38 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
     /**
      * Set all route params as widlcard by default
      *
-     * @param $route
+     * @param string $routeName
      *
      * @return array
      */
-    protected function preFillParams($route)
+    protected function preFillParams($routeName)
     {
         $params = array();
-        $route = $this->router->getRouteCollection()->get($route->getName());
+        $route = $this->router->getRouteCollection()->get($routeName->getName());
         $pathVariables = $route->compile()->getPathVariables();
-        if (count($pathVariables) > 0) {
-            foreach ($pathVariables as &$param) {
-                $params[$param] = '(.*)';
-            }
+        foreach ($pathVariables as &$param) {
+            $params[$param] = '(.*)';
         }
 
         return $params;
+    }
+
+    /**
+     * Generate url regex by route path
+     *
+     * @param string $routeName
+     * @param array $params
+     *
+     * @return string
+     */
+    protected function generateRegexPath($routeName, $params)
+    {
+        $route = $this->router->getRouteCollection()->get($routeName->getName())->getPath();
+        foreach ($params as $param => $value) {
+            str_replace('{'.$param.'}', $value, $route);
+        }
+
+        return $route;
     }
 
     /**
