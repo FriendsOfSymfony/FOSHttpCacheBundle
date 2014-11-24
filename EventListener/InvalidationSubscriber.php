@@ -276,7 +276,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
             str_replace('{'.$param.'}', $value, $route);
         }
 
-        return $route;
+        return $route.'(\?.*)?$';
     }
 
     /**
