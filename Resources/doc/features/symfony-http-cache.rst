@@ -40,8 +40,8 @@ User context
 
 .. note::
 
-    For detailed information on user context, please read the
-    `user context documentation page </features/user-context>`
+    For detailed information on user context, please see
+    the :doc:`user-context` chapter.
 
 * ``SESSION_NAME_PREFIX``: Prefix for session names. Must match your session
   configuration.
