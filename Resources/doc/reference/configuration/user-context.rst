@@ -33,7 +33,7 @@ triggered:
 
     # app/config/routing.yml
     user_context_hash:
-        /user-context-hash
+        path: /user-context-hash
 
 .. important::
 
@@ -66,8 +66,8 @@ automatically enabled if you configure any of the ``user_context`` options.
 
     # app/config/config.yml
     fos_http_cache:
-      user_context:
-        enabled: true
+        user_context:
+            enabled: true
 
 hash_header
 ~~~~~~~~~~~
@@ -109,9 +109,9 @@ If set, ``accept`` and ``method`` will be ignored.
 hash_cache_ttl
 ~~~~~~~~~~~~~~
 
-**type**: ``integer`` **default**: `0`
+**type**: ``integer`` **default**: ``0``
 
-Time in seconds that context hash responses will be cached. Value `0` means
+Time in seconds that context hash responses will be cached. Value ``0`` means
 caching is disabled. For performance reasons, it makes sense to cache the hash
 generation response; after all, each content request may trigger a hash
 request. However, when you decide to cache hash responses, you must invalidate
@@ -154,10 +154,10 @@ for 15 minutes, configure:
 
     # app/config/config.yml
     fos_http_cache:
-      user_context:
-        user_identifier_headers:
-          - Authorization
-        hash_cache_ttl: 900
+        user_context:
+            user_identifier_headers:
+                - Authorization
+            hash_cache_ttl: 900
 
 role_provider
 ~~~~~~~~~~~~~
@@ -173,8 +173,8 @@ all roles are added to the hash:
 
     # app/config/config.yml
     fos_http_cache
-      user_context:
-        role_provider: true
+        user_context:
+            role_provider: true
 
 .. _custom-context-providers:
 
@@ -192,9 +192,9 @@ is generated.
 .. code-block:: yaml
 
     acme.demo_bundle.my_service:
-      class: "%acme.demo_bundle.my_service.class%"
-      tags:
-        - { name: fos_http_cache.user_context_provider }
+        class: "%acme.demo_bundle.my_service.class%"
+        tags:
+            - { name: fos_http_cache.user_context_provider }
 
 .. code-block:: xml
 
