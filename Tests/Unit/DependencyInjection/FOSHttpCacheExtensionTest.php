@@ -92,6 +92,8 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
         $container = $this->createContainer();
         $this->extension->load(array($config), $container);
+        
+        $this->assertFalse($container->has('fos_http_cache.user_context.logout_handler'));
     }
 
     public function testConfigLoadTagRules()
@@ -214,8 +216,8 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigUserContext()
     {
-        $config = array(
-            array('user_context' => array(
+        $config = $this->getBaseConfig() + array(
+            'user_context' => array(
                 'match'   => array(
                     'matcher_service' => 'my_request_matcher_id',
                     'method' => 'AUTHENTICATE',
@@ -225,17 +227,18 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                 'user_hash_header' => 'X-Bar',
                 'hash_cache_ttl' => 30,
                 'role_provider' => true
-            )),
+            ),
         );
 
         $container = $this->createContainer();
-        $this->extension->load($config, $container);
+        $this->extension->load(array($config), $container);
 
         $this->assertTrue($container->has('fos_http_cache.event_listener.user_context'));
         $this->assertTrue($container->has('fos_http_cache.user_context.hash_generator'));
         $this->assertTrue($container->has('fos_http_cache.user_context.request_matcher'));
         $this->assertTrue($container->has('fos_http_cache.user_context.role_provider'));
-
+        $this->assertTrue($container->has('fos_http_cache.user_context.logout_handler'));
+        
         $this->assertEquals(array('fos_http_cache.user_context.role_provider' => array(array())), $container->findTaggedServiceIds('fos_http_cache.user_context_provider'));
     }
 
@@ -263,6 +266,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($container->has('fos_http_cache.user_context.hash_generator'));
         $this->assertFalse($container->has('fos_http_cache.user_context.request_matcher'));
         $this->assertFalse($container->has('fos_http_cache.user_context.role_provider'));
+        $this->assertFalse($container->has('fos_http_cache.user_context.logout_handler'));
     }
 
     public function testConfigLoadFlashMessageSubscriber()

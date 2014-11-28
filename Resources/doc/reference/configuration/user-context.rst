@@ -118,8 +118,11 @@ request. However, when you decide to cache hash responses, you must invalidate
 them when the user context changes, particularly when the user logs in or out.
 This bundle provides a logout handler that takes care of this for you.
 
-Logout Handler
-""""""""""""""
+logout_handler
+~~~~~~~~~~~~~~
+
+The logout handler will invalidate any cached user hashes when the user logs
+out.
 
 For the handler to work:
 
@@ -139,6 +142,16 @@ Add the handler to your firewall configuration:
                     invalidate_session: true
                     handlers:
                         - fos_http_cache.user_context.logout_handler
+
+enabled
+"""""""
+
+**type**: ``enum`` **default**: ``auto`` **options**: ``true``, ``false``, ``auto``
+
+Defauts to ``auto``, which enables the logout handler service if a
+:doc:`proxy client </reference/configuration/proxy-client>` is configured.
+Set to ``true`` to explicitly enable the logout handler. This will throw an
+exception if no proxy client is configured. 
 
 user_identifier_headers
 ~~~~~~~~~~~~~~~~~~~~~~~
