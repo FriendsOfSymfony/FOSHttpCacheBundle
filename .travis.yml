@@ -26,7 +26,11 @@ matrix:
         - FRAMEWORK_EXTRA_VERSION='~3.0'
     - php: 5.5
       env:
-        - SYMFONY_VERSION='2.6.*@dev'
+        - SYMFONY_VERSION='2.6.*'
+        - FRAMEWORK_EXTRA_VERSION='~3.0'
+    - php: 5.5
+      env:
+        - SYMFONY_VERSION='2.7.*@dev'
         - FRAMEWORK_EXTRA_VERSION='~3.0'
 
 before_script:
