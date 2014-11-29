@@ -17,7 +17,8 @@ headers are added. You can force to overwrite the headers globally by setting
 ``cache_control.defaults.overwrite: true`` to true, or on a per rule basis with
 ``overwrite: true`` under ``headers``.
 
-For instance:
+This is an example configuration. For more, see the  
+:doc:`/reference/configuration/headers` configuration reference.
 
 .. code-block:: yaml
 
@@ -61,8 +62,6 @@ For instance:
                         overwrite: false
                         cache_control: { public: true, max_age: 15, s_maxage: 30 }
                         last_modified: "-1 hour"
-
-See the :doc:`/reference/configuration/headers` configuration reference.
 
 .. _manually setting cache headers: http://symfony.com/doc/current/book/http_cache.html#the-cache-control-header
 .. _setting caching headers through annotations: http://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/cache.html

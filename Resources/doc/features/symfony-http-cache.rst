@@ -2,9 +2,9 @@ Symfony HttpCache
 =================
 
 Symfony comes with a built-in reverse proxy written in PHP, known as
-``HttpCache``. It can be useful when one hosts a Symfony application on shared
-hosting for instance
-(see `HttpCache documentation <http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy>`_).
+HttpCache_. While a dedicated proxy server like Varnish or Nginx is 
+preferred for performance, the Symfony HttpCache can be useful on shared 
+hosting.
 
 If you use Symfony ``HttpCache``, you'll need to make your ``AppCache`` class
 extend ``FOS\HttpCacheBundle\HttpCache`` instead of
@@ -80,3 +80,5 @@ User context
   context hash generation.
 
   **default**: ``GET``
+
+.. _HttpCache: http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy
