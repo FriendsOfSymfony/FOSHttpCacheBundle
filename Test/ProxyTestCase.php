@@ -19,8 +19,8 @@ abstract class ProxyTestCase extends WebTestCase
     /**
      * Assert cache hit
      *
-     * @param Response $response
-     * @param string   $message
+     * @param Response    $response
+     * @param string|null $message
      */
     public function assertHit(Response $response, $message = null)
     {
@@ -30,8 +30,8 @@ abstract class ProxyTestCase extends WebTestCase
     /**
      * Assert cache miss
      *
-     * @param Response $response
-     * @param string   $message
+     * @param Response    $response
+     * @param string|null $message
      */
     public function assertMiss(Response $response, $message = null)
     {

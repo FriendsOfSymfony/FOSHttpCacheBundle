@@ -29,6 +29,7 @@ use \Mockery;
 class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     protected $cacheManager;
+    protected $invalidators;
 
     public function setUp()
     {
