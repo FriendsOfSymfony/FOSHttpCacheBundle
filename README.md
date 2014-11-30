@@ -33,7 +33,13 @@ Documentation is available at [Read the Docs](http://foshttpcachebundle.readthed
 Roadmap
 -------
 
-See the [GitHub milestones](https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/milestones).
+This bundle is fully functional with Varnish and used in production in several 
+systems. With Nginx, many features are supported too.
+
+Work for using the Symfony built-in HttpCache is in progress.
+
+See the [GitHub issues](https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/issues)
+if you are interested in the development of this bundle.
 
 License
 -------
