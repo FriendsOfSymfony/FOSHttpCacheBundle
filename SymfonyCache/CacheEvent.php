@@ -63,12 +63,16 @@ class CacheEvent extends Event
     }
 
     /**
-     * Set this to overwrite the response that would otherwise be given.
+     * Sets a response to use instead of continuing to handle this request.
+     *
+     * Setting a response stops propagation of the event.
      *
      * @param Response $response
      */
     public function setResponse(Response $response)
     {
         $this->response = $response;
+
+        $this->stopPropagation();
     }
 }

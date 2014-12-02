@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCacheBundle\Tests\Unit;
+namespace FOS\HttpCacheBundle\Tests\Unit\SymfonyCache;
 
 use FOS\HttpCacheBundle\SymfonyCache\CacheEvent;
 use FOS\HttpCacheBundle\SymfonyCache\UserContextSubscriber;
