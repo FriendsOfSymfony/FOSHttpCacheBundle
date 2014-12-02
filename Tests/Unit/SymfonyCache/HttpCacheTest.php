@@ -14,6 +14,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\SymfonyCache;
 use FOS\HttpCacheBundle\SymfonyCache\HttpCache;
 use FOS\HttpCacheBundle\SymfonyCache\CacheEvent;
 use FOS\HttpCacheBundle\SymfonyCache\Events;
+use FOS\HttpCacheBundle\SymfonyCache\UserContextSubscriber;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -94,6 +95,48 @@ class HttpCacheTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, $subscriber->hits);
         $this->assertSame($response, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST, $catch));
+    }
+
+    /**
+     * @dataProvider configuredSubscribersProvider
+     */
+    public function testConfiguredSubscribers(array $options, array $expectedSubscribers)
+    {
+        $cacheKernel = $this->getHttpCachePartialMock(array('getOptions'));
+        $cacheKernel
+            ->expects($this->once())
+            ->method('getOptions')
+            ->will($this->returnValue($options));
+        $refCache = new \ReflectionClass(get_class($cacheKernel));
+        $refGetSubscribers = $refCache->getMethod('getSubscribers');
+        $refGetSubscribers->setAccessible(true);
+
+        $this->assertEquals($expectedSubscribers, $refGetSubscribers->invoke($cacheKernel));
+    }
+
+    public function configuredSubscribersProvider()
+    {
+        return array(
+            array(array(), array(new UserContextSubscriber())),
+            array(
+                array(
+                    'fos_native_subscribers' => HttpCache::SUBSCRIBER_ALL,
+                ),
+                array(new UserContextSubscriber())
+            ),
+            array(
+                array(
+                    'fos_native_subscribers' => HttpCache::SUBSCRIBER_NONE,
+                ),
+                array()
+            ),
+            array(
+                array(
+                    'fos_native_subscribers' => HttpCache::SUBSCRIBER_USER_CONTEXT,
+                ),
+                array(new UserContextSubscriber())
+            ),
+        );
     }
 }
 
