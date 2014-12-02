@@ -78,9 +78,7 @@ class UserContextSubscriber implements EventSubscriberInterface
     /**
      * Check on the handle event.
      *
-     * @param Request $request
-     * @param $type
-     * @param $catch
+     * @param CacheEvent $event
      *
      * @return Response|null If response is returned, this response should be used.
      *                       Otherwise let the kernel handle this request.
