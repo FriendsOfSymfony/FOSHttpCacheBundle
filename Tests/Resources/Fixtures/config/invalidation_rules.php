@@ -10,8 +10,8 @@ $container->loadFromExtension('fos_http_cache', array(
                 ),
                 'routes' => array(
                     'routename' => array(),
-                )
-            )
-        )
+                ),
+            ),
+        ),
     ),
 ));

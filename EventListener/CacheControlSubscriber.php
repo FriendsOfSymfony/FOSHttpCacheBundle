@@ -202,7 +202,6 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
                 && ($overwrite || !$response->headers->hasCacheControlDirective($option))
             ) {
                 $response->headers->addCacheControlDirective($option, $controls[$key]);
-
             }
         }
     }

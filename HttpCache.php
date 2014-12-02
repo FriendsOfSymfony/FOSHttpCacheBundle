@@ -178,7 +178,7 @@ abstract class HttpCache extends BaseHttpCache
     {
         $sessionIds = array();
         foreach ($originalRequest->cookies as $name => $value) {
-            if ( $this->isSessionName($name)) {
+            if ($this->isSessionName($name)) {
                 $sessionIds[$name] = $value;
                 $forwardReq->cookies->set($name, $value);
             }

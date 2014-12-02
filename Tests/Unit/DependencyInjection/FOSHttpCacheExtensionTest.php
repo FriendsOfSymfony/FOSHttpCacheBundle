@@ -73,11 +73,11 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                     'nginx' => array(
                         'base_url' => 'my_hostname',
                         'servers' => array(
-                            '127.0.0.1'
-                        )
-                    )
-                )
-            )
+                            '127.0.0.1',
+                        ),
+                    ),
+                ),
+            ),
         ), $container);
 
         $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
@@ -92,7 +92,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
         $container = $this->createContainer();
         $this->extension->load(array($config), $container);
-        
+
         $this->assertFalse($container->has('fos_http_cache.user_context.logout_handler'));
     }
 
@@ -111,9 +111,9 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                                 '_controller' => '^AcmeBundle:Default:index$',
                             ),
                         ),
-                        'tags' => array('tag-a', 'tag-b')
-                    )
-                )
+                        'tags' => array('tag-a', 'tag-b'),
+                    ),
+                ),
             ),
         );
 
@@ -139,8 +139,8 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                             'invalidate_route1' => array(
                             ),
                         ),
-                    )
-                )
+                    ),
+                ),
             ),
         );
 
@@ -171,7 +171,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                             'reverse_proxy_ttl' => 42,
                             'vary' => array('Cookie', 'Accept-Language'),
                         ),
-                    )
+                    ),
                 ),
             ),
         );
@@ -221,12 +221,12 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                 'match'   => array(
                     'matcher_service' => 'my_request_matcher_id',
                     'method' => 'AUTHENTICATE',
-                    'accept' => 'application/vnd.test'
+                    'accept' => 'application/vnd.test',
                 ),
                 'user_identifier_headers' => array('X-Foo'),
                 'user_hash_header' => 'X-Bar',
                 'hash_cache_ttl' => 30,
-                'role_provider' => true
+                'role_provider' => true,
             ),
         );
 
@@ -238,7 +238,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($container->has('fos_http_cache.user_context.request_matcher'));
         $this->assertTrue($container->has('fos_http_cache.user_context.role_provider'));
         $this->assertTrue($container->has('fos_http_cache.user_context.logout_handler'));
-        
+
         $this->assertEquals(array('fos_http_cache.user_context.role_provider' => array(array())), $container->findTaggedServiceIds('fos_http_cache.user_context_provider'));
     }
 
@@ -250,12 +250,12 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                 'match'   => array(
                     'matcher_service' => 'my_request_matcher_id',
                     'method' => 'AUTHENTICATE',
-                    'accept' => 'application/vnd.test'
+                    'accept' => 'application/vnd.test',
                 ),
                 'user_identifier_headers' => array('X-Foo'),
                 'user_hash_header' => 'X-Bar',
                 'hash_cache_ttl' => 30,
-                'role_provider' => true
+                'role_provider' => true,
             )),
         );
 
@@ -294,10 +294,10 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                 'varnish' => array(
                     'base_url' => 'my_hostname',
                     'servers' => array(
-                        '127.0.0.1'
-                    )
-                )
-            )
+                        '127.0.0.1',
+                    ),
+                ),
+            ),
         );
     }
 

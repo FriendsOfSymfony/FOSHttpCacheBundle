@@ -62,8 +62,7 @@ class UserContextSubscriber implements EventSubscriberInterface
         array $userIdentifierHeaders = array('Cookie', 'Authorization'),
         $hashHeader = "X-User-Context-Hash",
         $ttl = 0
-    )
-    {
+    ) {
         if (!count($userIdentifierHeaders)) {
             throw new \InvalidArgumentException('The user context must vary on some request headers');
         }
@@ -97,7 +96,7 @@ class UserContextSubscriber implements EventSubscriberInterface
         // status needs to be 200 as otherwise varnish will not cache the response.
         $response = new Response('', 200, array(
             $this->hashHeader => $hash,
-            'Content-Type'    => 'application/vnd.fos.user-context-hash'
+            'Content-Type'    => 'application/vnd.fos.user-context-hash',
         ));
 
         if ($this->ttl > 0) {

@@ -29,6 +29,7 @@ use \Mockery;
 class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     protected $cacheManager;
+    protected $invalidators;
 
     public function setUp()
     {
@@ -123,7 +124,7 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
         $request = new Request();
         $request->attributes->set('_invalidate_path', array(
             new InvalidatePath(array('value' => '/some/path')),
-            new InvalidatePath(array('value' => array('/other/path', 'http://absolute.com/path')))
+            new InvalidatePath(array('value' => array('/other/path', 'http://absolute.com/path'))),
         ));
 
         $event = $this->getEvent($request);
@@ -143,7 +144,7 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
         $request->attributes->set('request_id', 123);
         $request->attributes->set('_invalidate_route', array(
             new InvalidateRoute(array('name' => 'some_route')),
-            new InvalidateRoute(array('name' => 'other_route', 'params' => array('id' => array('expression' => 'request_id'))))
+            new InvalidateRoute(array('name' => 'other_route', 'params' => array('id' => array('expression' => 'request_id')))),
         ));
 
         $event = $this->getEvent($request);

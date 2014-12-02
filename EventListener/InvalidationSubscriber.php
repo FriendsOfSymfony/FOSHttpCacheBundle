@@ -58,9 +58,9 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
     /**
      * Constructor
      *
-     * @param CacheManager          $cacheManager
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param ExpressionLanguage    $expressionLanguage
+     * @param CacheManager            $cacheManager
+     * @param UrlGeneratorInterface   $urlGenerator
+     * @param ExpressionLanguage|null $expressionLanguage
      */
     public function __construct(
         CacheManager $cacheManager,
@@ -82,8 +82,6 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
      *   HTTP cache.
      *
      * @param PostResponseEvent $event
-     *
-     * @return array Paths that were flushed from the invalidation queue
      */
     public function onKernelTerminate(PostResponseEvent $event)
     {
@@ -139,7 +137,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
             KernelEvents::TERMINATE  => 'onKernelTerminate',
             KernelEvents::EXCEPTION  => 'onKernelException',
             ConsoleEvents::TERMINATE => 'onConsoleTerminate',
-            ConsoleEvents::EXCEPTION => 'onConsoleTerminate'
+            ConsoleEvents::EXCEPTION => 'onConsoleTerminate',
         );
     }
 

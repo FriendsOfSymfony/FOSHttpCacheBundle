@@ -37,7 +37,7 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
             '\FOS\HttpCacheBundle\CacheManager',
             array(
                 \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface'),
-                \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface')
+                \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface'),
             )
         )->shouldDeferMissing();
 

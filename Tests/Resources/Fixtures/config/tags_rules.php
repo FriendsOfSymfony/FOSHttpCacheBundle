@@ -9,7 +9,7 @@ $container->loadFromExtension('fos_http_cache', array(
                     'path' => '/def',
                 ),
                 'tags' => array('a'),
-            )
-        )
+            ),
+        ),
     ),
 ));

@@ -41,7 +41,7 @@ class InvalidateRouteTest extends \PHPUnit_Framework_TestCase
             'params' => array(
                 'id' => array(
                     'this-is-not-expression' => 'something',
-                )
+                ),
             ),
         ));
     }

@@ -12,7 +12,6 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\Test;
 
 use FOS\HttpCacheBundle\Test\ProxyTestCase;
-use Symfony\Bundle\FrameworkBundle\Tests\Functional\WebTestCase;
 
 class ProxyTestCaseAnnotationTest extends ProxyTestCase
 {

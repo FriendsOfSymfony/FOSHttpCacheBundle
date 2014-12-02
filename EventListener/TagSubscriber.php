@@ -39,8 +39,8 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
     /**
      * Constructor
      *
-     * @param CacheManager       $cacheManager
-     * @param ExpressionLanguage $expressionLanguage
+     * @param CacheManager            $cacheManager
+     * @param ExpressionLanguage|null $expressionLanguage
      */
     public function __construct(
         CacheManager $cacheManager,
@@ -100,7 +100,7 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
     public static function getSubscribedEvents()
     {
         return array(
-            KernelEvents::RESPONSE => 'onKernelResponse'
+            KernelEvents::RESPONSE => 'onKernelResponse',
         );
     }
 

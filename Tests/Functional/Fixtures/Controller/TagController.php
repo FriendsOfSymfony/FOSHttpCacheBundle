@@ -36,7 +36,7 @@ class TagController extends Controller
             $this->container->get('fos_http_cache.cache_manager')->invalidateTags(array('all-items'));
         }
 
-        return new Response('Item ' . $id . ' invalidated');
+        return new Response('Item '.$id.' invalidated');
     }
 
     /**

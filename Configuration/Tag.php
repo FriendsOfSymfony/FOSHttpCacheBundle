@@ -30,7 +30,7 @@ class Tag extends ConfigurationAnnotation
      */
     public function setValue($data)
     {
-        $this->setTags(is_array($data) ? $data: array($data));
+        $this->setTags(is_array($data) ? $data : array($data));
     }
 
     /**

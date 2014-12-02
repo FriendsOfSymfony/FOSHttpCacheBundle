@@ -18,6 +18,6 @@ class TestController extends Controller
 {
     public function contentAction($id = null)
     {
-        return new Response('content ' . $id);
+        return new Response('content '.$id);
     }
 }

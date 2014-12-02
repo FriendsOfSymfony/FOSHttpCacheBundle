@@ -24,7 +24,7 @@ class HttpCacheTest extends \PHPUnit_Framework_TestCase
     protected function getHttpCachePartialMock(array $mockedMethods = null)
     {
         $mock = $this->getMockBuilder('\FOS\HttpCacheBundle\HttpCache')
-                     ->setMethods( $mockedMethods )
+                     ->setMethods($mockedMethods)
                      ->disableOriginalConstructor()
                      ->getMock();
 
@@ -54,7 +54,7 @@ class HttpCacheTest extends \PHPUnit_Framework_TestCase
             $refOptions = $refHttpCache
                 ->getProperty('options');
             $refOptions->setAccessible(true);
-            $refOptions->setValue($mock, $options );
+            $refOptions->setValue($mock, $options);
         }
 
         return $mock;
@@ -106,7 +106,7 @@ class HttpCacheTest extends \PHPUnit_Framework_TestCase
         $cookies = array(
             'PHPSESSID' => $sessionId1,
             'PHPSESSIDsdiuhsdf4535d4f' => $sessionId2,
-            'foo' => 'bar'
+            'foo' => 'bar',
         );
         $cookieString = "PHPSESSID=$sessionId1; foo=bar; PHPSESSIDsdiuhsdf4535d4f=$sessionId2";
         $request = Request::create('/foo', 'GET', array(), $cookies, array(), array('Cookie' => $cookieString));
@@ -128,7 +128,7 @@ class HttpCacheTest extends \PHPUnit_Framework_TestCase
         $hashResponse = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Response')
             ->setMethods(array('prepare'))
             ->getMock();
-        $hashResponse->headers->set(HttpCache::USER_HASH_HEADER, $expectedContextHash );
+        $hashResponse->headers->set(HttpCache::USER_HASH_HEADER, $expectedContextHash);
 
         $httpCache = $this->getHttpCachePartialMock(array('lookup'));
         $httpCache

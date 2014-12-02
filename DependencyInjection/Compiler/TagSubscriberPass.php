@@ -29,7 +29,7 @@ class TagSubscriberPass implements CompilerPassInterface
         ) {
             throw new \RuntimeException(
                 'Tag support requires SensioFrameworkExtraBundle’s ControllerListener for the annotations. '
-                . 'Please install sensio/framework-extra-bundle and add it to your AppKernel.'
+                .'Please install sensio/framework-extra-bundle and add it to your AppKernel.'
             );
         }
     }

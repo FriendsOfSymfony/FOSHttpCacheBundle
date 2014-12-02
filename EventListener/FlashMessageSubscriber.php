@@ -58,11 +58,11 @@ class FlashMessageSubscriber implements EventSubscriberInterface
         );
     }
 
-   /**
-    * Moves flash messages from the session to a cookie inside a Response Kernel listener
-    *
-    * @param FilterResponseEvent $event
-    */
+    /**
+     * Moves flash messages from the session to a cookie inside a Response Kernel listener
+     *
+     * @param FilterResponseEvent $event
+     */
     public function onKernelResponse(FilterResponseEvent $event)
     {
         if ($event->getRequestType() !== HttpKernel::MASTER_REQUEST) {
