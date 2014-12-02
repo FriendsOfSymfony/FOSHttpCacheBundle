@@ -9,12 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCacheBundle\Tests\Unit;
+namespace FOS\HttpCacheBundle\Tests\Unit\SymfonyCache;
 
-use FOS\HttpCacheBundle\HttpCache;
+use FOS\HttpCacheBundle\SymfonyCache\HttpCache;
 use FOS\HttpCacheBundle\SymfonyCache\CacheEvent;
 use FOS\HttpCacheBundle\SymfonyCache\Events;
-use FOS\HttpCacheBundle\SymfonyCache\UserContextHandler;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,11 +22,11 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 class HttpCacheTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @return \FOS\HttpCacheBundle\HttpCache|\PHPUnit_Framework_MockObject_MockObject
+     * @return HttpCache|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getHttpCachePartialMock(array $mockedMethods = null)
     {
-        $mock = $this->getMockBuilder('\FOS\HttpCacheBundle\HttpCache')
+        $mock = $this->getMockBuilder('\FOS\HttpCacheBundle\SymfonyCache\HttpCache')
                      ->setMethods( $mockedMethods )
                      ->disableOriginalConstructor()
                      ->getMock();
@@ -43,14 +42,7 @@ class HttpCacheTest extends \PHPUnit_Framework_TestCase
             'stale_if_error' => 60,
         );
 
-        $refMock = new \ReflectionObject($mock);
-        $refHttpCache = $refMock
-            // \FOS\HttpCacheBundle\HttpCache
-            ->getParentClass()
-            // \Symfony\Bundle\FrameworkBundle\HttpCache\HttpCache
-            ->getParentClass()
-            // \Symfony\Component\HttpKernel\HttpCache\HttpCache
-            ->getParentClass();
+        $refHttpCache = new \ReflectionClass('Symfony\Component\HttpKernel\HttpCache\HttpCache');
         // Workaround for Symfony 2.3 where $options property is not defined.
         if (!$refHttpCache->hasProperty('options')) {
             $mock->options = $options;
