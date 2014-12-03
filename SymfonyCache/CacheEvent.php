@@ -5,7 +5,7 @@ namespace FOS\HttpCacheBundle\SymfonyCache;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpCache\HttpCache;
+use Symfony\Component\HttpKernel\HttpCache\HttpCache as BaseHttpCache;
 
 class CacheEvent extends Event
 {
@@ -25,10 +25,10 @@ class CacheEvent extends Event
     private $response;
 
     /**
-     * @param HttpCache $kernel  The kernel raising with this event.
+     * @param BaseHttpCache $kernel  The kernel raising with this event.
      * @param Request   $request The request being processed.
      */
-    public function __construct(HttpCache $kernel, Request $request)
+    public function __construct(BaseHttpCache $kernel, Request $request)
     {
         $this->kernel = $kernel;
         $this->request = $request;
