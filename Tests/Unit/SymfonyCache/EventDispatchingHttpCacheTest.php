@@ -11,26 +11,28 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\SymfonyCache;
 
-use FOS\HttpCacheBundle\SymfonyCache\HttpCache;
-use FOS\HttpCacheBundle\SymfonyCache\CacheEvent;
-use FOS\HttpCacheBundle\SymfonyCache\Events;
-use FOS\HttpCacheBundle\SymfonyCache\UserContextSubscriber;
+use FOS\HttpCacheBundle\SymfonyCache\EventDispatchingHttpCache;
+use FOS\HttpCache\SymfonyCache\CacheEvent;
+use FOS\HttpCache\SymfonyCache\Events;
+use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-class HttpCacheTest extends \PHPUnit_Framework_TestCase
+class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @return HttpCache|\PHPUnit_Framework_MockObject_MockObject
+     * @return EventDispatchingHttpCache|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getHttpCachePartialMock(array $mockedMethods = null)
     {
-        $mock = $this->getMockBuilder('\FOS\HttpCacheBundle\SymfonyCache\HttpCache')
-                     ->setMethods( $mockedMethods )
-                     ->disableOriginalConstructor()
-                     ->getMock();
+        $mock = $this
+            ->getMockBuilder('\FOS\HttpCacheBundle\SymfonyCache\EventDispatchingHttpCache')
+            ->setMethods( $mockedMethods )
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
         // Force setting options property since we can't use original constructor.
         $options = array(
@@ -106,9 +108,10 @@ class HttpCacheTest extends \PHPUnit_Framework_TestCase
         $cacheKernel
             ->expects($this->once())
             ->method('getOptions')
-            ->will($this->returnValue($options));
+            ->will($this->returnValue($options))
+        ;
         $refCache = new \ReflectionClass(get_class($cacheKernel));
-        $refGetSubscribers = $refCache->getMethod('getSubscribers');
+        $refGetSubscribers = $refCache->getMethod('getDefaultSubscribers');
         $refGetSubscribers->setAccessible(true);
 
         $this->assertEquals($expectedSubscribers, $refGetSubscribers->invoke($cacheKernel));
@@ -120,19 +123,19 @@ class HttpCacheTest extends \PHPUnit_Framework_TestCase
             array(array(), array(new UserContextSubscriber())),
             array(
                 array(
-                    'fos_native_subscribers' => HttpCache::SUBSCRIBER_ALL,
+                    'fos_default_subscribers' => EventDispatchingHttpCache::SUBSCRIBER_ALL,
                 ),
                 array(new UserContextSubscriber())
             ),
             array(
                 array(
-                    'fos_native_subscribers' => HttpCache::SUBSCRIBER_NONE,
+                    'fos_default_subscribers' => EventDispatchingHttpCache::SUBSCRIBER_NONE,
                 ),
                 array()
             ),
             array(
                 array(
-                    'fos_native_subscribers' => HttpCache::SUBSCRIBER_USER_CONTEXT,
+                    'fos_default_subscribers' => EventDispatchingHttpCache::SUBSCRIBER_USER_CONTEXT,
                 ),
                 array(new UserContextSubscriber())
             ),

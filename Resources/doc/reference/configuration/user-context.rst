@@ -20,7 +20,7 @@ Set up Varnish caching proxy as explained in the
 Symfony reverse proxy
 """""""""""""""""""""
 
-Set up Symfony reverse proxy as explained in the :doc:`Symfony HttpCache dedicated documentation page </features/symfony-http-cache>`.
+Set up Symfony reverse proxy as explained in the :doc:`Symfony HttpCache documentation </features/symfony-http-cache>`.
 
 Context Hash Route
 ~~~~~~~~~~~~~~~~~~
@@ -153,7 +153,7 @@ enabled
 Defauts to ``auto``, which enables the logout handler service if a
 :doc:`proxy client </reference/configuration/proxy-client>` is configured.
 Set to ``true`` to explicitly enable the logout handler. This will throw an
-exception if no proxy client is configured. 
+exception if no proxy client is configured.
 
 user_identifier_headers
 ~~~~~~~~~~~~~~~~~~~~~~~

@@ -65,4 +65,3 @@ This is an example configuration. For more, see the
 
 .. _manually setting cache headers: http://symfony.com/doc/current/book/http_cache.html#the-cache-control-header
 .. _setting caching headers through annotations: http://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/cache.html
-

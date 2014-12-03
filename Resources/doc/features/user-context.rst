@@ -4,9 +4,9 @@ User Context
 **Works with**:
 
 - :ref:`Varnish <foshttpcache:varnish user context>`
-- :doc:`symfony-http-cache` 
+- :doc:`symfony-http-cache`
 
-If your application serves different content depending on the user’s group
+If your application serves different content depending on the user's group
 or context (guest, editor, admin), you can cache that content per user context.
 Each user context (group) gets its own unique hash, which is then used to vary
 content on. The event subscriber responds to hash requests and sets the Vary
@@ -40,7 +40,7 @@ These five steps resemble the Overview in the FOSHttpCache documentation.
 Configuration
 -------------
 
-First :doc:`configure your caching proxy and application </reference/configuration/user-context>`. 
+First :doc:`configure your caching proxy and application </reference/configuration/user-context>`.
 Then you can enable the subscriber with the default settings:
 
 .. code-block:: yaml
@@ -73,4 +73,4 @@ Caching Hash Responses
 ----------------------
 
 To improve User Context Caching performance, you should cache the hash responses.
-You can do so by configuring :ref:`hash_cache_ttl`. 
+You can do so by configuring :ref:`hash_cache_ttl`.
