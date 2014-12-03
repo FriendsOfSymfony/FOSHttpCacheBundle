@@ -108,7 +108,7 @@ class HttpCacheTest extends \PHPUnit_Framework_TestCase
             ->method('getOptions')
             ->will($this->returnValue($options));
         $refCache = new \ReflectionClass(get_class($cacheKernel));
-        $refGetSubscribers = $refCache->getMethod('getSubscribers');
+        $refGetSubscribers = $refCache->getMethod('getDefaultSubscribers');
         $refGetSubscribers->setAccessible(true);
 
         $this->assertEquals($expectedSubscribers, $refGetSubscribers->invoke($cacheKernel));

@@ -25,38 +25,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 class UserContextSubscriber implements EventSubscriberInterface
 {
-    /**
-     * Hash for anonymous user.
-     */
-    const ANONYMOUS_HASH = '38015b703d82206ebc01d17a39c727e5';
-
-    /**
-     * Accept header value to be used to request the user hash to the backend application.
-     * It must match the one defined in FOSHttpCacheBundle's configuration.
-     */
-    const USER_HASH_ACCEPT_HEADER = 'application/vnd.fos.user-context-hash';
-
-    /**
-     * Name of the header the user context hash will be stored into.
-     * It must match the one defined in FOSHttpCacheBundle's configuration.
-     */
-    const USER_HASH_HEADER = 'X-User-Context-Hash';
-
-    /**
-     * URI used with the forwarded request for user context hash generation.
-     */
-    const USER_HASH_URI = '/_fos_user_context_hash';
-
-    /**
-     * HTTP Method used with the forwarded request for user context hash generation.
-     */
-    const USER_HASH_METHOD = 'GET';
-
-    /**
-     * Prefix for session names.
-     * Must match your session configuration.
-     */
-    const SESSION_NAME_PREFIX = 'PHPSESSID';
+    private $options;
 
     /**
      * Generated user hash.
@@ -64,6 +33,32 @@ class UserContextSubscriber implements EventSubscriberInterface
      * @var string
      */
     private $userHash;
+
+    /**
+     * When creating this subscriber, you can configure a number of options.
+     *
+     * - ANONYMOUS_HASH Hash for anonymous user.
+     * - USER_HASH_ACCEPT_HEADER Accept header value to be used to request the user hash to the backend application.
+     *   It must match the one defined in FOSHttpCacheBundle's configuration.
+     * - USER_HASH_HEADER Name of the header the user context hash will be stored into.
+     *   It must match the one defined in FOSHttpCacheBundle's configuration.
+     * - USER_HASH_URI URI used with the forwarded request for user context hash generation.
+     * - USER_HASH_METHOD HTTP Method used with the forwarded request for user context hash generation.
+     * - SESSION_NAME_PREFIX Prefix for session names. Must match your session configuration.
+     *
+     * @param array $options Options to overwrite the default options
+     */
+    public function __construct(array $options = array())
+    {
+        $this->options = array(
+            'anonymous_hash' => '38015b703d82206ebc01d17a39c727e5',
+            'user_hash_accept_header' => 'application/vnd.fos.user-context-hash',
+            'user_hash_header' => 'X-User-Context-Hash',
+            'user_hash_uri' => '/_fos_user_context_hash',
+            'user_hash_method' => 'GET',
+            'session_name_prefix' => 'PHPSESSID',
+        ) + $options;
+    }
 
     /**
      * {@inheritdoc}
@@ -88,8 +83,8 @@ class UserContextSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
         if (!$this->isInternalRequest($request)) {
             // Prevent tampering attacks on the hash mechanism
-            if ($request->headers->get('accept') === static::USER_HASH_ACCEPT_HEADER
-                || $request->headers->get(static::USER_HASH_HEADER) !== null
+            if ($request->headers->get('accept') === $this->options['user_hash_accept_header']
+                || $request->headers->get($this->options['user_hash_header']) !== null
             ) {
                 $event->setResponse(new Response('', 400));
 
@@ -97,7 +92,7 @@ class UserContextSubscriber implements EventSubscriberInterface
             }
 
             if ($request->isMethodSafe()) {
-                $request->headers->set(static::USER_HASH_HEADER, $this->getUserHash($event->getKernel(), $request));
+                $request->headers->set($this->options['user_hash_header'], $this->getUserHash($event->getKernel(), $request));
             }
         }
 
@@ -130,14 +125,14 @@ class UserContextSubscriber implements EventSubscriberInterface
         }
 
         if ($this->isAnonymous($request)) {
-            return $this->userHash = static::ANONYMOUS_HASH;
+            return $this->userHash = $this->options['anonymous_hash'];
         }
 
         // Forward the request to generate the user hash
         $forwardReq = $this->generateForwardRequest($request);
         $resp = $kernel->handle($forwardReq);
         // Store the user hash in memory for sub-requests (processed in the same thread).
-        $this->userHash = $resp->headers->get(static::USER_HASH_HEADER);
+        $this->userHash = $resp->headers->get($this->options['user_hash_header']);
 
         return $this->userHash;
     }
@@ -169,7 +164,7 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     private function isSessionName($name)
     {
-        return strpos($name, static::SESSION_NAME_PREFIX) === 0;
+        return strpos($name, $this->options['session_name_prefix']) === 0;
     }
 
     /**
@@ -181,9 +176,9 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     private function generateForwardRequest(Request $request)
     {
-        $forwardReq = Request::create(static::USER_HASH_URI, static::USER_HASH_METHOD, array(), array(), array(), $request->server->all());
+        $forwardReq = Request::create($this->options['user_hash_uri'], $this->options['user_hash_method'], array(), array(), array(), $request->server->all());
         $forwardReq->attributes->set('internalRequest', true);
-        $forwardReq->headers->set('Accept', static::USER_HASH_ACCEPT_HEADER);
+        $forwardReq->headers->set('Accept', $this->options['user_hash_accept_header']);
         $this->cleanupForwardRequest($forwardReq, $request);
 
         return $forwardReq;

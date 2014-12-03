@@ -58,7 +58,7 @@ abstract class HttpCache extends BaseHttpCache
     {
         parent::__construct($kernel, $cacheDir);
 
-        foreach ($this->getSubscribers() as $subscriber) {
+        foreach ($this->getDefaultSubscribers() as $subscriber) {
             $this->addSubscriber($subscriber);
         }
     }
@@ -81,14 +81,10 @@ abstract class HttpCache extends BaseHttpCache
      * Add subscriber
      *
      * @param EventSubscriberInterface $subscriber
-     *
-     * @return $this
      */
     public function addSubscriber(EventSubscriberInterface $subscriber)
     {
         $this->getEventDispatcher()->addSubscriber($subscriber);
-
-        return $this;
     }
 
     /**
@@ -96,17 +92,17 @@ abstract class HttpCache extends BaseHttpCache
      * Override this method if you want to add custom subscribers:
      *
      * ```php
-     * protected function getSubscribers()
+     * protected function getDefaultSubscribers()
      * {
      *     // Get native subscribers.
-     *     $subscribers = parent::getSubscribers();
+     *     $subscribers = parent::getDefaultSubscribers();
      *     return array_merge($subscribers, [new CustomSubscriber(), new AnotherSubscriber()]);
      * }
      * ```
      *
      * @return EventSubscriberInterface[]
      */
-    protected function getSubscribers()
+    protected function getDefaultSubscribers()
     {
         $options = $this->getOptions();
         $subscribers = array();

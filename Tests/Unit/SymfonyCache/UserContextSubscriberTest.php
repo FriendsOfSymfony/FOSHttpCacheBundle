@@ -11,11 +11,21 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\SymfonyCache;
 
+/*
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 use FOS\HttpCacheBundle\SymfonyCache\CacheEvent;
 use FOS\HttpCacheBundle\SymfonyCache\UserContextSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\HttpCache;
+use FOS\HttpCacheBundle\HttpCache as BCHttpCache;
 
 class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
 {
@@ -42,7 +52,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testGenerateUserHashNotAllowed()
     {
         $request = new Request();
-        $request->headers->set('accept', UserContextSubscriber::USER_HASH_ACCEPT_HEADER);
+        $request->headers->set('accept', BCHttpCache::USER_HASH_ACCEPT_HEADER);
         $event = new CacheEvent($this->kernel, $request);
 
         $this->userContextSubscriber->preHandle($event);
@@ -55,7 +65,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testPassingUserHashNotAllowed()
     {
         $request = new Request();
-        $request->headers->set(UserContextSubscriber::USER_HASH_HEADER, 'foo');
+        $request->headers->set(BCHttpCache::USER_HASH_HEADER, 'foo');
         $event = new CacheEvent($this->kernel, $request);
 
         $this->userContextSubscriber->preHandle($event);
@@ -77,8 +87,8 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $response = $event->getResponse();
 
         $this->assertNull($response);
-        $this->assertTrue($request->headers->has(UserContextSubscriber::USER_HASH_HEADER));
-        $this->assertSame(UserContextSubscriber::ANONYMOUS_HASH, $request->headers->get(UserContextSubscriber::USER_HASH_HEADER));
+        $this->assertTrue($request->headers->has(\FOS\HttpCacheBundle\HttpCache::USER_HASH_HEADER));
+        $this->assertSame(BCHttpCache::ANONYMOUS_HASH, $request->headers->get(BCHttpCache::USER_HASH_HEADER));
     }
 
     public function testUserHashUserWithSession()
@@ -94,9 +104,9 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $cookieString = "PHPSESSID=$sessionId1; foo=bar; PHPSESSIDsdiuhsdf4535d4f=$sessionId2";
         $request = Request::create('/foo', 'GET', array(), $cookies, array(), array('Cookie' => $cookieString));
 
-        $hashRequest = Request::create(UserContextSubscriber::USER_HASH_URI, UserContextSubscriber::USER_HASH_METHOD, array(), array(), array(), $request->server->all());
+        $hashRequest = Request::create(BCHttpCache::USER_HASH_URI, BCHttpCache::USER_HASH_METHOD, array(), array(), array(), $request->server->all());
         $hashRequest->attributes->set('internalRequest', true);
-        $hashRequest->headers->set('Accept', UserContextSubscriber::USER_HASH_ACCEPT_HEADER);
+        $hashRequest->headers->set('Accept', BCHttpCache::USER_HASH_ACCEPT_HEADER);
         $hashRequest->headers->set('Cookie', "PHPSESSID=$sessionId1; PHPSESSIDsdiuhsdf4535d4f=$sessionId2");
         $hashRequest->cookies->set('PHPSESSID', $sessionId1);
         $hashRequest->cookies->set('PHPSESSIDsdiuhsdf4535d4f', $sessionId2);
@@ -110,7 +120,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $hashResponse = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Response')
             ->setMethods(array('prepare'))
             ->getMock();
-        $hashResponse->headers->set(UserContextSubscriber::USER_HASH_HEADER, $expectedContextHash );
+        $hashResponse->headers->set(BCHttpCache::USER_HASH_HEADER, $expectedContextHash );
 
         $that = $this;
         $this->kernel
@@ -135,7 +145,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $response = $event->getResponse();
 
         $this->assertNull($response);
-        $this->assertTrue($request->headers->has(UserContextSubscriber::USER_HASH_HEADER));
-        $this->assertSame($expectedContextHash, $request->headers->get(UserContextSubscriber::USER_HASH_HEADER));
+        $this->assertTrue($request->headers->has(BCHttpCache::USER_HASH_HEADER));
+        $this->assertSame($expectedContextHash, $request->headers->get(BCHttpCache::USER_HASH_HEADER));
     }
 }

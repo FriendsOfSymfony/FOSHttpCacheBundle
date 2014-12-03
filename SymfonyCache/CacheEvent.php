@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the FOSHttpCacheBundle package.
+ *
+ * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCacheBundle\SymfonyCache;
 
 use Symfony\Component\EventDispatcher\Event;
@@ -7,6 +16,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\HttpCache as BaseHttpCache;
 
+/**
+ * Event raised by the HttpCache kernel.
+ *
+ * @author David Buchmann <mail@davidbu.ch>
+ */
 class CacheEvent extends Event
 {
     /**
