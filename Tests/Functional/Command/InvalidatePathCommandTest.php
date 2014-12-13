@@ -22,6 +22,7 @@ class InvalidatePathCommandTest extends CommandTestCase
             'fos_http_cache.cache_manager',
             '\FOS\HttpCacheBundle\CacheManager'
         )
+            ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidatePath')->once()->with('http://example.com/my/path')
             ->shouldReceive('invalidatePath')->once()->with('http://example.com/other/path')
             ->shouldReceive('flush')->once()->andReturn(2)
@@ -38,6 +39,7 @@ class InvalidatePathCommandTest extends CommandTestCase
             'fos_http_cache.cache_manager',
             '\FOS\HttpCacheBundle\CacheManager'
         )
+            ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidatePath')->once()->with('http://example.com/my/path')
             ->shouldReceive('invalidatePath')->once()->with('http://example.com/other/path')
             ->shouldReceive('flush')->once()->andReturn(2)

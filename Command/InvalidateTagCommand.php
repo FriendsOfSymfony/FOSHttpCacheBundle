@@ -11,18 +11,25 @@
 
 namespace FOS\HttpCacheBundle\Command;
 
+use FOS\HttpCacheBundle\CacheManager;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use FOS\HttpCacheBundle\CacheManager;
+use FOS\HttpCache\Handler\TagHandler;
 
 /**
  * A command to trigger cache invalidation by tag from the command line.
  *
  * @author David Buchmann <mail@davidbu.ch>
  */
-class InvalidateTagCommand extends BaseInvalidateCommand
+class InvalidateTagCommand extends ContainerAwareCommand
 {
+    /**
+     * @var TagHandler
+     */
+    private $tagHandler;
+
     /**
      * @var string
      */
@@ -32,13 +39,24 @@ class InvalidateTagCommand extends BaseInvalidateCommand
      * If no cache manager is specified explicitly, fos_http_cache.cache_manager
      * is automatically loaded.
      *
-     * @param CacheManager|null $cacheManager The cache manager to talk to.
-     * @param string            $commandName  Name of this command, in case you want to reuse it.
+     * Passing CacheManager as argument is deprecated and will be restricted to TagHandler in 2.0.
+     *
+     * @param TagHandler|CacheManager|null $tagHandler  The tag handler to talk to.
+     * @param string                       $commandName Name of this command, in case you want to reuse it.
      */
-    public function __construct(CacheManager $cacheManager = null, $commandName = 'fos:httpcache:invalidate:tag')
+    public function __construct($tagHandler = null, $commandName = 'fos:httpcache:invalidate:tag')
     {
+        if (!($tagHandler instanceof TagHandler || $tagHandler instanceof CacheManager || null === $tagHandler)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Expected instance of TagHandler, CacheManager or null, but got %s',
+                    get_class($tagHandler)
+                )
+            );
+        }
         $this->commandName = $commandName;
-        parent::__construct($cacheManager);
+        $this->tagHandler = $tagHandler;
+        parent::__construct();
     }
 
     /**
@@ -72,6 +90,18 @@ EOF
     {
         $tags = $input->getArgument('tags');
 
-        $this->getCacheManager()->invalidateTags($tags);
+        $this->getTagManager()->invalidateTags($tags);
+    }
+
+    /**
+     * @return TagHandler|CacheManager
+     */
+    protected function getTagManager()
+    {
+        if (!$this->tagHandler) {
+            $this->tagHandler = $this->getContainer()->get('fos_http_cache.handler.tag_handler');
+        }
+
+        return $this->tagHandler;
     }
 }

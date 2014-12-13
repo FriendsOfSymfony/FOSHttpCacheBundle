@@ -12,6 +12,10 @@ tag_one:
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController::itemAction }
   methods:  [GET,POST]
 
+tag_manual:
+  path: /tag_manual
+  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController::manualAction }
+
 invalidation_route:
   path: /invalidate/route/{id}
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::itemAction }

@@ -45,7 +45,7 @@
         </service>
 
         <service id="fos_http_cache.command.invalidate_tag" class="%fos_http_cache.command.invalidate_tag.class%">
-            <argument type="service" id="fos_http_cache.cache_manager" />
+            <argument type="service" id="fos_http_cache.handler.tag_handler" />
             <tag name="console.command"/>
         </service>
 
