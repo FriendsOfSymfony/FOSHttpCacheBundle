@@ -20,7 +20,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-
 /**
  * Base class for enhanced Symfony reverse proxy based on the symfony FrameworkBundle HttpCache.
  *
