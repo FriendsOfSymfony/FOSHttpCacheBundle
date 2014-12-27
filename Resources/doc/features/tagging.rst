@@ -1,8 +1,7 @@
 Tagging
 =======
 
-**Prerequisites**: :ref:`configure caching proxy for tagging <foshttpcache:varnish_tagging>`
-(Varnish only) and :doc:`enable proxy client </reference/configuration/proxy-client>`.
+**Works with**: :ref:`Varnish <foshttpcache:varnish_tagging>`
 
 If your application has many intricate relationships between cached items,
 which makes it complex to invalidate them by route, cache tagging will be

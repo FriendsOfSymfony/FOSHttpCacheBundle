@@ -106,6 +106,8 @@ Id of a service that determines whether a request is a context hash request.
 The service must implement ``Symfony\Component\HttpFoundation\RequestMatcherInterface``.
 If set, ``accept`` and ``method`` will be ignored.
 
+.. _hash_cache_ttl:
+
 hash_cache_ttl
 ~~~~~~~~~~~~~~
 

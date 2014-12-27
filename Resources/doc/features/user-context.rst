@@ -1,7 +1,10 @@
 User Context
 ============
 
-**Prerequisites**: :ref:`configure caching proxy for user context <foshttpcache:varnish user context>` (Varnish only).
+**Works with**:
+
+- :ref:`Varnish <foshttpcache:varnish user context>`
+- :doc:`symfony-http-cache` 
 
 If your application serves different content depending on the user’s group
 or context (guest, editor, admin), you can cache that content per user context.
@@ -65,3 +68,9 @@ user’s roles. To enable it:
             role_provider: true
 
 Alternatively, you can create a :ref:`custom context provider <custom-context-providers>`.
+
+Caching Hash Responses
+----------------------
+
+To improve User Context Caching performance, you should cache the hash responses.
+You can do so by configuring :ref:`hash_cache_ttl`. 

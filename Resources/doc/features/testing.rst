@@ -1,12 +1,19 @@
 Testing
 =======
 
-**Prerequisites**: :ref:`configure caching proxy <foshttpcache:proxy-configuration>`.
-Your application must be reachable from the caching proxy through HTTP, so you
-need to have a web server running. If you already have a web server installed
-for development, you can use that. Alternatively, on PHP 5.4 or newer, you can
-use PHP’s built-in web server, for instance through
-``FOS\HttpCache\Tests\Functional\WebServerListener``.
+**Works with**:
+
+* :ref:`Varnish <foshttpcache:varnish configuration>`
+* :ref:`Nginx <foshttpcache:nginx configuration>`
+
+**Preparation**: 
+
+1. :ref:`Configure caching proxy <foshttpcache:proxy-configuration>`
+2. Your application must be reachable from the caching proxy through HTTP, so you
+   need to have a web server running. If you already have a web server installed
+   for development, you can use that. Alternatively, on PHP 5.4 or newer, you can
+   use PHP’s built-in web server, for instance through
+   ``FOS\HttpCache\Tests\Functional\WebServerListener``.
 
 ProxyTestCase
 -------------
