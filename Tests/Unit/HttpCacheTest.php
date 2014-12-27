@@ -23,10 +23,13 @@ class HttpCacheTest extends \PHPUnit_Framework_TestCase
      */
     protected function getHttpCachePartialMock(array $mockedMethods = null)
     {
+        // HttpKernelInterface does not work, as symfony HttpCache requires an isDebug method
+        $mockKernel = $this->getMock('Symfony\Component\HttpKernel\KernelInterface');
         $mock = $this->getMockBuilder('\FOS\HttpCacheBundle\HttpCache')
-                     ->setMethods($mockedMethods)
-                     ->disableOriginalConstructor()
-                     ->getMock();
+            ->setConstructorArgs(array($mockKernel, sys_get_temp_dir()))
+            ->setMethods($mockedMethods)
+            ->getMock()
+        ;
 
         // Force setting options property since we can't use original constructor.
         $options = array(
@@ -39,14 +42,7 @@ class HttpCacheTest extends \PHPUnit_Framework_TestCase
             'stale_if_error' => 60,
         );
 
-        $refMock = new \ReflectionObject($mock);
-        $refHttpCache = $refMock
-            // \FOS\HttpCacheBundle\HttpCache
-            ->getParentClass()
-            // \Symfony\Bundle\FrameworkBundle\HttpCache\HttpCache
-            ->getParentClass()
-            // \Symfony\Component\HttpKernel\HttpCache\HttpCache
-            ->getParentClass();
+        $refHttpCache = new \ReflectionClass('Symfony\Component\HttpKernel\HttpCache\HttpCache');
         // Workaround for Symfony 2.3 where $options property is not defined.
         if (!$refHttpCache->hasProperty('options')) {
             $mock->options = $options;
