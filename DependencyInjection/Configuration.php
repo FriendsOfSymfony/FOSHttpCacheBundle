@@ -16,6 +16,7 @@ use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * This class contains the configuration information for the bundle
@@ -449,6 +450,17 @@ class Configuration implements ConfigurationInterface
                             ->values(array(true, false, 'auto'))
                             ->defaultValue('auto')
                             ->info('Allows to disable the invalidation manager. Enabled by default if you configure a proxy client.')
+                        ->end()
+                        ->enumNode('generate_url_type')
+                            ->values(array(
+                                'auto',
+                                UrlGeneratorInterface::ABSOLUTE_PATH,
+                                UrlGeneratorInterface::ABSOLUTE_URL,
+                                UrlGeneratorInterface::NETWORK_PATH,
+                                UrlGeneratorInterface::RELATIVE_PATH,
+                            ))
+                            ->defaultValue('auto')
+                            ->info('Set what URLs to generate on invalidate/refresh Route. Auto means path if base_url is set on the default proxy client, full URL otherwise.')
                         ->end()
                     ->end()
         ;

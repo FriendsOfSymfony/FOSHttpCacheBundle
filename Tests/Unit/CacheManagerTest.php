@@ -14,6 +14,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit;
 use FOS\HttpCacheBundle\CacheManager;
 use \Mockery;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CacheManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,11 +36,11 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
 
         $router = \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface')
             ->shouldReceive('generate')
-            ->with('my_route', array())
+            ->with('my_route', array(), UrlGeneratorInterface::ABSOLUTE_PATH)
             ->andReturn('/my/route')
 
             ->shouldReceive('generate')
-            ->with('route_with_params', array('id' => 123))
+            ->with('route_with_params', array('id' => 123), UrlGeneratorInterface::ABSOLUTE_PATH)
             ->andReturn('/route/with/params/id/123')
             ->getMock();
 
@@ -62,11 +63,11 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
 
         $router = \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface')
             ->shouldReceive('generate')
-            ->with('my_route', array())
+            ->with('my_route', array(), UrlGeneratorInterface::ABSOLUTE_PATH)
             ->andReturn('/my/route')
 
             ->shouldReceive('generate')
-            ->with('route_with_params', array('id' => 123))
+            ->with('route_with_params', array('id' => 123), UrlGeneratorInterface::ABSOLUTE_PATH)
             ->andReturn('/route/with/params/id/123')
             ->getMock();
 

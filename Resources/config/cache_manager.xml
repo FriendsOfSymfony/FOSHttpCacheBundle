@@ -21,6 +21,9 @@
             <call method="setEventDispatcher">
                 <argument id="event_dispatcher" type="service" on-invalid="ignore" />
             </call>
+            <call method="setGenerateUrlType">
+                <argument>%fos_http_cache.cache_manager.generate_url_type%</argument>
+            </call>
         </service>
 
         <service id="fos_http_cache.event_listener.log"

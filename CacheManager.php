@@ -30,6 +30,13 @@ class CacheManager extends CacheInvalidator
     private $urlGenerator;
 
     /**
+     * What type of urls to generate.
+     *
+     * @var bool|string
+     */
+    private $generateUrlType = UrlGeneratorInterface::ABSOLUTE_PATH;
+
+    /**
      * Constructor
      *
      * @param ProxyClientInterface  $cache        HTTP cache proxy client
@@ -39,6 +46,16 @@ class CacheManager extends CacheInvalidator
     {
         parent::__construct($cache);
         $this->urlGenerator = $urlGenerator;
+    }
+
+    /**
+     * Set what type of URLs to generate.
+     *
+     * @param bool|string $generateUrlType One of the constants in UrlGeneratorInterface
+     */
+    public function setGenerateUrlType($generateUrlType)
+    {
+        $this->generateUrlType = $generateUrlType;
     }
 
     /**
@@ -80,7 +97,7 @@ class CacheManager extends CacheInvalidator
      */
     public function invalidateRoute($name, array $parameters = array(), array $headers = array())
     {
-        $this->invalidatePath($this->urlGenerator->generate($name, $parameters), $headers);
+        $this->invalidatePath($this->urlGenerator->generate($name, $parameters, $this->generateUrlType), $headers);
 
         return $this;
     }
@@ -96,7 +113,7 @@ class CacheManager extends CacheInvalidator
      */
     public function refreshRoute($route, array $parameters = array(), array $headers = array())
     {
-        $this->refreshPath($this->urlGenerator->generate($route, $parameters), $headers);
+        $this->refreshPath($this->urlGenerator->generate($route, $parameters, $this->generateUrlType), $headers);
 
         return $this;
     }

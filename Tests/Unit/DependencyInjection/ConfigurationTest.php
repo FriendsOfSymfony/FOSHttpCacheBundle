@@ -93,6 +93,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ),
             'cache_manager' => array(
                 'enabled' => true,
+                'generate_url_type' => 'auto',
             ),
             'tags' => array(
                 'enabled' => 'auto',
@@ -193,6 +194,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ),
         );
         $expectedConfiguration['cache_manager']['enabled'] = 'auto';
+        $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
         $expectedConfiguration['tags']['enabled'] = 'auto';
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
         $expectedConfiguration['user_context']['logout_handler']['enabled'] = 'auto';
@@ -250,6 +252,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ),
         );
         $expectedConfiguration['cache_manager']['enabled'] = 'auto';
+        $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
         $expectedConfiguration['tags']['enabled'] = 'auto';
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
         $expectedConfiguration['user_context']['logout_handler']['enabled'] = 'auto';
@@ -418,6 +421,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         return array(
             'cache_manager' => array(
                 'enabled' => false,
+                'generate_url_type' => 'auto',
             ),
             'tags' => array(
                 'enabled' => false,

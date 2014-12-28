@@ -19,6 +19,7 @@ use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * {@inheritdoc}
@@ -62,6 +63,16 @@ class FOSHttpCacheExtension extends Extension
         }
 
         if ($config['cache_manager']['enabled']) {
+            if ('auto' === $config['cache_manager']['generate_url_type']) {
+                $defaultClient = $this->getDefault($config['proxy_client']);
+                $generateUrlType = isset($config['proxy_client'][$defaultClient]['base_url'])
+                    ? UrlGeneratorInterface::ABSOLUTE_PATH
+                    : UrlGeneratorInterface::ABSOLUTE_URL
+                ;
+            } else {
+                $generateUrlType = $config['cache_manager']['generate_url_type'];
+            }
+            $container->setParameter($this->getAlias().'.cache_manager.generate_url_type', $generateUrlType);
             $loader->load('cache_manager.xml');
         }
 
