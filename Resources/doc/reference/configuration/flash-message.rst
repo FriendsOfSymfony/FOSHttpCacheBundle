@@ -7,7 +7,7 @@ another building brick for caching pages for logged in users.
 
 .. code-block:: yaml
 
-    # app/config.yml
+    # app/config/config.yml
     fos_http_cache:
         flash_message:
             enabled: true
