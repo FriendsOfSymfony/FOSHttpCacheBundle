@@ -26,6 +26,7 @@
         "symfony/framework-bundle": "~2.3"
     },
     "require-dev": {
+        "friendsofsymfony/http-cache": "~1.2@dev",
         "mockery/mockery": "0.9.*",
         "monolog/monolog": "*",
         "sensio/framework-extra-bundle": "~2.3",
@@ -45,7 +46,6 @@
             "FOS\\HttpCacheBundle\\": ""
         }
     },
-    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
             "dev-master": "1.2.x-dev"
