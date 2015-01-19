@@ -78,6 +78,6 @@ Subscribers
 
 Each feature has its subscriber. Subscribers are provided by the FOSHttpCache_
 library. You can find the documentation for the subscribers in the
-`FOSHttpCache Symfony Cache documentation section <foshttpcache:symfony-cache-configuration>`.
+:ref:`FOSHttpCache Symfony Cache documentation section <foshttpcache:symfony httpcache configuration>`.
 
 .. _Symfony HttpCache documentation: http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy
