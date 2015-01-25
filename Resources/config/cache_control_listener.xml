@@ -6,8 +6,6 @@
 
     <parameters>
         <parameter key="fos_http_cache.event_listener.cache_control.class">FOS\HttpCacheBundle\EventListener\CacheControlSubscriber</parameter>
-        <parameter key="fos_http_cache.request_matcher.class">Symfony\Component\HttpFoundation\RequestMatcher</parameter>
-        <parameter key="fos_http_cache.rule_matcher.class">FOS\HttpCacheBundle\Http\RuleMatcher</parameter>
     </parameters>
 
     <services>
@@ -15,19 +13,6 @@
                  class="%fos_http_cache.event_listener.cache_control.class%">
             <argument>%fos_http_cache.debug_header%</argument>
             <tag name="kernel.event_subscriber" />
-        </service>
-
-        <service id="fos_http_cache.request_matcher"
-                 class="%fos_http_cache.request_matcher.class%"
-                 public="false"
-        />
-
-        <service id="fos_http_cache.rule_matcher"
-                 class="%fos_http_cache.rule_matcher.class%"
-                 public="false"
-        >
-            <argument/>
-            <argument/>
         </service>
     </services>
 </container>
