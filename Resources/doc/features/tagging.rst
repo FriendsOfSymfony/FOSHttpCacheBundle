@@ -24,9 +24,8 @@ Then enable tagging in your application configuration:
 .. code-block:: yaml
 
     fos_http_cache:
-      cache_manager:
         tags:
-          enabled: true
+            enabled: true
 
 For more information, see :doc:`/reference/configuration/tags`.
 
