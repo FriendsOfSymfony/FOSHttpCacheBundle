@@ -1,17 +1,17 @@
 Invalidation
 ============
 
-**Works with**: 
+**Works with**:
 
 * :ref:`Varnish <foshttpcache:varnish configuration>`
 * :ref:`Nginx <foshttpcache:nginx configuration>`
 
 **Preparation**:
 
-In order to invalidate cached objects, requests are sent to your caching proxy, 
+In order to invalidate cached objects, requests are sent to your caching proxy,
 so first:
 
-1. :ref:`configure your proxy <foshttpcache:proxy-configuration>` 
+1. :ref:`configure your proxy <foshttpcache:proxy-configuration>`
 2. :doc:`enable a proxy client </reference/configuration/proxy-client>`
 
 By *invalidating* a piece of content, you tell your HTTP caching proxy (Varnish
@@ -86,7 +86,7 @@ You can add invalidation rules to your application configuration:
                         villain_details: ~   # e.g., /villain/{id}
 
 Now when a request to either route ``villain_edit`` or route ``villain_delete``
-returns a succesful response, both routes ``vilains_index`` and
+returns a successful response, both routes ``villains_index`` and
 ``villain_details`` will be purged. See the
 :doc:`/reference/configuration/invalidation` configuration reference.
 
@@ -115,8 +115,8 @@ Console Commands
 
 This bundle provides commands to trigger cache invalidation from the command
 line. You could also send invalidation requests with a command line tool like
-curl or, in the case of varnish, varnishadm. But the commands simplify the task
-and will automatically talk to all configured cache instances.
+``curl`` or, in the case of varnish, ``varnishadm``. But the commands simplify
+the task and will automatically talk to all configured cache instances.
 
 * ``fos:httpcache:invalidate:path`` accepts one or more paths and invalidates
   each of them. See :ref:`cache manager invalidation`.

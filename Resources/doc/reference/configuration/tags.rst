@@ -17,15 +17,15 @@ that you set this to ``true`` so you are notified of missing dependencies:
         tags:
             enabled: true
 
-header
-------
+``header``
+----------
 
 **type**: ``string`` **default**: ``X-Cache-Tags``
 
 Custom HTTP header that tags are stored in.
 
-rules
------
+``rules``
+---------
 
 **type**: ``array``
 
@@ -59,9 +59,8 @@ unsafe requests.
                         path: ^/news
                     tags: [news-section]
 
-
-tag_expressions
-~~~~~~~~~~~~~~~
+``tag_expressions``
+~~~~~~~~~~~~~~~~~~~
 
 **type**: ``array``
 

@@ -19,8 +19,8 @@ varnish
                 servers: 123.123.123.1:6060, 123.123.123.2
                 base_url: yourwebsite.com
 
-servers
-"""""""
+``servers``
+"""""""""""
 
 **type**: ``array``
 
@@ -28,8 +28,8 @@ Comma-separated list of IP addresses or host names of your
 caching proxy servers. The port those servers will be contacted
 defaults to 80; you can specify a different port with ``:<port>``.
 
-base_url
-""""""""
+``base_url``
+""""""""""""
 
 **type**: ``string``
 
@@ -68,8 +68,8 @@ nginx
 
 For ``servers`` and ``base_url``, see above.
 
-purge_location
-""""""""""""""
+``purge_location``
+""""""""""""""""""
 
 **type**: ``string``
 

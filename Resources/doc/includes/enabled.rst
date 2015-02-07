@@ -1,5 +1,5 @@
-enabled
--------
+``enabled``
+-----------
 
 **type**: ``enum``, **default**: ``auto``, **options**: ``true``, ``false``, ``auto``
 

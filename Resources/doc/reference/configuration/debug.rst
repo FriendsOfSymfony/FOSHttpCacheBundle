@@ -15,16 +15,16 @@ debug information when that header is present:
             enabled: true
             header: Please-Send-Debug-Infos
 
-enabled
--------
+``enabled``
+-----------
 
 **type**: ``enum`` **default**: ``auto`` **options**: ``true``, ``false``, ``auto``
 
 The default value is ``%kernel.debug%``, triggering the header when you are in
-dev mode but not in prod mode.
+``dev`` mode but not in prod mode.
 
-header
-------
+``header``
+----------
 
 **type**: ``string`` **default**: ``X-Cache-Debug``
 

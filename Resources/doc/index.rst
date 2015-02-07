@@ -4,7 +4,7 @@ FOSHttpCacheBundle
 This is the documentation for the `FOSHttpCacheBundle <https://github.com/FriendsOfSymfony/FOSHttpCacheBundle>`_.
 Use the FOSHttpCacheBundle to:
 
-* Set path-based cache expiration headers via your app configuration;
+* Set path-based cache expiration headers via your application configuration;
 * Set up an invalidation scheme without writing PHP code;
 * Tag your responses and invalidate cache based on tags;
 * Send invalidation requests with minimal impact on performance with the FOSHttpCache_ library;
@@ -20,4 +20,6 @@ Contents
     overview
     features
     reference
+
     testing
+    contributing

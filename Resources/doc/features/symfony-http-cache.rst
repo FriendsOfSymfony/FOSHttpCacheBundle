@@ -42,7 +42,7 @@ By default, the event dispatching cache kernel registers all subscribers it know
 about. You can disable subscribers, or customize how they are instantiated.
 
 If you do not need all subscribers, or need to register some yourself to
-customize their behaviour, overwrite ``getOptions`` and return the right bitmap
+customize their behavior, overwrite ``getOptions`` and return the right bitmap
 in ``fos_default_subscribers``. Use the constants provided by the cache kernel::
 
     public function getOptions()

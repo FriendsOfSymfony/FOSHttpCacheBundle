@@ -22,8 +22,8 @@ routes when some other routes are requested.
 
 .. include:: /includes/enabled.rst
 
-rules
------
+``rules``
+---------
 
 **type**: ``array``
 
@@ -36,15 +36,15 @@ specified, where the first match wins. The routes are invalidated when:
 
 .. include:: /includes/match.rst
 
-routes
-^^^^^^
+``routes``
+^^^^^^^^^^
 
 **type**: ``array``
 
 A list of route names that will be invalidated.
 
-ignore_extra_params
-"""""""""""""""""""
+``ignore_extra_params``
+"""""""""""""""""""""""
 
 **type**: ``boolean`` **default**: ``true``
 

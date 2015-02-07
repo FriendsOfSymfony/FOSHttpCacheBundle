@@ -13,8 +13,8 @@ actions are executed.
 
 .. _invalidatepath:
 
-@InvalidatePath
----------------
+``@InvalidatePath``
+-------------------
 
 Invalidate a path::
 
@@ -32,8 +32,8 @@ See :doc:`/features/invalidation` for more information.
 
 .. _invalidateroute:
 
-@InvalidateRoute
-----------------
+``@InvalidateRoute``
+--------------------
 
 Invalidate a route with parameters::
 
@@ -66,8 +66,8 @@ See :doc:`/features/invalidation` for more information.
 
 .. _tag:
 
-@Tag
-----
+``@Tag``
+--------
 
 You can make this bundle tag your response automatically using the ``@Tag``
 annotation. :term:`Safe <safe>` operations like GET that produce a successful
