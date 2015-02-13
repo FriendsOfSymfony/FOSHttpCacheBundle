@@ -34,11 +34,7 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->cacheManager = \Mockery::mock(
-            '\FOS\HttpCacheBundle\CacheManager',
-            array(
-                \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface'),
-                \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface'),
-            )
+            '\FOS\HttpCacheBundle\CacheManager'
         )->shouldDeferMissing();
 
         $this->listener = new TagSubscriber($this->cacheManager);
