@@ -156,6 +156,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $request = new Request();
         $request->setMethod('HEAD');
+        $request->headers->set('X-SessionId', 'session');
 
         $requestMatcher = $this->getRequestMatcher($request, false);
         $hashGenerator = \Mockery::mock('\FOS\HttpCache\UserContext\HashGenerator');
@@ -166,6 +167,24 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $userContextSubscriber->onKernelResponse($event);
 
         $this->assertEquals('X-SessionId', $event->getResponse()->headers->get('Vary'));
+    }
+
+    /**
+     * If no hash in the request and no user identifier do not set any more vary (anonymous)
+     */
+    public function testOnKernelResponseAnonymousNoVary()
+    {
+        $request = new Request();
+
+        $requestMatcher = $this->getRequestMatcher($request, false);
+        $hashGenerator = \Mockery::mock('\FOS\HttpCache\UserContext\HashGenerator');
+
+        $userContextSubscriber = new UserContextSubscriber($requestMatcher, $hashGenerator, array('X-SessionId'), 'X-Hash');
+        $event = $this->getKernelResponseEvent($request);
+
+        $userContextSubscriber->onKernelResponse($event);
+
+        $this->assertNull($event->getResponse()->headers->get('Vary'));
     }
 
     protected function getKernelRequestEvent(Request $request, $type = HttpKernelInterface::MASTER_REQUEST)
