@@ -132,7 +132,7 @@ class UserContextSubscriber implements EventSubscriberInterface
             }
         } else {
             foreach ($this->userIdentifierHeaders as $header) {
-                if (!in_array($header, $vary)) {
+                if ($event->getRequest()->headers->has($header) && !in_array($header, $vary)) {
                     $vary[] = $header;
                 }
             }
