@@ -14,6 +14,7 @@ namespace FOS\HttpCacheBundle\UserContext;
 use FOS\HttpCache\UserContext\ContextProviderInterface;
 use FOS\HttpCache\UserContext\UserContext;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Role\RoleInterface;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 
@@ -34,10 +35,19 @@ class RoleProvider implements ContextProviderInterface
      * firewall. It is however not valid to call updateUserContext when not in
      * a firewall context.
      *
-     * @param SecurityContextInterface|null $context
+     * @param SecurityContextInterface|TokenStorageInterface $context
      */
-    public function __construct(SecurityContextInterface $context = null)
+    public function __construct($context = null)
     {
+        if ($context
+            && !$context instanceof SecurityContextInterface
+            && !$context instanceof TokenStorageInterface
+        ) {
+            throw new \InvalidArgumentException(
+                'Context must implement either TokenStorageInterface or SecurityContextInterface'
+            );
+        }
+        
         $this->context = $context;
     }
 
