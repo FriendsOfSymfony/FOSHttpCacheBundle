@@ -33,7 +33,7 @@ triggered:
 
     # app/config/routing.yml
     user_context_hash:
-        path: /user-context-hash
+        path: /_fos_user_context_hash
 
 .. important::
 
