@@ -14,8 +14,8 @@ All criteria are regular expressions. For instance:
         host: ^login.example.com$
         path: ^/$
 
-host
-----
+``host``
+--------
 
 **type**: ``string``
 
@@ -24,21 +24,21 @@ serve more than one host from your Symfony application.
 
 .. tip::
 
-    To simplify caching of a site that at the same time has frontend
+    To simplify caching of a site that offers front-end
     editing, put the editing on a separate (sub-)domain. Then define a first
     rule matching that domain with ``host`` and set ``max-age: 0`` to make sure
     your caching proxy never caches the editing domain.
 
-path
-----
+``path``
+--------
 
 **type**: ``string``
 
 For example, ``path: ^/`` will match every request. To only match the home
 page, use ``path: ^/$``.
 
-methods
--------
+``methods``
+-----------
 
 **type**: ``array``
 
@@ -51,8 +51,8 @@ even when you set the methods here:
     match:
         methods: [PUT, DELETE]
 
-ips
----
+``ips``
+-------
 
 **type**: ``array``
 
@@ -66,16 +66,16 @@ client IP addresses.
     only sees the caching proxy IP. See `Trusting Proxies`_ in the Symfony
     documentation.
 
-attributes
-----------
+``attributes``
+--------------
 
 **type**: ``array``
 
 An array of request attributes to match against. Each attribute is interpreted
 as a regular expression.
 
-_controller
-^^^^^^^^^^^
+``_controller``
+^^^^^^^^^^^^^^^
 
 **type**: ``string``
 
@@ -92,8 +92,8 @@ for `controllers as services`_.
     uses the service name and you need to match on that. If you mixed both, you
     can do a regular expression like ``^(Acme\\TestBundle|acme_test.controller)``.
 
-_route
-^^^^^^
+``_route``
+^^^^^^^^^^
 
 **type**: ``string``
 
@@ -123,8 +123,8 @@ regular expressions.
 
 .. _additional_cacheable_status:
 
-additional_cacheable_status
----------------------------
+``additional_cacheable_status``
+-------------------------------
 
 **type**: ``array``
 
@@ -138,8 +138,8 @@ the rule.
 
 .. _match_response:
 
-match_response
---------------
+``match_response``
+------------------
 
 **type**: ``string``
 

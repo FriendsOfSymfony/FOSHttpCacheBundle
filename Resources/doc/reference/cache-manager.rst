@@ -17,8 +17,8 @@ By *refreshing* a piece of content, a fresh copy will be fetched right away.
 
 .. _cache manager invalidation:
 
-invalidatePath
---------------
+``invalidatePath()``
+--------------------
 
 .. important::
 
@@ -58,8 +58,8 @@ The cache manager offers a fluent interface::
 
 .. _cache manager refreshing:
 
-Refreshing
-----------
+``refreshPath()`` and ``refreshRoute()``
+----------------------------------------
 
 .. note::
 
@@ -82,8 +82,8 @@ Refresh a Route::
 
 .. _cache_manager_tags:
 
-tagResponse()
--------------
+``tagResponse()``
+-----------------
 
 Use the Cache Manager to tag responses::
 
@@ -95,8 +95,8 @@ option to true::
 
     $cacheManager->tagResponse($response, array('different'), true);
 
-invalidateTags()
-----------------
+``invalidateTags()``
+--------------------
 
 Invalidate cache tags::
 
@@ -104,8 +104,8 @@ Invalidate cache tags::
 
 .. _flushing:
 
-Flushing
---------
+``flush()``
+-----------
 
 Internally, the invalidation requests are queued and only sent out to your HTTP
 proxy when the manager is flushed. The manager is flushed automatically at the

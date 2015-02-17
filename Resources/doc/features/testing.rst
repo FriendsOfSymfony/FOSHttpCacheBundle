@@ -6,7 +6,7 @@ Testing
 * :ref:`Varnish <foshttpcache:varnish configuration>`
 * :ref:`Nginx <foshttpcache:nginx configuration>`
 
-**Preparation**: 
+**Preparation**:
 
 1. :ref:`Configure caching proxy <foshttpcache:proxy-configuration>`
 2. Your application must be reachable from the caching proxy through HTTP, so you
@@ -49,7 +49,7 @@ Test Client
 ^^^^^^^^^^^
 
 The ``getResponse()`` method calls ``getHttpClient()`` to retrieve a test client. You
-can use this client yourself to customise the requests. Note that the test
+can use this client yourself to customize the requests. Note that the test
 client must be :doc:`enabled in your configuration </reference/configuration/test>`.
 By default, it is enabled when you access your application in debug mode and
 you have :doc:`configured a proxy client </reference/configuration/proxy-client>`

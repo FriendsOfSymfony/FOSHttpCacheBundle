@@ -16,8 +16,8 @@ another building brick for caching pages for logged in users.
             host: null
             secure: false
 
-enabled
--------
+``enabled``
+-----------
 
 **type**: ``boolean`` **default**: ``false``
 
@@ -25,29 +25,28 @@ This event subscriber is disabled by default. You can set enabled to true if
 the default values for all options are good for you. When you configure any of
 the options, the subscriber is automatically enabled.
 
-name
-----
+``name``
+--------
 
 **type**: ``string`` **default**: ``flashes``
 Set the name of the cookie.
 
-
-path
-----
+``path``
+--------
 
 **type**: ``string`` **default**: ``/``
 
 The cookie path to use.
 
-host
-----
+``host``
+--------
 
 **type**: ``string``
 
 Set the host for the cookie, e.g. to share among subdomains.
 
-secure
-------
+``secure``
+----------
 
 **type**: ``boolean`` **default**: ``false``
 

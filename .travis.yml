@@ -43,11 +43,13 @@ before_script:
   - bash -c 'FLAWED_DEPRECATIONS=`echo "${SYMFONY_VERSION:0:3} >= 2.7"|bc`; if [ "$FLAWED_DEPRECATIONS" = "1" ]; then echo "error_reporting = E_ALL & ~E_DEPRECATED" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini; echo "PHPUnit_Framework_Error_Deprecated::\$enabled = false;" >> Tests/bootstrap.php; fi;'
   - sh -c 'if [ "$FRAMEWORK_EXTRA_VERSION" != "" ]; then composer require --dev --no-update sensio/framework-extra-bundle=$FRAMEWORK_EXTRA_VERSION; fi;'
   - composer install
-  - sudo apt-get install python-sphinx
+  - sudo apt-get install python-sphinx enchant
+  - sudo pip install -r Resources/doc/requirements.txt
 
 script:
   - phpunit --coverage-clover=coverage.clover
   - make -C Resources/doc SPHINXOPTS='-nW' html
+  - make -C Resources/doc spelling
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar

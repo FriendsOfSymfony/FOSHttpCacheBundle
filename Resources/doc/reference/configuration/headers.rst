@@ -64,8 +64,8 @@ cache headers even if they are already set.
                             s_maxage: 30
                         last_modified: "-1 hour"
 
-rules
------
+``rules``
+---------
 
 **type**: ``array``
 
@@ -128,13 +128,13 @@ You can prevent the cache control on specific requests by injecting the
 service ``fos_http_cache.event_listener.cache_control`` and calling
 ``setSkip()`` on it. If this method is called, no cache rules are applied.
 
-cache_control
-"""""""""""""
+``cache_control``
+"""""""""""""""""
 
 **type**: ``array``
 
 The map under ``cache_control`` is set in a call to ``Response::setCache()``.
-The names are specified with underscores in yml, but translated to ``-`` for
+The names are specified with underscores in yaml, but translated to ``-`` for
 the ``Cache-Control`` header.
 
 You can use the standard cache control directives:
@@ -200,8 +200,8 @@ directives are flags that are included when set to true.
                             proxy_revalidate: true
                             no_transform: true
 
-last_modified
-"""""""""""""
+``last_modified``
+"""""""""""""""""
 
 **type**: ``string``
 
@@ -224,8 +224,8 @@ This value must be a valid input to ``DateTime``.
     ``If-Modified-Since`` requests. Varnish can handle these to serve data
     from the cache if it was not invalidated since the client requested it.
 
-vary
-""""
+``vary``
+""""""""
 
 **type**: ``string``
 
@@ -243,16 +243,16 @@ keeping previously set Vary options.
                     headers:
                         vary: My-Custom-Header
 
-reverse_proxy_ttl
-"""""""""""""""""
+``reverse_proxy_ttl``
+"""""""""""""""""""""
 
 **type**: ``integer``
 
 Set a X-Reverse-Proxy-TTL header for reverse proxy time-outs not driven by ``s-maxage``.
 
 By default, reverse proxies use the ``s-maxage`` of your ``Cache-Control`` header
-to know how long it should cache a page. But by default, the s-maxage is also
-sent to the client. Any caches on the internet, for example at an internet
+to know how long it should cache a page. But by default, the ``s-maxage`` is also
+sent to the client. Any caches on the Internet, for example at an Internet
 provider or in the office of a surfer, might look at ``s-maxage`` and
 cache the page if it is ``public``. This can be a problem, notably when you do
 :doc:`explicit cache invalidation </reference/cache-manager>`. You might want your reverse
