@@ -12,6 +12,7 @@
 namespace FOS\HttpCacheBundle;
 
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\LoggerPass;
+use FOS\HttpCacheBundle\DependencyInjection\Compiler\SecurityContextPass;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\TagSubscriberPass;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -25,6 +26,7 @@ class FOSHttpCacheBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new LoggerPass());
+        $container->addCompilerPass(new SecurityContextPass());
         $container->addCompilerPass(new TagSubscriberPass());
         $container->addCompilerPass(new HashGeneratorPass());
     }
