@@ -5,10 +5,6 @@ framework:
   test: ~
   session:
     storage_id:  session.test_storage
-  # We need to specify templating because of a bug in Symfony: 
-  # see https://github.com/symfony/symfony/issues/13710
-  templating: 
-    engines: ['php']
 
 fos_http_cache:
   cache_control:

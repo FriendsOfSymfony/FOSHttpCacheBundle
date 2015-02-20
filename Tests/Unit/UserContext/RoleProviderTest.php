@@ -67,6 +67,6 @@ class RoleProviderTest extends \PHPUnit_Framework_TestCase
         }
         
         // Symfony < 2.6 compatibility
-        return \Mockery::mock('\Symfony\Component\Security\Core\SecurityContext');
+        return \Mockery::mock('\Symfony\Component\Security\Core\SecurityContextInterface');
     }
 }
