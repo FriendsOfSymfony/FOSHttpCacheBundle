@@ -43,6 +43,7 @@ class FOSHttpCacheExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('matcher.xml');
 
         if ($config['debug']['enabled'] || (!empty($config['cache_control']))) {
             $debugHeader = $config['debug']['enabled'] ? $config['debug']['header'] : false;

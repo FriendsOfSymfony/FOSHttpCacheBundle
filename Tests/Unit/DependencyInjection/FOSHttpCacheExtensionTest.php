@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection;
 
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
@@ -149,6 +150,9 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertMatcherCreated($container, array('_route' => 'my_route'));
         $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.invalidation');
+        
+        // Test for runtime errors
+        $container->compile();
     }
 
     public function testConfigLoadCacheControl()
@@ -282,9 +286,17 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
     protected function createContainer()
     {
-        return new ContainerBuilder(new ParameterBag(array(
-            'kernel.debug'       => false,
-        )));
+        $container = new ContainerBuilder(
+            new ParameterBag(array('kernel.debug' => false,))
+        );
+        
+        // The cache_manager service depends on the router service
+        $container->setDefinition(
+            'router',
+            new Definition('\Symfony\Component\Routing\Router')
+        );
+        
+        return $container;
     }
 
     protected function getBaseConfig()
