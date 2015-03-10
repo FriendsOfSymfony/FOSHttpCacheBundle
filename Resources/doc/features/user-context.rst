@@ -40,8 +40,25 @@ These five steps resemble the Overview in the FOSHttpCache documentation.
 Configuration
 -------------
 
-First :doc:`configure your caching proxy and application </reference/configuration/user-context>`.
-Then you can enable the subscriber with the default settings:
+First :ref:`configure your caching proxy <foshttpcache:user-context>`. Then
+configure Symfony for handling hash lookups. The minimal steps are described
+below, see the :doc:`reference </reference/configuration/user-context>` for
+more details.
+
+You need to configure a route for the context hash. It does not specify any
+controller, as the request listener will abort the request right after the
+firewall has been applied, but the route definition must exist. Use the same
+path as you specified in the caching proxy and make sure that this path is
+covered by your
+`firewall configuration <http://symfony.com/doc/current/book/security.html>`_:
+
+.. code-block:: yaml
+
+    # app/config/routing.yml
+    user_context_hash:
+        path: /_fos_user_context_hash
+
+Finally, enable the subscriber with the default settings:
 
 .. code-block:: yaml
 
