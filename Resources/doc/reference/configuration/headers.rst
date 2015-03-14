@@ -7,7 +7,7 @@ parameters described in the ``match`` section, the headers as defined under
 checked in the order specified, where the first match wins.
 
 A global setting and a per rule ``overwrite`` option allow to overwrite the
-cache headers even if they are already set.
+cache headers even if they are already set:
 
 .. code-block:: yaml
 
@@ -27,7 +27,7 @@ cache headers even if they are already set.
                             public: false
                             max_age: 0
                             s_maxage: 0
-                        last_modified: "-1 hour"
+                        etag: true
                         vary: [Accept-Encoding, Accept-Language]
 
                 # match all actions of a specific controller
@@ -50,7 +50,7 @@ cache headers even if they are already set.
                             public: true
                             max_age: 64000
                             s_maxage: 64000
-                        last_modified: "-1 hour"
+                        etag: true
                         vary: [Accept-Encoding, Accept-Language]
 
                 # match everything to set defaults
@@ -62,7 +62,7 @@ cache headers even if they are already set.
                             public: true
                             max_age: 15
                             s_maxage: 30
-                        last_modified: "-1 hour"
+                        etag: true
 
 ``rules``
 ---------
@@ -143,7 +143,7 @@ You can use the standard cache control directives:
 * ``s_maxage`` time in seconds for proxy caches (also public caches);
 * ``private`` true or false;
 * ``public`` true or false;
-* ``no_cache`` true or false (use exclusively to support HTTP 1.0);
+* ``no_cache`` true or false (use exclusively to support HTTP 1.0).
 
 .. code-block:: yaml
 
@@ -182,7 +182,7 @@ RFCs extending HTTP/1.1. The following options are supported:
 
 The *stale* directives need a parameter specifying the time in seconds how long
 a  cache is allowed to continue serving stale content if needed. The other
-directives are flags that are included when set to true.
+directives are flags that are included when set to true:
 
 .. code-block:: yaml
 
@@ -200,13 +200,44 @@ directives are flags that are included when set to true.
                             proxy_revalidate: true
                             no_transform: true
 
+``etag``
+""""""""
+
+**type**: ``boolean``
+
+This enables a simplistic ETag calculated as md5 hash of the response body:
+
+.. code-block:: yaml
+
+    # app/config/config.yml
+    fos_http_cache:
+        cache_control:
+            rules:
+                -
+                    headers:
+                        etag: true
+
+.. tip::
+
+    This simplistic ETag handler will not help you to prevent unnecessary work
+    on your webserver, but allows a caching proxy to use the ETag cache
+    validation method to preserve bandwidth. The presence of an ETag tells
+    clients that they can send a ``If-None-Match`` header with the ETag their
+    current version of the content has. If the caching proxy still has the same
+    ETag, it responds with a "304 Not Modified" status.
+
+    You can get additional performance if you write your own ETag listener that
+    also checks the ETag on requests and decides whether the content of the
+    requested page would still generate the same ETag and abort the request as
+    early as possible to return the "304 Not Modified" status.
+
 ``last_modified``
 """""""""""""""""
 
 **type**: ``string``
 
 The input to the ``last_modified`` is used for the ``Last-Modified`` header.
-This value must be a valid input to ``DateTime``.
+This value must be a valid input to ``DateTime``:
 
 .. code-block:: yaml
 
@@ -218,11 +249,21 @@ This value must be a valid input to ``DateTime``.
                     headers:
                         last_modified: "-1 hour"
 
-.. hint::
+.. note::
 
     Setting an arbitrary last modified time allows clients to send
     ``If-Modified-Since`` requests. Varnish can handle these to serve data
     from the cache if it was not invalidated since the client requested it.
+
+    If you only use these simple configurations to add cache validation
+    information, there is no point in adding both a last modified and ETag
+    header. Usually, you should prefer the ETag method as it is not prone to
+    clock skew issues.
+
+    If your site is under heavy load, your best option is to write either a
+    custom ETag handler or a custom last modified handler that uses the content
+    of the page in a way that can avoid rendering the whole page before
+    deciding whether the cached version is still valid.
 
 ``vary``
 """"""""
@@ -231,7 +272,7 @@ This value must be a valid input to ``DateTime``.
 
 You can set the `vary` option to an array that defines the contents of the
 `Vary` header when matching the request. This adds to existing Vary headers,
-keeping previously set Vary options.
+keeping previously set Vary options:
 
 .. code-block:: yaml
 

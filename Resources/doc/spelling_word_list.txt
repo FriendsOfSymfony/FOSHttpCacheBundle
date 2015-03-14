@@ -8,3 +8,4 @@ github
 subdomains
 yaml
 invalidator
+ETag

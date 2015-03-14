@@ -19,7 +19,7 @@
                     <additional-cacheable-status>100</additional-cacheable-status>
                     <additional-cacheable-status>500</additional-cacheable-status>
                 </match>
-                <headers last-modified="-1 hour" reverse-proxy-ttl="42">
+                <headers etag="true" last-modified="-1 hour" reverse-proxy-ttl="42">
                     <overwrite>false</overwrite>
                     <cache-control
                         max-age="1"

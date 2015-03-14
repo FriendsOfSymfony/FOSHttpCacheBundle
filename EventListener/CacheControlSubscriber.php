@@ -130,6 +130,11 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
                 $response->setVary($options['vary'], $options['overwrite']);
             }
 
+            if (!empty($options['etag'])
+                && ($options['overwrite'] || null === $response->getEtag())
+            ) {
+                $response->setEtag(md5($response->getContent()));
+            }
             if (isset($options['last_modified'])
                 && ($options['overwrite'] || null === $response->getLastModified())
             ) {
