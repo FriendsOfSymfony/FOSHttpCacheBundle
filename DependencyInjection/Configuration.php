@@ -54,12 +54,15 @@ class Configuration implements ConfigurationInterface
             ->validate()
                 ->ifTrue(function ($v) {return $v['cache_manager']['enabled'] && !isset($v['proxy_client']);})
                 ->then(function ($v) {
+                    if (!empty($v['cache_manager']['proxy_client'])) {
+                        return $v;
+                    }
                     if ('auto' === $v['cache_manager']['enabled']) {
                         $v['cache_manager']['enabled'] = false;
 
                         return $v;
                     }
-                    throw new InvalidConfigurationException('You need to configure a proxy_client to use the cache_manager.');
+                    throw new InvalidConfigurationException('You need to configure a proxy_client or specify a custom_proxy_client to use the cache_manager.');
                 })
             ->end()
             ->validate()
@@ -450,6 +453,9 @@ class Configuration implements ConfigurationInterface
                             ->values(array(true, false, 'auto'))
                             ->defaultValue('auto')
                             ->info('Allows to disable the invalidation manager. Enabled by default if you configure a proxy client.')
+                        ->end()
+                        ->scalarNode('custom_proxy_client')
+                            ->info('Service name of a custom proxy client to use. If you configure a proxy client, that client will be used by default.')
                         ->end()
                         ->enumNode('generate_url_type')
                             ->values(array(

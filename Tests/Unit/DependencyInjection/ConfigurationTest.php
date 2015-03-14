@@ -93,6 +93,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ),
             'cache_manager' => array(
                 'enabled' => true,
+                'custom_proxy_client' => 'acme.proxy_client',
                 'generate_url_type' => 'auto',
             ),
             'tags' => array(
