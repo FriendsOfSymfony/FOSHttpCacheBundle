@@ -1,11 +1,16 @@
 proxy_client
 ============
 
-The proxy client sends invalidation requests to your caching proxy. It must be
-configured for the :doc:`Cache Manager </reference/cache-manager>` to work,
-which wraps the proxy client and is the usual entry point for application
-interaction with the caching proxy. The proxy client is also available as a
-service (``fos_http_cache.proxy_client``) that you can use directly.
+The proxy client sends invalidation requests to your caching proxy. The
+:doc:`Cache Manager </reference/cache-manager>` wraps the proxy client and is
+the usual entry point for application interaction with the caching proxy.
+
+You need to configure a client or define your own service for the cache manager
+to work.
+
+The proxy client is also directly available as a service
+(``fos_http_cache.proxy_client.default`` and ``fos_http_cache.proxy_client.varnish``
+or ``fos_http_cache.proxy_client.nginx``) that you can use directly.
 
 varnish
 -------

@@ -64,9 +64,16 @@ class FOSHttpCacheExtension extends Extension
         }
 
         if ($config['cache_manager']['enabled']) {
+            if (!empty($config['cache_manager']['custom_proxy_client'])) {
+                // overwrite the previously set alias, if a proxy client was also configured
+                $container->setAlias(
+                    $this->getAlias().'.default_proxy_client',
+                    $config['cache_manager']['custom_proxy_client']
+                );
+            }
             if ('auto' === $config['cache_manager']['generate_url_type']) {
-                $defaultClient = $this->getDefault($config['proxy_client']);
-                $generateUrlType = isset($config['proxy_client'][$defaultClient]['base_url'])
+                $defaultClient = $this->getDefaultProxyClient($config['proxy_client']);
+                $generateUrlType = empty($config['cache_manager']['custom_proxy_client']) && isset($config['proxy_client'][$defaultClient]['base_url'])
                     ? UrlGeneratorInterface::ABSOLUTE_PATH
                     : UrlGeneratorInterface::ABSOLUTE_URL
                 ;
@@ -230,7 +237,7 @@ class FOSHttpCacheExtension extends Extension
 
         $container->setAlias(
             $this->getAlias().'.default_proxy_client',
-            $this->getAlias().'.proxy_client.'.$this->getDefault($config)
+            $this->getAlias().'.proxy_client.'.$this->getDefaultProxyClient($config)
         );
     }
 
@@ -297,7 +304,7 @@ class FOSHttpCacheExtension extends Extension
 
             $container->setAlias(
                 $this->getAlias().'.test.default_client',
-                $this->getAlias().'.test.client.'.$this->getDefault($config['client'])
+                $this->getAlias().'.test.client.'.$this->getDefaultProxyClient($config['client'])
             );
         }
     }
@@ -314,7 +321,7 @@ class FOSHttpCacheExtension extends Extension
 
         $container->setAlias(
             $this->getAlias().'.test.default_proxy_server',
-            $this->getAlias().'.test.proxy_server.'.$this->getDefault($config)
+            $this->getAlias().'.test.proxy_server.'.$this->getDefaultProxyClient($config)
         );
     }
 
@@ -384,7 +391,7 @@ class FOSHttpCacheExtension extends Extension
         return $url;
     }
 
-    private function getDefault(array $config)
+    private function getDefaultProxyClient(array $config)
     {
         if (isset($config['default'])) {
             return $config['default'];
@@ -397,5 +404,7 @@ class FOSHttpCacheExtension extends Extension
         if (isset($config['nginx'])) {
             return 'nginx';
         }
+
+        throw new InvalidConfigurationException('No proxy client configured');
     }
 }
