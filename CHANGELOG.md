@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.3.0
+-----
+
+* **2015-05-08** Added configuration option for custom proxy client (#208)
+
 1.2.0
 -----
 
