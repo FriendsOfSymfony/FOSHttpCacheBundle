@@ -15,6 +15,8 @@ concept is to use event subscribers on the HttpCache class.
 
     Symfony HttpCache support is currently limited to following features:
 
+    * Purge
+    * Refresh
     * User context
 
 Extending the correct HttpCache

@@ -3,8 +3,8 @@ User Context
 
 **Works with**:
 
-- :ref:`Varnish <foshttpcache:varnish user context>`
-- :doc:`symfony-http-cache`
+* :ref:`Varnish <foshttpcache:varnish user context>`
+* :doc:`symfony-http-cache`
 
 If your application serves different content depending on the user's group
 or context (guest, editor, admin), you can cache that content per user context.

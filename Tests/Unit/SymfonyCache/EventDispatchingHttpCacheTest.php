@@ -11,6 +11,8 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\SymfonyCache;
 
+use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
+use FOS\HttpCache\SymfonyCache\RefreshSubscriber;
 use FOS\HttpCacheBundle\SymfonyCache\EventDispatchingHttpCache;
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\Events;
@@ -119,13 +121,14 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
 
     public function configuredSubscribersProvider()
     {
+        $all = array(new UserContextSubscriber(), new PurgeSubscriber(), new RefreshSubscriber());
         return array(
-            array(array(), array(new UserContextSubscriber())),
+            array(array(), $all),
             array(
                 array(
                     'fos_default_subscribers' => EventDispatchingHttpCache::SUBSCRIBER_ALL,
                 ),
-                array(new UserContextSubscriber())
+                $all
             ),
             array(
                 array(
