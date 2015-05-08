@@ -166,19 +166,20 @@ default. If you want it respected, add your own logic to ``vcl_fetch``.
 
 .. note::
 
-    The cache-control headers are described in detail in :rfc:`2616#section-14.9`.
+    The cache-control headers are described in detail in :rfc:`2616#section-14.9`
+    and further clarified in :rfc:`7234#section-5.2`.
 
 Extra Cache Control Directives
 """"""""""""""""""""""""""""""
 
 You can also set headers that Symfony considers non-standard, some coming from
-RFCs extending HTTP/1.1. The following options are supported:
+RFCs extending :rfc:`2616` HTTP/1.1. The following options are supported:
 
-* ``must_revalidate`` (:rfc:`2616#section-14.9`)
-* ``proxy_revalidate`` (:rfc:`2616#section-14.9`)
-* ``no_transform`` (:rfc:`2616#section-14.9`)
-* ``stale_if_error``: seconds (:rfc:`5861`)
-* ``stale_while_revalidate``: seconds (:rfc:`5861`)
+* ``must_revalidate`` (:rfc:`7234#section-5.2.2.1`)
+* ``proxy_revalidate`` (:rfc:`7234#section-5.2.2.7`)
+* ``no_transform`` (:rfc:`7234#section-5.2.2.4`)
+* ``stale_if_error``: seconds (:rfc:`5861#section-4`)
+* ``stale_while_revalidate``: seconds (:rfc:`5861#section-3`)
 
 The *stale* directives need a parameter specifying the time in seconds how long
 a  cache is allowed to continue serving stale content if needed. The other
@@ -220,16 +221,18 @@ This enables a simplistic ETag calculated as md5 hash of the response body:
 .. tip::
 
     This simplistic ETag handler will not help you to prevent unnecessary work
-    on your webserver, but allows a caching proxy to use the ETag cache
+    on your web server, but allows a caching proxy to use the ETag cache
     validation method to preserve bandwidth. The presence of an ETag tells
     clients that they can send a ``If-None-Match`` header with the ETag their
     current version of the content has. If the caching proxy still has the same
     ETag, it responds with a "304 Not Modified" status.
 
-    You can get additional performance if you write your own ETag listener that
-    also checks the ETag on requests and decides whether the content of the
-    requested page would still generate the same ETag and abort the request as
-    early as possible to return the "304 Not Modified" status.
+    You can get additional performance if you write your own ETag handler that
+    can read an ETag from your content and decide very early in the request
+    whether the ETag changed or not. It can then terminate the request early
+    with an empty "304 Not Modified" response. This avoids rendering the whole
+    page. If the page depends on permissions, make sure to make the ETag differ
+    based on those permissions (e.g. by appending the :doc:`user context hash </features/user-context>`).
 
 ``last_modified``
 """""""""""""""""
@@ -255,15 +258,21 @@ This value must be a valid input to ``DateTime``:
     ``If-Modified-Since`` requests. Varnish can handle these to serve data
     from the cache if it was not invalidated since the client requested it.
 
-    If you only use these simple configurations to add cache validation
-    information, there is no point in adding both a last modified and ETag
-    header. Usually, you should prefer the ETag method as it is not prone to
-    clock skew issues.
+    Note that the default system will generate an arbitrary last modified date.
+    You can get additional performance if you write your own last modified
+    handler that can compare this date with information about the content of
+    your page and decide early in the request whether anything changed. It can
+    then terminate the request early with an empty "304 Not Modified" response.
+    Using content meta data increases the probability for a 304 response and
+    avoids rendering the whole page.
 
-    If your site is under heavy load, your best option is to write either a
-    custom ETag handler or a custom last modified handler that uses the content
-    of the page in a way that can avoid rendering the whole page before
-    deciding whether the cached version is still valid.
+    See also :rfc:`7232#section-2.2.1` for further consideration on how to
+    generate the last modified date.
+
+.. note::
+
+    You may configure both ETag and last modified on the same response. See
+    :rfc:`7232#section-2.4` for more details.
 
 ``vary``
 """"""""
