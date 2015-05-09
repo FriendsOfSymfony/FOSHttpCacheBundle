@@ -23,6 +23,7 @@ class InvalidationSubscriberTest extends WebTestCase
             'fos_http_cache.cache_manager',
             '\FOS\HttpCacheBundle\CacheManager'
         )
+            ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidateRoute')->once()->with('test_noncached', array())
             ->shouldReceive('invalidateRoute')->once()->with('test_cached', array('id' => 'myhardcodedid'))
             ->shouldReceive('invalidateRoute')->once()->with('tag_one', array('id' => '42'))
@@ -40,6 +41,7 @@ class InvalidationSubscriberTest extends WebTestCase
             'fos_http_cache.cache_manager',
             '\FOS\HttpCacheBundle\CacheManager'
         )
+            ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidatePath')->once()->with('/cached')
             ->shouldReceive('flush')->once()
         ;
@@ -55,6 +57,7 @@ class InvalidationSubscriberTest extends WebTestCase
             'fos_http_cache.cache_manager',
             '\FOS\HttpCacheBundle\CacheManager'
         )
+            ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidatePath')->never()
             ->shouldReceive('flush')->once()
         ;

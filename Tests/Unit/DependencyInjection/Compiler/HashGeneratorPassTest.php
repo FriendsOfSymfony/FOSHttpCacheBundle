@@ -43,7 +43,7 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
         $config = $this->getBaseConfig();
         $this->extension->load(array($config), $container);
         $this->userContextListenerPass->process($container);
-        $this->assertCount(12, $container->getDefinitions());
+        $this->assertCount(13, $container->getDefinitions());
     }
 
     /**

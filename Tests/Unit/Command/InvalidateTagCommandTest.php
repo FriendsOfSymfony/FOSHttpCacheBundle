@@ -22,7 +22,7 @@ class InvalidateTagCommandTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteMissingParameters()
     {
-        $invalidator = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager');
+        $invalidator = \Mockery::mock('\FOS\HttpCacheBundle\Handler\TagHandler');
 
         $application = new Application();
         $application->add(new InvalidateTagCommand($invalidator));
@@ -34,7 +34,7 @@ class InvalidateTagCommandTest extends \PHPUnit_Framework_TestCase
 
     public function testExecuteParameter()
     {
-        $invalidator = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager')
+        $invalidator = \Mockery::mock('\FOS\HttpCacheBundle\Handler\TagHandler')
             ->shouldReceive('invalidateTags')->once()->with(array('my-tag'))
             ->getMock()
         ;

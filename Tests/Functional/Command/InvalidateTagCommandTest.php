@@ -22,7 +22,8 @@ class InvalidateTagCommandTest extends CommandTestCase
             'fos_http_cache.cache_manager',
             '\FOS\HttpCacheBundle\CacheManager'
         )
-            ->shouldReceive('invalidateTags')->once()->with(array('my-tag', 'other-tag'))
+            ->shouldReceive('supports')->andReturn(true)
+            ->shouldReceive('invalidate')->once()->with(array('X-Cache-Tags' => '(my\\-tag|other\\-tag)(,.+)?$'))
             ->shouldReceive('flush')->once()->andReturn(1)
         ;
 
@@ -37,7 +38,8 @@ class InvalidateTagCommandTest extends CommandTestCase
             'fos_http_cache.cache_manager',
             '\FOS\HttpCacheBundle\CacheManager'
         )
-            ->shouldReceive('invalidateTags')->once()->with(array('my-tag', 'other-tag'))
+            ->shouldReceive('supports')->andReturn(true)
+            ->shouldReceive('invalidate')->once()->with(array('X-Cache-Tags' => '(my\\-tag|other\\-tag)(,.+)?$'))
             ->shouldReceive('flush')->once()->andReturn(1)
         ;
 

@@ -35,25 +35,30 @@ Setting and Invalidating Tags
 You can tag responses in three ways: with the cache manager, configuration and
 annotations.
 
-Cache Manager
-~~~~~~~~~~~~~
+Tagging from code
+~~~~~~~~~~~~~~~~~
 
-Use ``tagResponse($response, $tags)`` to set tags on a response::
+Inject the ``TagHandler`` (service ``fos_http_cache.handler.tag_handler``) and
+use ``addTags($tags)`` to add tags that will be set on the response::
 
-    use Symfony\Component\HttpFoundation\Response;
+    use FOS\HttpCacheBundle\Handler\TagHandler;
 
     class NewsController
     {
+        /**
+         * @var TagHandler
+         */
+        private $tagHandler;
+
         public function articleAction($id)
         {
-            $response = new Response('Some news article');
-            $this->cacheManager->tagResponse($response, array('news', 'news-' . $id));
+            $this->tagHandler->addTags(array('news', 'news-' . $id));
 
-            return $response;
+            // ...
         }
     }
 
-Then call ``invalidateTags($tags)`` to invalidate the tags you set::
+To invalidate tags, call ``TagHandler::invalidateTags($tags)``::
 
     class NewsController
     {
@@ -63,13 +68,13 @@ Then call ``invalidateTags($tags)`` to invalidate the tags you set::
         {
             // ...
 
-            $this->cacheManager->invalidateTags(array('news-' . $id))->flush();
+            $this->tagHandler->invalidateTags(array('news-' . $id));
 
             // ...
         }
     }
 
-See the :ref:`Cache Manager reference <cache_manager_tags>` for full details.
+See the :ref:`Tag Handler reference <tag_handler_addtags>` for full details.
 
 Configuration
 ~~~~~~~~~~~~~

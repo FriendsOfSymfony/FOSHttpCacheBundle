@@ -22,6 +22,7 @@ class InvalidateRegexCommandTest extends CommandTestCase
             'fos_http_cache.cache_manager',
             '\FOS\HttpCacheBundle\CacheManager'
         )
+            ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidateRegex')->once()->with('/my.*/path')
             ->shouldReceive('flush')->once()->andReturn(1)
         ;
@@ -37,6 +38,7 @@ class InvalidateRegexCommandTest extends CommandTestCase
             'fos_http_cache.cache_manager',
             '\FOS\HttpCacheBundle\CacheManager'
         )
+            ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidateRegex')->once()->with('/my.*/path')
             ->shouldReceive('flush')->once()->andReturn(1)
         ;

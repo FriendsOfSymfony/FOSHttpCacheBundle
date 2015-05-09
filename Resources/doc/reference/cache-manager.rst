@@ -82,25 +82,12 @@ Refresh a Route::
 
 .. _cache_manager_tags:
 
-``tagResponse()``
------------------
+``tagResponse()``, ``invalidateTags()``
+---------------------------------------
 
-Use the Cache Manager to tag responses::
-
-    // $response is a \Symfony\Component\HttpFoundation\Response object
-    $cacheManager->tagResponse($response, array('some-tag', 'other-tag'));
-
-The tags are appended to already existing tags, unless you set the ``$replace``
-option to true::
-
-    $cacheManager->tagResponse($response, array('different'), true);
-
-``invalidateTags()``
---------------------
-
-Invalidate cache tags::
-
-    $cacheManager->invalidateTags(array('some-tag', 'other-tag'));
+.. versionadded:: 1.3
+    Since version 1.3, use the :doc:`TagHandler <tag-handler>` instead of the
+    CacheManager for working with tags.
 
 .. _flushing:
 

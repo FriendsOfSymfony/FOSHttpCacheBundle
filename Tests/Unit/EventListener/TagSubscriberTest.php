@@ -11,9 +11,9 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
-use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\EventListener\TagSubscriber;
+use FOS\HttpCacheBundle\Handler\TagHandler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -22,9 +22,9 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var CacheManager|\Mockery\Mock
+     * @var TagHandler|\Mockery\Mock
      */
-    protected $cacheManager;
+    protected $tagHandler;
 
     /**
      * @var TagSubscriber
@@ -33,11 +33,11 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->cacheManager = \Mockery::mock(
-            '\FOS\HttpCacheBundle\CacheManager'
+        $this->tagHandler = \Mockery::mock(
+            '\FOS\HttpCacheBundle\Handler\TagHandler'
         )->shouldDeferMissing();
 
-        $this->listener = new TagSubscriber($this->cacheManager);
+        $this->listener = new TagSubscriber($this->tagHandler);
     }
 
     public function testOnKernelResponseGet()
@@ -55,7 +55,7 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             'item-1,item-2',
-            $event->getResponse()->headers->get($this->cacheManager->getTagsHeader())
+            $event->getResponse()->headers->get($this->tagHandler->getTagsHeaderName())
         );
 
         $mockMatcher = \Mockery::mock('FOS\HttpCacheBundle\Http\RuleMatcherInterface')
@@ -70,7 +70,7 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             'item-1,item-2,configured-tag',
-            $event->getResponse()->headers->get($this->cacheManager->getTagsHeader())
+            $event->getResponse()->headers->get($this->tagHandler->getTagsHeaderName())
         );
     }
 
@@ -88,7 +88,7 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             'item-123',
-            $event->getResponse()->headers->get($this->cacheManager->getTagsHeader())
+            $event->getResponse()->headers->get($this->tagHandler->getTagsHeaderName())
         );
     }
 
@@ -103,13 +103,13 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $event = $this->getEvent($request);
 
-        $this->cacheManager
+        $this->tagHandler
             ->shouldReceive('invalidateTags')
             ->once()
             ->with(array('item-1', 'item-2'));
         $this->listener->onKernelResponse($event);
 
-        $this->cacheManager
+        $this->tagHandler
             ->shouldReceive('invalidateTags')
             ->once()
             ->with(array('item-1', 'item-2', 'configured-tag', 'item-2'));

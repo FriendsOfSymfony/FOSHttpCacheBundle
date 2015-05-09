@@ -67,6 +67,8 @@ class CacheManager extends CacheInvalidator
      *                           response
      *
      * @return $this
+     *
+     * @deprecated Add tags with TagHandler::addTags and then use TagHandler::tagResponse
      */
     public function tagResponse(Response $response, array $tags, $replace = false)
     {

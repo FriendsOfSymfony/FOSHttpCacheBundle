@@ -33,7 +33,7 @@ class TagController extends Controller
     public function itemAction(Request $request, $id)
     {
         if (!$request->isMethodSafe()) {
-            $this->container->get('fos_http_cache.cache_manager')->invalidateTags(array('all-items'));
+            $this->container->get('fos_http_cache.handler.tag_handler')->invalidateTags(array('all-items'));
         }
 
         return new Response('Item '.$id.' invalidated');
@@ -45,5 +45,25 @@ class TagController extends Controller
     public function errorAction()
     {
         return new Response('Forbidden', 403);
+    }
+
+    /**
+     * @Tag("manual-items")
+     */
+    public function manualAction()
+    {
+        $this->get('fos_http_cache.handler.tag_handler')->addTags(array('manual-tag'));
+
+        return $this->render('::container.html.twig');
+    }
+
+    /**
+     * @Tag("sub-items")
+     */
+    public function subrequestAction()
+    {
+        $this->get('fos_http_cache.handler.tag_handler')->addTags(array('sub-tag'));
+
+        return new Response('subrequest');
     }
 }

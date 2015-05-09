@@ -11,11 +11,12 @@
 
 namespace FOS\HttpCacheBundle\EventListener;
 
-use FOS\HttpCacheBundle\CacheManager;
+use FOS\HttpCacheBundle\Handler\TagHandler;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
@@ -27,9 +28,9 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var CacheManager
+     * @var TagHandler
      */
-    private $cacheManager;
+    private $tagHandler;
 
     /**
      * @var ExpressionLanguage
@@ -39,14 +40,14 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
     /**
      * Constructor
      *
-     * @param CacheManager            $cacheManager
+     * @param TagHandler              $tagHandler
      * @param ExpressionLanguage|null $expressionLanguage
      */
     public function __construct(
-        CacheManager $cacheManager,
+        TagHandler $tagHandler,
         ExpressionLanguage $expressionLanguage = null
     ) {
-        $this->cacheManager = $cacheManager;
+        $this->tagHandler = $tagHandler;
         $this->expressionLanguage = $expressionLanguage;
     }
 
@@ -65,7 +66,6 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
         $response = $event->getResponse();
 
         $tags = array();
-
         // Only set cache tags or invalidate them if response is successful
         if ($response->isSuccessful()) {
             $tags = $this->getAnnotationTags($request);
@@ -73,24 +73,21 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
 
         $configuredTags = $this->matchRule($request, $response);
         if ($configuredTags) {
-            foreach ($configuredTags['tags'] as $tag) {
-                $tags[] = $tag;
-            }
+            $tags = array_merge($tags, $configuredTags['tags']);
             foreach ($configuredTags['expressions'] as $expression) {
                 $tags[] = $this->evaluateTag($expression, $request);
             }
         }
 
-        if (!count($tags)) {
-            return;
-        }
-
         if ($request->isMethodSafe()) {
-            // For safe requests (GET and HEAD), set cache tags on response
-            $this->cacheManager->tagResponse($response, $tags);
-        } else {
+            $this->tagHandler->addTags($tags);
+            if (HttpKernelInterface::MASTER_REQUEST === $event->getRequestType()) {
+                // For safe requests (GET and HEAD), set cache tags on response
+                $this->tagHandler->tagResponse($response);
+            }
+        } elseif (count($tags)) {
             // For non-safe methods, invalidate the tags
-            $this->cacheManager->invalidateTags($tags);
+            $this->tagHandler->invalidateTags($tags);
         }
     }
 

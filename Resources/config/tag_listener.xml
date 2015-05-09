@@ -9,9 +9,14 @@
     </parameters>
 
     <services>
+        <service id="fos_http_cache.handler.tag_handler" class="FOS\HttpCacheBundle\Handler\TagHandler">
+            <argument type="service" id="fos_http_cache.cache_manager"/>
+            <argument>%fos_http_cache.tag_handler.header%</argument>
+        </service>
+
         <service id="fos_http_cache.event_listener.tag"
                  class="%fos_http_cache.event_listener.tag.class%">
-            <argument type="service" id="fos_http_cache.cache_manager" />
+            <argument type="service" id="fos_http_cache.handler.tag_handler" />
             <tag name="kernel.event_subscriber" />
         </service>
     </services>
