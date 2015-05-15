@@ -16,6 +16,10 @@ tag_manual:
   path: /tag_manual
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController::manualAction }
 
+tag_twig:
+  path: /tag_twig
+  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController::twigAction }
+
 invalidation_route:
   path: /invalidate/route/{id}
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::itemAction }

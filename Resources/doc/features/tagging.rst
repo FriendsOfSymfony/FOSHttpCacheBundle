@@ -32,10 +32,10 @@ For more information, see :doc:`/reference/configuration/tags`.
 Setting and Invalidating Tags
 -----------------------------
 
-You can tag responses in three ways: with the cache manager, configuration and
-annotations.
+You can tag responses in different ways: with the tag handler from PHP or with
+a twig function, from configuration or using annotations on controller actions.
 
-Tagging from code
+Tagging from Code
 ~~~~~~~~~~~~~~~~~
 
 Inject the ``TagHandler`` (service ``fos_http_cache.handler.tag_handler``) and
@@ -76,8 +76,31 @@ To invalidate tags, call ``TagHandler::invalidateTags($tags)``::
 
 See the :ref:`Tag Handler reference <tag_handler_addtags>` for full details.
 
-Configuration
-~~~~~~~~~~~~~
+Tagging from Twig Templates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In situations where a page is assembled in the templating layer, it can be more
+convenient to add tags from inside the template. This works the same way as
+with the tag handler and can also be mixed with the other methods:
+
+.. code-block:: jinja
+
+    {# template.html.twig #}
+    {{ fos_httpcache_tag('mytag') }}
+    {{ fos_httpcache_tag(['tag-one', 'tag-two']) }}
+
+.. hint::
+
+    This twig function never outputs anything into the template but is only
+    called for the side effect of adding the tag to the response header.
+
+.. note::
+
+    Tag invalidation from twig would be a strange architecture and is therefore
+    not supported.
+
+Tagging with Configuration Rules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Alternatively, you can :doc:`configure rules </reference/configuration/tags>`
 for setting and invalidating tags:
@@ -97,8 +120,8 @@ Now if a :term:`safe` request matches the criteria under ``match``, the response
 will be tagged with ``news``. When an unsafe request matches, the tag ``news``
 will be invalidated.
 
-Annotations
-~~~~~~~~~~~
+Tagging with Controller Annotations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Add the ``@Tag`` annotations to your controllers to set and invalidate tags::
 
