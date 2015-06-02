@@ -36,7 +36,7 @@ Instead of extending ``Symfony\Bundle\FrameworkBundle\HttpCache\HttpCache``, you
 .. tip::
 
     If your class already needs to extend a different class, simply copy the event
-    handling code from the EventDispatchingHttpCache into your ``AppCache`` class.
+    handling code from the ``EventDispatchingHttpCache`` into your ``AppCache`` class.
     The drawback is that you need to manually check whether you need to adjust your
     ``AppCache`` each time you update the FOSHttpCache library.
 
@@ -45,7 +45,8 @@ about. You can disable subscribers, or customize how they are instantiated.
 
 If you do not need all subscribers, or need to register some yourself to
 customize their behavior, overwrite ``getOptions`` and return the right bitmap
-in ``fos_default_subscribers``. Use the constants provided by the cache kernel::
+in ``fos_default_subscribers``. Use the constants provided by the
+``EventDispatchingHttpCache``::
 
     public function getOptions()
     {

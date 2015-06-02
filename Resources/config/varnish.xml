@@ -13,6 +13,7 @@
                  class="%fos_http_cache.proxy_client.varnish.class%">
             <argument>%fos_http_cache.proxy_client.varnish.servers%</argument>
             <argument>%fos_http_cache.proxy_client.varnish.base_url%</argument>
+            <argument type="service" id="fos_http_cache.proxy_client.varnish.guzzle_client" on-invalid="ignore"/>
         </service>
 
         <service id="fos_http_cache.test.client.varnish"

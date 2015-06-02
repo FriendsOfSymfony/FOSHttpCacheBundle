@@ -4,17 +4,16 @@ Changelog
 1.3.0
 -----
 
-* Configured/annotated cache tags on subrequests (in twig: `render(controller())`)
+* Added configuration for Symfony HttpCache client and HttpCache now loads
+  purge and refresh handlers by default.
+* Configured/annotated cache tags on subrequests (in Twig: `render(controller())`)
   are no longer ignored. Additionally, it is now possible to add tags from code
   before the response object has been created, by using the TagHandler, and from
-  twig with the `fos_httpcache_tag` function.
-  
+  Twig with the `fos_httpcache_tag` function.
   If you defined custom services for the `InvalidateTagCommand`, you should
   now inject the TagHandler instead of the CacheManager.
-
-  **deprecated** `CacheManager::tagResponse` in favor of `TagHandler::addTags`
-
-* **2015-05-08** Added configuration option for custom proxy client (#208)
+* **deprecated** `CacheManager::tagResponse` in favor of `TagHandler::addTags`
+* Added configuration option for custom proxy client (#208)
 * Added support for a simple Etag header in the header configuration (#207)
 
 1.2.0

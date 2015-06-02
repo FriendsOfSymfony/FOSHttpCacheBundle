@@ -22,6 +22,8 @@ specify the ``custom_proxy_client`` field.
 Whether the cache manager service should be enabled. By default, it is enabled
 if a proxy client is configured. It can not be enabled without a proxy client.
 
+.. _custom_proxy_client:
+
 ``custom_proxy_client``
 -----------------------
 
