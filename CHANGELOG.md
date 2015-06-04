@@ -4,14 +4,16 @@ Changelog
 1.3.0
 -----
 
-* **2015-05-08** Configured/annotated cache tags on subrequests
-  (twig `render(controller())`) are no longer ignored. Additionally, it is now
-  possible to add tags from code before the response object has been created,
-  by using the TagHandler.
+* Configured/annotated cache tags on subrequests (in twig: `render(controller())`)
+  are no longer ignored. Additionally, it is now possible to add tags from code
+  before the response object has been created, by using the TagHandler, and from
+  twig with the `fos_httpcache_tag` function.
+  
   If you defined custom services for the `InvalidateTagCommand`, you should
   now inject the TagHandler instead of the CacheManager.
 
   **deprecated** `CacheManager::tagResponse` in favor of `TagHandler::addTags`
+
 * **2015-05-08** Added configuration option for custom proxy client (#208)
 * Added support for a simple Etag header in the header configuration (#207)
 

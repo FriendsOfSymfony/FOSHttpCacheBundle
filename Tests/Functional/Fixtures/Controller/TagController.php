@@ -66,4 +66,9 @@ class TagController extends Controller
 
         return new Response('subrequest');
     }
+
+    public function twigAction()
+    {
+        $this->render('::tag.html.twig');
+    }
 }

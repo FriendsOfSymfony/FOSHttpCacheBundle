@@ -95,6 +95,15 @@ class TagSubscriberTest extends WebTestCase
         $this->assertEquals('manual-tag,sub-tag,sub-items,manual-items', $response->headers->get('X-Cache-Tags'));
     }
 
+    public function testTwigExtension()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/tag_twig');
+        $response = $client->getResponse();
+        $this->assertEquals('tag-from-twig', $response->headers->get('X-Cache-Tags'));
+    }
+
     protected function tearDown()
     {
         static::createClient()->getContainer()->unmock('fos_http_cache.cache_manager');

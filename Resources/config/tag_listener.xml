@@ -14,6 +14,11 @@
             <argument>%fos_http_cache.tag_handler.header%</argument>
         </service>
 
+        <service id="fos_http_cache.twig.tag_extension" class="FOS\HttpCacheBundle\Twig\CacheTagExtension">
+            <argument id="fos_http_cache.handler.tag_handler" type="service"/>
+            <tag name="twig.extension"/>
+        </service>
+
         <service id="fos_http_cache.event_listener.tag"
                  class="%fos_http_cache.event_listener.tag.class%">
             <argument type="service" id="fos_http_cache.handler.tag_handler" />
