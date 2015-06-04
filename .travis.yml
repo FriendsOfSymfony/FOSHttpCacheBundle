@@ -4,7 +4,6 @@ php:
   - 5.3
   - 5.4
   - 5.5
-  - 5.6
   - hhvm
 
 branches:
@@ -32,6 +31,10 @@ matrix:
       env:
         - SYMFONY_VERSION='2.7.*@dev'
         - FRAMEWORK_EXTRA_VERSION='~3.0'
+    - php: 5.6
+      env:
+        - PHPUNIT_FLAGS="--coverage-clover=coverage.clover"
+        - COVERAGE=true
 
 # only needed for the hackaround for https://github.com/symfony/symfony/issues/12868
 before_install:
@@ -47,13 +50,13 @@ before_script:
   - sudo pip install -r Resources/doc/requirements.txt
 
 script:
-  - phpunit --coverage-clover=coverage.clover
+  - phpunit ${PHPUNIT_FLAGS}
   - make -C Resources/doc SPHINXOPTS='-nW' html
   - make -C Resources/doc spelling
 
 after_script:
-  - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+  - if [[ "$COVERAGE" = true ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
+  - if [[ "$COVERAGE" = true ]]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
 
 after_failure:
   - cat /tmp/fos-http-cache-bundle/logs/test.log
