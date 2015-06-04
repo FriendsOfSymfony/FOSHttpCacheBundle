@@ -28,6 +28,7 @@ $container->loadFromExtension('fos_http_cache', array(
                         'stale_if_error' => 3,
                         'stale_while_revalidate' => 4,
                     ),
+                    'etag' => true,
                     'last_modified' => '-1 hour',
                     'reverse_proxy_ttl' => 42,
                     'vary' => array('Cookie', 'Authorization'),

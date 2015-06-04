@@ -128,6 +128,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
             'vary' => array(
                 'Cookie',
             ),
+            'etag' => true,
             'last_modified' => '2014-10-10 GMT',
         );
         $subscriber = $this->getCacheControl($headers);
@@ -136,6 +137,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $response->setCache(array('max_age' => 0));
         $response->headers->addCacheControlDirective('stale-if-error', 0);
         $response->setVary('Encoding');
+        $response->setEtag('foo');
         $response->setLastModified(new \DateTime('2013-09-09 GMT'));
 
         $subscriber->onKernelResponse($event);
@@ -143,6 +145,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('max-age=0, must-revalidate, no-transform, proxy-revalidate, public, s-maxage=300, stale-if-error=0, stale-while-revalidate=400', $newHeaders['cache-control'][0]);
         $this->assertEquals(array('Encoding', 'Cookie'), $newHeaders['vary']);
+        $this->assertEquals('"foo"', $newHeaders['etag'][0]);
         $this->assertEquals('Mon, 09 Sep 2013 00:00:00 GMT', $newHeaders['last-modified'][0]);
     }
 
@@ -165,6 +168,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
             'vary' => array(
                 'Cookie',
             ),
+            'etag' => true,
             'last_modified' => '2014-10-10 GMT',
         );
         $subscriber = $this->getCacheControl($headers);
@@ -173,6 +177,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $response->setCache(array('max_age' => 0));
         $response->headers->addCacheControlDirective('stale-if-error', 0);
         $response->setVary('Encoding');
+        $response->setEtag('foo');
         $response->setLastModified(new \DateTime('2013-09-09 GMT'));
 
         $subscriber->onKernelResponse($event);
@@ -180,6 +185,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('max-age=900, must-revalidate, no-transform, proxy-revalidate, public, s-maxage=300, stale-if-error=300, stale-while-revalidate=400', $newHeaders['cache-control'][0]);
         $this->assertEquals(array('Cookie'), $newHeaders['vary']);
+        $this->assertEquals('"'.md5('').'"', $response->getEtag());
         $this->assertEquals('Fri, 10 Oct 2014 00:00:00 GMT', $newHeaders['last-modified'][0]);
     }
 

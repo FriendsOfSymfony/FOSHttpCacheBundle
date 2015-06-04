@@ -13,6 +13,7 @@ Changelog
 
   **deprecated** `CacheManager::tagResponse` in favor of `TagHandler::addTags`
 * **2015-05-08** Added configuration option for custom proxy client (#208)
+* Added support for a simple Etag header in the header configuration (#207)
 
 1.2.0
 -----
