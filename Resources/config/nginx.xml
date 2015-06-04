@@ -14,6 +14,7 @@
             <argument>%fos_http_cache.proxy_client.nginx.servers%</argument>
             <argument>%fos_http_cache.proxy_client.nginx.base_url%</argument>
             <argument>%fos_http_cache.proxy_client.nginx.purge_location%</argument>
+            <argument type="service" id="fos_http_cache.proxy_client.nginx.guzzle_client" on-invalid="ignore"/>
         </service>
 
         <service id="fos_http_cache.test.client.nginx"

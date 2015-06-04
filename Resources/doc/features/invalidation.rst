@@ -4,7 +4,8 @@ Invalidation
 **Works with**:
 
 * :ref:`Varnish <foshttpcache:varnish configuration>`
-* :ref:`Nginx <foshttpcache:nginx configuration>`
+* :ref:`Nginx <foshttpcache:nginx configuration>` (except regular expressions)
+* :doc:`symfony-http-cache` (except regular expressions)
 
 **Preparation**:
 

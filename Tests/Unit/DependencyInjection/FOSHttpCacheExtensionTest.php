@@ -38,6 +38,8 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.nginx'));
         $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
+
+        $this->assertFalse($container->hasParameter('fos_http_cache.proxy_client.varnish.guzzle_client'));
     }
 
     public function testConfigLoadVarnishCustomGuzzle()
@@ -50,7 +52,11 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
         $def = $container->getDefinition('fos_http_cache.proxy_client.varnish');
-        $this->assertEquals('my_guzzle', $def->getArgument(2));
+        $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $def->getArgument(2));
+        $this->assertEquals('fos_http_cache.proxy_client.varnish.guzzle_client', $def->getArgument(2)->__toString());
+
+        $this->assertTrue($container->hasParameter('fos_http_cache.proxy_client.varnish.guzzle_client'));
+        $this->assertEquals('my_guzzle', $container->getParameter('fos_http_cache.proxy_client.varnish.guzzle_client'));
     }
 
     /**
@@ -150,7 +156,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertMatcherCreated($container, array('_route' => 'my_route'));
         $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.invalidation');
-        
+
         // Test for runtime errors
         $container->compile();
     }
@@ -289,13 +295,13 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $container = new ContainerBuilder(
             new ParameterBag(array('kernel.debug' => false,))
         );
-        
+
         // The cache_manager service depends on the router service
         $container->setDefinition(
             'router',
             new Definition('\Symfony\Component\Routing\Router')
         );
-        
+
         return $container;
     }
 

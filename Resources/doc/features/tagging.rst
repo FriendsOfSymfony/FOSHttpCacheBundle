@@ -1,7 +1,9 @@
 Tagging
 =======
 
-**Works with**: :ref:`Varnish <foshttpcache:varnish_tagging>`
+**Works with**:
+
+* :ref:`Varnish <foshttpcache:varnish_tagging>`
 
 If your application has many intricate relationships between cached items,
 which makes it complex to invalidate them by route, cache tagging will be

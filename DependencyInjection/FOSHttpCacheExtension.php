@@ -235,6 +235,9 @@ class FOSHttpCacheExtension extends Extension
         if (isset($config['nginx'])) {
             $this->loadNginx($container, $loader, $config['nginx']);
         }
+        if (isset($config['symfony'])) {
+            $this->loadSymfony($container, $loader, $config['symfony']);
+        }
 
         $container->setAlias(
             $this->getAlias().'.default_proxy_client',
@@ -256,12 +259,8 @@ class FOSHttpCacheExtension extends Extension
         }
         $container->setParameter($this->getAlias().'.proxy_client.varnish.servers', $config['servers']);
         $container->setParameter($this->getAlias().'.proxy_client.varnish.base_url', $baseUrl);
-        if ($config['guzzle_client']) {
-            $container->getDefinition($this->getAlias().'.proxy_client.varnish')
-                ->addArgument(
-                    new Reference($config['guzzle_client'])
-                )
-            ;
+        if (!empty($config['guzzle_client'])) {
+            $container->setParameter($this->getAlias().'.proxy_client.varnish.guzzle_client', $config['guzzle_client']);
         }
     }
 
@@ -279,6 +278,28 @@ class FOSHttpCacheExtension extends Extension
         $container->setParameter($this->getAlias().'.proxy_client.nginx.servers', $config['servers']);
         $container->setParameter($this->getAlias().'.proxy_client.nginx.base_url', $baseUrl);
         $container->setParameter($this->getAlias().'.proxy_client.nginx.purge_location', $config['purge_location']);
+        if (!empty($config['guzzle_client'])) {
+            $container->setParameter($this->getAlias().'.proxy_client.nginx.guzzle_client', $config['guzzle_client']);
+        }
+    }
+
+    private function loadSymfony(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        $loader->load('symfony-client.xml');
+        foreach ($config['servers'] as $url) {
+            $this->validateUrl($url, 'Not a valid web server address: "%s"');
+        }
+        if (!empty($config['base_url'])) {
+            $baseUrl = $this->prefixSchema($config['base_url'], 'Not a valid base path: "%s"');
+            $this->validateUrl($baseUrl, 'Not a valid base path: "%s"');
+        } else {
+            $baseUrl = null;
+        }
+        $container->setParameter($this->getAlias().'.proxy_client.symfony.servers', $config['servers']);
+        $container->setParameter($this->getAlias().'.proxy_client.symfony.base_url', $baseUrl);
+        if (!empty($config['guzzle_client'])) {
+            $container->setParameter($this->getAlias().'.proxy_client.symfony.guzzle_client', $config['guzzle_client']);
+        }
     }
 
     private function loadTest(ContainerBuilder $container, XmlFileLoader $loader, array $config)
