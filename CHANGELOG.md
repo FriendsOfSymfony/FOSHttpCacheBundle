@@ -19,8 +19,8 @@ Changelog
 1.2.0
 -----
 
-* **2014-12-05** Refactored the Symfony built-in HttpCache support to be extensible.
-  FOS\HttpCacheBundle\HttpCache is deprecated in favor of EventDispatchingHttpCache.
+* Refactored the Symfony built-in HttpCache support to be extensible.
+  `FOS\HttpCacheBundle\HttpCache` is deprecated in favor of `EventDispatchingHttpCache`.
 
   BC break: If you overwrite cleanupForwardRequest in your cache kernel, you need to
   extend FOS\HttpCache\SymfonyCache\UserContextSubscriber and move that logic to the
@@ -29,9 +29,9 @@ Changelog
 1.1.0
 -----
 
-* **2014-10-14** Allow cache headers overwrite.
-* **2014-10-29** Added support for the user context lookup with Symfony built-in
-  reverse proxy, aka `HttpCache`.
+* Allow cache headers overwrite.
+* Added support for the user context lookup with Symfony built-in reverse
+  proxy, aka `HttpCache`.
 
 1.0.0
 -----
