@@ -285,7 +285,7 @@ class FOSHttpCacheExtension extends Extension
 
     private function loadSymfony(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
-        $loader->load('symfony-client.xml');
+        $loader->load('symfony.xml');
         foreach ($config['servers'] as $url) {
             $this->validateUrl($url, 'Not a valid web server address: "%s"');
         }
@@ -425,6 +425,10 @@ class FOSHttpCacheExtension extends Extension
 
         if (isset($config['nginx'])) {
             return 'nginx';
+        }
+
+        if (isset($config['symfony'])) {
+            return 'symfony';
         }
 
         throw new InvalidConfigurationException('No proxy client configured');
