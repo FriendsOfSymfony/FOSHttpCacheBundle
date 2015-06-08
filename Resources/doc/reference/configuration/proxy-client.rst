@@ -81,7 +81,7 @@ nginx
                 base_url: yourwebsite.com
                 purge_location: /purge
         tags:
-            enabled:        false
+            enabled: false
 
 For ``servers`` and ``base_url``, see above.
 
@@ -111,7 +111,7 @@ symfony
                 servers: 123.123.123.1:6060, 123.123.123.2
                 base_url: yourwebsite.com
         tags:
-            enabled:        false
+            enabled: false
 
 For ``servers`` and ``base_url``, see above.
 
