@@ -108,8 +108,8 @@ symfony
     fos_http_cache:
         proxy_client:
             symfony:
-                servers:    123.123.123.1:6060, 123.123.123.2
-                base_url:   yourwebsite.com
+                servers: 123.123.123.1:6060, 123.123.123.2
+                base_url: yourwebsite.com
         tags:
             enabled:        false
 
