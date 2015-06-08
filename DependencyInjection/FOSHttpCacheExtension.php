@@ -427,6 +427,10 @@ class FOSHttpCacheExtension extends Extension
             return 'nginx';
         }
 
+        if (isset($config['symfony'])) {
+            return 'symfony';
+        }
+
         throw new InvalidConfigurationException('No proxy client configured');
     }
 }
