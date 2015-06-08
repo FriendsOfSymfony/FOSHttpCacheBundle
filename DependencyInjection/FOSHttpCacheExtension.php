@@ -86,6 +86,9 @@ class FOSHttpCacheExtension extends Extension
 
         $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', $config['tags']['enabled']);
         if ($config['tags']['enabled']) {
+            // only load tag_invalidate if tags are enabled
+            $loader->load('tag_invalidate.xml');
+
             // true or auto
             $container->setParameter($this->getAlias().'.tag_handler.header', $config['tags']['header']);
             $loader->load('tag_listener.xml');
