@@ -88,7 +88,7 @@ class FOSHttpCacheExtension extends Extension
         if ($config['tags']['enabled']) {
             // true or auto
             $container->setParameter($this->getAlias().'.tag_handler.header', $config['tags']['header']);
-            $loader->load('tag.xml');
+            $loader->load('cache_tagging.xml');
             if (!empty($config['tags']['rules'])) {
                 $this->loadTagRules($container, $config['tags']['rules']);
             }
