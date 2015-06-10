@@ -214,6 +214,35 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
+    public function testSupportsSymfony()
+    {
+        $expectedConfiguration = $this->getEmptyConfig();
+        $expectedConfiguration['proxy_client'] = array(
+            'symfony' => array(
+                'servers' => array('22.22.22.22'),
+                'base_url' => '/test',
+                'guzzle_client' => 'acme.guzzle.symfony',
+            ),
+        );
+        $expectedConfiguration['cache_manager']['enabled'] = 'auto';
+        $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
+        $expectedConfiguration['tags']['enabled'] = 'auto';
+        $expectedConfiguration['invalidation']['enabled'] = 'auto';
+        $expectedConfiguration['user_context']['logout_handler']['enabled'] = 'auto';
+
+        $formats = array_map(function ($path) {
+            return __DIR__.'/../../Resources/Fixtures/'.$path;
+        }, array(
+            'config/symfony.yml',
+            'config/symfony.xml',
+            'config/symfony.php',
+        ));
+
+        foreach ($formats as $format) {
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, array($format));
+        }
+    }
+
     public function testSplitOptions()
     {
         $expectedConfiguration = $this->getEmptyConfig();

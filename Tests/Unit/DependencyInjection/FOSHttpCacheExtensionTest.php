@@ -38,6 +38,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.nginx'));
         $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.handler.tag_handler'));
 
         $this->assertFalse($container->hasParameter('fos_http_cache.proxy_client.varnish.guzzle_client'));
     }
@@ -91,6 +92,31 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.nginx'));
         $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
+        $this->assertFalse($container->hasDefinition('fos_http_cache.handler.tag_handler'));
+    }
+
+    public function testConfigLoadSymfony()
+    {
+        $container = $this->createContainer();
+        $this->extension->load(array(
+            array(
+                'proxy_client' => array(
+                    'symfony' => array(
+                        'base_url' => 'my_hostname',
+                        'servers' => array(
+                            '127.0.0.1',
+                        ),
+                    ),
+                ),
+            ),
+        ), $container);
+
+        $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
+        $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.nginx'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.symfony'));
+        $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
+        $this->assertFalse($container->hasDefinition('fos_http_cache.handler.tag_handler'));
     }
 
     public function testEmptyConfig()
@@ -101,6 +127,30 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->load(array($config), $container);
 
         $this->assertFalse($container->has('fos_http_cache.user_context.logout_handler'));
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @expectedExceptionMessage You can not enable cache tagging with nginx
+     */
+    public function testConfigTagNotSupported()
+    {
+        $config = array(
+                'proxy_client' => array(
+                    'nginx' => array(
+                        'base_url' => 'my_hostname',
+                        'servers' => array(
+                            '127.0.0.1',
+                        ),
+                    ),
+                ),
+                'tags' => array(
+                    'enabled' => true,
+                ),
+            );
+
+        $container = $this->createContainer();
+        $this->extension->load(array($config), $container);
     }
 
     public function testConfigLoadTagRules()

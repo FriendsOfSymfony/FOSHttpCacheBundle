@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services">
+
+    <config xmlns="http://example.org/schema/dic/fos_http_cache">
+        <proxy-client>
+            <symfony base-url="/test" guzzle-client="acme.guzzle.symfony">
+                <server>22.22.22.22</server>
+            </symfony>
+        </proxy-client>
+
+    </config>
+</container>
