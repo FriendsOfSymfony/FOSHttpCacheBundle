@@ -2,7 +2,8 @@ imports:
   - php
 
 tools:
-  external_code_coverage: true
+  external_code_coverage:
+    timeout: 1800
   php_code_sniffer:
     config:
       standard: PSR2
