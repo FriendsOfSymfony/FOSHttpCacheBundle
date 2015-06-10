@@ -80,8 +80,14 @@ nginx
                 servers: 123.123.123.1:6060, 123.123.123.2
                 base_url: yourwebsite.com
                 purge_location: /purge
+        tags:
+            enabled: false
 
 For ``servers`` and ``base_url``, see above.
+
+.. warning::
+
+    By now, tagging only works with Varnish, so ``tags`` has to be explicitly disabled.
 
 ``purge_location``
 """"""""""""""""""
@@ -104,8 +110,14 @@ symfony
             symfony:
                 servers: 123.123.123.1:6060, 123.123.123.2
                 base_url: yourwebsite.com
+        tags:
+            enabled: false
 
 For ``servers`` and ``base_url``, see above.
+
+.. warning::
+
+    By now, tagging only works with Varnish, so ``tags`` has to be explicitly disabled.
 
 default
 -------
