@@ -6,6 +6,7 @@
 
     <parameters>
         <parameter key="fos_http_cache.event_listener.tag.class">FOS\HttpCacheBundle\EventListener\TagSubscriber</parameter>
+        <parameter key="fos_http_cache.command.invalidate_tag.class">FOS\HttpCacheBundle\Command\InvalidateTagCommand</parameter>
     </parameters>
 
     <services>
@@ -19,10 +20,14 @@
             <tag name="twig.extension"/>
         </service>
 
-        <service id="fos_http_cache.event_listener.tag"
-                 class="%fos_http_cache.event_listener.tag.class%">
+        <service id="fos_http_cache.event_listener.tag" class="%fos_http_cache.event_listener.tag.class%">
             <argument type="service" id="fos_http_cache.handler.tag_handler" />
             <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="fos_http_cache.command.invalidate_tag" class="%fos_http_cache.command.invalidate_tag.class%">
+            <argument type="service" id="fos_http_cache.handler.tag_handler" />
+            <tag name="console.command"/>
         </service>
     </services>
 </container>

@@ -91,6 +91,8 @@ class FOSHttpCacheExtension extends Extension
                 $config['tags'],
                 $this->getDefaultProxyClient($config['proxy_client'])
             );
+        } else {
+            $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', false);
         }
 
         if ($config['invalidation']['enabled']) {
@@ -309,7 +311,7 @@ class FOSHttpCacheExtension extends Extension
 
         $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', true);
         $container->setParameter($this->getAlias().'.tag_handler.header', $config['header']);
-        $loader->load('tag_listener.xml');
+        $loader->load('cache_tagging.xml');
         if (!empty($config['rules'])) {
             $this->loadTagRules($container, $config['rules']);
         }
