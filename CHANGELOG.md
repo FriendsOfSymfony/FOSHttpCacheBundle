@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.3.1
+-----
+
+* Fixed configuration handling with symfony and nginx cache client. Cache
+  tagging is now immediately reported to not work with those clients.
+
 1.3.0
 -----
 
