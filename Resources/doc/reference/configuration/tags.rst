@@ -7,8 +7,13 @@ for an introduction.
 
 .. include:: /includes/enabled.rst
 
+If you use a :doc:`proxy client that does not support banning </features/tagging>`,
+cache tagging is not possible. If you leave ``enabled`` on ``auto``, tagging will
+be deactivated.
+
 Enables tag annotations and rules. If you want to use tagging, it is recommended
-that you set this to ``true`` so you are notified of missing dependencies:
+that you set this to ``true`` so you are notified of missing dependencies and
+incompatible proxies:
 
 .. code-block:: yaml
 
