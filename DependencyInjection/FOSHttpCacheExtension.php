@@ -84,19 +84,13 @@ class FOSHttpCacheExtension extends Extension
             $loader->load('cache_manager.xml');
         }
 
-        $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', $config['tags']['enabled']);
         if ($config['tags']['enabled']) {
-            // true or auto
-            $container->setParameter($this->getAlias().'.tag_handler.header', $config['tags']['header']);
-            $loader->load('tag_listener.xml');
-            if (!empty($config['tags']['rules'])) {
-                $this->loadTagRules($container, $config['tags']['rules']);
-            }
-
-            $tagsHeader = $config['tags']['header'];
-            $container->getDefinition($this->getAlias().'.cache_manager')
-                ->addMethodCall('setTagsHeader', array($tagsHeader))
-            ;
+            $this->loadCacheTagging(
+                $container,
+                $loader,
+                $config['tags'],
+                $this->getDefaultProxyClient($config['proxy_client'])
+            );
         }
 
         if ($config['invalidation']['enabled']) {
@@ -300,6 +294,30 @@ class FOSHttpCacheExtension extends Extension
         if (!empty($config['guzzle_client'])) {
             $container->setParameter($this->getAlias().'.proxy_client.symfony.guzzle_client', $config['guzzle_client']);
         }
+    }
+
+    private function loadCacheTagging(ContainerBuilder $container, XmlFileLoader $loader, array $config, $client)
+    {
+        if ('auto' === $config['enabled'] && 'varnish' !== $client) {
+            $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', false);
+
+            return;
+        }
+        if ('varnish' !== $client) {
+            throw new InvalidConfigurationException(sprintf('You can not enable cache tagging with %s', $client));
+        }
+
+        $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', true);
+        $container->setParameter($this->getAlias().'.tag_handler.header', $config['header']);
+        $loader->load('tag_listener.xml');
+        if (!empty($config['rules'])) {
+            $this->loadTagRules($container, $config['rules']);
+        }
+
+        $tagsHeader = $config['header'];
+        $container->getDefinition($this->getAlias().'.cache_manager')
+            ->addMethodCall('setTagsHeader', array($tagsHeader))
+        ;
     }
 
     private function loadTest(ContainerBuilder $container, XmlFileLoader $loader, array $config)
