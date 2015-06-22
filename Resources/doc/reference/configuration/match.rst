@@ -103,7 +103,7 @@ Route name regular expression. To match a single route:
 
     match:
         attributes:
-            route: ^articles_index$
+            _route: ^articles_index$
 
 To match multiple routes:
 
@@ -111,7 +111,7 @@ To match multiple routes:
 
     match:
         attributes:
-            route: ^articles.*|news$
+            _route: ^articles.*|news$
 
 Note that even for the request attributes, your criteria are interpreted as
 regular expressions.
