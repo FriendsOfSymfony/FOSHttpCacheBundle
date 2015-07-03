@@ -128,8 +128,11 @@ regular expressions.
 
 **type**: ``array``
 
-A list of additional HTTP status codes of the response for which to also apply
-the rule.
+By defaut, a rule will only match cacheable status codes: 200, 203, 300, 301,
+302, 404 and 410.
+
+`additional_cacheable_status` let you define a list of additional HTTP
+status codes of the response for which to also apply the rule.
 
 .. code-block:: yaml
 
