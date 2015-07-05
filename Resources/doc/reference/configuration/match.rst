@@ -128,8 +128,11 @@ regular expressions.
 
 **type**: ``array``
 
-A list of additional HTTP status codes of the response for which to also apply
-the rule.
+By default, a rule will only match cacheable status codes: 200, 203, 300, 301,
+302, 404 and 410 (as described in the `RFC 7231`_).
+
+`additional_cacheable_status` let you define a list of additional HTTP
+status codes of the response for which to also apply the rule.
 
 .. code-block:: yaml
 
@@ -164,3 +167,4 @@ inside the same rule.
 
 .. _Trusting Proxies: http://symfony.com/doc/current/components/http_foundation/trusting_proxies.html
 .. _controllers as services: http://symfony.com/doc/current/cookbook/controller/service.html
+.. _RFC 7231: http://tools.ietf.org/html/rfc7231#page-48
