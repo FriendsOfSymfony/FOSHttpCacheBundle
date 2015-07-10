@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.3.2
+-----
+
+* Fixed some status codes (such as 204 and 302) not triggering invalidation.
+
 1.3.1
 -----
 

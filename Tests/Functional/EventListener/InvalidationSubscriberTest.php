@@ -33,7 +33,10 @@ class InvalidationSubscriberTest extends WebTestCase
         $client->request('POST', '/invalidate/route/42');
     }
 
-    public function testInvalidatePath()
+    /**
+     * @dataProvider getStatusCodesThatTriggerInvalidation
+     */
+    public function testInvalidatePath($statusCode)
     {
         $client = static::createClient();
 
@@ -43,10 +46,13 @@ class InvalidationSubscriberTest extends WebTestCase
         )
             ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidatePath')->once()->with('/cached')
+            ->shouldReceive('invalidatePath')->once()->with(
+                sprintf('/invalidate/path/%s', $statusCode)
+            )
             ->shouldReceive('flush')->once()
         ;
 
-        $client->request('POST', '/invalidate/path');
+        $client->request('POST', sprintf('/invalidate/path/%s', $statusCode));
     }
 
     public function testErrorIsNotInvalidated()
@@ -63,6 +69,11 @@ class InvalidationSubscriberTest extends WebTestCase
         ;
 
         $client->request('POST', '/invalidate/error');
+    }
+
+    public function getStatusCodesThatTriggerInvalidation()
+    {
+        return array(array(200), array(204), array(302));
     }
 
     protected function tearDown()

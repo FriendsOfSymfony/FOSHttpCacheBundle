@@ -25,7 +25,7 @@ invalidation_route:
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::itemAction }
 
 invalidation_path:
-  path: /invalidate/path
+  path: /invalidate/path/{statusCode}
   defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::otherAction }
 
 invalidation_error:
