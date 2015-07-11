@@ -4,7 +4,7 @@ Overview
 Installation
 ------------
 
-This bundle is available on Packagist_. You can install it using Composer:
+This bundle is available on Packagist. You can install it using Composer:
 
 .. code-block:: bash
 
