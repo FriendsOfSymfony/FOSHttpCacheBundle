@@ -69,7 +69,7 @@ class RuleMatcher implements RuleMatcherInterface
              * headers are already set. As we are about to set them, that would
              * always return false.
              */
-            $status = array(200, 203, 300, 301, 302, 404, 410);
+            $status = array(200, 203, 204, 300, 301, 302, 404, 410);
             if (!empty($this->criteria['additional_cacheable_status'])) {
                 $status = array_merge($status, $this->criteria['additional_cacheable_status']);
             }

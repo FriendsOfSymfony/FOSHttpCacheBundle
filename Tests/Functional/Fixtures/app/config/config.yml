@@ -20,6 +20,13 @@ fos_http_cache:
     varnish:
       servers: 127.0.0.1
       base_url: localhost:8080
+  invalidation:
+    rules:
+      -
+        match:
+          path: ^/invalidate/path.*
+        routes:
+          invalidation_path: ~
   tags:
     rules:
       -

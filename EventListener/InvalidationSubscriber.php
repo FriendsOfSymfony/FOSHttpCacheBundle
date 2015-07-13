@@ -89,7 +89,9 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
         $response = $event->getResponse();
 
         // Don't invalidate any caches if the request was unsuccessful
-        if ($response->isSuccessful()) {
+        if ($response->getStatusCode() >= 200
+            && $response->getStatusCode() < 400
+        ) {
             $this->handleInvalidation($request, $response);
         }
 
@@ -144,7 +146,8 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
     /**
      * Handle the invalidation annotations and configured invalidators.
      *
-     * @param Request $request
+     * @param Request  $request
+     * @param Response $response
      */
     private function handleInvalidation(Request $request, Response $response)
     {

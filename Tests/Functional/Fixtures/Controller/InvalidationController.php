@@ -31,9 +31,9 @@ class InvalidationController extends Controller
     /**
      * @InvalidatePath("/cached")
      */
-    public function otherAction()
+    public function otherAction($statusCode)
     {
-        return new Response('Done.');
+        return new Response('Done.', $statusCode);
     }
 
     /**
