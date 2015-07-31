@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services">
+
+    <config xmlns="http://example.org/schema/dic/fos_http_cache">
+        <cache-manager enabled="true" custom-proxy-client="acme.proxy_client"/>
+    </config>
+</container>
