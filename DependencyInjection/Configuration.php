@@ -52,11 +52,13 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->validate()
-                ->ifTrue(function ($v) {return $v['cache_manager']['enabled'] && !isset($v['proxy_client']);})
+                ->ifTrue(function ($v) {
+                    return $v['cache_manager']['enabled']
+                        && !isset($v['proxy_client'])
+                        && !isset($v['cache_manager']['custom_proxy_client'])
+                    ;
+                })
                 ->then(function ($v) {
-                    if (!empty($v['cache_manager']['proxy_client'])) {
-                        return $v;
-                    }
                     if ('auto' === $v['cache_manager']['enabled']) {
                         $v['cache_manager']['enabled'] = false;
 

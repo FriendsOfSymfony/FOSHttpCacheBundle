@@ -184,6 +184,30 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
+    public function testCustomProxyClient()
+    {
+        $expectedConfiguration = $this->getEmptyConfig();
+        $expectedConfiguration['cache_manager'] = array(
+            'enabled' => true,
+            'custom_proxy_client' => 'acme.proxy_client',
+            'generate_url_type' => 'auto',
+        );
+        $expectedConfiguration['tags']['enabled'] = 'auto';
+        $expectedConfiguration['invalidation']['enabled'] = 'auto';
+
+        $formats = array_map(function ($path) {
+            return __DIR__.'/../../Resources/Fixtures/'.$path;
+        }, array(
+            'config/custom-client.yml',
+            'config/custom-client.xml',
+            'config/custom-client.php',
+        ));
+
+        foreach ($formats as $format) {
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, array($format));
+        }
+    }
+
     public function testSupportsNginx()
     {
         $expectedConfiguration = $this->getEmptyConfig();
