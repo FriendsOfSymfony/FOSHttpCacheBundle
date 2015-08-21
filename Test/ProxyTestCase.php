@@ -16,6 +16,8 @@ use FOS\HttpCache\Test\PHPUnit\IsCacheMissConstraint;
 use FOS\HttpCache\Test\Proxy\ProxyInterface;
 use Guzzle\Http\ClientInterface;
 use Guzzle\Http\Message\Response;
+use Http\Adapter\HttpAdapter;
+use Http\Discovery\MessageFactoryDiscovery;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -71,7 +73,7 @@ abstract class ProxyTestCase extends WebTestCase
      * Get HTTP test client for making requests to your application through a
      * live caching proxy.
      *
-     * @return ClientInterface
+     * @return HttpAdapter
      */
     protected function getHttpClient()
     {
@@ -81,15 +83,22 @@ abstract class ProxyTestCase extends WebTestCase
     /**
      * Get a response from your application through a live caching proxy.
      *
-     * @param string $url     Request URL (absolute or relative)
+     * @param string $uri     Request URL (absolute or relative)
      * @param array  $headers Request HTTP headers
      * @param array  $options Request options
      *
      * @return Response
      */
-    protected function getResponse($url, array $headers = array(), $options = array())
+    protected function getResponse($uri, array $headers = array())
     {
-        return $this->getHttpClient()->get($url, $headers, $options)->send();
+        $request = MessageFactoryDiscovery::find()->createRequest(
+            'GET',
+            $uri,
+            '1.1',
+            $headers
+        );
+
+        return $this->getHttpClient()->sendRequest($request);
     }
 
     /**

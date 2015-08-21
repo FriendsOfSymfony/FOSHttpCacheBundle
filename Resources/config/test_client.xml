@@ -9,15 +9,18 @@
         <parameter key="fos_http_cache.test.client.curlopt_forbid_reuse" type="constant">CURLOPT_FORBID_REUSE</parameter>
     </parameters>
 
-    <services>
-        <service id="fos_http_cache.test.client.abstract"
-                 class="%fos_http_cache.test.client.class%"
-                 abstract="true">
-            <argument /><!-- base_url -->
+    <!--
+    TODO: how to handle guzzle in future?
+<services>
+    <service id="fos_http_cache.test.client.abstract"
+             class="%fos_http_cache.test.client.class%"
+             abstract="true">
+        <argument />--><!-- base_url --><!--
             <argument type="collection">
                 <argument key="%fos_http_cache.test.client.curlopt_forbid_reuse%">true</argument>
             </argument>
         </service>
     </services>
+    -->
 
 </container>
