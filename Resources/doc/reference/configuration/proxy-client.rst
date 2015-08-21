@@ -27,8 +27,11 @@ varnish
     fos_http_cache:
         proxy_client:
             varnish:
-                servers: 123.123.123.1:6060, 123.123.123.2
-                base_url: yourwebsite.com
+                http:
+                    servers:
+                        - 123.123.123.1:6060
+                        - 123.123.123.2
+                    base_url: yourwebsite.com
 
 ``servers``
 """""""""""
@@ -58,7 +61,8 @@ URL may contain a path. If you access your web application on a port other than
     fos_http_cache:
         proxy_client:
             varnish:
-                base_url: yourwebsite.com:8000
+                http:
+                    base_url: yourwebsite.com:8000
 
 .. warning::
 
@@ -77,9 +81,12 @@ nginx
     fos_http_cache:
         proxy_client:
             nginx:
-                servers: 123.123.123.1:6060, 123.123.123.2
-                base_url: yourwebsite.com
                 purge_location: /purge
+                http:
+                    servers:
+                        - 123.123.123.1:6060
+                        - 123.123.123.2
+                    base_url: yourwebsite.com
 
 For ``servers`` and ``base_url``, see above.
 
@@ -102,8 +109,11 @@ symfony
     fos_http_cache:
         proxy_client:
             symfony:
-                servers: 123.123.123.1:6060, 123.123.123.2
-                base_url: yourwebsite.com
+                http:
+                    servers:
+                        - 123.123.123.1:6060
+                        - 123.123.123.2
+                    base_url: yourwebsite.com
 
 For ``servers`` and ``base_url``, see above.
 
@@ -126,22 +136,16 @@ The default proxy client that will be used by the cache manager. You can
 *configure Nginx, Varnish and Symfony proxy clients in parallel*. There is
 however only one cache manager and it will only use the default client.
 
-Custom Guzzle Client
---------------------
+.. _custom HTTP client:
 
-By default, the proxy client instantiates a `Guzzle client`_ to talk with the
-caching proxy. If you need to customize the requests, for example to send a
-basic authentication header, you can configure a service and specify that in
-the ``guzzle_client`` option of any of the cache proxy clients. A sample
-service definition for using basic authentication looks like this:
+Custom HTTP Client
+------------------
 
-.. code-block:: yaml
-
-    # app/config/config.yml
-    acme.varnish.guzzle.client:
-        class: Guzzle\Service\Client
-        calls:
-            - [setDefaultOption, [auth, [%caching_proxy.username%, %caching_proxy.password%, basic ]]]
+The proxy client uses a ``Http\Client\Utils\HttpMethodsClient`` wrapping a
+``Http\Client\HttpClient`` instance. If you need to customize the requests, for
+example to send a basic authentication header with each request, you can
+configure a service for the ``HttpClient`` and specify that in the
+``http_client`` option of any of the cache proxy clients.
 
 Caching Proxy Configuration
 ---------------------------
@@ -149,5 +153,3 @@ Caching Proxy Configuration
 You need to configure your caching proxy (Varnish or Nginx) to work with this
 bundle. Please refer to the :ref:`FOSHttpCache library’s documentation <foshttpcache:proxy-configuration>`
 for more information.
-
-.. _Guzzle client: http://guzzle3.readthedocs.org/

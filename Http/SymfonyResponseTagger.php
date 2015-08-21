@@ -9,15 +9,15 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCacheBundle\Handler;
+namespace FOS\HttpCacheBundle\Http;
 
-use FOS\HttpCache\Handler\TagHandler as BaseTagHandler;
+use FOS\HttpCache\ResponseTagger;
 use Symfony\Component\HttpFoundation\Response;
 
-class TagHandler extends BaseTagHandler
+class SymfonyResponseTagger extends ResponseTagger
 {
     /**
-     * Tag response with the previously added tags.
+     * Tag a symfony response with the previously added tags.
      *
      * @param Response $response
      * @param bool     $replace  Whether to replace the current tags on the
@@ -26,8 +26,12 @@ class TagHandler extends BaseTagHandler
      *
      * @return $this
      */
-    public function tagResponse(Response $response, $replace = false)
+    public function tagSymfonyResponse(Response $response, $replace = false)
     {
+        if (!$this->hasTags()) {
+            return $this;
+        }
+
         if (!$replace && $response->headers->has($this->getTagsHeaderName())) {
             $header = $response->headers->get($this->getTagsHeaderName());
             if ('' !== $header) {
@@ -35,9 +39,7 @@ class TagHandler extends BaseTagHandler
             }
         }
 
-        if ($this->hasTags()) {
-            $response->headers->set($this->getTagsHeaderName(), $this->getTagsHeaderValue());
-        }
+        $response->headers->set($this->getTagsHeaderName(), $this->getTagsHeaderValue());
 
         return $this;
     }

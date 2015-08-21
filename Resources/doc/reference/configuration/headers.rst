@@ -307,7 +307,7 @@ not under your control.
     This is a custom header. You need to set up your caching proxy to respect
     this header. See the FOSHttpCache documentation
     :ref:`for Varnish <foshttpcache:varnish configuration>` or
-    :ref:`for the Symfony HttpCache <foshttpcache:symfony cache configuration>`.
+    :ref:`for the Symfony HttpCache <foshttpcache:symfony httpcache configuration>`.
 
 To use the custom TTL, specify the option ``reverse_proxy_ttl`` in the headers
 section:

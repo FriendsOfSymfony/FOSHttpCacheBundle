@@ -38,12 +38,14 @@ class TagListenerTest extends WebTestCase
             CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidate')->with(array('X-Cache-Tags' => '(all\\-items)(,.+)?$'))
-            ->shouldReceive('invalidate')->with(array('X-Cache-Tags' => '(item\\-123)(,.+)?$'))
+            ->shouldReceive('invalidateTags')->with(['all-items'])
+            ->shouldReceive('invalidateTags')->with(['item-123'])
             ->shouldReceive('flush')->once()
         ;
 
         $client->request('POST', '/tag/123');
+        $response = $client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode(), $response->getContent());
     }
 
     public function testErrorIsNotInvalidated()
@@ -80,7 +82,7 @@ class TagListenerTest extends WebTestCase
             CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidate')->once()->with(array('X-Cache-Tags' => '(area|area\\-51)(,.+)?$'))
+            ->shouldReceive('invalidateTags')->once()->with(['area', 'area-51'])
             ->shouldReceive('flush')->once()
         ;
 

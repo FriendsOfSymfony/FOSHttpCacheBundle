@@ -39,9 +39,10 @@ fos_http_cache:
                         - Authorization
     proxy_client:
         varnish:
-            servers: 22.22.22.22
-            base_url: /test
-            guzzle_client: acme.guzzle.varnish
+            http:
+                servers: [22.22.22.22]
+                base_url: /test
+                http_client: acme.guzzle.varnish
 
     cache_manager:
         enabled: true

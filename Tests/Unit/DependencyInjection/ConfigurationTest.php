@@ -87,9 +87,11 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ),
             'proxy_client' => array(
                 'varnish' => array(
-                    'servers' => array('22.22.22.22'),
-                    'base_url' => '/test',
-                    'guzzle_client' => 'acme.guzzle.varnish',
+                    'http' => [
+                        'servers' => array('22.22.22.22'),
+                        'base_url' => '/test',
+                        'http_client' => 'acme.guzzle.varnish',
+                    ],
                 ),
             ),
             'cache_manager' => array(
@@ -216,10 +218,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['proxy_client'] = array(
             'nginx' => array(
-                'servers' => array('22.22.22.22'),
-                'base_url' => '/test',
-                'guzzle_client' => 'acme.guzzle.nginx',
                 'purge_location' => '/purge',
+                'http' => [
+                    'servers' => array('22.22.22.22'),
+                    'base_url' => '/test',
+                    'http_client' => 'acme.guzzle.nginx',
+                ],
             ),
         );
         $expectedConfiguration['cache_manager']['enabled'] = 'auto';
@@ -246,9 +250,11 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['proxy_client'] = array(
             'symfony' => array(
-                'servers' => array('22.22.22.22'),
-                'base_url' => '/test',
-                'guzzle_client' => 'acme.guzzle.symfony',
+                'http' => [
+                    'servers' => array('22.22.22.22'),
+                    'base_url' => '/test',
+                    'http_client' => 'acme.guzzle.symfony',
+                ],
             ),
         );
         $expectedConfiguration['cache_manager']['enabled'] = 'auto';
@@ -299,15 +305,19 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         );
         $expectedConfiguration['proxy_client'] = array(
             'varnish' => array(
-                'base_url' => null,
-                'guzzle_client' => null,
-                'servers' => array('1.1.1.1:80', '2.2.2.2:80'),
+                'http' => [
+                    'base_url' => null,
+                    'http_client' => null,
+                    'servers' => array('1.1.1.1:80', '2.2.2.2:80'),
+                ],
             ),
             'nginx' => array(
-                'base_url' => null,
-                'guzzle_client' => null,
-                'purge_location' => '',
-                'servers' => array('1.1.1.1:81', '2.2.2.2:81'),
+                'purge_location' => false,
+                'http' => [
+                    'base_url' => null,
+                    'http_client' => null,
+                    'servers' => array('1.1.1.1:81', '2.2.2.2:81'),
+                ],
             ),
         );
         $expectedConfiguration['cache_manager']['enabled'] = 'auto';

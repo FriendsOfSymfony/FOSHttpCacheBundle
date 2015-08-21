@@ -2,7 +2,8 @@ fos_http_cache:
 
     proxy_client:
         nginx:
-            servers: 22.22.22.22
-            base_url: /test
             purge_location: /purge
-            guzzle_client: acme.guzzle.nginx
+            http:
+                servers: [22.22.22.22]
+                base_url: /test
+                http_client: acme.guzzle.nginx

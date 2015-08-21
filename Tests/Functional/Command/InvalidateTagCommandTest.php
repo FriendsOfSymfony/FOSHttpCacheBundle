@@ -24,7 +24,7 @@ class InvalidateTagCommandTest extends CommandTestCase
             CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidate')->once()->with(array('X-Cache-Tags' => '(my\\-tag|other\\-tag)(,.+)?$'))
+            ->shouldReceive('invalidateTags')->once()->with(['my-tag', 'other-tag'])
             ->shouldReceive('flush')->once()->andReturn(1)
         ;
 
@@ -40,7 +40,7 @@ class InvalidateTagCommandTest extends CommandTestCase
             CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidate')->once()->with(array('X-Cache-Tags' => '(my\\-tag|other\\-tag)(,.+)?$'))
+            ->shouldReceive('invalidateTags')->once()->with(['my-tag', 'other-tag'])
             ->shouldReceive('flush')->once()->andReturn(1)
         ;
 

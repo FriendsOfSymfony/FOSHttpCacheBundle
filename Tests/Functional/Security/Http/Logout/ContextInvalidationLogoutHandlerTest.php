@@ -31,5 +31,7 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
 
         $client->getCookieJar()->set(new Cookie('TESTSESSID', 'test'));
         $client->request('GET', '/secured_area/logout');
+
+        $this->assertEquals(302, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }
 }

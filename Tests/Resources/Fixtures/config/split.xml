@@ -13,10 +13,16 @@
         </cache-control>
         <proxy-client>
             <varnish>
-                <servers>1.1.1.1:80,2.2.2.2:80</servers>
+                <http>
+                    <server>1.1.1.1:80</server>
+                    <server>2.2.2.2:80</server>
+                </http>
             </varnish>
             <nginx>
-                <servers>1.1.1.1:81,2.2.2.2:81</servers>
+                <http>
+                    <server>1.1.1.1:81</server>
+                    <server>2.2.2.2:81</server>
+                </http>
             </nginx>
         </proxy-client>
     </config>
