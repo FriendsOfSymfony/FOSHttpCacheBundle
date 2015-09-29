@@ -50,7 +50,7 @@ before_script:
   - sudo pip install -r Resources/doc/requirements.txt
 
 script:
-  - phpunit ${PHPUNIT_FLAGS}
+  - SYMFONY_DEPRECATIONS_HELPER=weak phpunit ${PHPUNIT_FLAGS}
   - make -C Resources/doc SPHINXOPTS='-nW' html
   - make -C Resources/doc spelling
 
