@@ -335,13 +335,11 @@ class FOSHttpCacheExtension extends Extension
             $loader->load('test_client.xml');
 
             if ($config['client']['varnish']['enabled']) {
-                $container->getDefinition($this->getAlias().'.test.client.varnish')
-                    ->setAbstract(false);
+                $loader->load('varnish_test_client.xml');
             }
 
             if ($config['client']['nginx']['enabled']) {
-                $container->getDefinition($this->getAlias().'.test.client.nginx')
-                    ->setAbstract(false);
+                $loader->load('nginx_test_client.xml');
             }
 
             $container->setAlias(
