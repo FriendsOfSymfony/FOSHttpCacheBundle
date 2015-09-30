@@ -332,21 +332,6 @@ then use on the reverse proxy:
 
 This example adds the header ``X-Reverse-Proxy-TTL: 3600`` to your responses.
 Varnish by default knows nothing about this header. To make this solution work,
-you need to extend your varnish ``vcl_fetch`` configuration:
-
-.. code-block:: c
-
-    sub vcl_fetch {
-        if (beresp.http.X-Reverse-Proxy-TTL) {
-            C{
-                char *ttl;
-                ttl = VRT_GetHdr(sp, HDR_BERESP, "\024X-Reverse-Proxy-TTL:");
-                VRT_l_beresp_ttl(sp, atoi(ttl));
-            }C
-            unset beresp.http.X-Reverse-Proxy-TTL;
-        }
-    }
-
-Note that there is a ``beresp.ttl`` field in VCL but unfortunately it can only
-be set to absolute values and not dynamically. Thus we have to revert to a C
-code fragment.
+you need to extend your varnish ``vcl_fetch`` configuration. Please refer to
+the :ref:`FOSHttpCache library’s docs <foshttpcache:varnish_customttl>`
+for more information.
