@@ -53,3 +53,5 @@ class RemoveClassesFromCachePass implements CompilerPassInterface
         $reflProp = $reflClass->getProperty('classes');
         $reflProp->setAccessible(true);
         $reflProp->setValue($frameworkExt, $classes);
+    }
+}
