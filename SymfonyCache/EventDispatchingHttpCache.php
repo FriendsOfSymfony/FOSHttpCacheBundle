@@ -119,6 +119,12 @@ abstract class EventDispatchingHttpCache extends HttpCache
             }
         }
 
+        // load `CacheEvent` class and its parent classes to prevent Symfony
+        // from adding them to its class cache, what results in redeclaration
+        // error. For more background information consult
+        // https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/issues/242
+        class_exists('FOS\\HttpCache\\SymfonyCache\\CacheEvent');
+
         return parent::handle($request, $type, $catch);
     }
 

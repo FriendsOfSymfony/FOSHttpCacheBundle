@@ -100,7 +100,6 @@ class FOSHttpCacheExtension extends Extension
             if (!empty($config['invalidation']['rules'])) {
                 $this->loadInvalidatorRules($container, $config['invalidation']['rules']);
             }
-            $container->setParameter($this->getAlias().'.invalidation.enabled', true);
         }
 
         if ($config['user_context']['enabled']) {
