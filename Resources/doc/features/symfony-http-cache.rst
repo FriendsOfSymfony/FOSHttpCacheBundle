@@ -88,11 +88,11 @@ Prevent redeclaration error for Event class
 
 Under some circumstances this bundle loads a class which inherits from
 class ``Symfony\Component\EventDispatcher\Event`` in early cache lookup phase. This
-results in the following error message:
+results in the following error message::
 
     Fatal error: Cannot redeclare class Symfony\Component\EventDispatcher\Event in app/cache/dev/classes.php on line ...
 
-This error may occure if you have told the kernel to load class cache in your
+This error may occur if you have told the kernel to load class cache in your
 ``app/console`` script, by adding something like ``$kernel->loadClassCache()``.
 To get around the error you can either stop using the class cache or adding this
 line to your ``app/console``::
