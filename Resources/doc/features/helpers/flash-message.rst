@@ -49,7 +49,7 @@ to only show the flash message once. Something along these lines:
             return;
         }
 
-        var flashes = JSON.parse(cookie);
+        var flashes = JSON.parse(decodeURIComponent(cookie));
 
         // show flashes in your DOM...
 
