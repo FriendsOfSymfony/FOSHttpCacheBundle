@@ -51,12 +51,25 @@ to only show the flash message once. Something along these lines:
 
         var flashes = JSON.parse(decodeURIComponent(cookie));
 
-        // show flashes in your DOM...
+        var html = '';
+        for (var key in flashes) {
+            if (key === 'length' || !flashes.hasOwnProperty(key)) {
+                continue;
+            }
+            html = '<div class="alert alert-' + key + '">';
+            html += '<i class="fa fa-info-circle"></i>';
+            html += flashes[key];
+            html += '</div>';
+        }
+        // YOUR WORK: show flashes in your DOM...
 
+        // remove the cookie to not show flashes again
         document.cookie = "flashes=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
     }
 
-    // register showFlash on the page ready event.
+    // YOUR WORK: register showFlash on the page ready event.
+
+The parts about adding the flash messages in the DOM and registering your handler depend on the Javascript framework you use in your page.
 
 Your VCL configuration should `filter out this cookie <https://www.varnish-cache.org/trac/wiki/VCLExampleRemovingSomeCookies>`_
 on subsequent requests, in case the JavaScript failed to remove it.
