@@ -69,20 +69,13 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainer();
 
         $definitions = array(
-
-            'test.provider' => (new Definition)
-                ->setClass('\\stdClass')
-                ->addTag(HashGeneratorPass::TAG_NAME, array('priority' => 10)),
-
-            'foo.provider' => (new Definition)
-                ->setClass('\\stdClass')
-                ->addTag(HashGeneratorPass::TAG_NAME),
-
-            'bar.provider' => (new Definition)
-                ->setClass('\\stdClass')
-                ->addTag(HashGeneratorPass::TAG_NAME, array('priority' => 5)),
-
+            'test.provider' => new Definition('\\stdClass'),
+            'foo.provider' => new Definition('\\stdClass'),
+            'bar.provider' => new Definition('\\stdClass'),
         );
+        $definitions['test.provider']->addTag(HashGeneratorPass::TAG_NAME, array('priority' => 10));
+        $definitions['foo.provider']->addTag(HashGeneratorPass::TAG_NAME);
+        $definitions['bar.provider']->addTag(HashGeneratorPass::TAG_NAME, array('priority' => 5));
 
         $container->setDefinitions($definitions);
 

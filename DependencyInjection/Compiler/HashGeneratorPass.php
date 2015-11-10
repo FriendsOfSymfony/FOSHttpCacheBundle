@@ -51,10 +51,13 @@ class HashGeneratorPass implements CompilerPassInterface
         krsort($prioritisedTags, SORT_NUMERIC);
         $prioritisedProviders = call_user_func_array('array_merge', $prioritisedTags);
 
+        $providers = array();
         foreach ($prioritisedProviders as $id) {
             $providers[] = new Reference($id);
         }
 
-        $definition->addArgument($providers);
+        if (!empty($providers)) {
+            $definition->addArgument($providers);
+        }
     }
 }
