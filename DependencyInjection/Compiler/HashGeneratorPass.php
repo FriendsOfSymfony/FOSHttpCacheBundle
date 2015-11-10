@@ -56,8 +56,6 @@ class HashGeneratorPass implements CompilerPassInterface
             $providers[] = new Reference($id);
         }
 
-        if (!empty($providers)) {
-            $definition->addArgument($providers);
-        }
+        $definition->addArgument($providers);
     }
 }
