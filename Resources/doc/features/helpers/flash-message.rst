@@ -57,7 +57,6 @@ to only show the flash message once. Something along these lines:
                 continue;
             }
             html = '<div class="alert alert-' + key + '">';
-            html += '<i class="fa fa-info-circle"></i>';
             html += flashes[key];
             html += '</div>';
         }
