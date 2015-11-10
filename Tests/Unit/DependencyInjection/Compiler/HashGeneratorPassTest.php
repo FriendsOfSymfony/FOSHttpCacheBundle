@@ -14,6 +14,8 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection\Compiler;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
@@ -57,6 +59,39 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
         $config['user_context']['enabled'] = true;
         $this->extension->load(array($config), $container);
         $this->userContextListenerPass->process($container);
+    }
+
+    /**
+     * Test that priorities allow for us to re-arrange services.
+     */
+    public function testConfigPrioritisedProviders()
+    {
+        $container = $this->createContainer();
+
+        $definitions = array(
+            'test.provider' => new Definition('\\stdClass'),
+            'foo.provider' => new Definition('\\stdClass'),
+            'bar.provider' => new Definition('\\stdClass'),
+        );
+        $definitions['test.provider']->addTag(HashGeneratorPass::TAG_NAME, array('priority' => 10));
+        $definitions['foo.provider']->addTag(HashGeneratorPass::TAG_NAME);
+        $definitions['bar.provider']->addTag(HashGeneratorPass::TAG_NAME, array('priority' => 5));
+
+        $container->setDefinitions($definitions);
+
+        $config = $this->getBaseConfig();
+        $config['user_context']['enabled'] = true;
+        $this->extension->load(array($config), $container);
+        $this->userContextListenerPass->process($container);
+
+        $arguments = $container->getDefinition('fos_http_cache.user_context.hash_generator')->getArguments();
+        $services = array_map(
+            function($argument) {
+                return (string)$argument;
+            }, array_shift($arguments)
+        );
+
+        $this->assertEquals($services, array('test.provider', 'bar.provider', 'foo.provider'));
     }
 
     protected function createContainer()

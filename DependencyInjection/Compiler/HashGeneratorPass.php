@@ -34,13 +34,26 @@ class HashGeneratorPass implements CompilerPassInterface
 
         $definition = $container->getDefinition('fos_http_cache.user_context.hash_generator');
 
-        $providers = array();
-        foreach ($container->findTaggedServiceIds(self::TAG_NAME) as $id => $parameters) {
-            $providers[] = new Reference($id);
+        $prioritisedTags = array();
+        $taggedProviders = $container->findTaggedServiceIds(self::TAG_NAME);
+
+        if (!count($taggedProviders)) {
+            throw new InvalidConfigurationException('No user context providers found. Either tag providers or disable fos_http_cache.user_context');
         }
 
-        if (!count($providers)) {
-            throw new InvalidConfigurationException('No user context providers found. Either tag providers or disable fos_http_cache.user_context');
+        foreach ($taggedProviders as $id => $tags) {
+            foreach ($tags as $tag) {
+                $priority = isset($tag['priority']) ? (int)$tag['priority'] : 0;
+                $prioritisedTags[$priority][] = $id;
+            }
+        }
+
+        krsort($prioritisedTags, SORT_NUMERIC);
+        $prioritisedProviders = call_user_func_array('array_merge', $prioritisedTags);
+
+        $providers = array();
+        foreach ($prioritisedProviders as $id) {
+            $providers[] = new Reference($id);
         }
 
         $definition->addArgument($providers);
