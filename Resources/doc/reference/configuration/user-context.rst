@@ -201,6 +201,9 @@ Custom providers need to:
 * implement ``FOS\HttpCache\UserContext\ContextProviderInterface``
 * be tagged with ``fos_http_cache.user_context_provider``.
 
+Optionally these may also supply a ``priority`` parameter, which will allow for
+context providers to be ordered reliably and consequently overridden.
+
 The ``updateUserContext(UserContext $context)`` method is called when the hash
 is generated.
 
@@ -209,10 +212,17 @@ is generated.
     acme.demo_bundle.my_service:
         class: "%acme.demo_bundle.my_service.class%"
         tags:
-            - { name: fos_http_cache.user_context_provider }
+            - { name: fos_http_cache.user_context_provider, priority: 10 }
 
 .. code-block:: xml
 
     <service id="acme.demo_bundle.my_service" class="%acme.demo_bundle.my_service.class%">
-        <tag name="fos_http_cache.user_context_provider" />
+        <tag name="fos_http_cache.user_context_provider" priority="10" />
     </service>
+
+.. code-block:: php
+
+    $container
+        ->register('acme.demo_bundle.my_service', '%acme.demo_bundle.my_service.class%')
+        ->addTag('fos_http_cache.user_context_provider', array('priority' => 10))
+    ;
