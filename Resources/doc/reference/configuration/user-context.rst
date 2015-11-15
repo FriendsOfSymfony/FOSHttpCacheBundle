@@ -201,11 +201,13 @@ Custom providers need to:
 * implement ``FOS\HttpCache\UserContext\ContextProviderInterface``
 * be tagged with ``fos_http_cache.user_context_provider``.
 
-Optionally these may also supply a ``priority`` parameter, which will allow for
-context providers to be ordered reliably and consequently overridden.
+If you need context providers to run in a specific order, you can specify the
+optional ``priority`` parameter for the tag. The higher the priority, the
+earlier a context provider is executed. The build-in provider has a priority
+of 0.
 
-The ``updateUserContext(UserContext $context)`` method is called when the hash
-is generated.
+The ``updateUserContext(UserContext $context)`` method of the context provider
+is called when the hash is generated.
 
 .. code-block:: yaml
 
