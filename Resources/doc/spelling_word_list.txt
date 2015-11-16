@@ -10,4 +10,3 @@ yaml
 invalidator
 ETag
 templating
-Javascript

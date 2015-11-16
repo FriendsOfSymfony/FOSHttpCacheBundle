@@ -68,7 +68,7 @@ to only show the flash message once. Something along these lines:
 
     // YOUR WORK: register showFlash on the page ready event.
 
-The parts about adding the flash messages in the DOM and registering your handler depend on the Javascript framework you use in your page.
+The parts about adding the flash messages in the DOM and registering your handler depend on the JavaScript framework you use in your page.
 
 Your VCL configuration should `filter out this cookie <https://www.varnish-cache.org/trac/wiki/VCLExampleRemovingSomeCookies>`_
 on subsequent requests, in case the JavaScript failed to remove it.
