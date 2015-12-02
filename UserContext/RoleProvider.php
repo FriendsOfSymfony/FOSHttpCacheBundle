@@ -47,7 +47,7 @@ class RoleProvider implements ContextProviderInterface
                 'Context must implement either TokenStorageInterface or SecurityContextInterface'
             );
         }
-        
+
         $this->context = $context;
     }
 
