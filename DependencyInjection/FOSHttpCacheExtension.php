@@ -97,6 +97,14 @@ class FOSHttpCacheExtension extends Extension
 
         if ($config['invalidation']['enabled']) {
             $loader->load('invalidation_listener.xml');
+
+            if (!empty($config['invalidation']['expression_language'])) {
+                $container->setAlias(
+                    $this->getAlias().'.invalidation.expression_language',
+                    $config['invalidation']['expression_language']
+                );
+            }
+
             if (!empty($config['invalidation']['rules'])) {
                 $this->loadInvalidatorRules($container, $config['invalidation']['rules']);
             }
@@ -312,6 +320,14 @@ class FOSHttpCacheExtension extends Extension
         $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', true);
         $container->setParameter($this->getAlias().'.tag_handler.header', $config['header']);
         $loader->load('cache_tagging.xml');
+
+        if (!empty($config['expression_language'])) {
+            $container->setAlias(
+                $this->getAlias().'.tag_handler.expression_language',
+                $config['expression_language']
+            );
+        }
+
         if (!empty($config['rules'])) {
             $this->loadTagRules($container, $config['rules']);
         }

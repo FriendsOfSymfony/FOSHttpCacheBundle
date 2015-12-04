@@ -49,6 +49,7 @@ fos_http_cache:
 
     tags:
         header: FOS-Tags
+        expression_language: acme.expression_language
         rules:
             -
                 match:
@@ -71,6 +72,7 @@ fos_http_cache:
                     - '"b"'
 
     invalidation:
+        expression_language: acme.expression_language
         rules:
             -
                 match:

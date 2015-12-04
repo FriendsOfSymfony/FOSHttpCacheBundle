@@ -13,6 +13,7 @@
                  class="%fos_http_cache.event_listener.invalidation.class%">
             <argument type="service" id="fos_http_cache.cache_manager" />
             <argument type="service" id="router" />
+            <argument type="service" id="fos_http_cache.invalidation.expression_language" on-invalid="ignore" />
             <tag name="kernel.event_subscriber" />
         </service>
     </services>

@@ -50,6 +50,7 @@ $container->loadFromExtension('fos_http_cache', array(
     ),
     'tags' => array(
         'header' => 'FOS-Tags',
+        'expression_language' => 'acme.expression_language',
         'rules' => array(
             array(
                 'match' => array(
@@ -69,6 +70,7 @@ $container->loadFromExtension('fos_http_cache', array(
     ),
     'invalidation' => array(
         'enabled' => 'auto',
+        'expression_language' => 'acme.expression_language',
         'rules' => array(
             array(
                 'match' => array(
