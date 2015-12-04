@@ -22,6 +22,7 @@
 
         <service id="fos_http_cache.event_listener.tag" class="%fos_http_cache.event_listener.tag.class%">
             <argument type="service" id="fos_http_cache.handler.tag_handler" />
+            <argument type="service" id="fos_http_cache.tag_handler.expression_language" on-invalid="ignore" />
             <tag name="kernel.event_subscriber" />
         </service>
 

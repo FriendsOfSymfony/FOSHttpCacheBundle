@@ -100,6 +100,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             'tags' => array(
                 'enabled' => 'auto',
                 'header' => 'FOS-Tags',
+                'expression_language' => 'acme.expression_language',
                 'rules' => array(
                     array(
                         'match' => array(
@@ -121,6 +122,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ),
             'invalidation' => array(
                 'enabled' => 'auto',
+                'expression_language' => 'acme.expression_language',
                 'rules' => array(
                     array(
                         'match' => array(
@@ -482,10 +484,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             'tags' => array(
                 'enabled' => false,
                 'header' => 'X-Cache-Tags',
+                'expression_language' => null,
                 'rules' => array(),
             ),
             'invalidation' => array(
                 'enabled' => false,
+                'expression_language' => null,
                 'rules' => array(),
             ),
             'user_context' => array(

@@ -1,8 +1,7 @@
 invalidation
 ============
 
-Configure :ref:`invalidation<invalidation configuration>` to invalidate
-routes when some other routes are requested.
+Configure invalidation to invalidate routes when some other routes are requested.
 
 .. code-block:: yaml
 
@@ -21,6 +20,17 @@ routes when some other routes are requested.
                             ignore_extra_params: false    # Defaults to true
 
 .. include:: /includes/enabled.rst
+
+.. include:: /includes/expression-language.rst
+
+Your custom expression functions can then be used in the ``@InvalidateRoute`` :ref:`annotations<invalidateroute>`.
+
+.. code-block:: yaml
+
+    # app/config/config.yml
+    fos_http_cache:
+        invalidation:
+            expression_language: app.expression_language
 
 ``rules``
 ---------

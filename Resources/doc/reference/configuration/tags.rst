@@ -29,6 +29,18 @@ incompatible proxies:
 
 Custom HTTP header that tags are stored in.
 
+.. include:: /includes/expression-language.rst
+
+Your custom expression functions can then be used in both the ``tag_expressions``
+section of the tag configuration and ``@tag`` :ref:`annotations<tag>`.
+
+.. code-block:: yaml
+
+    # app/config/config.yml
+    fos_http_cache:
+        tags:
+            expression_language: app.expression_language
+
 ``rules``
 ---------
 

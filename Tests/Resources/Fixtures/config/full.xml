@@ -45,7 +45,7 @@
 
         <cache-manager enabled="true" custom-proxy-client="acme.proxy_client"/>
 
-        <tags header="FOS-Tags">
+        <tags header="FOS-Tags" expression-language="acme.expression_language">
             <rule>
                 <match path="/def" host="friends">
                     <method>PUT</method>
@@ -62,7 +62,7 @@
             </rule>
         </tags>
 
-        <invalidation>
+        <invalidation expression-language="acme.expression_language">
             <rule>
                 <match path="/hij" host="symfony">
                     <method>PATCH</method>

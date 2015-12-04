@@ -14,7 +14,7 @@
                  class="%fos_http_cache.request_matcher.class%"
                  public="false"
         />
-        
+
         <service id="fos_http_cache.rule_matcher"
                  class="%fos_http_cache.rule_matcher.class%"
                  public="false"
