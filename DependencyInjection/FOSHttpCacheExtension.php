@@ -273,13 +273,7 @@ class FOSHttpCacheExtension extends Extension
         }
         $container->setParameter($this->getAlias().'.proxy_client.varnish.servers', $config['servers']);
         $container->setParameter($this->getAlias().'.proxy_client.varnish.base_url', $baseUrl);
-
-        if (!empty($config['guzzle_client'])) {
-            $container->setAlias(
-                $this->getAlias().'.proxy_client.varnish.guzzle_client',
-                $config['guzzle_client']
-            );
-        }
+        $container->setParameter($this->getAlias().'.proxy_client.varnish.http_client', $config['http_client']);
     }
 
     private function loadNginx(ContainerBuilder $container, XmlFileLoader $loader, array $config)
@@ -296,13 +290,7 @@ class FOSHttpCacheExtension extends Extension
         $container->setParameter($this->getAlias().'.proxy_client.nginx.servers', $config['servers']);
         $container->setParameter($this->getAlias().'.proxy_client.nginx.base_url', $baseUrl);
         $container->setParameter($this->getAlias().'.proxy_client.nginx.purge_location', $config['purge_location']);
-
-        if (!empty($config['guzzle_client'])) {
-            $container->setAlias(
-                $this->getAlias().'.proxy_client.nginx.guzzle_client',
-                $config['guzzle_client']
-            );
-        }
+        $container->setParameter($this->getAlias().'.proxy_client.nginx.http_client', $config['http_client']);
     }
 
     private function loadSymfony(ContainerBuilder $container, XmlFileLoader $loader, array $config)
@@ -319,13 +307,7 @@ class FOSHttpCacheExtension extends Extension
         }
         $container->setParameter($this->getAlias().'.proxy_client.symfony.servers', $config['servers']);
         $container->setParameter($this->getAlias().'.proxy_client.symfony.base_url', $baseUrl);
-
-        if (!empty($config['guzzle_client'])) {
-            $container->setAlias(
-                $this->getAlias().'.proxy_client.symfony.guzzle_client',
-                $config['guzzle_client']
-            );
-        }
+        $container->setParameter($this->getAlias().'.proxy_client.symfony.http_client', $config['http_client']);
     }
 
     /**
@@ -372,7 +354,6 @@ class FOSHttpCacheExtension extends Extension
 
         if (isset($config['client']['varnish']['enabled'])
             || isset($config['client']['nginx']['enabled'])) {
-            $loader->load('test_client.xml');
 
             if ($config['client']['varnish']['enabled']) {
                 $loader->load('varnish_test_client.xml');

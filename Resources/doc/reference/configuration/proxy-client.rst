@@ -126,22 +126,14 @@ The default proxy client that will be used by the cache manager. You can
 *configure Nginx, Varnish and Symfony proxy clients in parallel*. There is
 however only one cache manager and it will only use the default client.
 
-Custom Guzzle Client
---------------------
+Custom HTTP Client
+------------------
 
-By default, the proxy client instantiates a `Guzzle client`_ to talk with the
-caching proxy. If you need to customize the requests, for example to send a
-basic authentication header, you can configure a service and specify that in
-the ``guzzle_client`` option of any of the cache proxy clients. A sample
-service definition for using basic authentication looks like this:
-
-.. code-block:: yaml
-
-    # app/config/config.yml
-    acme.varnish.guzzle.client:
-        class: Guzzle\Service\Client
-        calls:
-            - [setDefaultOption, [auth, [%caching_proxy.username%, %caching_proxy.password%, basic ]]]
+The proxy client uses a ``Http\Client\Utils\HttpMethodsClient`` wrapping a
+``Http\Client\HttpClient`` instance. If you need to customize the requests, for
+example to send a basic authentication header with each request, you can
+configure a service for the ``HttpClient`` and specify that in the
+``http_client`` option of any of the cache proxy clients.
 
 Caching Proxy Configuration
 ---------------------------

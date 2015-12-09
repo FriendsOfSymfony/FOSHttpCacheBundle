@@ -11,16 +11,15 @@ This bundle is available on Packagist_. You can install it using Composer:
     $ composer require friendsofsymfony/http-cache-bundle
 
 Note that the FOSHttpCache_ library needs a ``psr/http-message-implementation``
-and ``php-http/adapter-implementation``. If your project does not contain one,
-composer will complain that it did not find ``psr/http-message-implementation``.
-
-When on PHP 5.5+, use the following line instead:
+and ``php-http/client-implementation``. If your project does not contain one,
+composer will complain that it did not find ``psr/http-message-implementation``:
 
 .. code-block:: bash
 
-    $ composer require friendsofsymfony/http-cache-bundle:~2.0 guzzlehttp/psr7:^1.0 php-http/guzzle6-adapter:^0.1.0
+    $ composer require friendsofsymfony/http-cache-bundle:~2.0 guzzlehttp/psr7:^1.0 php-http/guzzle6-adapter:^1.0.0
 
-On PHP 5.4, the ``php-http/guzzle5-adapter:^0.1.0`` works fine.
+If you want to use something else than Guzzle 6, see packagist
+for a list of available `client implementations`_.
 
 Then add the bundle to your application:
 
@@ -115,3 +114,4 @@ This bundle is released under the MIT license.
 .. _SensioFrameworkExtraBundle: http://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/index.html
 .. _ExpressionLanguage: http://symfony.com/doc/current/components/expression_language/introduction.html
 .. _Symfony: http://symfony.com/doc/current/book/http_cache.html#the-cache-control-header
+.. _client implementations: https://packagist.org/providers/php-http/client-implementation

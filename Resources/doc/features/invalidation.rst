@@ -63,7 +63,7 @@ To refresh paths and routes, you can use ``refreshPath($path, $headers)`` and
 
     If you want to add a header (such as ``Authorization``) to *all*
     invalidation requests, you can use a
-    :ref:`custom Guzzle client <custom guzzle client>` instead.
+    :ref:`custom HTTP client <custom HTTP client>` instead.
 
 .. _invalidation configuration:
 

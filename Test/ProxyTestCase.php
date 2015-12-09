@@ -14,10 +14,9 @@ namespace FOS\HttpCacheBundle\Test;
 use FOS\HttpCache\Test\PHPUnit\IsCacheHitConstraint;
 use FOS\HttpCache\Test\PHPUnit\IsCacheMissConstraint;
 use FOS\HttpCache\Test\Proxy\ProxyInterface;
-use Guzzle\Http\ClientInterface;
-use Guzzle\Http\Message\Response;
-use Http\Adapter\HttpAdapter;
+use Http\Client\HttpClient;
 use Http\Discovery\MessageFactoryDiscovery;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -30,10 +29,10 @@ abstract class ProxyTestCase extends WebTestCase
     /**
      * Assert cache hit.
      *
-     * @param Response    $response
-     * @param string|null $message
+     * @param ResponseInterface $response
+     * @param string|null       $message
      */
-    public function assertHit(Response $response, $message = null)
+    public function assertHit(ResponseInterface $response, $message = null)
     {
         self::assertThat($response, self::isCacheHit(), $message);
     }
@@ -41,10 +40,10 @@ abstract class ProxyTestCase extends WebTestCase
     /**
      * Assert cache miss.
      *
-     * @param Response    $response
-     * @param string|null $message
+     * @param ResponseInterface $response
+     * @param string|null       $message
      */
-    public function assertMiss(Response $response, $message = null)
+    public function assertMiss(ResponseInterface $response, $message = null)
     {
         self::assertThat($response, self::isCacheMiss(), $message);
     }
@@ -73,7 +72,7 @@ abstract class ProxyTestCase extends WebTestCase
      * Get HTTP test client for making requests to your application through a
      * live caching proxy.
      *
-     * @return HttpAdapter
+     * @return HttpClient
      */
     protected function getHttpClient()
     {
@@ -87,7 +86,7 @@ abstract class ProxyTestCase extends WebTestCase
      * @param array  $headers Request HTTP headers
      * @param array  $options Request options
      *
-     * @return Response
+     * @return ResponseInterface
      */
     protected function getResponse($uri, array $headers = array())
     {
