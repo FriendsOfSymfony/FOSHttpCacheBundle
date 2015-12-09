@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class SecurityContextPass implements CompilerPassInterface
 {
     const ROLE_PROVIDER_SERVICE = 'fos_http_cache.user_context.role_provider';
-    
+
     /**
      * {@inheritdoc}
      */
@@ -31,8 +31,8 @@ class SecurityContextPass implements CompilerPassInterface
         if (!$container->has(self::ROLE_PROVIDER_SERVICE)) {
             return;
         }
-        
-        if (!$container->has('security.token_storage')) {
+
+        if (!$container->has('security.token_storage') && $container->has('security.context')) {
             $definition = $container->getDefinition(self::ROLE_PROVIDER_SERVICE);
             $definition->replaceArgument(0, new Reference('security.context'));
         }
