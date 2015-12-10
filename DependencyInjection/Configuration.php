@@ -79,10 +79,6 @@ class Configuration implements ConfigurationInterface
                 })
             ->end()
             ->validate()
-                ->ifTrue(function ($v) {return $v['tags']['rules'] && !$v['tags']['enabled'];})
-                ->thenInvalid('You need to enable the cache_manager and tags to use rules.')
-            ->end()
-            ->validate()
                 ->ifTrue(function ($v) {return $v['invalidation']['enabled'] && !$v['cache_manager']['enabled'];})
                 ->then(function ($v) {
                     if ('auto' === $v['invalidation']['enabled']) {
@@ -92,10 +88,6 @@ class Configuration implements ConfigurationInterface
                     }
                     throw new InvalidConfigurationException('You need to configure a proxy_client to get the cache_manager needed for invalidation handling.');
                 })
-            ->end()
-            ->validate()
-                ->ifTrue(function ($v) {return $v['invalidation']['rules'] && !$v['invalidation']['enabled'];})
-                ->thenInvalid('You need to enable the cache_manager and invalidation to use rules.')
             ->end()
             ->validate()
                 ->ifTrue(function ($v) {
