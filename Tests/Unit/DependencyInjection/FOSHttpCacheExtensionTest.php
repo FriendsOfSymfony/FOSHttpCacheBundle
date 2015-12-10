@@ -56,8 +56,8 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $def->getArgument(2));
         $this->assertEquals('fos_http_cache.proxy_client.varnish.guzzle_client', $def->getArgument(2)->__toString());
 
-        $this->assertTrue($container->hasParameter('fos_http_cache.proxy_client.varnish.guzzle_client'));
-        $this->assertEquals('my_guzzle', $container->getParameter('fos_http_cache.proxy_client.varnish.guzzle_client'));
+        $this->assertTrue($container->hasAlias('fos_http_cache.proxy_client.varnish.guzzle_client'));
+        $this->assertEquals('my_guzzle', $container->getAlias('fos_http_cache.proxy_client.varnish.guzzle_client'));
     }
 
     /**
