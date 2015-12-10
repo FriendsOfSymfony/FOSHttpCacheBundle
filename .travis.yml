@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - 5.3
   - 5.4
   - 5.5
   - 5.6
@@ -15,6 +14,8 @@ branches:
 
 matrix:
   include:
+    - php: 5.4
+      env: COMPOSER_FLAGS="--prefer-lowest"
     - php: 5.6
       env:
         - PHPUNIT_FLAGS="--coverage-clover=coverage.clover"
@@ -45,7 +46,7 @@ matrix:
 before_script:
   - sh -c 'if [ "$SYMFONY_VERSION" != "" ]; then composer require --dev --no-update symfony/symfony=$SYMFONY_VERSION; fi;'
   - sh -c 'if [ "$FRAMEWORK_EXTRA_VERSION" != "" ]; then composer require --dev --no-update sensio/framework-extra-bundle=$FRAMEWORK_EXTRA_VERSION; fi;'
-  - composer install
+  - composer update $COMPOSER_FLAGS
   - sudo apt-get install python-sphinx enchant
   - sudo pip install -r Resources/doc/requirements.txt
 
