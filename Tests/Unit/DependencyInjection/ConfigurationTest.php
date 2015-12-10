@@ -388,46 +388,6 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testTagRulesNotEnabled()
-    {
-        $formats = array_map(function ($path) {
-            return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, array(
-            'config/tags_rules.yml',
-            'config/tags_rules.xml',
-            'config/tags_rules.php',
-        ));
-
-        foreach ($formats as $format) {
-            try {
-                $this->assertProcessedConfigurationEquals(array(), array($format));
-                $this->fail('No exception thrown on invalid configuration');
-            } catch (InvalidConfigurationException $e) {
-                $this->assertContains('need to enable the cache_manager and tags to use rules', $e->getMessage());
-            }
-        }
-    }
-
-    public function testInvalidationRulesNotEnabled()
-    {
-        $formats = array_map(function ($path) {
-            return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, array(
-            'config/invalidation_rules.yml',
-            'config/invalidation_rules.xml',
-            'config/invalidation_rules.php',
-        ));
-
-        foreach ($formats as $format) {
-            try {
-                $this->assertProcessedConfigurationEquals(array(), array($format));
-                $this->fail('No exception thrown on invalid configuration');
-            } catch (InvalidConfigurationException $e) {
-                $this->assertContains('need to enable the cache_manager and invalidation to use rules', $e->getMessage());
-            }
-        }
-    }
-
     public function testInvalidDate()
     {
         $formats = array_map(function ($path) {
