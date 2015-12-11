@@ -1,5 +1,18 @@
 language: php
 
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.cache/pip
+
+addons:
+  apt:
+    packages:
+      - python-sphinx
+      - enchant
+
 php:
   - 5.4
   - 5.5
@@ -43,12 +56,13 @@ matrix:
         - SYMFONY_VERSION='2.8.*@dev'
         - FRAMEWORK_EXTRA_VERSION='~3.0'
 
+install:
+  - pip install -qr Resources/doc/requirements.txt --user
+
 before_script:
   - sh -c 'if [ "$SYMFONY_VERSION" != "" ]; then composer require --dev --no-update symfony/symfony=$SYMFONY_VERSION; fi;'
   - sh -c 'if [ "$FRAMEWORK_EXTRA_VERSION" != "" ]; then composer require --dev --no-update sensio/framework-extra-bundle=$FRAMEWORK_EXTRA_VERSION; fi;'
   - composer update $COMPOSER_FLAGS
-  - sudo apt-get install python-sphinx enchant
-  - sudo pip install -r Resources/doc/requirements.txt
 
 script:
   - SYMFONY_DEPRECATIONS_HELPER=weak phpunit ${PHPUNIT_FLAGS}
