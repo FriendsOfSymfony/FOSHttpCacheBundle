@@ -1,5 +1,18 @@
 language: php
 
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.cache/pip
+
+addons:
+  apt:
+    packages:
+      - python-sphinx
+      - enchant
+
 php:
   - 5.4
   - 5.5
@@ -14,6 +27,8 @@ branches:
 
 matrix:
   include:
+    - php: 5.4
+      env: COMPOSER_FLAGS="--prefer-lowest"
     - php: 5.6
       env:
         - PHPUNIT_FLAGS="--coverage-clover=coverage.clover"
@@ -38,15 +53,22 @@ matrix:
         - FRAMEWORK_EXTRA_VERSION='~3.0'
     - php: 5.6
       env:
-        - SYMFONY_VERSION='2.8.*@dev'
+        - SYMFONY_VERSION='2.8.*'
+        - FRAMEWORK_EXTRA_VERSION='~3.0'
+    - php: 5.6
+      env:
+        - SYMFONY_VERSION='3.0.*'
         - FRAMEWORK_EXTRA_VERSION='~3.0'
 
-before_script:
+install:
+  - pip install -qr Resources/doc/requirements.txt --user
+
+before_install:
   - sh -c 'if [ "$SYMFONY_VERSION" != "" ]; then composer require --dev --no-update symfony/symfony=$SYMFONY_VERSION; fi;'
   - sh -c 'if [ "$FRAMEWORK_EXTRA_VERSION" != "" ]; then composer require --dev --no-update sensio/framework-extra-bundle=$FRAMEWORK_EXTRA_VERSION; fi;'
-  - composer install
-  - sudo apt-get install python-sphinx enchant
-  - sudo pip install -r Resources/doc/requirements.txt
+
+before_script:
+  - composer update $COMPOSER_FLAGS
 
 script:
   - SYMFONY_DEPRECATIONS_HELPER=weak phpunit ${PHPUNIT_FLAGS}
