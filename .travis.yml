@@ -53,15 +53,21 @@ matrix:
         - FRAMEWORK_EXTRA_VERSION='~3.0'
     - php: 5.6
       env:
-        - SYMFONY_VERSION='2.8.*@dev'
+        - SYMFONY_VERSION='2.8.*'
+        - FRAMEWORK_EXTRA_VERSION='~3.0'
+    - php: 5.6
+      env:
+        - SYMFONY_VERSION='3.0.*'
         - FRAMEWORK_EXTRA_VERSION='~3.0'
 
 install:
   - pip install -qr Resources/doc/requirements.txt --user
 
-before_script:
+before_install:
   - sh -c 'if [ "$SYMFONY_VERSION" != "" ]; then composer require --dev --no-update symfony/symfony=$SYMFONY_VERSION; fi;'
   - sh -c 'if [ "$FRAMEWORK_EXTRA_VERSION" != "" ]; then composer require --dev --no-update sensio/framework-extra-bundle=$FRAMEWORK_EXTRA_VERSION; fi;'
+
+before_script:
   - composer update $COMPOSER_FLAGS
 
 script:

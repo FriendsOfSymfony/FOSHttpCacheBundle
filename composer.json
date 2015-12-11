@@ -23,17 +23,17 @@
     "require": {
         "php": ">=5.3.3",
         "friendsofsymfony/http-cache": "~1.4",
-        "symfony/framework-bundle": "~2.3"
+        "symfony/framework-bundle": "^2.3||^3.0"
     },
     "require-dev": {
         "mockery/mockery": "0.9.*",
         "monolog/monolog": "*",
-        "sensio/framework-extra-bundle": "~2.3",
-        "symfony/symfony": "~2.3",
-        "symfony/phpunit-bridge": "~2.7",
-        "symfony/expression-language": "~2.4",
-        "symfony/monolog-bundle": "~2.3",
-        "polishsymfonycommunity/symfony-mocker-container": "~1.0",
+        "sensio/framework-extra-bundle": "^2.3||^3.0",
+        "symfony/symfony": "^2.3||^3.0",
+        "symfony/phpunit-bridge": "^2.7||^3.0",
+        "symfony/expression-language": "^2.4||^3.0",
+        "symfony/monolog-bundle": "^2.3||^3.0",
+        "polishsymfonycommunity/symfony-mocker-container": "^1.0",
         "matthiasnoback/symfony-dependency-injection-test": "^0.7.4"
     },
     "suggest": {
