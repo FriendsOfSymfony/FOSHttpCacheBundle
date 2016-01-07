@@ -153,7 +153,8 @@ status codes of the response for which to also apply the rule.
 An ExpressionLanguage expression to decide whether the response should have
 the effect applied. If not set, headers are applied if the request is
 :term:`safe`. The expression can access the ``Response`` object with the
-``response`` variable. For example, to handle all failed requests, you can do:
+``response`` variable and the ``Request`` object with the
+``request`` variable. For example, to handle all failed requests, you can do:
 
 .. code-block:: yaml
 
