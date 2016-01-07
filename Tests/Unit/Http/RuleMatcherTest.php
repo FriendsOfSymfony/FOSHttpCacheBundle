@@ -45,4 +45,16 @@ class RuleMatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($ruleMatcher->matches(new Request(), new Response('', 100)));
         $this->assertTrue($ruleMatcher->matches(new Request(), new Response('', 500)));
     }
+
+    public function testMatchResponseRequest()
+    {
+        $ruleMatcher = new RuleMatcher(new RequestMatcher(), array('match_response' => 'response.getStatusCode() == 201 & request.getMethod() == \'PUT\''));
+        $request = new Request();
+
+        $request->setMethod('POST');
+        $this->assertFalse($ruleMatcher->matches($request, new Response('', 201)));
+
+        $request->setMethod('PUT');
+        $this->assertTrue($ruleMatcher->matches($request, new Response('', 201)));
+    }
 }
