@@ -87,11 +87,13 @@ class UserContextSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $hash = $this->hashGenerator->generateHash();
+        $event->getRequest()->attributes->set($this->hashHeader, $hash);
+
         if (!$this->requestMatcher->matches($event->getRequest())) {
             return;
         }
 
-        $hash = $this->hashGenerator->generateHash();
 
         // status needs to be 200 as otherwise varnish will not cache the response.
         $response = new Response('', 200, array(
@@ -124,6 +126,15 @@ class UserContextSubscriber implements EventSubscriberInterface
         }
 
         $response = $event->getResponse();
+        $request = $event->getRequest();
+
+        // hash has changed, session has most certainly changed, prevent setting incorrect cache
+        if ($request->attributes->get($this->hashHeader) !== $request->headers->get($this->hashHeader)) {
+            $response->setPrivate();
+
+            return;
+        }
+
         $vary = $response->getVary();
 
         if ($event->getRequest()->headers->has($this->hashHeader)) {
