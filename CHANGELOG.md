@@ -1,6 +1,19 @@
 Changelog
 =========
 
+
+1.3.7
+-----
+
+* Add a sanity check on UserContextHash to avoid invalid content being cached
+  (example: anonymous cache set for authenticated user). This scenario occures
+  when the UserContextHash is cached by Varnish via 
+  `fos_http_cache.user_context.hash_cache_ttl` > 0 and the session is lost via 
+  garbage collector. The data given is the anonymous one despite having a hash 
+  for authenticated, all authenticated users will then have the anonymous version.
+  Same problem could occurs with users having is role changed or anything else
+  that can modify the hash.
+
 1.3.2
 -----
 
