@@ -49,6 +49,11 @@ class UserContextSubscriber implements EventSubscriberInterface
     /**
      * @var string
      */
+    private $hash;
+
+    /**
+     * @var string
+     */
     private $hashHeader;
 
     /**
@@ -69,6 +74,7 @@ class UserContextSubscriber implements EventSubscriberInterface
         $this->requestMatcher        = $requestMatcher;
         $this->hashGenerator         = $hashGenerator;
         $this->userIdentifierHeaders = $userIdentifierHeaders;
+        $this->hash                  = null;
         $this->hashHeader            = $hashHeader;
         $this->ttl                   = $ttl;
     }
@@ -87,11 +93,14 @@ class UserContextSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $hash = $this->hashGenerator->generateHash();
+
         if (!$this->requestMatcher->matches($event->getRequest())) {
+            $this->hash = $hash;
+
             return;
         }
 
-        $hash = $this->hashGenerator->generateHash();
 
         // status needs to be 200 as otherwise varnish will not cache the response.
         $response = new Response('', 200, array(
@@ -124,9 +133,19 @@ class UserContextSubscriber implements EventSubscriberInterface
         }
 
         $response = $event->getResponse();
+        $request = $event->getRequest();
+
         $vary = $response->getVary();
 
-        if ($event->getRequest()->headers->has($this->hashHeader)) {
+        if ($request->headers->has($this->hashHeader)) {
+            // hash has changed, session has most certainly changed, prevent setting incorrect cache
+            if (!is_null($this->hash) && $this->hash !== $request->headers->get($this->hashHeader)) {
+                $response->setClientTtl(0);
+                $response->headers->addCacheControlDirective('no-cache');
+
+                return;
+            }
+
             if (!in_array($this->hashHeader, $vary)) {
                 $vary[] = $this->hashHeader;
             }

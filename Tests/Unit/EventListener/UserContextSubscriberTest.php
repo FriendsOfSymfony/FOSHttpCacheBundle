@@ -104,6 +104,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $requestMatcher = $this->getRequestMatcher($request, false);
         $hashGenerator = \Mockery::mock('\FOS\HttpCache\UserContext\HashGenerator');
+        $hashGenerator->shouldReceive('generateHash')->andReturn('hash');
 
         $userContextSubscriber = new UserContextSubscriber($requestMatcher, $hashGenerator, array('X-SessionId'), 'X-Hash');
         $event = $this->getKernelRequestEvent($request);
@@ -166,6 +167,67 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $userContextSubscriber->onKernelResponse($event);
 
         $this->assertEquals('X-SessionId', $event->getResponse()->headers->get('Vary'));
+    }
+
+    /**
+     * If there is no hash in the request, vary on the user identifier.
+     */
+    public function testFullRequestHashOk()
+    {
+        $request = new Request();
+        $request->setMethod('GET');
+        $request->headers->set('X-Hash', 'hash');
+
+        $requestMatcher = $this->getRequestMatcher($request, false);
+        $hashGenerator = \Mockery::mock('\FOS\HttpCache\UserContext\HashGenerator');
+        $hashGenerator->shouldReceive('generateHash')->andReturn('hash');
+
+        // onKernelRequest
+        $userContextSubscriber = new UserContextSubscriber($requestMatcher, $hashGenerator, array('X-SessionId'), 'X-Hash');
+        $event = $this->getKernelRequestEvent($request);
+
+        $userContextSubscriber->onKernelRequest($event);
+
+        $response = $event->getResponse();
+
+        $this->assertNull($response);
+
+        // onKernelResponse
+        $event = $this->getKernelResponseEvent($request);
+        $userContextSubscriber->onKernelResponse($event);
+
+        $this->assertContains('X-Hash', $event->getResponse()->headers->get('Vary'));
+    }
+
+    /**
+     * If there is no hash in the the requests but session changed, prevent setting bad cache
+     */
+    public function testFullRequestHashChanged()
+    {
+        $request = new Request();
+        $request->setMethod('GET');
+        $request->headers->set('X-Hash', 'hash');
+
+        $requestMatcher = $this->getRequestMatcher($request, false);
+        $hashGenerator = \Mockery::mock('\FOS\HttpCache\UserContext\HashGenerator');
+        $hashGenerator->shouldReceive('generateHash')->andReturn('hash-changed');
+
+        // onKernelRequest
+        $userContextSubscriber = new UserContextSubscriber($requestMatcher, $hashGenerator, array('X-SessionId'), 'X-Hash');
+        $event = $this->getKernelRequestEvent($request);
+
+        $userContextSubscriber->onKernelRequest($event);
+
+        $response = $event->getResponse();
+
+        $this->assertNull($response);
+
+        // onKernelResponse
+        $event = $this->getKernelResponseEvent($request);
+        $userContextSubscriber->onKernelResponse($event);
+
+        $this->assertFalse($event->getResponse()->headers->has('Vary'));
+        $this->assertEquals('max-age=0, no-cache, private', $event->getResponse()->headers->get('Cache-Control'));
     }
 
     protected function getKernelRequestEvent(Request $request, $type = HttpKernelInterface::MASTER_REQUEST)
