@@ -88,9 +88,10 @@ class UserContextSubscriber implements EventSubscriberInterface
         }
 
         $hash = $this->hashGenerator->generateHash();
-        $event->getRequest()->attributes->set($this->hashHeader, $hash);
 
         if (!$this->requestMatcher->matches($event->getRequest())) {
+            $event->getRequest()->attributes->set($this->hashHeader, $hash);
+
             return;
         }
 
@@ -129,7 +130,7 @@ class UserContextSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
 
         // hash has changed, session has most certainly changed, prevent setting incorrect cache
-        if ($request->attributes->get($this->hashHeader) !== $request->headers->get($this->hashHeader)) {
+        if ($request->attributes->has($this->hashHeader) && $request->attributes->get($this->hashHeader) !== $request->headers->get($this->hashHeader)) {
             $response->setPrivate();
 
             return;
