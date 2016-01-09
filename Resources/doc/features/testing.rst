@@ -72,7 +72,7 @@ configure the proxy server:
                     port: 8080
                     config_file: /etc/varnish/your-config.vcl
 
-.. seealso:: :doc:`test configuration </reference/configuration/test>`.
+.. seealso:: The complete reference for the configuration for testing is in the :doc:`test configuration </reference/configuration/test>` section.
 
 The custom ``@clearCache`` PHPUnit annotation will start the proxy server
 (if it was not yet running) and clear any previously cached content. This
