@@ -353,6 +353,38 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Safe methods should get into the matchRule
+     * @dataProvider getSafeMethods
+     * @param $method
+     */
+    public function testSafeMethodsTriggersMatchRule($method)
+    {
+        $subscriber = $this->getMockBuilder('FOS\HttpCacheBundle\EventListener\CacheControlSubscriber')
+            ->setMethods(array('matchRule'))
+            ->getMock()
+        ;
+        $subscriber->expects($this->once())
+            ->method('matchRule')
+        ;
+        $event = $this->buildEvent($method);
+
+        $subscriber->onKernelResponse($event);
+    }
+
+    /**
+     * Safe Methods data
+     * @return array
+     */
+    public function getSafeMethods()
+    {
+        return array(
+            'testSafeMethod for GET' => array('GET'),
+            'testSafeMethod for HEAD' => array('HEAD'),
+            'testSafeMethod for OPTIONS' => array('OPTIONS'),
+        );
+    }
+
+    /**
      * Build the filter response event with a mock kernel and default request
      * and response objects.
      *
