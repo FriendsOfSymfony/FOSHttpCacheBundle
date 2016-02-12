@@ -63,7 +63,8 @@ to only show the flash message once. Something along these lines:
         // YOUR WORK: show flashes in your DOM...
 
         // remove the cookie to not show flashes again
-        document.cookie = "flashes=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        // path is the fos_http_cache.flash_message.path value
+        document.cookie = "flashes=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/";
     }
 
     // YOUR WORK: register showFlash on the page ready event.
