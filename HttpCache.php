@@ -20,6 +20,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
+@trigger_error('The '.__NAMESPACE__.'\HttpCache class is deprecated since version 1.2 and will be removed in 2.0. Use FOS\HttpCacheBundle\SymfonyCache\EventDispatchingHttpCache instead.', E_USER_DEPRECATED);
+
 /**
  * Base class for enhanced Symfony reverse proxy based on the symfony FrameworkBundle HttpCache.
  *

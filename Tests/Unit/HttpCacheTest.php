@@ -16,6 +16,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
+/**
+ * @group legacy
+ */
 class HttpCacheTest extends \PHPUnit_Framework_TestCase
 {
     /**
