@@ -54,6 +54,10 @@ class InvalidateTagCommand extends ContainerAwareCommand
                 )
             );
         }
+        if ($tagHandler instanceof CacheManager) {
+            @trigger_error('Passing the CacheManager to '.__CLASS__.' is deprecated since version 1.2 and will be removed in 2.0. Provide the TagHandler instead.', E_USER_DEPRECATED);
+
+        }
         $this->commandName = $commandName;
         $this->tagHandler = $tagHandler;
         parent::__construct();
