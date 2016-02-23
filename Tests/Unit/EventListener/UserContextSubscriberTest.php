@@ -130,6 +130,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $userContextSubscriber->onKernelResponse($event);
 
+        $this->assertTrue($event->getResponse()->headers->has('Vary'), 'Vary header must be set');
         $this->assertContains('X-Hash', $event->getResponse()->headers->get('Vary'));
     }
 

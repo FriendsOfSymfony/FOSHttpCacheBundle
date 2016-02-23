@@ -120,6 +120,21 @@ request. However, when you decide to cache hash responses, you must invalidate
 them when the user context changes, particularly when the user logs in or out.
 This bundle provides a logout handler that takes care of this for you.
 
+``always_vary_on_context_hash``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**type**: ``boolean`` **default**: ``true``
+
+This bundle automatically adds the Vary header for the user context hash, so
+you don't need to do this yourself or :doc:`configure it as header <headers>`.
+If the hash header is missing from a request for some reason, the response is
+set to vary on the user identifier headers to avoid problems.
+
+If not all your pages depend on the hash, you can set
+``always_vary_on_context_hash`` to  ``false`` and handle the Vary yourself.
+When doing that, you should be careful to set the Vary header whenever needed,
+or you will end up with mixed up caches.
+
 ``logout_handler``
 ~~~~~~~~~~~~~~~~~~
 
