@@ -190,7 +190,8 @@ class FOSHttpCacheExtension extends Extension
             ->replaceArgument(0, new Reference($config['match']['matcher_service']))
             ->replaceArgument(2, $config['user_identifier_headers'])
             ->replaceArgument(3, $config['user_hash_header'])
-            ->replaceArgument(4, $config['hash_cache_ttl']);
+            ->replaceArgument(4, $config['hash_cache_ttl'])
+            ->replaceArgument(5, $config['always_vary_on_context_hash']);
 
         if ($config['logout_handler']['enabled']) {
             $container->getDefinition($this->getAlias().'.user_context.logout_handler')

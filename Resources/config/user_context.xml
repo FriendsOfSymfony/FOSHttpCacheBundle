@@ -27,6 +27,7 @@
             <argument />
             <argument />
             <argument />
+            <argument />
             <tag name="kernel.event_subscriber" />
         </service>
 

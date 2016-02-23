@@ -120,6 +120,15 @@ request. However, when you decide to cache hash responses, you must invalidate
 them when the user context changes, particularly when the user logs in or out.
 This bundle provides a logout handler that takes care of this for you.
 
+``always_vary_on_context_hash``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**type**: ``boolean`` **default**: ``true``
+
+Set ``always_vary_on_context_hash`` to  ``false`` to disable always adding X-User-Context-Hash in Vary header when the user hash is in the request.
+When no user hash is in the request, setting this option to false will switch off the safety precaution of adding user identifier headers (default are Cookie & Authorization) in Vary header.
+If this is set to false, you must make sure to manually set the Vary header correctly when the content of the response depends on the context of the user.
+
 ``logout_handler``
 ~~~~~~~~~~~~~~~~~~
 
