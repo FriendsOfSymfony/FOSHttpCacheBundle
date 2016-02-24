@@ -56,12 +56,18 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     private $ttl;
 
+    /**
+     * @var bool
+     */
+    private $addVaryOnHash;
+
     public function __construct(
         RequestMatcherInterface $requestMatcher,
         HashGenerator $hashGenerator,
         array $userIdentifierHeaders = array('Cookie', 'Authorization'),
         $hashHeader = "X-User-Context-Hash",
-        $ttl = 0
+        $ttl = 0,
+        $addVaryOnHash = true
     ) {
         if (!count($userIdentifierHeaders)) {
             throw new \InvalidArgumentException('The user context must vary on some request headers');
@@ -71,6 +77,7 @@ class UserContextSubscriber implements EventSubscriberInterface
         $this->userIdentifierHeaders = $userIdentifierHeaders;
         $this->hashHeader            = $hashHeader;
         $this->ttl                   = $ttl;
+        $this->addVaryOnHash            = $addVaryOnHash;
     }
 
     /**
@@ -123,22 +130,24 @@ class UserContextSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $response = $event->getResponse();
-        $vary = $response->getVary();
+        if ($this->addVaryOnHash) {
+            $response = $event->getResponse();
+            $vary = $response->getVary();
 
-        if ($event->getRequest()->headers->has($this->hashHeader)) {
-            if (!in_array($this->hashHeader, $vary)) {
-                $vary[] = $this->hashHeader;
-            }
-        } else {
-            foreach ($this->userIdentifierHeaders as $header) {
-                if (!in_array($header, $vary)) {
-                    $vary[] = $header;
+            if ($event->getRequest()->headers->has($this->hashHeader)) {
+                if (!in_array($this->hashHeader, $vary)) {
+                    $vary[] = $this->hashHeader;
+                }
+            } else {
+                foreach ($this->userIdentifierHeaders as $header) {
+                    if (!in_array($header, $vary)) {
+                        $vary[] = $header;
+                    }
                 }
             }
-        }
 
-        $response->setVary($vary, true);
+            $response->setVary($vary, true);
+        }
     }
 
     /**

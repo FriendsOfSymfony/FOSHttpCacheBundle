@@ -99,6 +99,7 @@ $container->loadFromExtension('fos_http_cache', array(
             'method' => 'GET',
         ),
         'hash_cache_ttl' => 300,
+        'always_vary_on_context_hash' => true,
         'user_identifier_headers' => array('Cookie', 'Authorization'),
         'user_hash_header' => 'FOS-User-Context-Hash',
         'role_provider' => true,
