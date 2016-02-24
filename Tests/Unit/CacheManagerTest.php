@@ -80,6 +80,9 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
         ;
     }
 
+    /**
+     * @group legacy
+     */
     public function testTagResponse()
     {
         $ban = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface');
