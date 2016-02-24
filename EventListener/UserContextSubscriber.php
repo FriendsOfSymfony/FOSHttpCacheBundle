@@ -49,6 +49,11 @@ class UserContextSubscriber implements EventSubscriberInterface
     /**
      * @var string
      */
+    private $hash;
+
+    /**
+     * @var string
+     */
     private $hashHeader;
 
     /**
@@ -88,6 +93,10 @@ class UserContextSubscriber implements EventSubscriberInterface
         }
 
         if (!$this->requestMatcher->matches($event->getRequest())) {
+            if ($event->getRequest()->headers->has($this->hashHeader)) {
+                $this->hash = $this->hashGenerator->generateHash();
+            }
+
             return;
         }
 
@@ -124,9 +133,19 @@ class UserContextSubscriber implements EventSubscriberInterface
         }
 
         $response = $event->getResponse();
+        $request = $event->getRequest();
+
         $vary = $response->getVary();
 
-        if ($event->getRequest()->headers->has($this->hashHeader)) {
+        if ($request->headers->has($this->hashHeader)) {
+            // hash has changed, session has most certainly changed, prevent setting incorrect cache
+            if (!is_null($this->hash) && $this->hash !== $request->headers->get($this->hashHeader)) {
+                $response->setClientTtl(0);
+                $response->headers->addCacheControlDirective('no-cache');
+
+                return;
+            }
+
             if (!in_array($this->hashHeader, $vary)) {
                 $vary[] = $this->hashHeader;
             }
