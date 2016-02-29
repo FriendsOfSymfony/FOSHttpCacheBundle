@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0.0 (unreleased)
+------------------
+
+* [User Context] Added an option always_vary_on_context_hash to make it 
+  possible to disable automatically setting the vary headers for the user 
+  hash.
 
 1.3.7
 -----

@@ -61,12 +61,18 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     private $ttl;
 
+    /**
+     * @var bool Whether to automatically add the Vary header for the hash / user identifier if there was no hash.
+     */
+    private $addVaryOnHash;
+
     public function __construct(
         RequestMatcherInterface $requestMatcher,
         HashGenerator $hashGenerator,
         array $userIdentifierHeaders = array('Cookie', 'Authorization'),
         $hashHeader = "X-User-Context-Hash",
-        $ttl = 0
+        $ttl = 0,
+        $addVaryOnHash = true
     ) {
         if (!count($userIdentifierHeaders)) {
             throw new \InvalidArgumentException('The user context must vary on some request headers');
@@ -76,6 +82,7 @@ class UserContextSubscriber implements EventSubscriberInterface
         $this->userIdentifierHeaders = $userIdentifierHeaders;
         $this->hashHeader            = $hashHeader;
         $this->ttl                   = $ttl;
+        $this->addVaryOnHash         = $addVaryOnHash;
     }
 
     /**
@@ -146,10 +153,16 @@ class UserContextSubscriber implements EventSubscriberInterface
                 return;
             }
 
-            if (!in_array($this->hashHeader, $vary)) {
+            if ($this->addVaryOnHash && !in_array($this->hashHeader, $vary)) {
                 $vary[] = $this->hashHeader;
             }
-        } else {
+        } elseif ($this->addVaryOnHash) {
+            /*
+             * Additional precaution: If for some reason we get requests without a user hash, vary
+             * on user identifier headers to avoid the caching proxy mixing up caches between
+             * users. For the hash lookup request, those Vary headers are already added in
+             * onKernelRequest above.
+             */
             foreach ($this->userIdentifierHeaders as $header) {
                 if (!in_array($header, $vary)) {
                     $vary[] = $header;

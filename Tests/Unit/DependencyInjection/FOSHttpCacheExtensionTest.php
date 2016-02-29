@@ -286,6 +286,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                 'user_identifier_headers' => array('X-Foo'),
                 'user_hash_header' => 'X-Bar',
                 'hash_cache_ttl' => 30,
+                'always_vary_on_context_hash' => true,
                 'role_provider' => true,
             ),
         );
@@ -315,6 +316,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
                 'user_identifier_headers' => array('X-Foo'),
                 'user_hash_header' => 'X-Bar',
                 'hash_cache_ttl' => 30,
+                'always_vary_on_context_hash' => true,
                 'role_provider' => true,
             )),
         );
