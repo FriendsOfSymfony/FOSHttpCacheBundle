@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\EventListener;
 
 use FOS\HttpCache\UserContext\HashGenerator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -61,12 +62,22 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     private $ttl;
 
+    /**
+     * Used to exclude anonymous requests (no authentication nor session) from user hash sanity check.
+     * It prevents issues when the hash generator that is used returns a customized value for anonymous users,
+     * that differs from the documented, hardcoded one.
+     *
+     * @var RequestMatcherInterface
+     */
+    private $anonymousRequestMatcher;
+
     public function __construct(
         RequestMatcherInterface $requestMatcher,
         HashGenerator $hashGenerator,
         array $userIdentifierHeaders = array('Cookie', 'Authorization'),
         $hashHeader = 'X-User-Context-Hash',
-        $ttl = 0
+        $ttl = 0,
+        RequestMatcherInterface $anonymousRequestMatcher = null
     ) {
         if (!count($userIdentifierHeaders)) {
             throw new \InvalidArgumentException('The user context must vary on some request headers');
@@ -76,6 +87,7 @@ class UserContextSubscriber implements EventSubscriberInterface
         $this->userIdentifierHeaders = $userIdentifierHeaders;
         $this->hashHeader = $hashHeader;
         $this->ttl = $ttl;
+        $this->anonymousRequestMatcher = $anonymousRequestMatcher;
     }
 
     /**
@@ -93,7 +105,7 @@ class UserContextSubscriber implements EventSubscriberInterface
         }
 
         if (!$this->requestMatcher->matches($event->getRequest())) {
-            if ($event->getRequest()->headers->has($this->hashHeader)) {
+            if ($event->getRequest()->headers->has($this->hashHeader) && !$this->isAnonymous($event->getRequest())) {
                 $this->hash = $this->hashGenerator->generateHash();
             }
 
@@ -118,6 +130,20 @@ class UserContextSubscriber implements EventSubscriberInterface
         }
 
         $event->setResponse($response);
+    }
+
+    /**
+     * Tests if $request is an anonymous request or not.
+     *
+     * For backward compatibility reasons, true will be returned if no anonymous request matcher was provided.
+     *
+     * @param Request $request
+     *
+     * @return bool
+     */
+    private function isAnonymous(Request $request)
+    {
+        return $this->anonymousRequestMatcher ? $this->anonymousRequestMatcher->matches($request) : false;
     }
 
     /**
