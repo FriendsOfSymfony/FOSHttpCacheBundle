@@ -76,6 +76,26 @@ To register subscribers that you need to instantiate yourself, overwrite
         return $subscribers;
     }
 
+.. warning::
+
+    Since Symfony 2.8, the class cache (``classes.php``) is compiled even in
+    console mode by an optional warmer (``ClassCacheCacheWarmer``). This can
+    produce conflicting results with the regular web entry points, because the
+    class cache may contain definitions (such as the subscribers above) that
+    are loaded before the class cache itself; leading to redeclaration fatal
+    errors.
+
+    There are two workarounds:
+
+    * Disable class cache warming in console mode with e.g. a compiler pass::
+
+        $container->getDefinition('kernel.class_cache.cache_warmer')->clearTag('kernel.cache_warmer');
+
+    * Force loading of all classes and interfaced used by the ``HttpCache`` in
+      ``app/console`` to make the class cache omit those classes. The simplest
+      way to achieve this is to call ``class_exists`` resp. ``interface_exists``
+      with each of them.
+
 Subscribers
 ~~~~~~~~~~~
 
