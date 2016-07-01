@@ -17,11 +17,11 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * Add tagged provider to the hash generator for user context
+ * Add tagged provider to the hash generator for user context.
  */
 class HashGeneratorPass implements CompilerPassInterface
 {
-    const TAG_NAME = "fos_http_cache.user_context_provider";
+    const TAG_NAME = 'fos_http_cache.user_context_provider';
 
     /**
      * {@inheritdoc}
@@ -43,7 +43,7 @@ class HashGeneratorPass implements CompilerPassInterface
 
         foreach ($taggedProviders as $id => $tags) {
             foreach ($tags as $tag) {
-                $priority = isset($tag['priority']) ? (int)$tag['priority'] : 0;
+                $priority = isset($tag['priority']) ? (int) $tag['priority'] : 0;
                 $prioritisedTags[$priority][] = $id;
             }
         }

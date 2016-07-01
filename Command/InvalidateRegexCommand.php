@@ -43,7 +43,7 @@ class InvalidateRegexCommand extends BaseInvalidateCommand
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -55,7 +55,7 @@ class InvalidateRegexCommand extends BaseInvalidateCommand
                 InputArgument::REQUIRED,
                 'Regular expression for the paths to match.'
             )
-            ->setHelp(<<<EOF
+            ->setHelp(<<<'EOF'
 The <info>%command.name%</info> command invalidates all cached content matching a regular expression on the configured caching proxies.
 
 Example:
@@ -71,7 +71,7 @@ EOF
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

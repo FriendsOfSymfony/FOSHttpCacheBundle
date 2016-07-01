@@ -38,7 +38,7 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
     private $expressionLanguage;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param TagHandler              $tagHandler
      * @param ExpressionLanguage|null $expressionLanguage
@@ -53,7 +53,7 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
 
     /**
      * Process the _tags request attribute, which is set when using the Tag
-     * annotation
+     * annotation.
      *
      * - For a safe (GET or HEAD) request, the tags are set on the response.
      * - For a non-safe request, the tags will be invalidated.
@@ -134,7 +134,7 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
     }
 
     /**
-     * Evaluate a tag that contains expressions
+     * Evaluate a tag that contains expressions.
      *
      * @param string  $expression
      * @param Request $request

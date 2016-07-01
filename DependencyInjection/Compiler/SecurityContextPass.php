@@ -16,8 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * In Symfony < 2.6, replace the new security.token_storage service with the  
- * deprecated security.context service. 
+ * In Symfony < 2.6, replace the new security.token_storage service with the
+ * deprecated security.context service.
  */
 class SecurityContextPass implements CompilerPassInterface
 {

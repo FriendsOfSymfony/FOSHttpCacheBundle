@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Attach Symfony2 logger to cache manager
+ * Attach Symfony2 logger to cache manager.
  */
 class LoggerPass implements CompilerPassInterface
 {

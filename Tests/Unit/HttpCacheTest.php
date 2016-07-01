@@ -38,7 +38,7 @@ class HttpCacheTest extends \PHPUnit_Framework_TestCase
         $options = array(
             'debug' => false,
             'default_ttl' => 0,
-            'private_headers' => array( 'Authorization', 'Cookie' ),
+            'private_headers' => array('Authorization', 'Cookie'),
             'allow_reload' => false,
             'allow_revalidate' => false,
             'stale_while_revalidate' => 2,
