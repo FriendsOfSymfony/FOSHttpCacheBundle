@@ -14,7 +14,6 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection\Compiler;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
@@ -37,7 +36,7 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Nothing happens when user_context.hash_generator is not enabled
+     * Nothing happens when user_context.hash_generator is not enabled.
      */
     public function testConfigNoContext()
     {
@@ -86,8 +85,8 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
 
         $arguments = $container->getDefinition('fos_http_cache.user_context.hash_generator')->getArguments();
         $services = array_map(
-            function($argument) {
-                return (string)$argument;
+            function ($argument) {
+                return (string) $argument;
             }, array_shift($arguments)
         );
 
@@ -97,7 +96,7 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
     protected function createContainer()
     {
         return new ContainerBuilder(new ParameterBag(array(
-            'kernel.debug'       => false,
+            'kernel.debug' => false,
         )));
     }
 

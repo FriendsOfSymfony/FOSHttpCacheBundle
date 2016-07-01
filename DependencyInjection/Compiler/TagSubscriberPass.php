@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Check for required ControllerListener if TagSubscriber is enabled
+ * Check for required ControllerListener if TagSubscriber is enabled.
  */
 class TagSubscriberPass implements CompilerPassInterface
 {

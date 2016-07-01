@@ -35,28 +35,28 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubscriberInterface
 {
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var CacheManager
      */
     private $cacheManager;
 
     /**
-     * Router
+     * Router.
      *
      * @var UrlGeneratorInterface
      */
     private $urlGenerator;
 
     /**
-     * Router
+     * Router.
      *
      * @var ExpressionLanguage|null
      */
     private $expressionLanguage;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param CacheManager            $cacheManager
      * @param UrlGeneratorInterface   $urlGenerator
@@ -73,7 +73,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
     }
 
     /**
-     * Apply invalidators and flush cache manager
+     * Apply invalidators and flush cache manager.
      *
      * On kernel.terminate:
      * - see if any invalidators apply to the current request and, if so, add
@@ -104,7 +104,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
     }
 
     /**
-     * Flush cache manager when kernel exception occurs
+     * Flush cache manager when kernel exception occurs.
      */
     public function onKernelException()
     {
@@ -117,7 +117,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
     }
 
     /**
-     * Flush cache manager when console terminates or errors
+     * Flush cache manager when console terminates or errors.
      *
      * @throws ExceptionCollection If an exception occurs during flush.
      */
@@ -136,8 +136,8 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
     public static function getSubscribedEvents()
     {
         return array(
-            KernelEvents::TERMINATE  => 'onKernelTerminate',
-            KernelEvents::EXCEPTION  => 'onKernelException',
+            KernelEvents::TERMINATE => 'onKernelTerminate',
+            KernelEvents::EXCEPTION => 'onKernelException',
             ConsoleEvents::TERMINATE => 'onConsoleTerminate',
             ConsoleEvents::EXCEPTION => 'onConsoleTerminate',
         );
@@ -182,7 +182,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
     }
 
     /**
-     * Invalidate paths from annotations
+     * Invalidate paths from annotations.
      *
      * @param array|InvalidatePath[] $pathConfigurations
      */
@@ -196,7 +196,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
     }
 
     /**
-     * Invalidate routes from annotations
+     * Invalidate routes from annotations.
      *
      * @param array|InvalidateRoute[] $routes
      * @param Request                 $request
