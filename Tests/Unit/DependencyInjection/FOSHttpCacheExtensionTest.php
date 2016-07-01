@@ -278,7 +278,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $config = $this->getBaseConfig() + array(
             'user_context' => array(
-                'match'   => array(
+                'match' => array(
                     'matcher_service' => 'my_request_matcher_id',
                     'method' => 'AUTHENTICATE',
                     'accept' => 'application/vnd.test',
@@ -308,7 +308,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $config = array(
             array('user_context' => array(
                 'enabled' => false,
-                'match'   => array(
+                'match' => array(
                     'matcher_service' => 'my_request_matcher_id',
                     'method' => 'AUTHENTICATE',
                     'accept' => 'application/vnd.test',
@@ -345,7 +345,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     protected function createContainer()
     {
         $container = new ContainerBuilder(
-            new ParameterBag(array('kernel.debug' => false,))
+            new ParameterBag(array('kernel.debug' => false))
         );
 
         // The cache_manager service depends on the router service

@@ -91,7 +91,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->buildEvent();
         $headers = array(
-            'overwrite'     => false,
+            'overwrite' => false,
             'cache_control' => array(
                 'max_age' => '0',
                 's_maxage' => '0',
