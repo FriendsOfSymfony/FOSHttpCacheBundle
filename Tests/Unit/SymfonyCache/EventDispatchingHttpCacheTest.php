@@ -31,7 +31,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
     {
         $mock = $this
             ->getMockBuilder('\FOS\HttpCacheBundle\SymfonyCache\EventDispatchingHttpCache')
-            ->setMethods( $mockedMethods )
+            ->setMethods($mockedMethods)
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -40,7 +40,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         $options = array(
             'debug' => false,
             'default_ttl' => 0,
-            'private_headers' => array( 'Authorization', 'Cookie' ),
+            'private_headers' => array('Authorization', 'Cookie'),
             'allow_reload' => false,
             'allow_revalidate' => false,
             'stale_while_revalidate' => 2,
@@ -55,7 +55,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
             $refOptions = $refHttpCache
                 ->getProperty('options');
             $refOptions->setAccessible(true);
-            $refOptions->setValue($mock, $options );
+            $refOptions->setValue($mock, $options);
         }
 
         return $mock;
@@ -122,25 +122,26 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
     public function configuredSubscribersProvider()
     {
         $all = array(new UserContextSubscriber(), new PurgeSubscriber(), new RefreshSubscriber());
+
         return array(
             array(array(), $all),
             array(
                 array(
                     'fos_default_subscribers' => EventDispatchingHttpCache::SUBSCRIBER_ALL,
                 ),
-                $all
+                $all,
             ),
             array(
                 array(
                     'fos_default_subscribers' => EventDispatchingHttpCache::SUBSCRIBER_NONE,
                 ),
-                array()
+                array(),
             ),
             array(
                 array(
                     'fos_default_subscribers' => EventDispatchingHttpCache::SUBSCRIBER_USER_CONTEXT,
                 ),
-                array(new UserContextSubscriber())
+                array(new UserContextSubscriber()),
             ),
         );
     }
@@ -174,6 +175,6 @@ class TestSubscriber implements EventSubscriberInterface
         if ($this->response) {
             $event->setResponse($this->response);
         }
-        $this->hits++;
+        ++$this->hits;
     }
 }

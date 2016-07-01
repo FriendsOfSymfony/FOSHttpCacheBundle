@@ -12,12 +12,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class that you can extend to run integration tests against a live
- * caching proxy instance
+ * caching proxy instance.
  */
 abstract class ProxyTestCase extends WebTestCase
 {
     /**
-     * Assert cache hit
+     * Assert cache hit.
      *
      * @param Response    $response
      * @param string|null $message
@@ -28,7 +28,7 @@ abstract class ProxyTestCase extends WebTestCase
     }
 
     /**
-     * Assert cache miss
+     * Assert cache miss.
      *
      * @param Response    $response
      * @param string|null $message
@@ -39,7 +39,7 @@ abstract class ProxyTestCase extends WebTestCase
     }
 
     /**
-     * Get cache hit constraint
+     * Get cache hit constraint.
      *
      * @return IsCacheHitConstraint
      */
@@ -49,7 +49,7 @@ abstract class ProxyTestCase extends WebTestCase
     }
 
     /**
-     * Get cache miss constraint
+     * Get cache miss constraint.
      *
      * @return IsCacheMissConstraint
      */
@@ -60,7 +60,7 @@ abstract class ProxyTestCase extends WebTestCase
 
     /**
      * Get HTTP test client for making requests to your application through a
-     * live caching proxy
+     * live caching proxy.
      *
      * @return ClientInterface
      */
@@ -70,7 +70,7 @@ abstract class ProxyTestCase extends WebTestCase
     }
 
     /**
-     * Get a response from your application through a live caching proxy
+     * Get a response from your application through a live caching proxy.
      *
      * @param string $url     Request URL (absolute or relative)
      * @param array  $headers Request HTTP headers
@@ -84,7 +84,7 @@ abstract class ProxyTestCase extends WebTestCase
     }
 
     /**
-     * Start and clear caching proxy server if test is annotated with @clearCache
+     * Start and clear caching proxy server if test is annotated with @clearCache.
      */
     protected function setUp()
     {
@@ -101,7 +101,7 @@ abstract class ProxyTestCase extends WebTestCase
     }
 
     /**
-     * Get proxy server
+     * Get proxy server.
      *
      * @return ProxyInterface
      *
@@ -120,7 +120,7 @@ abstract class ProxyTestCase extends WebTestCase
     }
 
     /**
-     * Get HTTP header that shows whether the response was a cache hit or miss
+     * Get HTTP header that shows whether the response was a cache hit or miss.
      *
      * @return string
      */
@@ -130,7 +130,7 @@ abstract class ProxyTestCase extends WebTestCase
     }
 
     /**
-     * Get container
+     * Get container.
      *
      * @return ContainerInterface
      */

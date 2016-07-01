@@ -52,7 +52,7 @@ class RoleProvider implements ContextProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @throws InvalidConfigurationException when called without a security context being set.
      */

@@ -91,7 +91,7 @@ abstract class EventDispatchingHttpCache extends HttpCache
     private $eventDispatcher;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * Adding the default subscribers to the event dispatcher.
      */
@@ -105,7 +105,7 @@ abstract class EventDispatchingHttpCache extends HttpCache
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * Adding the Events::PRE_HANDLE event.
      */
@@ -124,7 +124,7 @@ abstract class EventDispatchingHttpCache extends HttpCache
 
     /**
      * Add a cache kernel event subscriber that listens to events listed in
-     * FOS\HttpCache\SymfonyCache\Event
+     * FOS\HttpCache\SymfonyCache\Event.
      *
      * @param EventSubscriberInterface $subscriber
      */
@@ -136,7 +136,7 @@ abstract class EventDispatchingHttpCache extends HttpCache
     /**
      * Made public to allow event subscribers to do refresh operations.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function fetch(Request $request, $catch = false)
     {
@@ -144,7 +144,7 @@ abstract class EventDispatchingHttpCache extends HttpCache
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * Adding the Events::PRE_INVALIDATE event.
      */
@@ -188,7 +188,7 @@ abstract class EventDispatchingHttpCache extends HttpCache
     }
 
     /**
-     * Get event dispatcher
+     * Get event dispatcher.
      *
      * @return EventDispatcherInterface
      */

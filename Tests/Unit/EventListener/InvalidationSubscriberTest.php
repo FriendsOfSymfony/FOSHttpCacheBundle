@@ -15,8 +15,6 @@ use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use FOS\HttpCacheBundle\EventListener\InvalidationSubscriber;
 use FOS\HttpCacheBundle\Http\RuleMatcher;
-use FOS\HttpCacheBundle\Invalidator\Invalidator;
-use FOS\HttpCacheBundle\Invalidator\InvalidatorCollection;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
@@ -24,7 +22,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use \Mockery;
 
 class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
 {

@@ -11,7 +11,6 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
-use FOS\HttpCache\UserContext\HashGenerator;
 use FOS\HttpCacheBundle\EventListener\UserContextSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -200,7 +199,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * If there is no hash in the requests but session changed, prevent setting bad cache
+     * If there is no hash in the requests but session changed, prevent setting bad cache.
      */
     public function testFullRequestHashChanged()
     {

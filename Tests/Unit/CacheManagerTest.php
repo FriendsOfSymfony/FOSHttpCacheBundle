@@ -12,7 +12,6 @@
 namespace FOS\HttpCacheBundle\Tests\Unit;
 
 use FOS\HttpCacheBundle\CacheManager;
-use \Mockery;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

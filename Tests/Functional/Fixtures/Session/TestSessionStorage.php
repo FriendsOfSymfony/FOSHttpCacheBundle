@@ -57,7 +57,6 @@ class TestSessionStorage implements SessionStorageInterface
     /**
      * {@inheritdoc}
      */
-
     public function setName($name)
     {
     }
@@ -109,6 +108,6 @@ class TestSessionStorage implements SessionStorageInterface
      */
     public function getMetadataBag()
     {
-        return null;
+        return;
     }
 }
