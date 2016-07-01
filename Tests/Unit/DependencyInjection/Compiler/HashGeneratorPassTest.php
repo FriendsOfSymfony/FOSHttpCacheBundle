@@ -35,7 +35,7 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Nothing happens when user_context.hash_generator is not enabled
+     * Nothing happens when user_context.hash_generator is not enabled.
      */
     public function testConfigNoContext()
     {
@@ -62,7 +62,7 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
     protected function createContainer()
     {
         return new ContainerBuilder(new ParameterBag(array(
-            'kernel.debug'       => false,
+            'kernel.debug' => false,
         )));
     }
 

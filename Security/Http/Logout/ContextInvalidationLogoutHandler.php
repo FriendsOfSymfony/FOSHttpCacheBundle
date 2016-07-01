@@ -20,21 +20,21 @@ use Symfony\Component\Security\Http\Logout\LogoutHandlerInterface;
 class ContextInvalidationLogoutHandler implements LogoutHandlerInterface
 {
     /**
-     * Service used to ban hash request
+     * Service used to ban hash request.
      *
      * @var \FOS\HttpCache\ProxyClient\Invalidation\BanInterface
      */
     private $banner;
 
     /**
-     * Accept header
+     * Accept header.
      *
      * @var string
      */
     private $acceptHeader;
 
     /**
-     * User identifier headers
+     * User identifier headers.
      *
      * @var string[]
      */
@@ -42,13 +42,13 @@ class ContextInvalidationLogoutHandler implements LogoutHandlerInterface
 
     public function __construct(BanInterface $banner, $userIdentifierHeaders, $acceptHeader)
     {
-        $this->banner                = $banner;
-        $this->acceptHeader          = $acceptHeader;
+        $this->banner = $banner;
+        $this->acceptHeader = $acceptHeader;
         $this->userIdentifierHeaders = $userIdentifierHeaders;
     }
 
     /**
-     * Invalidate the user context hash
+     * Invalidate the user context hash.
      *
      * @param Request        $request
      * @param Response       $response

@@ -21,14 +21,14 @@ class RoleProviderTest extends \PHPUnit_Framework_TestCase
     {
         $roles = array(new Role('ROLE_USER'));
 
-        $token           = \Mockery::mock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        
+        $token = \Mockery::mock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+
         $securityContext = $this->getTokenStorageMock();
         $securityContext->shouldReceive('getToken')->andReturn($token);
         $token->shouldReceive('getRoles')->andReturn($roles);
 
         $userContext = new UserContext();
-        $provider    = new RoleProvider($securityContext);
+        $provider = new RoleProvider($securityContext);
 
         $provider->updateUserContext($userContext);
 
@@ -43,7 +43,7 @@ class RoleProviderTest extends \PHPUnit_Framework_TestCase
         $securityContext->shouldReceive('getToken')->andReturn(null);
 
         $userContext = new UserContext();
-        $provider    = new RoleProvider($securityContext);
+        $provider = new RoleProvider($securityContext);
 
         $provider->updateUserContext($userContext);
 
@@ -58,14 +58,14 @@ class RoleProviderTest extends \PHPUnit_Framework_TestCase
         $roleProvider = new RoleProvider();
         $roleProvider->updateUserContext(new UserContext());
     }
-    
+
     private function getTokenStorageMock()
     {
         if (interface_exists('\Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface')) {
             // Symfony >= 2.6
             return \Mockery::mock('\Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
         }
-        
+
         // Symfony < 2.6 compatibility
         return \Mockery::mock('\Symfony\Component\Security\Core\SecurityContextInterface');
     }

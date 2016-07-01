@@ -50,7 +50,7 @@ class RuleMatcher implements RuleMatcherInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function matches(Request $request, Response $response)
     {
