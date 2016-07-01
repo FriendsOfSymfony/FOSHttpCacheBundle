@@ -61,7 +61,7 @@ class LoggerPassTest extends \PHPUnit_Framework_TestCase
     private function createContainer()
     {
         return new ContainerBuilder(new ParameterBag(array(
-            'kernel.debug'       => false,
+            'kernel.debug' => false,
         )));
     }
 

@@ -37,7 +37,7 @@ class CacheManager extends CacheInvalidator
     private $generateUrlType = UrlGeneratorInterface::ABSOLUTE_PATH;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ProxyClientInterface  $cache        HTTP cache proxy client
      * @param UrlGeneratorInterface $urlGenerator Symfony route generator
@@ -59,7 +59,7 @@ class CacheManager extends CacheInvalidator
     }
 
     /**
-     * Assign cache tags to a response
+     * Assign cache tags to a response.
      *
      * @param Response $response
      * @param array    $tags
@@ -91,7 +91,7 @@ class CacheManager extends CacheInvalidator
     }
 
     /**
-     * Invalidate a route
+     * Invalidate a route.
      *
      * @param string $name       Route name
      * @param array  $parameters Route parameters (optional)
@@ -107,7 +107,7 @@ class CacheManager extends CacheInvalidator
     }
 
     /**
-     * Refresh a route
+     * Refresh a route.
      *
      * @param string $route      Route name
      * @param array  $parameters Route parameters (optional)
