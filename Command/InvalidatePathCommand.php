@@ -42,7 +42,7 @@ class InvalidatePathCommand extends BaseInvalidateCommand
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -54,7 +54,7 @@ class InvalidatePathCommand extends BaseInvalidateCommand
                 InputArgument::IS_ARRAY | InputArgument::REQUIRED,
                 'URL paths you want to invalidate, you can specify any number of paths'
             )
-            ->setHelp(<<<EOF
+            ->setHelp(<<<'EOF'
 The <info>%command.name%</info> command invalidates a list of paths on the configured caching proxies.
 
 Example:
@@ -66,7 +66,7 @@ EOF
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

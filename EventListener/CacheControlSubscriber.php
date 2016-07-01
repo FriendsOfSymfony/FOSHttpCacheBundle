@@ -148,7 +148,7 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
      *
      * @param Response $response
      * @param array    $directives
-     * @param boolean  $overwrite  Whether to keep existing cache headers or to overwrite them.
+     * @param bool     $overwrite  Whether to keep existing cache headers or to overwrite them.
      */
     private function setCache(Response $response, array $directives, $overwrite)
     {
@@ -185,7 +185,7 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
      *
      * @param Response $response
      * @param array    $controls
-     * @param boolean  $overwrite Whether to keep existing cache headers or to overwrite them.
+     * @param bool     $overwrite Whether to keep existing cache headers or to overwrite them.
      */
     private function setExtraCacheDirectives(Response $response, array $controls, $overwrite)
     {

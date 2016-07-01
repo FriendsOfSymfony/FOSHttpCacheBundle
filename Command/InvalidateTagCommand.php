@@ -56,7 +56,6 @@ class InvalidateTagCommand extends ContainerAwareCommand
         }
         if ($tagHandler instanceof CacheManager) {
             @trigger_error('Passing the CacheManager to '.__CLASS__.' is deprecated since version 1.2 and will be removed in 2.0. Provide the TagHandler instead.', E_USER_DEPRECATED);
-
         }
         $this->commandName = $commandName;
         $this->tagHandler = $tagHandler;
@@ -64,7 +63,7 @@ class InvalidateTagCommand extends ContainerAwareCommand
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -76,7 +75,7 @@ class InvalidateTagCommand extends ContainerAwareCommand
                 InputArgument::IS_ARRAY | InputArgument::REQUIRED,
                 'Tags in the response tags header to invalidate'
             )
-            ->setHelp(<<<EOF
+            ->setHelp(<<<'EOF'
 The <info>%command.name%</info> command invalidates all cached content matching the specified tags on the configured caching proxies.
 
 Example:
@@ -88,7 +87,7 @@ EOF
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
