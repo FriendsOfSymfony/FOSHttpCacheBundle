@@ -49,7 +49,7 @@ You need to configure a route for the context hash. It does not specify any
 controller, as the request listener will abort the request right after the
 firewall has been applied, but the route definition must exist. Use the same
 path as you specified in the caching proxy and make sure that this path is
-covered by your
+allowed for anonymous users and covered by your
 `firewall configuration <http://symfony.com/doc/current/book/security.html>`_:
 
 .. code-block:: yaml
@@ -57,6 +57,17 @@ covered by your
     # app/config/routing.yml
     user_context_hash:
         path: /_fos_user_context_hash
+
+If your access rules limit the whole site to logged in users, make sure to
+handle the user context URL like the login page:
+
+.. code-block:: yaml
+
+    # app/config/security.yml
+    access_control:
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/_fos_user_context_hash, roles: [IS_AUTHENTICATED_ANONYMOUSLY] }
+        - { path: ^/, roles: ROLE_USER }
 
 Finally, enable the subscriber with the default settings:
 
