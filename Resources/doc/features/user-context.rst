@@ -78,6 +78,15 @@ Finally, enable the subscriber with the default settings:
         user_context:
             enabled: true
 
+.. note::
+
+    When using the FOSRestBundle ``format_listener`` configuration on all paths
+    of your site, the hash lookup will fail with "406 Not Acceptable - No
+    matching accepted Response format could be determined". To avoid this
+    problem, you can add a rule to the format listener configuration:
+
+    ``- { path: '^/_fos_user_context_hash', stop: true }``
+
 Generating Hashes
 -----------------
 
