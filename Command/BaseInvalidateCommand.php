@@ -30,7 +30,7 @@ abstract class BaseInvalidateCommand extends ContainerAwareCommand
      * If no cache manager is specified explicitly, fos_http_cache.cache_manager
      * is automatically loaded.
      *
-     * @param CacheManager|null $cacheManager The cache manager to talk to.
+     * @param CacheManager|null $cacheManager The cache manager to talk to
      */
     public function __construct(CacheManager $cacheManager = null)
     {

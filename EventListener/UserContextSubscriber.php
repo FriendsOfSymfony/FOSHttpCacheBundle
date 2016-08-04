@@ -62,7 +62,7 @@ class UserContextSubscriber implements EventSubscriberInterface
     private $ttl;
 
     /**
-     * @var bool Whether to automatically add the Vary header for the hash / user identifier if there was no hash.
+     * @var bool Whether to automatically add the Vary header for the hash / user identifier if there was no hash
      */
     private $addVaryOnHash;
 

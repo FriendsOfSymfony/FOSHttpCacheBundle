@@ -32,7 +32,7 @@ class InvalidateRoute extends ConfigurationAnnotation
     /**
      * Handle route name given without explicit key.
      *
-     * @param string $value The route name.
+     * @param string $value The route name
      */
     public function setValue($value)
     {

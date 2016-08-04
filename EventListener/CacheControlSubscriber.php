@@ -50,12 +50,12 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
      * If not empty, add a debug header with that name to all responses,
      * telling the cache proxy to add debug output.
      *
-     * @var string|bool Name of the header or false to add no header.
+     * @var string|bool Name of the header or false to add no header
      */
     private $debugHeader;
 
     /**
-     * @param string|bool $debugHeader Header to set to trigger debugging, or false to send no header.
+     * @param string|bool $debugHeader Header to set to trigger debugging, or false to send no header
      */
     public function __construct($debugHeader = false)
     {
@@ -148,7 +148,7 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
      *
      * @param Response $response
      * @param array    $directives
-     * @param bool     $overwrite  Whether to keep existing cache headers or to overwrite them.
+     * @param bool     $overwrite  Whether to keep existing cache headers or to overwrite them
      */
     private function setCache(Response $response, array $directives, $overwrite)
     {
@@ -185,7 +185,7 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
      *
      * @param Response $response
      * @param array    $controls
-     * @param bool     $overwrite Whether to keep existing cache headers or to overwrite them.
+     * @param bool     $overwrite Whether to keep existing cache headers or to overwrite them
      */
     private function setExtraCacheDirectives(Response $response, array $controls, $overwrite)
     {
@@ -216,7 +216,7 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
      *
      * @param Request $request
      *
-     * @return bool True if the request is safe and headers can be set.
+     * @return bool True if the request is safe and headers can be set
      */
     protected function isRequestSafe(Request $request)
     {

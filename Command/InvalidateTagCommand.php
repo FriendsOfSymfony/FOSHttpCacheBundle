@@ -41,8 +41,8 @@ class InvalidateTagCommand extends ContainerAwareCommand
      *
      * Passing CacheManager as argument is deprecated and will be restricted to TagHandler in 2.0.
      *
-     * @param TagHandler|CacheManager|null $tagHandler  The tag handler to talk to.
-     * @param string                       $commandName Name of this command, in case you want to reuse it.
+     * @param TagHandler|CacheManager|null $tagHandler  The tag handler to talk to
+     * @param string                       $commandName Name of this command, in case you want to reuse it
      */
     public function __construct($tagHandler = null, $commandName = 'fos:httpcache:invalidate:tag')
     {

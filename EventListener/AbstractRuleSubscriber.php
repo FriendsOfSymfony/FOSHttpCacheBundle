@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 class AbstractRuleSubscriber
 {
     /**
-     * @var array List of arrays with RuleMatcher, settings array.
+     * @var array List of arrays with RuleMatcher, settings array
      */
     private $rulesMap = array();
 
@@ -26,8 +26,8 @@ class AbstractRuleSubscriber
      * Add a rule matcher with a list of header directives to apply if the
      * request and response are matched.
      *
-     * @param RuleMatcherInterface $ruleMatcher The headers apply to responses matched by this matcher.
-     * @param array                $settings    An array of header configuration.
+     * @param RuleMatcherInterface $ruleMatcher The headers apply to responses matched by this matcher
+     * @param array                $settings    An array of header configuration
      */
     public function addRule(
         RuleMatcherInterface $ruleMatcher,
@@ -42,7 +42,7 @@ class AbstractRuleSubscriber
      * @param Request  $request
      * @param Response $response
      *
-     * @return array|false Settings to apply or false if no rule matched.
+     * @return array|false Settings to apply or false if no rule matched
      */
     protected function matchRule(Request $request, Response $response)
     {
