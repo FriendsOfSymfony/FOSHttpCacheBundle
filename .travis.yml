@@ -14,7 +14,6 @@ addons:
       - enchant
 
 php:
-  - 5.5
   - 5.6
   - 7.0
   - hhvm
@@ -29,48 +28,27 @@ branches:
 
 matrix:
   include:
-    - php: 5.4
+    - php: 5.5
       env:
         - COMPOSER_FLAGS="--prefer-lowest"
-        - SYMFONY_VERSION='2.3.*'
-    - php: 5.6
-      env:
-        - SYMFONY_VERSION='2.4.*'
-        - PHPUNIT_FLAGS="--coverage-clover=coverage.clover"
-        - COVERAGE=true
-    - php: 5.6
-      env: SYMFONY_VERSION='2.3.*'
-    - php: 5.6
-      env:
-        - SYMFONY_VERSION='2.4.*'
-        - FRAMEWORK_EXTRA_VERSION='~3.0'
-    - php: 5.6
-      env:
-        - SYMFONY_VERSION='2.5.*'
-        - FRAMEWORK_EXTRA_VERSION='~3.0'
-    - php: 5.6
-      env:
-        - SYMFONY_VERSION='2.6.*'
-        - FRAMEWORK_EXTRA_VERSION='~3.0'
-    - php: 5.6
-      env:
-        - SYMFONY_VERSION='2.7.*'
-        - FRAMEWORK_EXTRA_VERSION='~3.0'
-    - php: 5.6
-      env:
         - SYMFONY_VERSION='2.8.*'
-        - FRAMEWORK_EXTRA_VERSION='~3.0'
-    - php: 5.6
+    - php: 7.1
       env:
         - SYMFONY_VERSION='3.0.*'
-        - FRAMEWORK_EXTRA_VERSION='~3.0'
+        - PHPUNIT_FLAGS="--coverage-clover=coverage.clover"
+        - COVERAGE=true
+    - php: 7.1
+      env:
+        - SYMFONY_VERSION='2.8.*'
+    - php: 7.1
+      env:
+        - SYMFONY_VERSION='3.0.*'
 
 install:
   - pip install -qr Resources/doc/requirements.txt --user
 
 before_install:
   - sh -c 'if [ "$SYMFONY_VERSION" != "" ]; then composer require --dev --no-update symfony/symfony=$SYMFONY_VERSION; fi;'
-  - sh -c 'if [ "$FRAMEWORK_EXTRA_VERSION" != "" ]; then composer require --dev --no-update sensio/framework-extra-bundle=$FRAMEWORK_EXTRA_VERSION; fi;'
 
 before_script:
   - composer update $COMPOSER_FLAGS
