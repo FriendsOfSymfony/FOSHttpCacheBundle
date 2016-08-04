@@ -119,7 +119,7 @@ class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubs
     /**
      * Flush cache manager when console terminates or errors.
      *
-     * @throws ExceptionCollection If an exception occurs during flush.
+     * @throws ExceptionCollection If an exception occurs during flush
      */
     public function onConsoleTerminate(ConsoleEvent $event)
     {

@@ -433,7 +433,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     }
 
     /**
-     * @return array The configuration when nothing is specified.
+     * @return array The configuration when nothing is specified
      */
     private function getEmptyConfig()
     {
