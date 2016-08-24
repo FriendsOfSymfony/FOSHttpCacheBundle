@@ -20,6 +20,9 @@ php:
   - 7.0
   - hhvm
 
+env:
+  - SYMFONY_VERSION='3.0.*'
+
 branches:
   only:
     - master
@@ -28,9 +31,12 @@ branches:
 matrix:
   include:
     - php: 5.4
-      env: COMPOSER_FLAGS="--prefer-lowest"
+      env:
+        - COMPOSER_FLAGS="--prefer-lowest"
+        - SYMFONY_VERSION='2.3.*'
     - php: 5.6
       env:
+        - SYMFONY_VERSION='3.0.*'
         - PHPUNIT_FLAGS="--coverage-clover=coverage.clover"
         - COVERAGE=true
     - php: 5.6
