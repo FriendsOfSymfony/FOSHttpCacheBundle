@@ -40,8 +40,8 @@ class RuleMatcher implements RuleMatcherInterface
     private $expressionLanguage;
 
     /**
-     * @param RequestMatcherInterface $requestMatcher Strategy to match the request.
-     * @param array                   $criteria       Additional criteria not covered by request matcher.
+     * @param RequestMatcherInterface $requestMatcher Strategy to match the request
+     * @param array                   $criteria       Additional criteria not covered by request matcher
      */
     public function __construct(RequestMatcherInterface $requestMatcher, array $criteria)
     {
