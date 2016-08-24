@@ -54,7 +54,7 @@ class RoleProvider implements ContextProviderInterface
     /**
      * {@inheritdoc}
      *
-     * @throws InvalidConfigurationException when called without a security context being set.
+     * @throws InvalidConfigurationException when called without a security context being set
      */
     public function updateUserContext(UserContext $context)
     {
