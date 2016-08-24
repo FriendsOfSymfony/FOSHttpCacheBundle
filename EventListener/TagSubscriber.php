@@ -107,7 +107,7 @@ class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInt
      *
      * @param Request $request
      *
-     * @return array List of tags affected by the request.
+     * @return array List of tags affected by the request
      */
     private function getAnnotationTags(Request $request)
     {

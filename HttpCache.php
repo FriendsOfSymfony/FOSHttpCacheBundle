@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 /**
  * Base class for enhanced Symfony reverse proxy based on the symfony FrameworkBundle HttpCache.
  *
- * @deprecated Use FOS\HttpCacheBundle\SymfonyCache\EventDispatchingHttpCache instead.
+ * @deprecated Use FOS\HttpCacheBundle\SymfonyCache\EventDispatchingHttpCache instead
  *
  * @author Jérôme Vieilledent <lolautruche@gmail.com> (courtesy of eZ Systems AS)
  *

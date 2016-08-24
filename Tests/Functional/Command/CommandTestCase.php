@@ -25,8 +25,8 @@ abstract class CommandTestCase extends WebTestCase
      *
      * @param Client $client
      * @param string $command
-     * @param int    $verbosity Verbosity level to use.
-     * @param int    $exitCode  Expected command exit code.
+     * @param int    $verbosity Verbosity level to use
+     * @param int    $exitCode  Expected command exit code
      *
      * @return string
      */
