@@ -19,7 +19,7 @@ php:
   - hhvm
 
 env:
-  - SYMFONY_VERSION='3.0.*'
+  - SYMFONY_VERSION='3.1.*'
 
 branches:
   only:
@@ -34,7 +34,7 @@ matrix:
         - SYMFONY_VERSION='2.8.*'
     - php: 7.1
       env:
-        - SYMFONY_VERSION='3.0.*'
+        - SYMFONY_VERSION='3.1.*'
         - PHPUNIT_FLAGS="--coverage-clover=coverage.clover"
         - COVERAGE=true
     - php: 7.1
@@ -43,7 +43,9 @@ matrix:
     - php: 7.1
       env:
         - SYMFONY_VERSION='3.0.*'
-
+    - php: 7.1
+      env:
+        - SYMFONY_VERSION='3.1.*'
 install:
   - pip install -qr Resources/doc/requirements.txt --user
 
