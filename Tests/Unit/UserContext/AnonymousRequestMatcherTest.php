@@ -45,4 +45,14 @@ class AnonymousRequestMatcherTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($requestMatcher->matches($request));
     }
+
+    public function testMatchEmptyCookieHeaderHeader()
+    {
+        $request = new Request();
+        $request->headers->set('Cookie', '');
+
+        $requestMatcher = new AnonymousRequestMatcher(['Cookie', 'Authorization']);
+
+        $this->assertTrue($requestMatcher->matches($request));
+    }
 }

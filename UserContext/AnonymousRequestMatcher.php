@@ -36,6 +36,11 @@ class AnonymousRequestMatcher implements RequestMatcherInterface
                 return false;
             }
             if ($request->headers->has($header)) {
+                if (strtolower($header) === 'cookie' && 0 === $request->cookies->count()) {
+                    // ignore empty cookie header
+                    continue;
+                }
+
                 return false;
             }
         }
