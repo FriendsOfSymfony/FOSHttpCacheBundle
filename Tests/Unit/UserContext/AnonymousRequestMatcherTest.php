@@ -29,6 +29,7 @@ class AnonymousRequestMatcherTest extends PHPUnit_Framework_TestCase
     public function testNoMatchIfCookie()
     {
         $request = new Request();
+        $request->headers->set('Cookie', '');
         $request->cookies->set('PHPSESSID7e476fc9f29f69d2ad6f11dbcd663b42', '25f6d9c5a843e3c948cd26902385a527');
 
         $requestMatcher = new AnonymousRequestMatcher(['Cookie', 'Authorization']);

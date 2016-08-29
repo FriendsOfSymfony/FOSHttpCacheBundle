@@ -32,9 +32,6 @@ class AnonymousRequestMatcher implements RequestMatcherInterface
     public function matches(Request $request)
     {
         foreach ($this->userIdentifierHeaders as $header) {
-            if (strtolower($header) === 'cookie' && $request->cookies->count()) {
-                return false;
-            }
             if ($request->headers->has($header)) {
                 if (strtolower($header) === 'cookie' && 0 === $request->cookies->count()) {
                     // ignore empty cookie header
