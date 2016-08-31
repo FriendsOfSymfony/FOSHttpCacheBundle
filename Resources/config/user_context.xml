@@ -28,6 +28,7 @@
             <argument />
             <argument />
             <argument />
+            <argument type="service" id="fos_http_cache.user_context.anonymous_request_matcher" />
             <tag name="kernel.event_subscriber" />
         </service>
 
@@ -39,6 +40,10 @@
             <argument type="service" id="fos_http_cache.default_proxy_client" />
             <argument />
             <argument />
+        </service>
+
+        <service id="fos_http_cache.user_context.anonymous_request_matcher" class="FOS\HttpCacheBundle\UserContext\AnonymousRequestMatcher">
+            <argument type="collection" />
         </service>
     </services>
 </container>

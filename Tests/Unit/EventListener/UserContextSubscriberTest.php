@@ -200,6 +200,39 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * If the request is an anonymous one, no hash should be generated/validated.
+     */
+    public function testFullAnonymousRequestHashNotGenerated()
+    {
+        $request = new Request();
+        $request->setMethod('GET');
+        $request->headers->set('X-Hash', 'anonymous-hash');
+
+        $requestMatcher = $this->getRequestMatcher($request, false);
+        $hashGenerator = \Mockery::mock('\FOS\HttpCache\UserContext\HashGenerator');
+        $hashGenerator->shouldReceive('generateHash')->never();
+
+        $anonymousRequestMatcher = \Mockery::mock('\Symfony\Component\HttpFoundation\RequestMatcherInterface');
+        $anonymousRequestMatcher->shouldReceive('matches')->andReturn(true);
+
+        // onKernelRequest
+        $userContextSubscriber = new UserContextSubscriber($requestMatcher, $hashGenerator, array('X-SessionId'), 'X-Hash', 0, true, $anonymousRequestMatcher);
+        $event = $this->getKernelRequestEvent($request);
+
+        $userContextSubscriber->onKernelRequest($event);
+
+        $response = $event->getResponse();
+
+        $this->assertNull($response);
+
+        // onKernelResponse
+        $event = $this->getKernelResponseEvent($request);
+        $userContextSubscriber->onKernelResponse($event);
+
+        $this->assertContains('X-Hash', $event->getResponse()->headers->get('Vary'));
+    }
+
+    /**
      * If there is no hash in the requests but session changed, prevent setting bad cache.
      */
     public function testFullRequestHashChanged()
