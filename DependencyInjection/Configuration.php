@@ -507,7 +507,7 @@ class Configuration implements ConfigurationInterface
                             ->info('Allows to disable the invalidation manager. Enabled by default if you configure a proxy client.')
                         ->end()
                         ->scalarNode('custom_proxy_client')
-                            ->info('Service name of a custom proxy client to use. If you configure a proxy client, that client will be used by default.')
+                            ->info('Service name of a custom proxy client to use. With a custom client, generate_url_type defaults to ABSOLUTE_URL and tag support needs to be explicitly enabled. If no custom proxy client is specified, the first proxy client you configured is used.')
                         ->end()
                         ->enumNode('generate_url_type')
                             ->values(array(
