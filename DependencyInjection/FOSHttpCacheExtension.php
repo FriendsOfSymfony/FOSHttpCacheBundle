@@ -64,7 +64,7 @@ class FOSHttpCacheExtension extends Extension
         }
 
         if ($config['cache_manager']['enabled']) {
-            if (!empty($config['cache_manager']['custom_proxy_client'])) {
+            if (array_key_exists('custom_proxy_client', $config['cache_manager'])) {
                 // overwrite the previously set alias, if a proxy client was also configured
                 $container->setAlias(
                     $this->getAlias().'.default_proxy_client',
@@ -72,11 +72,15 @@ class FOSHttpCacheExtension extends Extension
                 );
             }
             if ('auto' === $config['cache_manager']['generate_url_type']) {
-                $defaultClient = $this->getDefaultProxyClient($config['proxy_client']);
-                $generateUrlType = empty($config['cache_manager']['custom_proxy_client']) && isset($config['proxy_client'][$defaultClient]['base_url'])
-                    ? UrlGeneratorInterface::ABSOLUTE_PATH
-                    : UrlGeneratorInterface::ABSOLUTE_URL
-                ;
+                if (array_key_exists('custom_proxy_client', $config['cache_manager'])) {
+                    $generateUrlType = UrlGeneratorInterface::ABSOLUTE_URL;
+                } else {
+                    $defaultClient = $this->getDefaultProxyClient($config['proxy_client']);
+                    $generateUrlType = array_key_exists('base_url', $config['proxy_client'][$defaultClient])
+                        ? UrlGeneratorInterface::ABSOLUTE_PATH
+                        : UrlGeneratorInterface::ABSOLUTE_URL
+                    ;
+                }
             } else {
                 $generateUrlType = $config['cache_manager']['generate_url_type'];
             }
@@ -89,7 +93,9 @@ class FOSHttpCacheExtension extends Extension
                 $container,
                 $loader,
                 $config['tags'],
-                $this->getDefaultProxyClient($config['proxy_client'])
+                array_key_exists('proxy_client', $config)
+                    ? $this->getDefaultProxyClient($config['proxy_client'])
+                    : 'custom'
             );
         } else {
             $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', false);
@@ -322,6 +328,13 @@ class FOSHttpCacheExtension extends Extension
         }
     }
 
+    /**
+     * @param ContainerBuilder $container
+     * @param XmlFileLoader    $loader
+     * @param array            $config    Configuration section for the tags node
+     * @param string           $client    Name of the client used with the cache manager,
+     *                                    "custom" when a custom client is used
+     */
     private function loadCacheTagging(ContainerBuilder $container, XmlFileLoader $loader, array $config, $client)
     {
         if ('auto' === $config['enabled'] && 'varnish' !== $client) {
@@ -329,7 +342,7 @@ class FOSHttpCacheExtension extends Extension
 
             return;
         }
-        if ('varnish' !== $client) {
+        if (!in_array($client, array('varnish', 'custom'))) {
             throw new InvalidConfigurationException(sprintf('You can not enable cache tagging with %s', $client));
         }
 
