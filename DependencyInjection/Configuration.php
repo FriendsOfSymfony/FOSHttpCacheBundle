@@ -508,6 +508,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('custom_proxy_client')
                             ->info('Service name of a custom proxy client to use. With a custom client, generate_url_type defaults to ABSOLUTE_URL and tag support needs to be explicitly enabled. If no custom proxy client is specified, the first proxy client you configured is used.')
+                            ->cannotBeEmpty()
                         ->end()
                         ->enumNode('generate_url_type')
                             ->values(array(
