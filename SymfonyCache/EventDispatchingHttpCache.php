@@ -37,7 +37,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  * Examples:
  *   - `self::SUBSCRIBER_USER_CONTEXT` (**only** user context).
  *   - `self::SUBSCRIBER_NONE` (**no** native subscriber).
- *   - `self::SUBSCRIBER_ALL | ~self::SUBSCRIBER_USER_CONTEXT` (**all** native ones **except** the user context one).
+ *   - `self::SUBSCRIBER_ALL & ~self::SUBSCRIBER_USER_CONTEXT` (**all** native ones **except** the user context one).
  *
  * Note: This class looks very similar to the FOSHttpCache library event
  * dispatching kernel, but extends the FrameworkBundle HttpCache instead of the
