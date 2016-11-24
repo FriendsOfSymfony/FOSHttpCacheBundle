@@ -11,12 +11,11 @@
 
 namespace FOS\HttpCacheBundle\DependencyInjection\Compiler;
 
-use FOS\HttpCache\Events;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Announce the log listener to the symfony event system
+ * Announce the log listener to the symfony event system.
  */
 class LoggerPass implements CompilerPassInterface
 {
@@ -31,7 +30,7 @@ class LoggerPass implements CompilerPassInterface
 
         $container->getDefinition('fos_http_cache.event_listener.log')
             ->setAbstract(false)
-            ->addTag('kernel.event_subscriber');
+            ->addTag('kernel.event_subscriber')
         ;
     }
 }

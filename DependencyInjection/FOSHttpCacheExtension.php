@@ -354,7 +354,6 @@ class FOSHttpCacheExtension extends Extension
 
         if (isset($config['client']['varnish']['enabled'])
             || isset($config['client']['nginx']['enabled'])) {
-
             if ($config['client']['varnish']['enabled']) {
                 $loader->load('varnish_test_client.xml');
             }

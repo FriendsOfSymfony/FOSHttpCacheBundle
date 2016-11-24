@@ -4,22 +4,19 @@ Overview
 Installation
 ------------
 
-This bundle is available on Packagist_. You can install it using Composer:
+This bundle is available on Packagist_. You can install it using Composer. Note
+that the FOSHttpCache_ library needs a ``psr/http-message-implementation`` and
+``php-http/client-implementation``. If your project does not contain one,
+composer will complain that it did not find ``psr/http-message-implementation``.
+
+To install the bundle together with guzzle, run:
 
 .. code-block:: bash
 
-    $ composer require friendsofsymfony/http-cache-bundle
+    $ composer require friendsofsymfony/http-cache-bundle guzzlehttp/psr7 php-http/guzzle6-adapter
 
-Note that the FOSHttpCache_ library needs a ``psr/http-message-implementation``
-and ``php-http/client-implementation``. If your project does not contain one,
-composer will complain that it did not find ``psr/http-message-implementation``:
-
-.. code-block:: bash
-
-    $ composer require friendsofsymfony/http-cache-bundle:~2.0 guzzlehttp/psr7:^1.0 php-http/guzzle6-adapter:^1.0.0
-
-If you want to use something else than Guzzle 6, see packagist
-for a list of available `client implementations`_.
+If you want to use something else than Guzzle 6, see packagist for a list of
+available `client implementations`_.
 
 Then add the bundle to your application:
 
