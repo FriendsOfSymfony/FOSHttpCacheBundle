@@ -32,7 +32,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  *
  * @author David de Boer <david@driebit.nl>
  */
-class InvalidationSubscriber extends AbstractRuleSubscriber implements EventSubscriberInterface
+class InvalidationListener extends AbstractRuleListener implements EventSubscriberInterface
 {
     /**
      * Cache manager.

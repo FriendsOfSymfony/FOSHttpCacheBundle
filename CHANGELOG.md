@@ -7,6 +7,8 @@ Changelog
 * [User Context] Added an option always_vary_on_context_hash to make it 
   possible to disable automatically setting the vary headers for the user 
   hash.
+  
+* [Event Listeners] Renamed the event listener classes to XxxLlistener
 
 1.3.7
 -----

@@ -25,7 +25,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  *
  * @author David de Boer <david@driebit.nl>
  */
-class TagSubscriber extends AbstractRuleSubscriber implements EventSubscriberInterface
+class TagListener extends AbstractRuleListener implements EventSubscriberInterface
 {
     /**
      * @var TagHandler

@@ -350,7 +350,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($container->has('fos_http_cache.user_context.logout_handler'));
     }
 
-    public function testConfigLoadFlashMessageSubscriber()
+    public function testConfigLoadFlashMessageListener()
     {
         $config = array(
             array('flash_message' => true,

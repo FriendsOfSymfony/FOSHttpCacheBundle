@@ -13,7 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
 use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
-use FOS\HttpCacheBundle\EventListener\InvalidationSubscriber;
+use FOS\HttpCacheBundle\EventListener\InvalidationListener;
 use FOS\HttpCacheBundle\Http\RuleMatcher;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
-class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
+class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
 {
     protected $cacheManager;
     protected $invalidators;
@@ -85,7 +85,7 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
             array('_route' => 'route_invalidator')
         ), array());
 
-        $listener = new InvalidationSubscriber($cacheManager, $router);
+        $listener = new InvalidationListener($cacheManager, $router);
         $listener->addRule($ruleMatcher, array(
             'route_invalidated' => array('ignore_extra_params' => true),
             'route_invalidated_special' => array('ignore_extra_params' => true),
@@ -108,7 +108,7 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $router = \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
-        $listener = new InvalidationSubscriber($cacheManager, $router);
+        $listener = new InvalidationListener($cacheManager, $router);
 
         $request = new Request();
 
@@ -181,7 +181,7 @@ class InvalidationSubscriberTest extends \PHPUnit_Framework_TestCase
 
     protected function getListener()
     {
-        return new InvalidationSubscriber(
+        return new InvalidationListener(
             $this->cacheManager,
             \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface')
         );

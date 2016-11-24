@@ -1,17 +1,17 @@
-Flash Message Subscriber
-========================
+Flash Message Listener
+======================
 
 **Prerequisites**: *none*
 
 When flash messages are rendered into the content of a page, you can't cache
-the page anymore. When enabled, this subscriber reads all flash messages into a
+the page anymore. When enabled, this listener reads all flash messages into a
 cookie, leading to them not being there anymore when rendering the template.
 This will return the page with a set-cookie header which you of course must
 make sure to not cache in varnish. By default, varnish will simply not cache
 the whole response when there is a set-cookie header. (Maybe you could do
 something more clever — if you do, please provide a VCL example.)
 
-The flash message subscriber is automatically enabled if you configure any of
+The flash message listener is automatically enabled if you configure any of
 the options under ``flash_message``.
 
 .. code-block:: yaml

@@ -13,7 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class CacheControlSubscriberTest extends WebTestCase
+class CacheControlListenerTest extends WebTestCase
 {
     public function testIsCached()
     {

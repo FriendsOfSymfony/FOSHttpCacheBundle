@@ -68,8 +68,8 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         $response = new Response();
 
         $httpCache = $this->getHttpCachePartialMock(array('lookup'));
-        $subscriber = new TestSubscriber($this, $httpCache, $request);
-        $httpCache->addSubscriber($subscriber);
+        $listener = new TestListener($this, $httpCache, $request);
+        $httpCache->addSubscriber($listener);
         $httpCache
             ->expects($this->any())
             ->method('lookup')
@@ -78,7 +78,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         ;
         $httpCache->handle($request);
 
-        $this->assertEquals(1, $subscriber->hits);
+        $this->assertEquals(1, $listener->hits);
         $this->assertSame($response, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST, $catch));
     }
 
@@ -89,15 +89,15 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         $response = new Response();
 
         $httpCache = $this->getHttpCachePartialMock(array('lookup'));
-        $subscriber = new TestSubscriber($this, $httpCache, $request, $response);
-        $httpCache->addSubscriber($subscriber);
+        $listener = new TestListener($this, $httpCache, $request, $response);
+        $httpCache->addSubscriber($listener);
         $httpCache
             ->expects($this->never())
             ->method('lookup')
         ;
         $httpCache->handle($request);
 
-        $this->assertEquals(1, $subscriber->hits);
+        $this->assertEquals(1, $listener->hits);
         $this->assertSame($response, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST, $catch));
     }
 
@@ -147,7 +147,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class TestSubscriber implements EventSubscriberInterface
+class TestListener implements EventSubscriberInterface
 {
     public $hits = 0;
     private $test;

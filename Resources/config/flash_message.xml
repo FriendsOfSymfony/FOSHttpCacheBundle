@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="fos_http_cache.event_listener.flash_message.class">FOS\HttpCacheBundle\EventListener\FlashMessageSubscriber</parameter>
+        <parameter key="fos_http_cache.event_listener.flash_message.class">FOS\HttpCacheBundle\EventListener\FlashMessageListener</parameter>
     </parameters>
 
     <services>

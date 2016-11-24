@@ -9,7 +9,7 @@ User Context
 If your application serves different content depending on the user's group
 or context (guest, editor, admin), you can cache that content per user context.
 Each user context (group) gets its own unique hash, which is then used to vary
-content on. The event subscriber responds to hash requests and sets the Vary
+content on. The event listener responds to hash requests and sets the Vary
 header. This way, you can differentiate your content between user groups while
 not having to store caches for each individual user.
 
@@ -27,7 +27,7 @@ These five steps resemble the Overview in the FOSHttpCache documentation.
 2. The :term:`foshttpcache:caching proxy` receives the request and holds it.
    It first sends a *hash request* to the *context hash route*.
 3. The :term:`foshttpcache:application` receives the hash request. An event
-   subscriber (``UserContextSubscriber``) aborts the request immediately after
+   listener (``UserContextListener``) aborts the request immediately after
    the Symfony2 firewall was applied. The application calculates the hash
    (``HashGenerator``) and then sends a response with the hash in a custom
    header (``X-User-Context-Hash`` by default).
@@ -69,7 +69,7 @@ handle the user context URL like the login page:
         - { path: ^/_fos_user_context_hash, roles: [IS_AUTHENTICATED_ANONYMOUSLY] }
         - { path: ^/, roles: ROLE_USER }
 
-Finally, enable the subscriber with the default settings:
+Finally, enable the listener with the default settings:
 
 .. code-block:: yaml
 

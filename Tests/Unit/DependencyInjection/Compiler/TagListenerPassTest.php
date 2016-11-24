@@ -11,12 +11,12 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection\Compiler;
 
-use FOS\HttpCacheBundle\DependencyInjection\Compiler\TagSubscriberPass;
+use FOS\HttpCacheBundle\DependencyInjection\Compiler\TagListenerPass;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
-class TagSubscriberPassTest extends \PHPUnit_Framework_TestCase
+class TagListenerPassTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException \RuntimeException
@@ -25,7 +25,7 @@ class TagSubscriberPassTest extends \PHPUnit_Framework_TestCase
     public function testNoFrameworkBundle()
     {
         $extension = new FOSHttpCacheExtension();
-        $tagListenerPass = new TagSubscriberPass();
+        $tagListenerPass = new TagListenerPass();
         $container = $this->createContainer();
         $config = $this->getConfig();
         $extension->load(array($config), $container);
