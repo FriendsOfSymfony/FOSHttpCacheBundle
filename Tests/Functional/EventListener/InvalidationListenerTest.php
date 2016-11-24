@@ -13,7 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class InvalidationSubscriberTest extends WebTestCase
+class InvalidationListenerTest extends WebTestCase
 {
     public function testInvalidateRoute()
     {

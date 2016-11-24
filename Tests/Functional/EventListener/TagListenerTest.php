@@ -13,7 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class TagSubscriberTest extends WebTestCase
+class TagListenerTest extends WebTestCase
 {
     public function testAnnotationTagsAreSet()
     {

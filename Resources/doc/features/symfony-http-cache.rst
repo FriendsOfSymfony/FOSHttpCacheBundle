@@ -9,7 +9,7 @@ running an application on shared hosting for instance
 (see the `Symfony HttpCache documentation`_).
 
 You can use features of this library with the Symfony ``HttpCache``. The basic
-concept is to use event subscribers on the HttpCache class.
+concept is to use event listeners on the HttpCache class.
 
 .. warning::
 
@@ -40,10 +40,10 @@ Instead of extending ``Symfony\Bundle\FrameworkBundle\HttpCache\HttpCache``, you
     The drawback is that you need to manually check whether you need to adjust your
     ``AppCache`` each time you update the FOSHttpCache library.
 
-By default, the event dispatching cache kernel registers all subscribers it knows
-about. You can disable subscribers, or customize how they are instantiated.
+By default, the event dispatching cache kernel registers all event listeners it
+knows about. You can disable listeners, or customize how they are instantiated.
 
-If you do not need all subscribers, or need to register some yourself to
+If you do not need all listeners, or need to register some yourself to
 customize their behavior, overwrite ``getOptions`` and return the right bitmap
 in ``fos_default_subscribers``. Use the constants provided by the
 ``EventDispatchingHttpCache``::
@@ -55,8 +55,8 @@ in ``fos_default_subscribers``. Use the constants provided by the
         );
     }
 
-To register subscribers that you need to instantiate yourself, overwrite
-``getDefaultSubscribers``::
+To register event listeners that you want to instantiate yourself in the cache
+kernel, overwrite ``getDefaultSubscribers``::
 
     use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
 
@@ -64,17 +64,20 @@ To register subscribers that you need to instantiate yourself, overwrite
 
     public function getDefaultSubscribers()
     {
-        // get enabled subscribers with default settings
+        // get enabled listeners with default settings
         $subscribers = parent::getDefaultSubscribers();
 
-        $subscribers[] = new UserContextSubscriber(array(
+        $subscribers[] = new UserContextListener(array(
             'session_name_prefix' => 'eZSESSID',
         ));
 
-        $subscribers[] = new CustomSubscriber();
+        $subscribers[] = new CustomListener();
 
         return $subscribers;
     }
+
+You can also register event listeners from outside the kernel, e.g. in your
+``app.php`` with the ``addListener`` and ``addSubscriber`` methods.
 
 .. warning::
 
@@ -96,11 +99,11 @@ To register subscribers that you need to instantiate yourself, overwrite
       way to achieve this is to call ``class_exists`` resp. ``interface_exists``
       with each of them.
 
-Subscribers
-~~~~~~~~~~~
+Event Listeners
+~~~~~~~~~~~~~~~
 
-Each feature has its subscriber. Subscribers are provided by the FOSHttpCache_
-library. You can find the documentation for the subscribers in the
-:ref:`FOSHttpCache Symfony Cache documentation section <foshttpcache:symfony httpcache configuration>`.
+Each cache feature has its own event listener. The listeners are provided by
+the FOSHttpCache_ library. You can find the documentation for those listeners
+in the :ref:`FOSHttpCache Symfony Cache documentation section <foshttpcache:symfony httpcache configuration>`.
 
 .. _Symfony HttpCache documentation: http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy

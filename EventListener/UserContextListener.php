@@ -30,7 +30,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * @author Stefan Paschke <stefan.paschke@gmail.com>
  * @author Joel Wurtz <joel.wurtz@gmail.com>
  */
-class UserContextSubscriber implements EventSubscriberInterface
+class UserContextListener implements EventSubscriberInterface
 {
     /**
      * @var RequestMatcherInterface

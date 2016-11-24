@@ -24,7 +24,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @author Lukas Kahwe Smith <smith@pooteeweet.org>
  */
-class FlashMessageSubscriber implements EventSubscriberInterface
+class FlashMessageListener implements EventSubscriberInterface
 {
     /**
      * @var array

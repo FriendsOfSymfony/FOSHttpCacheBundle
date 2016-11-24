@@ -15,7 +15,7 @@ use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AbstractRuleSubscriber
+abstract class AbstractRuleListener
 {
     /**
      * @var array List of arrays with RuleMatcher, settings array

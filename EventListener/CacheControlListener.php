@@ -25,7 +25,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * @author Lea Haensenberger <lea.haensenberger@gmail.com>
  * @author David Buchmann <mail@davidbu.ch>
  */
-class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubscriberInterface
+class CacheControlListener extends AbstractRuleListener implements EventSubscriberInterface
 {
     /**
      * Whether to skip this response and not set any cache headers.

@@ -28,10 +28,10 @@ class LoggerPass implements CompilerPassInterface
             return;
         }
 
-        $subscriber = $container->getDefinition('fos_http_cache.event_listener.log')
+        $logListener = $container->getDefinition('fos_http_cache.event_listener.log')
             ->setAbstract(false);
 
         $container->getDefinition('fos_http_cache.cache_manager')
-            ->addMethodCall('addSubscriber', array($subscriber));
+            ->addMethodCall('addSubscriber', array($logListener));
     }
 }
