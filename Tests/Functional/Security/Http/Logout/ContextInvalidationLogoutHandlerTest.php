@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Security\Http\Logout;
 
+use FOS\HttpCache\ProxyClient\Varnish;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
 
@@ -21,7 +22,7 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
         $client = static::createClient();
         $client->getContainer()->mock(
             'fos_http_cache.proxy_client.varnish',
-            '\FOS\HttpCache\ProxyClient\Varnish'
+            Varnish::class
         )
             ->shouldReceive('ban')->once()->with(array('accept' => 'application/vnd.fos.user-context-hash', 'Cookie' => '.*test.*'))
             ->shouldReceive('ban')->once()->with(array('accept' => 'application/vnd.fos.user-context-hash', 'Authorization' => '.*test.*'))

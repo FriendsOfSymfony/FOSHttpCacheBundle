@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Command;
 
+use FOS\HttpCacheBundle\CacheManager;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class InvalidateRegexCommandTest extends CommandTestCase
@@ -20,7 +21,7 @@ class InvalidateRegexCommandTest extends CommandTestCase
         $client = self::createClient();
         $client->getContainer()->mock(
             'fos_http_cache.cache_manager',
-            '\FOS\HttpCacheBundle\CacheManager'
+            CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidateRegex')->once()->with('/my.*/path')
@@ -36,7 +37,7 @@ class InvalidateRegexCommandTest extends CommandTestCase
         $client = self::createClient();
         $client->getContainer()->mock(
             'fos_http_cache.cache_manager',
-            '\FOS\HttpCacheBundle\CacheManager'
+            CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidateRegex')->once()->with('/my.*/path')

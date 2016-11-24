@@ -28,7 +28,7 @@ class HttpCacheTest extends \PHPUnit_Framework_TestCase
     {
         // HttpKernelInterface does not work, as symfony HttpCache requires an isDebug method
         $mockKernel = $this->getMock('Symfony\Component\HttpKernel\KernelInterface');
-        $mock = $this->getMockBuilder('\FOS\HttpCacheBundle\HttpCache')
+        $mock = $this->getMockBuilder(HttpCache::class)
             ->setConstructorArgs(array($mockKernel, sys_get_temp_dir()))
             ->setMethods($mockedMethods)
             ->getMock()

@@ -14,6 +14,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\EventListener\TagListener;
 use FOS\HttpCacheBundle\Handler\TagHandler;
+use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -34,7 +35,7 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->tagHandler = \Mockery::mock(
-            '\FOS\HttpCacheBundle\Handler\TagHandler'
+            TagHandler::class
         )->shouldDeferMissing();
 
         $this->listener = new TagListener($this->tagHandler);
@@ -58,7 +59,7 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
             $event->getResponse()->headers->get($this->tagHandler->getTagsHeaderName())
         );
 
-        $mockMatcher = \Mockery::mock('FOS\HttpCacheBundle\Http\RuleMatcherInterface')
+        $mockMatcher = \Mockery::mock(RuleMatcherInterface::class)
             ->shouldReceive('matches')->once()->with($request, $event->getResponse())->andReturn(true)
             ->getMock()
         ;
@@ -113,7 +114,7 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('invalidateTags')
             ->once()
             ->with(array('item-1', 'item-2', 'configured-tag', 'item-2'));
-        $mockMatcher = \Mockery::mock('FOS\HttpCacheBundle\Http\RuleMatcherInterface')
+        $mockMatcher = \Mockery::mock(RuleMatcherInterface::class)
             ->shouldReceive('matches')->once()->with($request, $event->getResponse())->andReturn(true)
             ->getMock()
         ;

@@ -30,7 +30,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
     protected function getHttpCachePartialMock(array $mockedMethods = null)
     {
         $mock = $this
-            ->getMockBuilder('\FOS\HttpCacheBundle\SymfonyCache\EventDispatchingHttpCache')
+            ->getMockBuilder(EventDispatchingHttpCache::class)
             ->setMethods($mockedMethods)
             ->disableOriginalConstructor()
             ->getMock()

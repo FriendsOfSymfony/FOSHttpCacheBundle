@@ -11,10 +11,12 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
+use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use FOS\HttpCacheBundle\EventListener\InvalidationListener;
 use FOS\HttpCacheBundle\Http\RuleMatcher;
+use Mockery\MockInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
@@ -25,12 +27,19 @@ use Symfony\Component\Routing\RouteCollection;
 
 class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
 {
-    protected $cacheManager;
-    protected $invalidators;
+    /**
+     * @var CacheManager|MockInterface
+     */
+    private $cacheManager;
+
+    /**
+     * @var |MockInterface
+     */
+    private $invalidators;
 
     public function setUp()
     {
-        $this->cacheManager = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager');
+        $this->cacheManager = \Mockery::mock(CacheManager::class);
     }
 
     public function testNoRoutesInvalidatedWhenResponseIsUnsuccessful()
@@ -38,12 +47,6 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
         $this->cacheManager
             ->shouldReceive('invalidateRoute')->never()
             ->shouldReceive('flush')->once();
-
-        $this->invalidators = \Mockery::mock('\FOS\HttpCacheBundle\Invalidator\InvalidatorCollection')
-            ->shouldReceive('hasInvalidatorRoute')
-            ->with('my_route')
-            ->andReturn(false)
-            ->getMock();
 
         $request = new Request();
         $request->attributes->set('_route', 'my_route');
@@ -54,7 +57,7 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelTerminate()
     {
-        $cacheManager = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager');
+        $cacheManager = \Mockery::mock(CacheManager::class);
         $cacheManager->shouldReceive('invalidatePath')->with('/retrieve/something/123')
             ->shouldReceive('invalidatePath')->with('/retrieve/something/123/bla')
             ->shouldReceive('flush')->once()
@@ -101,7 +104,7 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelException()
     {
-        $cacheManager = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager');
+        $cacheManager = \Mockery::mock(CacheManager::class);
         $cacheManager
             ->shouldReceive('flush')->once()
         ;

@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
+use FOS\HttpCacheBundle\CacheManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TagListenerTest extends WebTestCase
@@ -34,7 +35,7 @@ class TagListenerTest extends WebTestCase
 
         $client->getContainer()->mock(
             'fos_http_cache.cache_manager',
-            '\FOS\HttpCacheBundle\CacheManager'
+            CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidate')->with(array('X-Cache-Tags' => '(all\\-items)(,.+)?$'))
@@ -51,7 +52,7 @@ class TagListenerTest extends WebTestCase
 
         $client->getContainer()->mock(
             'fos_http_cache.cache_manager',
-            '\FOS\HttpCacheBundle\CacheManager'
+            CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidate')->never()
@@ -76,7 +77,7 @@ class TagListenerTest extends WebTestCase
 
         $client->getContainer()->mock(
             'fos_http_cache.cache_manager',
-            '\FOS\HttpCacheBundle\CacheManager'
+            CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidate')->once()->with(array('X-Cache-Tags' => '(area|area\\-51)(,.+)?$'))
