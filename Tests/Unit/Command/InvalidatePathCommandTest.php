@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\Command;
 
+use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Command\InvalidatePathCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -22,7 +23,7 @@ class InvalidatePathCommandTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteMissingParameters()
     {
-        $invalidator = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager');
+        $invalidator = \Mockery::mock(CacheManager::class);
 
         $application = new Application();
         $application->add(new InvalidatePathCommand($invalidator));
@@ -34,7 +35,7 @@ class InvalidatePathCommandTest extends \PHPUnit_Framework_TestCase
 
     public function testExecuteParameter()
     {
-        $invalidator = \Mockery::mock('\FOS\HttpCacheBundle\CacheManager')
+        $invalidator = \Mockery::mock(CacheManager::class)
             ->shouldReceive('invalidatePath')->once()->with('/my/path')
             ->shouldReceive('invalidatePath')->once()->with('/other/path')
             ->getMock()

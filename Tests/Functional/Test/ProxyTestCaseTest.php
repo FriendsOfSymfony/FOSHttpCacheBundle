@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Test;
 
+use FOS\HttpCache\Test\Proxy\VarnishProxy;
 use FOS\HttpCacheBundle\Test\ProxyTestCase;
 
 class ProxyTestCaseTest extends ProxyTestCase
@@ -19,7 +20,7 @@ class ProxyTestCaseTest extends ProxyTestCase
     {
         static::getContainer()->mock(
             'fos_http_cache.test.default_proxy_server',
-            '\FOS\HttpCache\Test\Proxy\VarnishProxy'
+            VarnishProxy::class
         );
 
         parent::setUp();

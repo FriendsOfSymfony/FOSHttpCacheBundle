@@ -11,6 +11,10 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit;
 
+use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
+use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 use FOS\HttpCacheBundle\CacheManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -21,12 +25,12 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->proxyClient = \Mockery::mock('\FOS\HttpCache\ProxyClient\ProxyClientInterface');
+        $this->proxyClient = \Mockery::mock(ProxyClientInterface::class);
     }
 
     public function testInvalidateRoute()
     {
-        $httpCache = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface')
+        $httpCache = \Mockery::mock(PurgeInterface::class)
             ->shouldReceive('purge')->once()->with('/my/route', array())
             ->shouldReceive('purge')->once()->with('/route/with/params/id/123', array())
             ->shouldReceive('purge')->once()->with('/route/with/params/id/123', array('X-Foo' => 'bar'))
@@ -53,7 +57,7 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testRefreshRoute()
     {
-        $httpCache = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface')
+        $httpCache = \Mockery::mock(RefreshInterface::class)
             ->shouldReceive('refresh')->once()->with('/my/route', null)
             ->shouldReceive('refresh')->once()->with('/route/with/params/id/123', null)
             ->shouldReceive('refresh')->once()->with('/route/with/params/id/123', array('X-Foo' => 'bar'))
@@ -84,8 +88,8 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testTagResponse()
     {
-        $ban = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface');
-        $router = \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $ban = \Mockery::mock(BanInterface::class);
+        $router = \Mockery::mock(UrlGeneratorInterface::class);
 
         $tags1 = array('post-1', 'posts');
         $tags2 = array('post-2');

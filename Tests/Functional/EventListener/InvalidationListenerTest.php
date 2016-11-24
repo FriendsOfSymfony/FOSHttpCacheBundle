@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
+use FOS\HttpCacheBundle\CacheManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class InvalidationListenerTest extends WebTestCase
@@ -21,7 +22,7 @@ class InvalidationListenerTest extends WebTestCase
 
         $client->getContainer()->mock(
             'fos_http_cache.cache_manager',
-            '\FOS\HttpCacheBundle\CacheManager'
+            CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidateRoute')->once()->with('test_noncached', array())
@@ -42,7 +43,7 @@ class InvalidationListenerTest extends WebTestCase
 
         $client->getContainer()->mock(
             'fos_http_cache.cache_manager',
-            '\FOS\HttpCacheBundle\CacheManager'
+            CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidatePath')->once()->with('/cached')
@@ -61,7 +62,7 @@ class InvalidationListenerTest extends WebTestCase
 
         $client->getContainer()->mock(
             'fos_http_cache.cache_manager',
-            '\FOS\HttpCacheBundle\CacheManager'
+            CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidatePath')->never()

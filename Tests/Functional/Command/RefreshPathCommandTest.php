@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Command;
 
+use FOS\HttpCacheBundle\CacheManager;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RefreshPathCommandTest extends CommandTestCase
@@ -20,7 +21,7 @@ class RefreshPathCommandTest extends CommandTestCase
         $client = self::createClient();
         $client->getContainer()->mock(
             'fos_http_cache.cache_manager',
-            '\FOS\HttpCacheBundle\CacheManager'
+            CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('refreshPath')->once()->with('http://example.com/my/path')
@@ -37,7 +38,7 @@ class RefreshPathCommandTest extends CommandTestCase
         $client = self::createClient();
         $client->getContainer()->mock(
             'fos_http_cache.cache_manager',
-            '\FOS\HttpCacheBundle\CacheManager'
+            CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('refreshPath')->once()->with('http://example.com/my/path')
