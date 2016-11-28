@@ -204,7 +204,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('stale_while_revalidate')->end()
                         ->end()
                     ->end()
-                    ->scalarNode('etag')
+                    ->booleanNode('etag')
                         ->defaultValue(false)
                         ->info('Set a simple ETag which is just the md5 hash of the response body')
                     ->end()
