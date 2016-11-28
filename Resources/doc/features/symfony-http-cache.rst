@@ -106,4 +106,22 @@ Each cache feature has its own event listener. The listeners are provided by
 the FOSHttpCache_ library. You can find the documentation for those listeners
 in the :ref:`FOSHttpCache Symfony Cache documentation section <foshttpcache:symfony httpcache configuration>`.
 
+Prevent redeclaration error for Event class
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Under some circumstances this bundle loads a class which inherits from
+class ``Symfony\Component\EventDispatcher\Event`` in early cache lookup phase. This
+results in the following error message::
+
+    Fatal error: Cannot redeclare class Symfony\Component\EventDispatcher\Event in app/cache/dev/classes.php on line ...
+
+This error may occur if you have told the kernel to load class cache in your
+``app/console`` script, by adding something like ``$kernel->loadClassCache()``.
+To get around the error you can either stop using the class cache or adding this
+line to your ``app/console``::
+
+    class_exists('FOS\\HttpCache\\SymfonyCache\\CacheEvent');
+
+directly below the inclusion of ``bootstrap.php.cache``.
+
 .. _Symfony HttpCache documentation: http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy
