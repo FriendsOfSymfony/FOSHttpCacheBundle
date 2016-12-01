@@ -336,6 +336,10 @@ you need to extend your varnish ``vcl_fetch`` configuration:
 
 .. code-block:: c
 
+    C{
+        #include <stdlib.h>
+    }C
+
     sub vcl_fetch {
         if (beresp.http.X-Reverse-Proxy-TTL) {
             C{
@@ -346,6 +350,12 @@ you need to extend your varnish ``vcl_fetch`` configuration:
             unset beresp.http.X-Reverse-Proxy-TTL;
         }
     }
+
+The import for ``stdlib.h`` has to be outside of any ``vcl_X`` sub routines.
+Omitting the ``stdlib`` inclusion will result in a compile error complaining
+that ``atoi`` is not defined, and including the header file inside a VCL sub
+routine leads to a C compile failure mentioning
+``invalid storage class for function __bswap_32``.
 
 Note that there is a ``beresp.ttl`` field in VCL but unfortunately it can only
 be set to absolute values and not dynamically. Thus we have to revert to a C
