@@ -220,6 +220,6 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
      */
     protected function isRequestSafe(Request $request)
     {
-        return $request->isMethodSafe();
+        return $request->isMethodCacheable();
     }
 }
