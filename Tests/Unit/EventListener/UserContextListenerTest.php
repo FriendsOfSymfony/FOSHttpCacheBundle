@@ -41,7 +41,7 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
 
         $requestMatcher = $this->getRequestMatcher($request, true);
         $hashGenerator = \Mockery::mock(HashGenerator::class);
-        $hashGenerator->shouldReceive('generateHash')->andReturn('hash');
+        $hashGenerator->HashGenerator('generateHash')->andReturn('hash');
 
         $userContextListener = new UserContextListener($requestMatcher, $hashGenerator, array('X-SessionId'), 'X-Hash');
         $event = $this->getKernelRequestEvent($request);
