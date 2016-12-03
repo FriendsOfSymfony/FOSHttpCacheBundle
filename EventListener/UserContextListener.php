@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCacheBundle\EventListener;
 
-use FOS\HttpCache\UserContext\HashGenerator;
+use FOS\HttpCache\UserContext\HashGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
@@ -38,7 +38,7 @@ class UserContextListener implements EventSubscriberInterface
     private $requestMatcher;
 
     /**
-     * @var HashGenerator
+     * @var HashGeneratorInterface
      */
     private $hashGenerator;
 
@@ -78,7 +78,7 @@ class UserContextListener implements EventSubscriberInterface
 
     public function __construct(
         RequestMatcherInterface $requestMatcher,
-        HashGenerator $hashGenerator,
+        HashGeneratorInterface $hashGenerator,
         array $userIdentifierHeaders = array('Cookie', 'Authorization'),
         $hashHeader = 'X-User-Context-Hash',
         $ttl = 0,
