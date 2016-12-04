@@ -287,7 +287,7 @@ class FOSHttpCacheExtension extends Extension
         $definition = new Definition(HttpDispatcher::class, [
             $config['servers'],
             $baseUrl,
-            $httpClient
+            $httpClient,
         ]);
 
         $container->setDefinition($serviceName, $definition);

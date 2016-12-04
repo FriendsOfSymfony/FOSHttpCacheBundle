@@ -39,7 +39,7 @@ class TagListenerTest extends WebTestCase
         )
             ->shouldReceive('supports')->andReturn(true)
             ->shouldReceive('invalidateTags')->with(['all-items'])
-            ->shouldReceive('invalidateTags')->with (['item-123'])
+            ->shouldReceive('invalidateTags')->with(['item-123'])
             ->shouldReceive('flush')->once()
         ;
 

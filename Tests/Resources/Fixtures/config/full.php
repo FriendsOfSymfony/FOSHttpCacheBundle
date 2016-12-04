@@ -125,5 +125,4 @@ $container->loadFromExtension('fos_http_cache', array(
     'debug' => array(
         'header' => 'FOS-Cache-Debug',
     ),
-
 ));

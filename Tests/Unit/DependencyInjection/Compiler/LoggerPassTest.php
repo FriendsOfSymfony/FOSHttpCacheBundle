@@ -76,7 +76,7 @@ class LoggerPassTest extends \PHPUnit_Framework_TestCase
                         'servers' => array(
                             '127.0.0.1',
                         ),
-                    ]
+                    ],
                 ),
             ),
             'tags' => array(
