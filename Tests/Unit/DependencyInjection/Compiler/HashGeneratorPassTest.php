@@ -44,7 +44,7 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
         $config = $this->getBaseConfig();
         $this->extension->load(array($config), $container);
         $this->userContextListenerPass->process($container);
-        $this->assertCount(13, $container->getDefinitions());
+        $this->assertCount(14, $container->getDefinitions());
     }
 
     /**
@@ -105,9 +105,11 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
         return array(
             'proxy_client' => array(
                 'varnish' => array(
-                    'base_url' => 'my_hostname',
-                    'servers' => array(
-                        '127.0.0.1',
+                    'http' => array(
+                        'base_url' => 'my_hostname',
+                        'servers' => array(
+                            '127.0.0.1',
+                        ),
                     ),
                 ),
             ),

@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\DependencyInjection\Reference;
 
 class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,26 +39,21 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.nginx'));
         $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
-        $this->assertTrue($container->hasDefinition('fos_http_cache.handler.tag_handler'));
-
-        $this->assertFalse($container->hasParameter('fos_http_cache.proxy_client.varnish.guzzle_client'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.tag'));
     }
 
-    public function testConfigLoadVarnishCustomGuzzle()
+    public function testConfigLoadVarnishCustomClient()
     {
         $container = $this->createContainer();
 
         $config = $this->getBaseConfig();
-        $config['proxy_client']['varnish']['guzzle_client'] = 'my_guzzle';
+        $config['proxy_client']['varnish']['http']['http_client'] = 'my_guzzle';
         $this->extension->load(array($config), $container);
 
-        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
-        $def = $container->getDefinition('fos_http_cache.proxy_client.varnish');
-        $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $def->getArgument(2));
-        $this->assertEquals('fos_http_cache.proxy_client.varnish.guzzle_client', $def->getArgument(2)->__toString());
-
-        $this->assertTrue($container->hasAlias('fos_http_cache.proxy_client.varnish.guzzle_client'));
-        $this->assertEquals('my_guzzle', $container->getAlias('fos_http_cache.proxy_client.varnish.guzzle_client'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.varnish.http_dispatcher'));
+        $def = $container->getDefinition('fos_http_cache.proxy_client.varnish.http_dispatcher');
+        $this->assertInstanceOf(Reference::class, $def->getArgument(2));
+        $this->assertEquals('my_guzzle', $def->getArgument(2)->__toString());
     }
 
     /**
@@ -67,7 +63,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $container = $this->createContainer();
         $config = $this->getBaseConfig();
-        $config['proxy_client']['varnish']['base_url'] = 'ftp:not a valid url';
+        $config['proxy_client']['varnish']['http']['base_url'] = 'ftp:not a valid url';
 
         $this->extension->load(array($config), $container);
     }
@@ -79,10 +75,12 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
             array(
                 'proxy_client' => array(
                     'nginx' => array(
-                        'base_url' => 'my_hostname',
-                        'servers' => array(
-                            '127.0.0.1',
-                        ),
+                        'http' => [
+                            'base_url' => 'my_hostname',
+                            'servers' => array(
+                                '127.0.0.1',
+                            ),
+                        ],
                     ),
                 ),
             ),
@@ -92,7 +90,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.nginx'));
         $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
-        $this->assertFalse($container->hasDefinition('fos_http_cache.handler.tag_handler'));
+        $this->assertFalse($container->hasDefinition('fos_http_cache.http.symfony_response_tagger'));
     }
 
     public function testConfigLoadSymfony()
@@ -102,10 +100,12 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
             array(
                 'proxy_client' => array(
                     'symfony' => array(
-                        'base_url' => 'my_hostname',
-                        'servers' => array(
-                            '127.0.0.1',
-                        ),
+                        'http' => [
+                            'base_url' => 'my_hostname',
+                            'servers' => array(
+                                '127.0.0.1',
+                            ),
+                        ],
                     ),
                 ),
             ),
@@ -116,7 +116,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.symfony'));
         $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
-        $this->assertFalse($container->hasDefinition('fos_http_cache.handler.tag_handler'));
+        $this->assertFalse($container->hasDefinition('fos_http_cache.http.symfony_response_tagger'));
     }
 
     public function testConfigCustomClient()
@@ -135,7 +135,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.symfony'));
         $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
-        $this->assertFalse($container->hasDefinition('fos_http_cache.handler.tag_handler'));
+        $this->assertFalse($container->hasDefinition('fos_http_cache.http.symfony_response_tagger'));
     }
 
     public function testEmptyConfig()
@@ -150,17 +150,19 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage You can not enable cache tagging with nginx
+     * @expectedExceptionMessage You can not enable cache tagging with the nginx client
      */
     public function testConfigTagNotSupported()
     {
         $config = array(
                 'proxy_client' => array(
                     'nginx' => array(
-                        'base_url' => 'my_hostname',
-                        'servers' => array(
-                            '127.0.0.1',
-                        ),
+                        'http' => [
+                            'base_url' => 'my_hostname',
+                            'servers' => array(
+                                '127.0.0.1',
+                            ),
+                        ],
                     ),
                 ),
                 'tags' => array(
@@ -381,10 +383,12 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         return array(
             'proxy_client' => array(
                 'varnish' => array(
-                    'base_url' => 'my_hostname',
-                    'servers' => array(
-                        '127.0.0.1',
-                    ),
+                    'http' => [
+                        'base_url' => 'my_hostname',
+                        'servers' => array(
+                            '127.0.0.1',
+                        ),
+                    ],
                 ),
             ),
         );

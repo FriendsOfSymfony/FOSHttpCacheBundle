@@ -47,9 +47,11 @@ $container->loadFromExtension('fos_http_cache', array(
     ),
     'proxy_client' => array(
         'varnish' => array(
-            'servers' => array('22.22.22.22'),
-            'base_url' => '/test',
-            'guzzle_client' => 'acme.guzzle.varnish',
+            'http' => [
+                'servers' => array('22.22.22.22'),
+                'base_url' => '/test',
+                'http_client' => 'acme.guzzle.varnish',
+            ],
         ),
     ),
 

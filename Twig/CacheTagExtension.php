@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Twig;
 
-use FOS\HttpCache\Handler\TagHandler;
+use FOS\HttpCache\ResponseTagger;
 
 /**
  * A Twig extension to allow adding cache tags from twig templates.
@@ -19,13 +19,13 @@ use FOS\HttpCache\Handler\TagHandler;
 class CacheTagExtension extends \Twig_Extension
 {
     /**
-     * @var TagHandler
+     * @var ResponseTagger
      */
-    private $tagHandler;
+    private $responseTagger;
 
-    public function __construct(TagHandler $tagHandler)
+    public function __construct(ResponseTagger $responseTagger)
     {
-        $this->tagHandler = $tagHandler;
+        $this->responseTagger = $responseTagger;
     }
 
     /**
@@ -50,7 +50,7 @@ class CacheTagExtension extends \Twig_Extension
      */
     public function addTag($tag)
     {
-        $this->tagHandler->addTags((array) $tag);
+        $this->responseTagger->addTags((array) $tag);
     }
 
     /**

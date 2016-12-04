@@ -3,8 +3,10 @@
 
     <config xmlns="http://example.org/schema/dic/fos_http_cache">
         <proxy-client>
-            <nginx base-url="/test" purge-location="/purge" guzzle-client="acme.guzzle.nginx">
-                <server>22.22.22.22</server>
+            <nginx purge-location="/purge">
+                <http base-url="/test" http-client="acme.guzzle.nginx">
+                    <server>22.22.22.22</server>
+                </http>
             </nginx>
         </proxy-client>
 

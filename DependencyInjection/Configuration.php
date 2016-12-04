@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -91,36 +92,6 @@ class Configuration implements ConfigurationInterface
                         return $v;
                     }
                     throw new InvalidConfigurationException('You need to configure a proxy_client to get the cache_manager needed for invalidation handling.');
-                })
-            ->end()
-            ->validate()
-                ->ifTrue(function ($v) {
-                    return isset($v['test'])
-                        && $v['test']['client']['varnish']['enabled']
-                        && !isset($v['proxy_client']['varnish']);
-                })
-                ->then(function ($v) {
-                    if ('auto' === $v['test']['client']['varnish']['enabled']) {
-                        $v['test']['client']['varnish']['enabled'] = false;
-
-                        return $v;
-                    }
-                    throw new InvalidConfigurationException('You need to configure the Varnish proxy_client to use the Varnish test client');
-                })
-            ->end()
-            ->validate()
-                ->ifTrue(function ($v) {
-                    if (isset($v['test'])) {
-                        return $v['test']['client']['nginx']['enabled'] && !isset($v['proxy_client']['nginx']);
-                    }
-                })
-                ->then(function ($v) {
-                    if ('auto' === $v['test']['client']['nginx']['enabled']) {
-                        $v['test']['client']['nginx']['enabled'] = false;
-
-                        return $v;
-                    }
-                    throw new InvalidConfigurationException('You need to configure the Nginx proxy_client to use the Nginx test client');
                 })
             ->end()
             ->validate()
@@ -314,87 +285,68 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->enumNode('default')
                             ->values(array('varnish', 'nginx', 'symfony'))
-                            ->info('If you configure more than one proxy client, specify which client is the default.')
+                            ->info('If you configure more than one proxy client, you need to specify which client is the default.')
                         ->end()
                         ->arrayNode('varnish')
-                            ->fixXmlConfig('server')
                             ->children()
-                                ->arrayNode('servers')
-                                    ->beforeNormalization()->ifString()->then(function ($v) {
-                                        return preg_split('/\s*,\s*/', $v);
-                                    })->end()
-                                    ->useAttributeAsKey('name')
-                                    ->isRequired()
-                                    ->requiresAtLeastOneElement()
-                                    ->prototype('scalar')->end()
-                                    ->info('Addresses of the hosts Varnish is running on. May be hostname or ip, and with :port if not the default port 80.')
-                                ->end()
-                                ->scalarNode('base_url')
-                                    ->defaultNull()
-                                    ->info('Default host name and optional path for path based invalidation.')
-                                ->end()
-                                ->scalarNode('http_client')
-                                    ->defaultValue('httplug.client')
-                                    ->info('Httplug service to use for sending the requests.')
-                                ->end()
+                                    ->append($this->getHttpDispatcherNode())
                             ->end()
                         ->end()
 
                         ->arrayNode('nginx')
-                            ->fixXmlConfig('server')
                             ->children()
-                                ->arrayNode('servers')
-                                    ->beforeNormalization()->ifString()->then(function ($v) {
-                                        return preg_split('/\s*,\s*/', $v);
-                                    })->end()
-                                    ->useAttributeAsKey('name')
-                                    ->isRequired()
-                                    ->requiresAtLeastOneElement()
-                                    ->prototype('scalar')->end()
-                                    ->info('Addresses of the hosts Nginx is running on. May be hostname or ip, and with :port if not the default port 80.')
-                                ->end()
-                                ->scalarNode('base_url')
-                                    ->defaultNull()
-                                    ->info('Default host name and optional path for path based invalidation.')
-                                ->end()
-                                ->scalarNode('http_client')
-                                    ->defaultValue('httplug.client')
-                                    ->info('Httplug service to use for sending the requests.')
-                                ->end()
                                 ->scalarNode('purge_location')
-                                    ->defaultValue('')
+                                    ->defaultValue(false)
                                     ->info('Path to trigger the purge on Nginx for different location purge.')
                                 ->end()
+                                ->append($this->getHttpDispatcherNode())
                             ->end()
                         ->end()
 
                         ->arrayNode('symfony')
-                            ->fixXmlConfig('server')
                             ->children()
-                                ->arrayNode('servers')
-                                    ->beforeNormalization()->ifString()->then(function ($v) {
-                                        return preg_split('/\s*,\s*/', $v);
-                                    })->end()
-                                    ->useAttributeAsKey('name')
-                                    ->isRequired()
-                                    ->requiresAtLeastOneElement()
-                                    ->prototype('scalar')->end()
-                                    ->info('Addresses of the hosts Symfony HttpCache is running on. May be hostname or ip, and with :port if not the default port 80.')
-                                ->end()
-                                ->scalarNode('base_url')
-                                    ->defaultNull()
-                                    ->info('Default host name and optional path for path based invalidation.')
-                                ->end()
-                                ->scalarNode('http_client')
-                                    ->defaultValue('httplug.client')
-                                    ->info('httplug service to use for sending the requests.')
-                                ->end()
+                                ->append($this->getHttpDispatcherNode())
                             ->end()
                         ->end()
 
                     ->end()
                 ->end()
             ->end();
+    }
+
+    /**
+     * Get the configuration node for a HTTP dispatcher in a proxy client.
+     *
+     * @return NodeDefinition
+     */
+    private function getHttpDispatcherNode()
+    {
+        $treeBuilder = new TreeBuilder();
+        $node = $treeBuilder->root('http');
+
+        $node
+            ->fixXmlConfig('server')
+            ->isRequired()
+            ->children()
+                ->arrayNode('servers')
+                    ->info('Addresses of the hosts the caching proxy is running on. May be hostname or ip, and with :port if not the default port 80.')
+                    ->useAttributeAsKey('name')
+                    ->isRequired()
+                    ->requiresAtLeastOneElement()
+                    ->prototype('scalar')->end()
+                ->end()
+                ->scalarNode('base_url')
+                    ->defaultNull()
+                    ->info('Default host name and optional path for path based invalidation.')
+                ->end()
+                ->scalarNode('http_client')
+                    ->defaultNull()
+                    ->info('Httplug async client service name to use for sending the requests.')
+                ->end()
+            ->end()
+        ;
+
+        return $node;
     }
 
     private function addTestSection(ArrayNodeDefinition $rootNode)
@@ -428,37 +380,6 @@ class Configuration implements ConfigurationInterface
                                         ->scalarNode('binary')->defaultValue('nginx')->end()
                                         ->integerNode('port')->defaultValue(8080)->end()
                                         ->scalarNode('ip')->defaultValue('127.0.0.1')->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('client')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->enumNode('default')
-                                    ->values(array('varnish', 'nginx'))
-                                    ->info('If you configure more than one proxy client, specify which client is the default.')
-                                ->end()
-                                ->arrayNode('varnish')
-                                    ->addDefaultsIfNotSet()
-                                    ->canBeEnabled()
-                                    ->children()
-                                        ->enumNode('enabled')
-                                            ->values(array(true, false, 'auto'))
-                                            ->defaultValue('auto')
-                                            ->info('Whether to enable the Varnish test client.')
-                                        ->end()
-                                    ->end()
-                                ->end()
-                                ->arrayNode('nginx')
-                                    ->addDefaultsIfNotSet()
-                                    ->canBeEnabled()
-                                    ->children()
-                                        ->enumNode('enabled')
-                                            ->values(array(true, false, 'auto'))
-                                            ->defaultValue('auto')
-                                            ->info('Whether to enable the Nginx test client.')
-                                        ->end()
                                     ->end()
                                 ->end()
                             ->end()

@@ -29,7 +29,7 @@ class LoggerPassTest extends \PHPUnit_Framework_TestCase
         $container->setDefinition('logger', new Definition());
         $loggerPass->process($container);
 
-        $this->assertHasCall($container, 'fos_http_cache.cache_manager', 'addSubscriber');
+        $this->assertHasTaggedService($container, 'fos_http_cache.event_listener.log', 'kernel.event_subscriber');
     }
 
     public function testNoLogger()
@@ -41,21 +41,22 @@ class LoggerPassTest extends \PHPUnit_Framework_TestCase
         $extension->load(array($config), $container);
         $loggerPass->process($container);
 
-        $this->assertNotHasCall($container, 'fos_http_cache.cache_manager', 'addSubscriber');
+        $this->assertIsAbstract($container, 'fos_http_cache.event_listener.log');
     }
 
-    private function assertHasCall(ContainerBuilder $container, $id, $method)
+    private function assertHasTaggedService(ContainerBuilder $container, $id, $tag)
     {
         $this->assertTrue($container->hasDefinition($id));
         $definition = $container->getDefinition($id);
-        $this->assertTrue($definition->hasMethodCall($method));
+        $this->assertFalse($definition->isAbstract());
+        $this->assertTrue($definition->hasTag($tag));
     }
 
-    private function assertNotHasCall(ContainerBuilder $container, $id, $method)
+    private function assertIsAbstract(ContainerBuilder $container, $id)
     {
         $this->assertTrue($container->hasDefinition($id));
         $definition = $container->getDefinition($id);
-        $this->assertFalse($definition->hasMethodCall($method));
+        $this->assertTrue($definition->isAbstract());
     }
 
     private function createContainer()
@@ -70,10 +71,12 @@ class LoggerPassTest extends \PHPUnit_Framework_TestCase
         return array(
             'proxy_client' => array(
                 'varnish' => array(
-                    'base_url' => 'my_hostname',
-                    'servers' => array(
-                        '127.0.0.1',
-                    ),
+                    'http' => [
+                        'base_url' => 'my_hostname',
+                        'servers' => array(
+                            '127.0.0.1',
+                        ),
+                    ]
                 ),
             ),
             'tags' => array(

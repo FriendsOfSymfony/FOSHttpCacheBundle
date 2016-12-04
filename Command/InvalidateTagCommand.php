@@ -16,7 +16,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use FOS\HttpCache\Handler\TagHandler;
 
 /**
  * A command to trigger cache invalidation by tag from the command line.
@@ -26,39 +25,18 @@ use FOS\HttpCache\Handler\TagHandler;
 class InvalidateTagCommand extends ContainerAwareCommand
 {
     /**
-     * @var TagHandler
+     * @var CacheManager
      */
-    private $tagHandler;
+    private $cacheManager;
 
     /**
      * @var string
      */
     private $commandName;
 
-    /**
-     * If no cache manager is specified explicitly, fos_http_cache.cache_manager
-     * is automatically loaded.
-     *
-     * Passing CacheManager as argument is deprecated and will be restricted to TagHandler in 2.0.
-     *
-     * @param TagHandler|CacheManager|null $tagHandler  The tag handler to talk to
-     * @param string                       $commandName Name of this command, in case you want to reuse it
-     */
-    public function __construct($tagHandler = null, $commandName = 'fos:httpcache:invalidate:tag')
+    public function __construct(CacheManager $cacheManager)
     {
-        if (!($tagHandler instanceof TagHandler || $tagHandler instanceof CacheManager || null === $tagHandler)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Expected instance of TagHandler, CacheManager or null, but got %s',
-                    get_class($tagHandler)
-                )
-            );
-        }
-        if ($tagHandler instanceof CacheManager) {
-            @trigger_error('Passing the CacheManager to '.__CLASS__.' is deprecated since version 1.2 and will be removed in 2.0. Provide the TagHandler instead.', E_USER_DEPRECATED);
-        }
-        $this->commandName = $commandName;
-        $this->tagHandler = $tagHandler;
+        $this->cacheManager = $cacheManager;
         parent::__construct();
     }
 
@@ -68,7 +46,7 @@ class InvalidateTagCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName($this->commandName)
+            ->setName('fos:httpcache:invalidate:tag')
             ->setDescription('Invalidate cached content matching the specified tags on all configured caching proxies')
             ->addArgument(
                 'tags',
@@ -93,18 +71,5 @@ EOF
     {
         $tags = $input->getArgument('tags');
 
-        $this->getTagManager()->invalidateTags($tags);
-    }
-
-    /**
-     * @return TagHandler|CacheManager
-     */
-    protected function getTagManager()
-    {
-        if (!$this->tagHandler) {
-            $this->tagHandler = $this->getContainer()->get('fos_http_cache.handler.tag_handler');
-        }
-
-        return $this->tagHandler;
-    }
-}
+        $this->cacheManager->invalidateTags($tags);
+    }}

@@ -11,8 +11,8 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\Command;
 
+use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Command\InvalidateTagCommand;
-use FOS\HttpCacheBundle\Handler\TagHandler;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -23,7 +23,7 @@ class InvalidateTagCommandTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteMissingParameters()
     {
-        $invalidator = \Mockery::mock(TagHandler::class);
+        $invalidator = \Mockery::mock(CacheManager::class);
 
         $application = new Application();
         $application->add(new InvalidateTagCommand($invalidator));
@@ -35,7 +35,7 @@ class InvalidateTagCommandTest extends \PHPUnit_Framework_TestCase
 
     public function testExecuteParameter()
     {
-        $invalidator = \Mockery::mock(TagHandler::class)
+        $invalidator = \Mockery::mock(CacheManager::class)
             ->shouldReceive('invalidateTags')->once()->with(array('my-tag'))
             ->getMock()
         ;

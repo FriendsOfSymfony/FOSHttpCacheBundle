@@ -27,8 +27,11 @@ varnish
     fos_http_cache:
         proxy_client:
             varnish:
-                servers: 123.123.123.1:6060, 123.123.123.2
-                base_url: yourwebsite.com
+                http:
+                    servers:
+                        - 123.123.123.1:6060
+                        - 123.123.123.2
+                    base_url: yourwebsite.com
 
 ``servers``
 """""""""""
@@ -58,7 +61,8 @@ URL may contain a path. If you access your web application on a port other than
     fos_http_cache:
         proxy_client:
             varnish:
-                base_url: yourwebsite.com:8000
+                http:
+                    base_url: yourwebsite.com:8000
 
 .. warning::
 
@@ -77,9 +81,12 @@ nginx
     fos_http_cache:
         proxy_client:
             nginx:
-                servers: 123.123.123.1:6060, 123.123.123.2
-                base_url: yourwebsite.com
                 purge_location: /purge
+                http:
+                    servers:
+                        - 123.123.123.1:6060
+                        - 123.123.123.2
+                    base_url: yourwebsite.com
 
 For ``servers`` and ``base_url``, see above.
 
@@ -102,8 +109,11 @@ symfony
     fos_http_cache:
         proxy_client:
             symfony:
-                servers: 123.123.123.1:6060, 123.123.123.2
-                base_url: yourwebsite.com
+                http:
+                    servers:
+                        - 123.123.123.1:6060
+                        - 123.123.123.2
+                    base_url: yourwebsite.com
 
 For ``servers`` and ``base_url``, see above.
 
