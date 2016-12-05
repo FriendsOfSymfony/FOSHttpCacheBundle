@@ -28,10 +28,11 @@ branches:
 
 matrix:
   include:
-    - php: 5.5
-      env:
-        - COMPOSER_FLAGS="--prefer-lowest"
-        - SYMFONY_VERSION='2.8.*'
+# fails to install. try to get this to work again before releasing
+#    - php: 5.5
+#      env:
+#        - COMPOSER_FLAGS="--prefer-lowest"
+#        - SYMFONY_VERSION='2.8.*'
     - php: 7.1
       env:
         - SYMFONY_VERSION='3.1.*'
