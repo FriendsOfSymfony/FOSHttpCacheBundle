@@ -11,10 +11,11 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
+use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\EventListener\TagListener;
-use FOS\HttpCacheBundle\Handler\TagHandler;
 use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
+use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -23,22 +24,31 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 class TagListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var TagHandler|\Mockery\Mock
+     * @var CacheManager|\Mockery\Mock
      */
-    protected $tagHandler;
+    private $cacheManager;
+
+    /**
+     * @var SymfonyResponseTagger|\Mockery\Mock
+     */
+    private $symfonyResponseTagger;
 
     /**
      * @var TagListener
      */
-    protected $listener;
+    private $listener;
 
     public function setUp()
     {
-        $this->tagHandler = \Mockery::mock(
-            TagHandler::class
-        )->shouldDeferMissing();
+        $this->cacheManager = \Mockery::mock(
+            CacheManager::class
+        );
 
-        $this->listener = new TagListener($this->tagHandler);
+        $this->symfonyResponseTagger = \Mockery::mock(
+            SymfonyResponseTagger::class
+        );
+
+        $this->listener = new TagListener($this->cacheManager, $this->symfonyResponseTagger);
     }
 
     public function testOnKernelResponseGet()
@@ -48,17 +58,44 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
 
         $request = new Request();
         $request->setMethod('GET');
-        $request->attributes->set('id', 2);
         $request->attributes->set('_tag', array($tag1, $tag2));
 
         $event = $this->getEvent($request);
+
+        $this->symfonyResponseTagger
+            ->shouldReceive('addTags')
+            ->withArgs([['item-1', 'item-1', 'item-2']])
+        ;
+
+        $this->symfonyResponseTagger
+            ->shouldReceive('tagSymfonyResponse')
+            ->withArgs([$event->getResponse()])
+            ->andReturn($this->symfonyResponseTagger);
+
         $this->listener->onKernelResponse($event);
+    }
 
-        $this->assertEquals(
-            'item-1,item-2',
-            $event->getResponse()->headers->get($this->tagHandler->getTagsHeaderName())
-        );
+    public function testOnKernelResponseGetMatcher()
+    {
+        $tag1 = new Tag(array('value' => 'item-1'));
 
+        $request = new Request();
+        $request->setMethod('GET');
+        $request->attributes->set('id', 2);
+        $request->attributes->set('_tag', array($tag1));
+
+        $event = $this->getEvent($request);
+
+        $this->symfonyResponseTagger
+            ->shouldReceive('addTags')
+            ->withArgs([['item-1', 'configured-tag', 'item-2']]);
+
+        $this->symfonyResponseTagger
+            ->shouldReceive('tagSymfonyResponse')
+            ->withArgs([$event->getResponse()])
+            ->andReturn($this->symfonyResponseTagger);
+
+        /** @var RuleMatcherInterface $mockMatcher */
         $mockMatcher = \Mockery::mock(RuleMatcherInterface::class)
             ->shouldReceive('matches')->once()->with($request, $event->getResponse())->andReturn(true)
             ->getMock()
@@ -68,11 +105,6 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
             'expressions' => array('"item-" ~ id'),
         ));
         $this->listener->onKernelResponse($event);
-
-        $this->assertEquals(
-            'item-1,item-2,configured-tag',
-            $event->getResponse()->headers->get($this->tagHandler->getTagsHeaderName())
-        );
     }
 
     public function testOnKernelResponseGetWithExpression()
@@ -85,12 +117,16 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
         $request->attributes->set('id', '123');
 
         $event = $this->getEvent($request);
-        $this->listener->onKernelResponse($event);
+        $this->symfonyResponseTagger
+            ->shouldReceive('addTags')
+            ->withArgs([['item-123']]);
 
-        $this->assertEquals(
-            'item-123',
-            $event->getResponse()->headers->get($this->tagHandler->getTagsHeaderName())
-        );
+        $this->symfonyResponseTagger
+            ->shouldReceive('tagSymfonyResponse')
+            ->withArgs([$event->getResponse()])
+            ->andReturn($this->symfonyResponseTagger);
+
+        $this->listener->onKernelResponse($event);
     }
 
     public function testOnKernelResponsePost()
@@ -104,16 +140,17 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
 
         $event = $this->getEvent($request);
 
-        $this->tagHandler
+        $this->cacheManager
             ->shouldReceive('invalidateTags')
             ->once()
             ->with(array('item-1', 'item-2'));
         $this->listener->onKernelResponse($event);
 
-        $this->tagHandler
+        $this->cacheManager
             ->shouldReceive('invalidateTags')
             ->once()
             ->with(array('item-1', 'item-2', 'configured-tag', 'item-2'));
+        /** @var RuleMatcherInterface $mockMatcher */
         $mockMatcher = \Mockery::mock(RuleMatcherInterface::class)
             ->shouldReceive('matches')->once()->with($request, $event->getResponse())->andReturn(true)
             ->getMock()

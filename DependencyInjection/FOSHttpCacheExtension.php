@@ -11,10 +11,12 @@
 
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
+use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
@@ -259,73 +261,57 @@ class FOSHttpCacheExtension extends Extension
         );
     }
 
-    private function loadVarnish(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    /**
+     * Define the http dispatcher service for the proxy client $name.
+     *
+     * @param ContainerBuilder $container
+     * @param array            $config
+     * @param string           $serviceName
+     */
+    private function createHttpDispatcherDefinition(ContainerBuilder $container, array $config, $serviceName)
     {
-        $loader->load('varnish.xml');
         foreach ($config['servers'] as $url) {
             $this->validateUrl($url, 'Not a valid Varnish server address: "%s"');
         }
         if (!empty($config['base_url'])) {
-            $baseUrl = $this->prefixSchema($config['base_url'], 'Not a valid base path: "%s"');
+            $baseUrl = $this->prefixSchema($config['base_url']);
             $this->validateUrl($baseUrl, 'Not a valid base path: "%s"');
         } else {
             $baseUrl = null;
         }
-        $container->setParameter($this->getAlias().'.proxy_client.varnish.servers', $config['servers']);
-        $container->setParameter($this->getAlias().'.proxy_client.varnish.base_url', $baseUrl);
-
-        if (!empty($config['guzzle_client'])) {
-            $container->setAlias(
-                $this->getAlias().'.proxy_client.varnish.guzzle_client',
-                $config['guzzle_client']
-            );
+        $httpClient = null;
+        if ($config['http_client']) {
+            $httpClient = new Reference($config['http_client']);
         }
+
+        $definition = new Definition(HttpDispatcher::class, [
+            $config['servers'],
+            $baseUrl,
+            $httpClient,
+        ]);
+
+        $container->setDefinition($serviceName, $definition);
+    }
+
+    private function loadVarnish(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        $this->createHttpDispatcherDefinition($container, $config['http'], $this->getAlias().'.proxy_client.varnish.http_dispatcher');
+        $loader->load('varnish.xml');
     }
 
     private function loadNginx(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
+        $this->createHttpDispatcherDefinition($container, $config['http'], $this->getAlias().'.proxy_client.nginx.http_dispatcher');
+        $container->setParameter($this->getAlias().'.proxy_client.nginx.options', [
+            'purge_location' => $config['purge_location'],
+        ]);
         $loader->load('nginx.xml');
-        foreach ($config['servers'] as $url) {
-            $this->validateUrl($url, 'Not a valid Nginx server address: "%s"');
-        }
-        if (!empty($config['base_url'])) {
-            $baseUrl = $this->prefixSchema($config['base_url'], 'Not a valid base path: "%s"');
-        } else {
-            $baseUrl = null;
-        }
-        $container->setParameter($this->getAlias().'.proxy_client.nginx.servers', $config['servers']);
-        $container->setParameter($this->getAlias().'.proxy_client.nginx.base_url', $baseUrl);
-        $container->setParameter($this->getAlias().'.proxy_client.nginx.purge_location', $config['purge_location']);
-
-        if (!empty($config['guzzle_client'])) {
-            $container->setAlias(
-                $this->getAlias().'.proxy_client.nginx.guzzle_client',
-                $config['guzzle_client']
-            );
-        }
     }
 
     private function loadSymfony(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
+        $this->createHttpDispatcherDefinition($container, $config['http'], $this->getAlias().'.proxy_client.symfony.http_dispatcher');
         $loader->load('symfony.xml');
-        foreach ($config['servers'] as $url) {
-            $this->validateUrl($url, 'Not a valid web server address: "%s"');
-        }
-        if (!empty($config['base_url'])) {
-            $baseUrl = $this->prefixSchema($config['base_url'], 'Not a valid base path: "%s"');
-            $this->validateUrl($baseUrl, 'Not a valid base path: "%s"');
-        } else {
-            $baseUrl = null;
-        }
-        $container->setParameter($this->getAlias().'.proxy_client.symfony.servers', $config['servers']);
-        $container->setParameter($this->getAlias().'.proxy_client.symfony.base_url', $baseUrl);
-
-        if (!empty($config['guzzle_client'])) {
-            $container->setAlias(
-                $this->getAlias().'.proxy_client.symfony.guzzle_client',
-                $config['guzzle_client']
-            );
-        }
     }
 
     /**
@@ -343,7 +329,7 @@ class FOSHttpCacheExtension extends Extension
             return;
         }
         if (!in_array($client, array('varnish', 'custom'))) {
-            throw new InvalidConfigurationException(sprintf('You can not enable cache tagging with %s', $client));
+            throw new InvalidConfigurationException(sprintf('You can not enable cache tagging with the %s client', $client));
         }
 
         $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', true);
@@ -360,11 +346,6 @@ class FOSHttpCacheExtension extends Extension
         if (!empty($config['rules'])) {
             $this->loadTagRules($container, $config['rules']);
         }
-
-        $tagsHeader = $config['header'];
-        $container->getDefinition($this->getAlias().'.cache_manager')
-            ->addMethodCall('setTagsHeader', array($tagsHeader))
-        ;
     }
 
     private function loadTest(ContainerBuilder $container, XmlFileLoader $loader, array $config)
@@ -373,24 +354,6 @@ class FOSHttpCacheExtension extends Extension
 
         if ($config['proxy_server']) {
             $this->loadProxyServer($container, $loader, $config['proxy_server']);
-        }
-
-        if (isset($config['client']['varnish']['enabled'])
-            || isset($config['client']['nginx']['enabled'])) {
-            $loader->load('test_client.xml');
-
-            if ($config['client']['varnish']['enabled']) {
-                $loader->load('varnish_test_client.xml');
-            }
-
-            if ($config['client']['nginx']['enabled']) {
-                $loader->load('nginx_test_client.xml');
-            }
-
-            $container->setAlias(
-                $this->getAlias().'.test.default_client',
-                $this->getAlias().'.test.client.'.$this->getDefaultProxyClient($config['client'])
-            );
         }
     }
 

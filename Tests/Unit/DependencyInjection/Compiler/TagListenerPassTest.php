@@ -44,10 +44,12 @@ class TagListenerPassTest extends \PHPUnit_Framework_TestCase
         return array(
             'proxy_client' => array(
                 'varnish' => array(
-                    'base_url' => 'my_hostname',
-                    'servers' => array(
-                        '127.0.0.1',
-                    ),
+                    'http' => [
+                        'base_url' => 'my_hostname',
+                        'servers' => array(
+                            '127.0.0.1',
+                        ),
+                    ],
                 ),
             ),
             'tags' => array(

@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Attach Symfony2 logger to cache manager.
+ * Announce the log listener to the symfony event system.
  */
 class LoggerPass implements CompilerPassInterface
 {
@@ -28,10 +28,9 @@ class LoggerPass implements CompilerPassInterface
             return;
         }
 
-        $logListener = $container->getDefinition('fos_http_cache.event_listener.log')
-            ->setAbstract(false);
-
-        $container->getDefinition('fos_http_cache.cache_manager')
-            ->addMethodCall('addSubscriber', array($logListener));
+        $container->getDefinition('fos_http_cache.event_listener.log')
+            ->setAbstract(false)
+            ->addTag('kernel.event_subscriber')
+        ;
     }
 }

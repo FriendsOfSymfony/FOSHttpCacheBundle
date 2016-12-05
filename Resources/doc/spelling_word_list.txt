@@ -16,3 +16,4 @@ TTL
 multi
 login
 logout
+Packagist

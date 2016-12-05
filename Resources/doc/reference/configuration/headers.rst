@@ -298,24 +298,19 @@ keeping previously set Vary options:
 
 **type**: ``integer``
 
-Set a X-Reverse-Proxy-TTL header for reverse proxy time-outs not driven by ``s-maxage``.
+Set a X-Reverse-Proxy-TTL header for reverse proxy time-outs not driven by
+``s-maxage``. This keeps your ``s-maxage`` free for use with reverse proxies
+not under your control.
 
-By default, reverse proxies use the ``s-maxage`` of your ``Cache-Control`` header
-to know how long it should cache a page. But by default, the ``s-maxage`` is also
-sent to the client. Any caches on the Internet, for example at an Internet
-provider or in the office of a surfer, might look at ``s-maxage`` and
-cache the page if it is ``public``. This can be a problem, notably when you do
-:doc:`explicit cache invalidation </reference/cache-manager>`. You might want your reverse
-proxy to keep a page in cache for a long time, but outside caches should not
-keep the page for a long duration.
+.. warning::
 
-One option could be to set a high ``s-maxage`` for the proxy and simply rewrite
-the response to remove or reduce the ``s-maxage``. This is not a good solution
-however, as you start to duplicate your caching rule definitions.
+    This is a custom header. You need to set up your caching proxy to respect
+    this header. See the FOSHttpCache documentation
+    :ref:`for Varnish <foshttpcache:varnish configuration>` or
+    :ref:`for the Symfony HttpCache <foshttpcache:symfony httpcache configuration>`.
 
-This bundle helps you to build a better solution: You can specify the option
-``reverse_proxy_ttl`` in the headers section to get a special header that you can
-then use on the reverse proxy:
+To use the custom TTL, specify the option ``reverse_proxy_ttl`` in the headers
+section:
 
 .. code-block:: yaml
 
@@ -331,32 +326,3 @@ then use on the reverse proxy:
                             s_maxage: 60
 
 This example adds the header ``X-Reverse-Proxy-TTL: 3600`` to your responses.
-Varnish by default knows nothing about this header. To make this solution work,
-you need to extend your varnish ``vcl_fetch`` configuration:
-
-.. code-block:: c
-
-    C{
-        #include <stdlib.h>
-    }C
-
-    sub vcl_fetch {
-        if (beresp.http.X-Reverse-Proxy-TTL) {
-            C{
-                char *ttl;
-                ttl = VRT_GetHdr(sp, HDR_BERESP, "\024X-Reverse-Proxy-TTL:");
-                VRT_l_beresp_ttl(sp, atoi(ttl));
-            }C
-            unset beresp.http.X-Reverse-Proxy-TTL;
-        }
-    }
-
-The import for ``stdlib.h`` has to be outside of any ``vcl_X`` sub routines.
-Omitting the ``stdlib`` inclusion will result in a compile error complaining
-that ``atoi`` is not defined, and including the header file inside a VCL sub
-routine leads to a C compile failure mentioning
-``invalid storage class for function __bswap_32``.
-
-Note that there is a ``beresp.ttl`` field in VCL but unfortunately it can only
-be set to absolute values and not dynamically. Thus we have to revert to a C
-code fragment.

@@ -18,8 +18,9 @@ fos_http_cache:
           cache_control: {public: true}
   proxy_client:
     varnish:
-      servers: 127.0.0.1
-      base_url: localhost:8080
+      http:
+        servers: [127.0.0.1]
+        base_url: localhost:8080
   invalidation:
     rules:
       -

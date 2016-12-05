@@ -10,6 +10,8 @@ fos_http_cache:
                     vary: Cookie,Authorization
     proxy_client:
         varnish:
-            servers: 1.1.1.1:80, 2.2.2.2:80
+            http:
+                servers: [1.1.1.1:80, 2.2.2.2:80]
         nginx:
-            servers: 1.1.1.1:81, 2.2.2.2:81
+            http:
+                servers: [1.1.1.1:81, 2.2.2.2:81]

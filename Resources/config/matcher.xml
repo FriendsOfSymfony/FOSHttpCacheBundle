@@ -13,11 +13,13 @@
         <service id="fos_http_cache.request_matcher"
                  class="%fos_http_cache.request_matcher.class%"
                  public="false"
+                 abstract="true"
         />
 
         <service id="fos_http_cache.rule_matcher"
                  class="%fos_http_cache.rule_matcher.class%"
                  public="false"
+                 abstract="true"
         >
             <argument/>
             <argument/>

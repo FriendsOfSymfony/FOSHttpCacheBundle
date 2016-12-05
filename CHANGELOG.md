@@ -4,11 +4,33 @@ Changelog
 2.0.0 (unreleased)
 ------------------
 
-* [User Context] Added an option always_vary_on_context_hash to make it 
-  possible to disable automatically setting the vary headers for the user 
+* [Proxy Client Configuration] The configuration for the proxy client has been
+  adjusted. Proxy servers are now configured under `http` and `servers` must be
+  a list - a comma separated string of server IPs is no longer supported.
+
+* [User Context] Added an option always_vary_on_context_hash to make it
+  possible to disable automatically setting the vary headers for the user
   hash.
   
-* [Event Listeners] Renamed the event listener classes to XxxLlistener
+* [Event Listeners] Renamed the event listener classes to XxxLlistener.
+
+* Updated the version of FOSHttpCache to 2.*. See [FOSHttpCache changelog]
+  (https://github.com/FriendsOfSymfony/FOSHttpCache/blob/master/CHANGELOG.md).  
+  Most important, there is no more hard coupling on Guzzle HTTP client. We now
+  use the HTTPlug HTTP client abstraction. Your composer.json now needs to
+  specify which HTTP client to install, see [installation instructions]
+  (http://foshttpcachebundle.readthedocs.org/en/stable/installation.html)
+
+* [Tags] The TagHandler has been split. Invalidating tags happens through the
+  CacheManager (if you use annotations for tag invalidation, you don't need to
+  change anything). Recording tags and writing them into the responses is done
+  through the SymfonyResponseTagger now.
+
+* [Test] Dropped the proxy client services as they where not used anywhere. The
+  services `fos_http_cache.test.client.varnish` and `fos_http_cache.test.client.nginx`
+  no longer exist.
+
+* Deprecated methods have been removed.
 
 1.3.7
 -----

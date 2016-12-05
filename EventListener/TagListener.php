@@ -11,7 +11,8 @@
 
 namespace FOS\HttpCacheBundle\EventListener;
 
-use FOS\HttpCacheBundle\Handler\TagHandler;
+use FOS\HttpCacheBundle\CacheManager;
+use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,9 +29,14 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 class TagListener extends AbstractRuleListener implements EventSubscriberInterface
 {
     /**
-     * @var TagHandler
+     * @var CacheManager
      */
-    private $tagHandler;
+    private $cacheManager;
+
+    /**
+     * @var SymfonyResponseTagger
+     */
+    private $symfonyResponseTagger;
 
     /**
      * @var ExpressionLanguage
@@ -40,15 +46,18 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
     /**
      * Constructor.
      *
-     * @param TagHandler              $tagHandler
+     * @param CacheManager            $cacheManager
+     * @param SymfonyResponseTagger   $tagHandler
      * @param ExpressionLanguage|null $expressionLanguage
      */
     public function __construct(
-        TagHandler $tagHandler,
+        CacheManager $cacheManager,
+        SymfonyResponseTagger $tagHandler,
         ExpressionLanguage $expressionLanguage = null
     ) {
-        $this->tagHandler = $tagHandler;
+        $this->symfonyResponseTagger = $tagHandler;
         $this->expressionLanguage = $expressionLanguage;
+        $this->cacheManager = $cacheManager;
     }
 
     /**
@@ -80,14 +89,14 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
         }
 
         if ($request->isMethodSafe()) {
-            $this->tagHandler->addTags($tags);
+            $this->symfonyResponseTagger->addTags($tags);
             if (HttpKernelInterface::MASTER_REQUEST === $event->getRequestType()) {
                 // For safe requests (GET and HEAD), set cache tags on response
-                $this->tagHandler->tagResponse($response);
+                $this->symfonyResponseTagger->tagSymfonyResponse($response);
             }
         } elseif (count($tags)) {
             // For non-safe methods, invalidate the tags
-            $this->tagHandler->invalidateTags($tags);
+            $this->cacheManager->invalidateTags($tags);
         }
     }
 

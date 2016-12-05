@@ -25,10 +25,20 @@ $container->loadFromExtension('fos_http_cache', array(
     ),
     'proxy_client' => array(
         'varnish' => array(
-            'servers' => '1.1.1.1:80,2.2.2.2:80',
+            'http' => [
+                'servers' => [
+                    '1.1.1.1:80',
+                    '2.2.2.2:80',
+                ],
+            ],
         ),
         'nginx' => array(
-            'servers' => '1.1.1.1:81,2.2.2.2:81',
+            'http' => [
+                'servers' => [
+                    '1.1.1.1:81',
+                    '2.2.2.2:81',
+                ],
+            ],
         ),
     ),
 ));
