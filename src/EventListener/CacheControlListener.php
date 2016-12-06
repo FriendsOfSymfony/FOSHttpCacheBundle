@@ -39,12 +39,12 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
      *
      * @var array
      */
-    private $supportedDirectives = array(
+    private $supportedDirectives = [
         'max_age' => true,
         's_maxage' => true,
         'private' => true,
         'public' => true,
-    );
+    ];
 
     /**
      * If not empty, add a debug header with that name to all responses,
@@ -67,9 +67,9 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
      */
     public static function getSubscribedEvents()
     {
-        return array(
-            KernelEvents::RESPONSE => array('onKernelResponse', 10),
-        );
+        return [
+            KernelEvents::RESPONSE => ['onKernelResponse', 10],
+        ];
     }
 
     /**
@@ -189,8 +189,8 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
      */
     private function setExtraCacheDirectives(Response $response, array $controls, $overwrite)
     {
-        $flags = array('must_revalidate', 'proxy_revalidate', 'no_transform', 'no_cache');
-        $options = array('stale_if_error', 'stale_while_revalidate');
+        $flags = ['must_revalidate', 'proxy_revalidate', 'no_transform', 'no_cache'];
+        $options = ['stale_if_error', 'stale_while_revalidate'];
 
         foreach ($flags as $key) {
             $flag = str_replace('_', '-', $key);

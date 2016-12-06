@@ -9,8 +9,8 @@
  * file that was distributed with this source code.
  */
 
-$container->loadFromExtension('fos_http_cache', array(
-    'cache_manager' => array(
+$container->loadFromExtension('fos_http_cache', [
+    'cache_manager' => [
         'enabled' => true,
-    ),
-));
+    ],
+]);

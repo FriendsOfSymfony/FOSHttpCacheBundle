@@ -42,7 +42,7 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
     {
         $container = $this->createContainer();
         $config = $this->getBaseConfig();
-        $this->extension->load(array($config), $container);
+        $this->extension->load([$config], $container);
         $this->userContextListenerPass->process($container);
         $this->assertCount(14, $container->getDefinitions());
     }
@@ -56,7 +56,7 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainer();
         $config = $this->getBaseConfig();
         $config['user_context']['enabled'] = true;
-        $this->extension->load(array($config), $container);
+        $this->extension->load([$config], $container);
         $this->userContextListenerPass->process($container);
     }
 
@@ -67,20 +67,20 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
     {
         $container = $this->createContainer();
 
-        $definitions = array(
+        $definitions = [
             'test.provider' => new Definition('\\stdClass'),
             'foo.provider' => new Definition('\\stdClass'),
             'bar.provider' => new Definition('\\stdClass'),
-        );
-        $definitions['test.provider']->addTag(HashGeneratorPass::TAG_NAME, array('priority' => 10));
+        ];
+        $definitions['test.provider']->addTag(HashGeneratorPass::TAG_NAME, ['priority' => 10]);
         $definitions['foo.provider']->addTag(HashGeneratorPass::TAG_NAME);
-        $definitions['bar.provider']->addTag(HashGeneratorPass::TAG_NAME, array('priority' => 5));
+        $definitions['bar.provider']->addTag(HashGeneratorPass::TAG_NAME, ['priority' => 5]);
 
         $container->setDefinitions($definitions);
 
         $config = $this->getBaseConfig();
         $config['user_context']['enabled'] = true;
-        $this->extension->load(array($config), $container);
+        $this->extension->load([$config], $container);
         $this->userContextListenerPass->process($container);
 
         $arguments = $container->getDefinition('fos_http_cache.user_context.hash_generator')->getArguments();
@@ -90,29 +90,29 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
             }, array_shift($arguments)
         );
 
-        $this->assertEquals($services, array('test.provider', 'bar.provider', 'foo.provider'));
+        $this->assertEquals($services, ['test.provider', 'bar.provider', 'foo.provider']);
     }
 
     protected function createContainer()
     {
-        return new ContainerBuilder(new ParameterBag(array(
+        return new ContainerBuilder(new ParameterBag([
             'kernel.debug' => false,
-        )));
+        ]));
     }
 
     protected function getBaseConfig()
     {
-        return array(
-            'proxy_client' => array(
-                'varnish' => array(
-                    'http' => array(
+        return [
+            'proxy_client' => [
+                'varnish' => [
+                    'http' => [
                         'base_url' => 'my_hostname',
-                        'servers' => array(
+                        'servers' => [
                             '127.0.0.1',
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }

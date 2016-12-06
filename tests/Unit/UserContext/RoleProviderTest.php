@@ -19,7 +19,7 @@ class RoleProviderTest extends \PHPUnit_Framework_TestCase
 {
     public function testProvider()
     {
-        $roles = array(new Role('ROLE_USER'));
+        $roles = [new Role('ROLE_USER')];
 
         $token = \Mockery::mock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
@@ -32,9 +32,9 @@ class RoleProviderTest extends \PHPUnit_Framework_TestCase
 
         $provider->updateUserContext($userContext);
 
-        $this->assertEquals(array(
-            'roles' => array('ROLE_USER'),
-        ), $userContext->getParameters());
+        $this->assertEquals([
+            'roles' => ['ROLE_USER'],
+        ], $userContext->getParameters());
     }
 
     public function testProviderWithoutToken()

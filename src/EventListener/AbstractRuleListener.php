@@ -20,7 +20,7 @@ abstract class AbstractRuleListener
     /**
      * @var array List of arrays with RuleMatcher, settings array
      */
-    private $rulesMap = array();
+    private $rulesMap = [];
 
     /**
      * Add a rule matcher with a list of header directives to apply if the
@@ -31,9 +31,9 @@ abstract class AbstractRuleListener
      */
     public function addRule(
         RuleMatcherInterface $ruleMatcher,
-        array $settings = array()
+        array $settings = []
     ) {
-        $this->rulesMap[] = array($ruleMatcher, $settings);
+        $this->rulesMap[] = [$ruleMatcher, $settings];
     }
 
     /**

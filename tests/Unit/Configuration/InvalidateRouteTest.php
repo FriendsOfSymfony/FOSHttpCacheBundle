@@ -24,10 +24,10 @@ class InvalidateRouteTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteInvalidParams()
     {
-        new InvalidateRoute(array(
+        new InvalidateRoute([
             'name' => 'test',
             'params' => 'foo',
-        ));
+        ]);
     }
 
     /**
@@ -36,13 +36,13 @@ class InvalidateRouteTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteNoExpression()
     {
-        new InvalidateRoute(array(
+        new InvalidateRoute([
             'name' => 'test',
-            'params' => array(
-                'id' => array(
+            'params' => [
+                'id' => [
                     'this-is-not-expression' => 'something',
-                ),
-            ),
-        ));
+                ],
+            ],
+        ]);
     }
 }

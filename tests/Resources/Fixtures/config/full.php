@@ -9,24 +9,24 @@
  * file that was distributed with this source code.
  */
 
-$container->loadFromExtension('fos_http_cache', array(
-    'cache_control' => array(
-        'defaults' => array(
+$container->loadFromExtension('fos_http_cache', [
+    'cache_control' => [
+        'defaults' => [
             'overwrite' => true,
-        ),
-        'rules' => array(
-            array(
-                'match' => array(
+        ],
+        'rules' => [
+            [
+                'match' => [
                     'path' => '/abc',
                     'host' => 'fos',
-                    'methods' => array('GET', 'POST'),
-                    'ips' => array('1.2.3.4', '1.1.1.1'),
-                    'attributes' => array('_controller' => 'fos.user_bundle.*'),
-                    'additional_cacheable_status' => array(100, 500),
-                ),
-                'headers' => array(
+                    'methods' => ['GET', 'POST'],
+                    'ips' => ['1.2.3.4', '1.1.1.1'],
+                    'attributes' => ['_controller' => 'fos.user_bundle.*'],
+                    'additional_cacheable_status' => [100, 500],
+                ],
+                'headers' => [
                     'overwrite' => false,
-                    'cache_control' => array(
+                    'cache_control' => [
                         'max_age' => 1,
                         's_maxage' => 2,
                         'public' => true,
@@ -36,93 +36,93 @@ $container->loadFromExtension('fos_http_cache', array(
                         'no_cache' => false,
                         'stale_if_error' => 3,
                         'stale_while_revalidate' => 4,
-                    ),
+                    ],
                     'etag' => true,
                     'last_modified' => '-1 hour',
                     'reverse_proxy_ttl' => 42,
-                    'vary' => array('Cookie', 'Authorization'),
-                ),
-            ),
-        ),
-    ),
-    'proxy_client' => array(
-        'varnish' => array(
+                    'vary' => ['Cookie', 'Authorization'],
+                ],
+            ],
+        ],
+    ],
+    'proxy_client' => [
+        'varnish' => [
             'http' => [
-                'servers' => array('22.22.22.22'),
+                'servers' => ['22.22.22.22'],
                 'base_url' => '/test',
                 'http_client' => 'acme.guzzle.varnish',
             ],
-        ),
-    ),
+        ],
+    ],
 
-    'cache_manager' => array(
+    'cache_manager' => [
         'enabled' => true,
         'custom_proxy_client' => 'acme.proxy_client',
-    ),
-    'tags' => array(
+    ],
+    'tags' => [
         'header' => 'FOS-Tags',
         'expression_language' => 'acme.expression_language',
-        'rules' => array(
-            array(
-                'match' => array(
+        'rules' => [
+            [
+                'match' => [
                     'path' => '/def',
                     'host' => 'friends',
-                    'methods' => array('PUT', 'DELETE'),
+                    'methods' => ['PUT', 'DELETE'],
                     'ips' => '99.99.99.99',
-                    'attributes' => array(
+                    'attributes' => [
                         '_foo' => 'bar',
-                    ),
-                    'additional_cacheable_status' => array(501, 502),
-                ),
-                'tags' => array('a', 'b'),
-                'tag_expressions' => array('"a"', '"b"'),
-            ),
-        ),
-    ),
-    'invalidation' => array(
+                    ],
+                    'additional_cacheable_status' => [501, 502],
+                ],
+                'tags' => ['a', 'b'],
+                'tag_expressions' => ['"a"', '"b"'],
+            ],
+        ],
+    ],
+    'invalidation' => [
         'enabled' => 'auto',
         'expression_language' => 'acme.expression_language',
-        'rules' => array(
-            array(
-                'match' => array(
+        'rules' => [
+            [
+                'match' => [
                     'path' => '/hij',
                     'host' => 'symfony',
-                    'methods' => array('PATCH'),
-                    'ips' => array('42.42.42.42'),
-                    'attributes' => array(
+                    'methods' => ['PATCH'],
+                    'ips' => ['42.42.42.42'],
+                    'attributes' => [
                         '_format' => 'json',
-                    ),
-                    'additional_cacheable_status' => array(404, 403),
-                ),
-                'routes' => array(
-                    'invalidate_route1' => array(
+                    ],
+                    'additional_cacheable_status' => [404, 403],
+                ],
+                'routes' => [
+                    'invalidate_route1' => [
                         'ignore_extra_params' => false,
-                    ),
-                ),
-            ),
-        ),
-    ),
-    'user_context' => array(
+                    ],
+                ],
+            ],
+        ],
+    ],
+    'user_context' => [
         'enabled' => true,
-        'match' => array(
+        'match' => [
             'matcher_service' => 'fos_http_cache.user_context.request_matcher',
             'accept' => 'application/vnd.fos.user-context-hash',
             'method' => 'GET',
-        ),
+        ],
         'hash_cache_ttl' => 300,
         'always_vary_on_context_hash' => true,
-        'user_identifier_headers' => array('Cookie', 'Authorization'),
+        'user_identifier_headers' => ['Cookie', 'Authorization'],
         'user_hash_header' => 'FOS-User-Context-Hash',
         'role_provider' => true,
-    ),
-    'flash_message' => array(
+    ],
+    'flash_message' => [
         'enabled' => true,
         'name' => 'flashtest',
         'path' => '/x',
         'host' => 'y',
         'secure' => true,
-    ),
-    'debug' => array(
+    ],
+    'debug' => [
         'header' => 'FOS-Cache-Debug',
-    ),
-));
+    ],
+]);

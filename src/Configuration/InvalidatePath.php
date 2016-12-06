@@ -30,7 +30,7 @@ class InvalidatePath extends ConfigurationAnnotation
      */
     public function setValue($data)
     {
-        $this->setPaths((is_array($data) ? $data : array($data)));
+        $this->setPaths((is_array($data) ? $data : [$data]));
     }
 
     /**

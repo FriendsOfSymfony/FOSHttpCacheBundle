@@ -59,9 +59,9 @@ class RuleMatcher implements RuleMatcherInterface
         }
 
         if (!empty($this->criteria['match_response'])) {
-            if (!$this->getExpressionLanguage()->evaluate($this->criteria['match_response'], array(
+            if (!$this->getExpressionLanguage()->evaluate($this->criteria['match_response'], [
                 'response' => $response,
-            ))) {
+            ])) {
                 return false;
             }
         } else {
@@ -69,7 +69,7 @@ class RuleMatcher implements RuleMatcherInterface
              * headers are already set. As we are about to set them, that would
              * always return false.
              */
-            $status = array(200, 203, 204, 300, 301, 302, 404, 410);
+            $status = [200, 203, 204, 300, 301, 302, 404, 410];
             if (!empty($this->criteria['additional_cacheable_status'])) {
                 $status = array_merge($status, $this->criteria['additional_cacheable_status']);
             }

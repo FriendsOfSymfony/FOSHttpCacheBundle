@@ -53,12 +53,12 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelResponseGet()
     {
-        $tag1 = new Tag(array('value' => 'item-1'));
-        $tag2 = new Tag(array('value' => array('item-1', 'item-2')));
+        $tag1 = new Tag(['value' => 'item-1']);
+        $tag2 = new Tag(['value' => ['item-1', 'item-2']]);
 
         $request = new Request();
         $request->setMethod('GET');
-        $request->attributes->set('_tag', array($tag1, $tag2));
+        $request->attributes->set('_tag', [$tag1, $tag2]);
 
         $event = $this->getEvent($request);
 
@@ -77,12 +77,12 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelResponseGetMatcher()
     {
-        $tag1 = new Tag(array('value' => 'item-1'));
+        $tag1 = new Tag(['value' => 'item-1']);
 
         $request = new Request();
         $request->setMethod('GET');
         $request->attributes->set('id', 2);
-        $request->attributes->set('_tag', array($tag1));
+        $request->attributes->set('_tag', [$tag1]);
 
         $event = $this->getEvent($request);
 
@@ -100,20 +100,20 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('matches')->once()->with($request, $event->getResponse())->andReturn(true)
             ->getMock()
         ;
-        $this->listener->addRule($mockMatcher, array(
-            'tags' => array('configured-tag'),
-            'expressions' => array('"item-" ~ id'),
-        ));
+        $this->listener->addRule($mockMatcher, [
+            'tags' => ['configured-tag'],
+            'expressions' => ['"item-" ~ id'],
+        ]);
         $this->listener->onKernelResponse($event);
     }
 
     public function testOnKernelResponseGetWithExpression()
     {
-        $tag = new Tag(array('expression' => '"item-"~id'));
+        $tag = new Tag(['expression' => '"item-"~id']);
 
         $request = new Request();
         $request->setMethod('GET');
-        $request->attributes->set('_tag', array($tag));
+        $request->attributes->set('_tag', [$tag]);
         $request->attributes->set('id', '123');
 
         $event = $this->getEvent($request);
@@ -131,34 +131,34 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelResponsePost()
     {
-        $tag = new Tag(array('value' => array('item-1', 'item-2')));
+        $tag = new Tag(['value' => ['item-1', 'item-2']]);
 
         $request = new Request();
         $request->setMethod('POST');
         $request->attributes->set('id', 2);
-        $request->attributes->set('_tag', array($tag));
+        $request->attributes->set('_tag', [$tag]);
 
         $event = $this->getEvent($request);
 
         $this->cacheManager
             ->shouldReceive('invalidateTags')
             ->once()
-            ->with(array('item-1', 'item-2'));
+            ->with(['item-1', 'item-2']);
         $this->listener->onKernelResponse($event);
 
         $this->cacheManager
             ->shouldReceive('invalidateTags')
             ->once()
-            ->with(array('item-1', 'item-2', 'configured-tag', 'item-2'));
+            ->with(['item-1', 'item-2', 'configured-tag', 'item-2']);
         /** @var RuleMatcherInterface $mockMatcher */
         $mockMatcher = \Mockery::mock(RuleMatcherInterface::class)
             ->shouldReceive('matches')->once()->with($request, $event->getResponse())->andReturn(true)
             ->getMock()
         ;
-        $this->listener->addRule($mockMatcher, array(
-            'tags' => array('configured-tag'),
-            'expressions' => array('"item-" ~ id'),
-        ));
+        $this->listener->addRule($mockMatcher, [
+            'tags' => ['configured-tag'],
+            'expressions' => ['"item-" ~ id'],
+        ]);
         $this->listener->onKernelResponse($event);
     }
 

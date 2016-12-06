@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Session;
 
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -22,7 +23,7 @@ class TestSessionStorage implements SessionStorageInterface
 {
     private $started = false;
 
-    private $bags = array();
+    private $bags = [];
 
     /**
      * {@inheritdoc}
@@ -105,8 +106,8 @@ class TestSessionStorage implements SessionStorageInterface
      */
     public function registerBag(SessionBagInterface $bag)
     {
-        if ($bag->getName() == 'attributes') {
-            $bag->set('_security_secured_area', serialize(new UsernamePasswordToken('user', 'user', 'in_memory', array('ROLE_USER'))));
+        if ($bag->getName() === 'attributes') {
+            $bag->set('_security_secured_area', serialize(new UsernamePasswordToken('user', 'user', 'in_memory', ['ROLE_USER'])));
         }
 
         $this->bags[$bag->getName()] = $bag;

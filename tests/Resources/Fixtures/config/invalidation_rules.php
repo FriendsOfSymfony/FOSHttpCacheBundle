@@ -9,18 +9,18 @@
  * file that was distributed with this source code.
  */
 
-$container->loadFromExtension('fos_http_cache', array(
-    'invalidation' => array(
+$container->loadFromExtension('fos_http_cache', [
+    'invalidation' => [
         'enabled' => false,
-        'rules' => array(
-            array(
-                'match' => array(
+        'rules' => [
+            [
+                'match' => [
                     'path' => '/def',
-                ),
-                'routes' => array(
-                    'routename' => array(),
-                ),
-            ),
-        ),
-    ),
-));
+                ],
+                'routes' => [
+                    'routename' => [],
+                ],
+            ],
+        ],
+    ],
+]);

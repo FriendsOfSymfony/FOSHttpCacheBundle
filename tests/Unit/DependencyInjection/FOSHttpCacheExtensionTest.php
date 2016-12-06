@@ -33,7 +33,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     public function testConfigLoadVarnish()
     {
         $container = $this->createContainer();
-        $this->extension->load(array($this->getBaseConfig()), $container);
+        $this->extension->load([$this->getBaseConfig()], $container);
 
         $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
         $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.nginx'));
@@ -48,7 +48,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
         $config = $this->getBaseConfig();
         $config['proxy_client']['varnish']['http']['http_client'] = 'my_guzzle';
-        $this->extension->load(array($config), $container);
+        $this->extension->load([$config], $container);
 
         $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.varnish.http_dispatcher'));
         $def = $container->getDefinition('fos_http_cache.proxy_client.varnish.http_dispatcher');
@@ -65,26 +65,26 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $config = $this->getBaseConfig();
         $config['proxy_client']['varnish']['http']['base_url'] = 'ftp:not a valid url';
 
-        $this->extension->load(array($config), $container);
+        $this->extension->load([$config], $container);
     }
 
     public function testConfigLoadNginx()
     {
         $container = $this->createContainer();
-        $this->extension->load(array(
-            array(
-                'proxy_client' => array(
-                    'nginx' => array(
+        $this->extension->load([
+            [
+                'proxy_client' => [
+                    'nginx' => [
                         'http' => [
                             'base_url' => 'my_hostname',
-                            'servers' => array(
+                            'servers' => [
                                 '127.0.0.1',
-                            ),
+                            ],
                         ],
-                    ),
-                ),
-            ),
-        ), $container);
+                    ],
+                ],
+            ],
+        ], $container);
 
         $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.nginx'));
@@ -96,20 +96,20 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     public function testConfigLoadSymfony()
     {
         $container = $this->createContainer();
-        $this->extension->load(array(
-            array(
-                'proxy_client' => array(
-                    'symfony' => array(
+        $this->extension->load([
+            [
+                'proxy_client' => [
+                    'symfony' => [
                         'http' => [
                             'base_url' => 'my_hostname',
-                            'servers' => array(
+                            'servers' => [
                                 '127.0.0.1',
-                            ),
+                            ],
                         ],
-                    ),
-                ),
-            ),
-        ), $container);
+                    ],
+                ],
+            ],
+        ], $container);
 
         $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
         $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.nginx'));
@@ -122,13 +122,13 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     public function testConfigCustomClient()
     {
         $container = $this->createContainer();
-        $this->extension->load(array(
-            array(
-                'cache_manager' => array(
+        $this->extension->load([
+            [
+                'cache_manager' => [
                     'custom_proxy_client' => 'app.cache.client',
-                ),
-            ),
-        ), $container);
+                ],
+            ],
+        ], $container);
 
         $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
         $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.nginx'));
@@ -140,10 +140,10 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testEmptyConfig()
     {
-        $config = array();
+        $config = [];
 
         $container = $this->createContainer();
-        $this->extension->load(array($config), $container);
+        $this->extension->load([$config], $container);
 
         $this->assertFalse($container->has('fos_http_cache.user_context.logout_handler'));
     }
@@ -154,78 +154,78 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testConfigTagNotSupported()
     {
-        $config = array(
-                'proxy_client' => array(
-                    'nginx' => array(
+        $config = [
+                'proxy_client' => [
+                    'nginx' => [
                         'http' => [
                             'base_url' => 'my_hostname',
-                            'servers' => array(
+                            'servers' => [
                                 '127.0.0.1',
-                            ),
+                            ],
                         ],
-                    ),
-                ),
-                'tags' => array(
+                    ],
+                ],
+                'tags' => [
                     'enabled' => true,
-                ),
-            );
+                ],
+            ];
 
         $container = $this->createContainer();
-        $this->extension->load(array($config), $container);
+        $this->extension->load([$config], $container);
     }
 
     public function testConfigLoadTagRules()
     {
-        $config = $this->getBaseConfig() + array(
-            'tags' => array(
-                'rules' => array(
-                    array(
-                        'match' => array(
+        $config = $this->getBaseConfig() + [
+            'tags' => [
+                'rules' => [
+                    [
+                        'match' => [
                             'path' => '^/$',
                             'host' => 'fos.lo',
-                            'methods' => array('GET', 'HEAD'),
-                            'ips' => array('1.1.1.1', '2.2.2.2'),
-                            'attributes' => array(
+                            'methods' => ['GET', 'HEAD'],
+                            'ips' => ['1.1.1.1', '2.2.2.2'],
+                            'attributes' => [
                                 '_controller' => '^AcmeBundle:Default:index$',
-                            ),
-                        ),
-                        'tags' => array('tag-a', 'tag-b'),
-                    ),
-                ),
-            ),
-        );
+                            ],
+                        ],
+                        'tags' => ['tag-a', 'tag-b'],
+                    ],
+                ],
+            ],
+        ];
 
         $container = $this->createContainer();
-        $this->extension->load(array($config), $container);
+        $this->extension->load([$config], $container);
 
-        $this->assertMatcherCreated($container, array('_controller' => '^AcmeBundle:Default:index$'));
+        $this->assertMatcherCreated($container, ['_controller' => '^AcmeBundle:Default:index$']);
         $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.tag');
     }
 
     public function testConfigLoadInvalidatorRules()
     {
-        $config = $this->getBaseConfig() + array(
-            'invalidation' => array(
-                'rules' => array(
-                    array(
-                        'match' => array(
-                            'attributes' => array(
+        $config = $this->getBaseConfig() + [
+            'invalidation' => [
+                'rules' => [
+                    [
+                        'match' => [
+                            'attributes' => [
                                 '_route' => 'my_route',
-                            ),
-                        ),
-                        'routes' => array(
-                            'invalidate_route1' => array(
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                            ],
+                        ],
+                        'routes' => [
+                            'invalidate_route1' => [
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
         $container = $this->createContainer();
-        $this->extension->load(array($config), $container);
+        $this->extension->load([$config], $container);
 
-        $this->assertMatcherCreated($container, array('_route' => 'my_route'));
+        $this->assertMatcherCreated($container, ['_route' => 'my_route']);
         $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.invalidation');
 
         // Test for runtime errors
@@ -234,33 +234,33 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigLoadCacheControl()
     {
-        $config = array(
-            'cache_control' => array(
-                'rules' => array(
-                    array(
-                        'match' => array(
+        $config = [
+            'cache_control' => [
+                'rules' => [
+                    [
+                        'match' => [
                             'path' => '^/$',
                             'host' => 'fos.lo',
-                            'methods' => array('GET', 'HEAD'),
-                            'ips' => array('1.1.1.1', '2.2.2.2'),
-                            'attributes' => array(
+                            'methods' => ['GET', 'HEAD'],
+                            'ips' => ['1.1.1.1', '2.2.2.2'],
+                            'attributes' => [
                                 '_controller' => '^AcmeBundle:Default:index$',
-                            ),
-                        ),
-                        'headers' => array(
-                            'cache_control' => array('public' => true),
+                            ],
+                        ],
+                        'headers' => [
+                            'cache_control' => ['public' => true],
                             'reverse_proxy_ttl' => 42,
-                            'vary' => array('Cookie', 'Accept-Language'),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                            'vary' => ['Cookie', 'Accept-Language'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
         $container = $this->createContainer();
-        $this->extension->load(array($config), $container);
+        $this->extension->load([$config], $container);
 
-        $this->assertMatcherCreated($container, array('_controller' => '^AcmeBundle:Default:index$'));
+        $this->assertMatcherCreated($container, ['_controller' => '^AcmeBundle:Default:index$']);
         $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.cache_control');
     }
 
@@ -269,51 +269,51 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testConfigLoadCacheControlSplit()
     {
-        $config = array(
-            'cache_control' => array(
-                'rules' => array(
-                    array(
-                        'match' => array(
+        $config = [
+            'cache_control' => [
+                'rules' => [
+                    [
+                        'match' => [
                             'methods' => 'GET,HEAD',
                             'ips' => '1.1.1.1,2.2.2.2',
-                            'attributes' => array(
+                            'attributes' => [
                                 '_controller' => '^AcmeBundle:Default:index$',
-                            ),
-                        ),
-                        'headers' => array(
+                            ],
+                        ],
+                        'headers' => [
                             'vary' => 'Cookie, Accept-Language',
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
         $container = $this->createContainer();
-        $this->extension->load(array($config), $container);
+        $this->extension->load([$config], $container);
 
-        $matcherDefinition = $this->assertMatcherCreated($container, array('_controller' => '^AcmeBundle:Default:index$'));
-        $this->assertEquals(array('GET', 'HEAD'), $matcherDefinition->getArgument(2));
+        $matcherDefinition = $this->assertMatcherCreated($container, ['_controller' => '^AcmeBundle:Default:index$']);
+        $this->assertEquals(['GET', 'HEAD'], $matcherDefinition->getArgument(2));
     }
 
     public function testConfigUserContext()
     {
-        $config = $this->getBaseConfig() + array(
-            'user_context' => array(
-                'match' => array(
+        $config = $this->getBaseConfig() + [
+            'user_context' => [
+                'match' => [
                     'matcher_service' => 'my_request_matcher_id',
                     'method' => 'AUTHENTICATE',
                     'accept' => 'application/vnd.test',
-                ),
-                'user_identifier_headers' => array('X-Foo'),
+                ],
+                'user_identifier_headers' => ['X-Foo'],
                 'user_hash_header' => 'X-Bar',
                 'hash_cache_ttl' => 30,
                 'always_vary_on_context_hash' => true,
                 'role_provider' => true,
-            ),
-        );
+            ],
+        ];
 
         $container = $this->createContainer();
-        $this->extension->load(array($config), $container);
+        $this->extension->load([$config], $container);
 
         $this->assertTrue($container->has('fos_http_cache.event_listener.user_context'));
         $this->assertTrue($container->has('fos_http_cache.user_context.hash_generator'));
@@ -321,26 +321,26 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($container->has('fos_http_cache.user_context.role_provider'));
         $this->assertTrue($container->has('fos_http_cache.user_context.logout_handler'));
 
-        $this->assertEquals(array('fos_http_cache.user_context.role_provider' => array(array())), $container->findTaggedServiceIds('fos_http_cache.user_context_provider'));
+        $this->assertEquals(['fos_http_cache.user_context.role_provider' => [[]]], $container->findTaggedServiceIds('fos_http_cache.user_context_provider'));
     }
 
     public function testConfigWithoutUserContext()
     {
-        $config = array(
-            array('user_context' => array(
+        $config = [[
+            'user_context' => [
                 'enabled' => false,
-                'match' => array(
+                'match' => [
                     'matcher_service' => 'my_request_matcher_id',
                     'method' => 'AUTHENTICATE',
                     'accept' => 'application/vnd.test',
-                ),
-                'user_identifier_headers' => array('X-Foo'),
+                ],
+                'user_identifier_headers' => ['X-Foo'],
                 'user_hash_header' => 'X-Bar',
                 'hash_cache_ttl' => 30,
                 'always_vary_on_context_hash' => true,
                 'role_provider' => true,
-            )),
-        );
+            ],
+        ]];
 
         $container = $this->createContainer();
         $this->extension->load($config, $container);
@@ -354,10 +354,10 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigLoadFlashMessageListener()
     {
-        $config = array(
-            array('flash_message' => true,
-            ),
-        );
+        $config = [
+            ['flash_message' => true,
+            ],
+        ];
 
         $container = $this->createContainer();
         $this->extension->load($config, $container);
@@ -366,7 +366,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     protected function createContainer()
     {
         $container = new ContainerBuilder(
-            new ParameterBag(array('kernel.debug' => false))
+            new ParameterBag(['kernel.debug' => false])
         );
 
         // The cache_manager service depends on the router service
@@ -380,18 +380,18 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 
     protected function getBaseConfig()
     {
-        return array(
-            'proxy_client' => array(
-                'varnish' => array(
+        return [
+            'proxy_client' => [
+                'varnish' => [
                     'http' => [
                         'base_url' => 'my_hostname',
-                        'servers' => array(
+                        'servers' => [
                             '127.0.0.1',
-                        ),
+                        ],
                     ],
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**

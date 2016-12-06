@@ -22,16 +22,16 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     public function testDefaultHeaders()
     {
         $event = $this->buildEvent();
-        $headers = array(
+        $headers = [
             'overwrite' => false,
             'last_modified' => '13.07.2003',
-            'cache_control' => array(
+            'cache_control' => [
                 'max_age' => '900',
                 's_maxage' => '300',
                 'public' => true,
                 'private' => false,
-            ),
-        );
+            ],
+        ];
         $listener = $this->getCacheControl($headers);
 
         $listener->onKernelResponse($event);
@@ -45,16 +45,16 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     public function testExtraHeaders()
     {
         $event = $this->buildEvent();
-        $headers = array(
+        $headers = [
             'overwrite' => false,
-            'cache_control' => array(
+            'cache_control' => [
                 'must_revalidate' => true,
                 'proxy_revalidate' => true,
                 'no_transform' => true,
                 'stale_if_error' => '300',
                 'stale_while_revalidate' => '400',
-            ),
-        );
+            ],
+        ];
         $listener = $this->getCacheControl($headers);
 
         $listener->onKernelResponse($event);
@@ -66,9 +66,9 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     public function testCompoundHeaders()
     {
         $event = $this->buildEvent();
-        $headers = array(
+        $headers = [
             'overwrite' => false,
-            'cache_control' => array(
+            'cache_control' => [
                 'max_age' => '900',
                 's_maxage' => '300',
                 'public' => true,
@@ -78,8 +78,8 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
                 'no_transform' => true,
                 'stale_if_error' => '300',
                 'stale_while_revalidate' => '400',
-            ),
-        );
+            ],
+        ];
         $listener = $this->getCacheControl($headers);
 
         $listener->onKernelResponse($event);
@@ -91,17 +91,17 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     public function testSetNoCacheHeaders()
     {
         $event = $this->buildEvent();
-        $headers = array(
+        $headers = [
             'overwrite' => false,
-            'cache_control' => array(
+            'cache_control' => [
                 'max_age' => '0',
                 's_maxage' => '0',
                 'private' => true,
                 'no_cache' => true,
                 'must_revalidate' => true,
-            ),
+            ],
             'last_modified' => '13.07.2003',
-        );
+        ];
         $listener = $this->getCacheControl($headers);
 
         $listener->onKernelResponse($event);
@@ -113,9 +113,9 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     public function testMergeHeaders()
     {
         $event = $this->buildEvent();
-        $headers = array(
+        $headers = [
             'overwrite' => false,
-            'cache_control' => array(
+            'cache_control' => [
                 'max_age' => '900',
                 's_maxage' => '300',
                 'public' => true,
@@ -125,17 +125,17 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
                 'no_transform' => true,
                 'stale_if_error' => '300',
                 'stale_while_revalidate' => '400',
-            ),
-            'vary' => array(
+            ],
+            'vary' => [
                 'Cookie',
-            ),
+            ],
             'etag' => true,
             'last_modified' => '2014-10-10 GMT',
-        );
+        ];
         $listener = $this->getCacheControl($headers);
         $response = $event->getResponse();
         $response->setPublic();
-        $response->setCache(array('max_age' => 0));
+        $response->setCache(['max_age' => 0]);
         $response->headers->addCacheControlDirective('stale-if-error', 0);
         $response->setVary('Encoding');
         $response->setEtag('foo');
@@ -145,7 +145,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         $newHeaders = $event->getResponse()->headers->all();
 
         $this->assertEquals('max-age=0, must-revalidate, no-transform, proxy-revalidate, public, s-maxage=300, stale-if-error=0, stale-while-revalidate=400', $newHeaders['cache-control'][0]);
-        $this->assertEquals(array('Encoding', 'Cookie'), $newHeaders['vary']);
+        $this->assertEquals(['Encoding', 'Cookie'], $newHeaders['vary']);
         $this->assertEquals('"foo"', $newHeaders['etag'][0]);
         $this->assertEquals('Mon, 09 Sep 2013 00:00:00 GMT', $newHeaders['last-modified'][0]);
     }
@@ -153,9 +153,9 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     public function testOverwriteHeaders()
     {
         $event = $this->buildEvent();
-        $headers = array(
+        $headers = [
             'overwrite' => true,
-            'cache_control' => array(
+            'cache_control' => [
                 'max_age' => '900',
                 's_maxage' => '300',
                 'public' => true,
@@ -165,17 +165,17 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
                 'no_transform' => true,
                 'stale_if_error' => '300',
                 'stale_while_revalidate' => '400',
-            ),
-            'vary' => array(
+            ],
+            'vary' => [
                 'Cookie',
-            ),
+            ],
             'etag' => true,
             'last_modified' => '2014-10-10 GMT',
-        );
+        ];
         $listener = $this->getCacheControl($headers);
         $response = $event->getResponse();
         $response->setPublic();
-        $response->setCache(array('max_age' => 0));
+        $response->setCache(['max_age' => 0]);
         $response->headers->addCacheControlDirective('stale-if-error', 0);
         $response->setVary('Encoding');
         $response->setEtag('foo');
@@ -185,7 +185,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         $newHeaders = $event->getResponse()->headers->all();
 
         $this->assertEquals('max-age=900, must-revalidate, no-transform, proxy-revalidate, public, s-maxage=300, stale-if-error=300, stale-while-revalidate=400', $newHeaders['cache-control'][0]);
-        $this->assertEquals(array('Cookie'), $newHeaders['vary']);
+        $this->assertEquals(['Cookie'], $newHeaders['vary']);
         $this->assertEquals('"'.md5('').'"', $response->getEtag());
         $this->assertEquals('Fri, 10 Oct 2014 00:00:00 GMT', $newHeaders['last-modified'][0]);
     }
@@ -193,11 +193,12 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     public function testMergePublicPrivate()
     {
         $event = $this->buildEvent();
-        $headers = array(
+        $headers = [
             'overwrite' => false,
-            'cache_control' => array(
+            'cache_control' => [
                 'private' => true,
-        ), );
+            ],
+        ];
         $listener = $this->getCacheControl($headers);
         $response = $event->getResponse();
         $response->setPublic();
@@ -214,12 +215,12 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     public function testSetOnlyNoCacheHeader()
     {
         $event = $this->buildEvent();
-        $headers = array(
+        $headers = [
             'overwrite' => false,
-            'cache_control' => array(
+            'cache_control' => [
                 'no_cache' => true,
-            ),
-        );
+            ],
+        ];
         $listener = $this->getCacheControl($headers);
 
         $listener->onKernelResponse($event);
@@ -232,7 +233,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->buildEvent();
         $listener = $this->getMockBuilder(CacheControlListener::class)
-            ->setMethods(array('matchRule'))
+            ->setMethods(['matchRule'])
             ->getMock()
         ;
         $listener->expects($this->never())
@@ -249,14 +250,14 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     public function testVary()
     {
         $event = $this->buildEvent();
-        $headers = array(
+        $headers = [
             'overwrite' => false,
-            'vary' => array(
+            'vary' => [
                 'Cookie',
                 'Accept-Language',
                 'Encoding',
-            ),
-        );
+            ],
+        ];
         $listener = $this->getCacheControl($headers);
 
         $listener->onKernelResponse($event);
@@ -269,9 +270,9 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     public function testReverseProxyTtl()
     {
         $event = $this->buildEvent();
-        $headers = array(
+        $headers = [
             'reverse_proxy_ttl' => 600,
-        );
+        ];
         $listener = $this->getCacheControl($headers);
 
         $listener->onKernelResponse($event);
@@ -283,7 +284,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testDebugHeader()
     {
-        $listener = \Mockery::mock(CacheControlListener::class.'[matchRule]', array('X-Cache-Debug'))
+        $listener = \Mockery::mock(CacheControlListener::class.'[matchRule]', ['X-Cache-Debug'])
             ->shouldAllowMockingProtectedMethods()
             ->shouldReceive('matchRule')->once()->andReturn(false)
             ->getMock()
@@ -306,14 +307,15 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         $request2 = $event2->getRequest();
         $response2 = $event2->getResponse();
 
-        $headers = array(
+        $headers = [
             'overwrite' => false,
-            'cache_control' => array(
-            'max_age' => '900',
-            's_maxage' => '300',
-            'public' => true,
-            'private' => false,
-        ), );
+            'cache_control' => [
+                'max_age' => '900',
+                's_maxage' => '300',
+                'public' => true,
+                'private' => false,
+            ],
+        ];
 
         $mockMatcher = \Mockery::mock(RuleMatcherInterface::class)
             ->shouldReceive('matches')->once()->with($request, $response)->andReturn(true)
@@ -342,7 +344,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     public function testUnsafeMethod()
     {
         $listener = $this->getMockBuilder(CacheControlListener::class)
-            ->setMethods(array('matchRule'))
+            ->setMethods(['matchRule'])
             ->getMock()
         ;
         $listener->expects($this->never())
@@ -381,7 +383,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     protected function getCacheControl(array $headers)
     {
         $listener = $this->getMockBuilder(CacheControlListener::class)
-            ->setMethods(array('matchRule'))
+            ->setMethods(['matchRule'])
             ->getMock()
         ;
 

@@ -9,4 +9,4 @@
  * file that was distributed with this source code.
  */
 
-$container->loadFromExtension('fos_http_cache', array());
+$container->loadFromExtension('fos_http_cache', []);

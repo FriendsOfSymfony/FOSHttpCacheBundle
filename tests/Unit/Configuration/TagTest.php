@@ -24,8 +24,8 @@ class TagTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteInvalidParams()
     {
-        new Tag(array(
-            'tags' => array('foo,bar'),
-        ));
+        new Tag([
+            'tags' => ['foo, bar'],
+        ]);
     }
 }

@@ -20,8 +20,8 @@ class RuleMatcherTest extends \PHPUnit_Framework_TestCase
 {
     public function testRequestMatcherCalled()
     {
-        $requestMatcher = new RequestMatcher(null, null, null, null, array('_controller' => '^AcmeBundle:Default:index$'));
-        $ruleMatcher = new RuleMatcher($requestMatcher, array());
+        $requestMatcher = new RequestMatcher(null, null, null, null, ['_controller' => '^AcmeBundle:Default:index$']);
+        $ruleMatcher = new RuleMatcher($requestMatcher, []);
 
         $request = new Request();
         $request->attributes->set('_controller', 'AcmeBundle:Default:index');
@@ -31,7 +31,7 @@ class RuleMatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testAdditionalCacheableStatus()
     {
-        $ruleMatcher = new RuleMatcher(new RequestMatcher(), array('additional_cacheable_status' => array(400, 500)));
+        $ruleMatcher = new RuleMatcher(new RequestMatcher(), ['additional_cacheable_status' => [400, 500]]);
 
         $this->assertFalse($ruleMatcher->matches(new Request(), new Response('', 504)));
         $this->assertTrue($ruleMatcher->matches(new Request(), new Response('', 500)));
@@ -40,7 +40,7 @@ class RuleMatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchResponse()
     {
-        $ruleMatcher = new RuleMatcher(new RequestMatcher(), array('match_response' => 'response.getStatusCode() >= 300'));
+        $ruleMatcher = new RuleMatcher(new RequestMatcher(), ['match_response' => 'response.getStatusCode() >= 300']);
 
         $this->assertFalse($ruleMatcher->matches(new Request(), new Response('', 100)));
         $this->assertTrue($ruleMatcher->matches(new Request(), new Response('', 500)));

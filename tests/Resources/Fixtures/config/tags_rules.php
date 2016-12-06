@@ -9,16 +9,16 @@
  * file that was distributed with this source code.
  */
 
-$container->loadFromExtension('fos_http_cache', array(
-    'tags' => array(
+$container->loadFromExtension('fos_http_cache', [
+    'tags' => [
         'enabled' => false,
-        'rules' => array(
-            array(
-                'match' => array(
+        'rules' => [
+            [
+                'match' => [
                     'path' => '/def',
-                ),
-                'tags' => array('a'),
-            ),
-        ),
-    ),
-));
+                ],
+                'tags' => ['a'],
+            ],
+        ],
+    ],
+]);

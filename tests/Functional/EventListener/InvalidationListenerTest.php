@@ -25,9 +25,9 @@ class InvalidationListenerTest extends WebTestCase
             CacheManager::class
         )
             ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidateRoute')->once()->with('test_noncached', array())
-            ->shouldReceive('invalidateRoute')->once()->with('test_cached', array('id' => 'myhardcodedid'))
-            ->shouldReceive('invalidateRoute')->once()->with('tag_one', array('id' => '42'))
+            ->shouldReceive('invalidateRoute')->once()->with('test_noncached', [])
+            ->shouldReceive('invalidateRoute')->once()->with('test_cached', ['id' => 'myhardcodedid'])
+            ->shouldReceive('invalidateRoute')->once()->with('tag_one', ['id' => '42'])
             ->shouldReceive('flush')->once()
         ;
 
@@ -74,7 +74,7 @@ class InvalidationListenerTest extends WebTestCase
 
     public function getStatusCodesThatTriggerInvalidation()
     {
-        return array(array(200), array(204), array(302));
+        return [[200], [204], [302]];
     }
 
     protected function tearDown()
