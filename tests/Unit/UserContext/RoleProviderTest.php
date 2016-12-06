@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\UserContext;
 
 use FOS\HttpCache\UserContext\UserContext;
 use FOS\HttpCacheBundle\UserContext\RoleProvider;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Role\Role;
 
 class RoleProviderTest extends \PHPUnit_Framework_TestCase
@@ -61,12 +62,6 @@ class RoleProviderTest extends \PHPUnit_Framework_TestCase
 
     private function getTokenStorageMock()
     {
-        if (interface_exists('\Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface')) {
-            // Symfony >= 2.6
-            return \Mockery::mock('\Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
-        }
-
-        // Symfony < 2.6 compatibility
-        return \Mockery::mock('\Symfony\Component\Security\Core\SecurityContextInterface');
+        return \Mockery::mock(TokenStorageInterface::class);
     }
 }

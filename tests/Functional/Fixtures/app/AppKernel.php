@@ -66,7 +66,7 @@ class AppKernel extends Kernel
      */
     protected function getContainerBaseClass()
     {
-        return '\PSS\SymfonyMockerContainer\DependencyInjection\MockerContainer';
+        return \PSS\SymfonyMockerContainer\DependencyInjection\MockerContainer::class;
     }
 
     /**

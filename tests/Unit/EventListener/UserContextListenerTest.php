@@ -51,7 +51,7 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $response = $event->getResponse();
 
         $this->assertNotNull($response);
-        $this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertEquals('hash', $response->headers->get('X-Hash'));
         $this->assertNull($response->headers->get('Vary'));
         $this->assertEquals('max-age=0, no-cache, private', $response->headers->get('Cache-Control'));
@@ -91,7 +91,7 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $response = $event->getResponse();
 
         $this->assertNotNull($response);
-        $this->assertInstanceOf('\Symfony\Component\HttpFoundation\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertEquals('hash', $response->headers->get('X-Hash'));
         $this->assertEquals('X-SessionId', $response->headers->get('Vary'));
         $this->assertEquals('max-age=30, public', $response->headers->get('Cache-Control'));
@@ -213,7 +213,7 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $hashGenerator = \Mockery::mock(HashGenerator::class);
         $hashGenerator->shouldReceive('generateHash')->never();
 
-        $anonymousRequestMatcher = \Mockery::mock('\Symfony\Component\HttpFoundation\RequestMatcherInterface');
+        $anonymousRequestMatcher = \Mockery::mock(RequestMatcherInterface::class);
         $anonymousRequestMatcher->shouldReceive('matches')->andReturn(true);
 
         // onKernelRequest
@@ -267,7 +267,7 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
     protected function getKernelRequestEvent(Request $request, $type = HttpKernelInterface::MASTER_REQUEST)
     {
         return new GetResponseEvent(
-            \Mockery::mock('\Symfony\Component\HttpKernel\HttpKernelInterface'),
+            \Mockery::mock(HttpKernelInterface::class),
             $request,
             $type
         );
@@ -276,7 +276,7 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
     protected function getKernelResponseEvent(Request $request, Response $response = null, $type = HttpKernelInterface::MASTER_REQUEST)
     {
         return new FilterResponseEvent(
-            \Mockery::mock('\Symfony\Component\HttpKernel\HttpKernelInterface'),
+            \Mockery::mock(HttpKernelInterface::class),
             $request,
             $type,
             $response ?: new Response()
@@ -291,7 +291,7 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function getRequestMatcher(Request $request, $match)
     {
-        $requestMatcher = \Mockery::mock('\Symfony\Component\HttpFoundation\RequestMatcherInterface');
+        $requestMatcher = \Mockery::mock(RequestMatcherInterface::class);
         $requestMatcher->shouldReceive('matches')->with($request)->andReturn($match);
 
         return $requestMatcher;

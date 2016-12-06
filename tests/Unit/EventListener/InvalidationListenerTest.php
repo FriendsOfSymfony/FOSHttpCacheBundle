@@ -17,13 +17,17 @@ use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use FOS\HttpCacheBundle\EventListener\InvalidationListener;
 use FOS\HttpCacheBundle\Http\RuleMatcher;
 use Mockery\MockInterface;
+use Symfony\Component\Console\Event\ConsoleEvent;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Router;
 
 class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -69,7 +73,7 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
         $routes->add('route_invalidated_special', new Route('/retrieve/something/{id}/{special}'));
 
         $requestParams = ['id' => 123, 'special' => 'bla'];
-        $router = \Mockery::mock('\Symfony\Component\Routing\Router')
+        $router = \Mockery::mock(Router::class)
             ->shouldDeferMissing()
             ->shouldReceive('generate')
             ->with('route_invalidated', $requestParams)
@@ -109,7 +113,7 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('flush')->once()
         ;
 
-        $router = \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $router = \Mockery::mock(UrlGeneratorInterface::class);
 
         $listener = new InvalidationListener($cacheManager, $router);
 
@@ -161,12 +165,12 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->cacheManager->shouldReceive('flush')->once()->andReturn(2);
 
-        $output = \Mockery::mock('\Symfony\Component\Console\Output\OutputInterface')
+        $output = \Mockery::mock(OutputInterface::class)
             ->shouldReceive('getVerbosity')->once()->andReturn(OutputInterface::VERBOSITY_VERBOSE)
             ->shouldReceive('writeln')->with('Sent 2 invalidation request(s)')->once()
             ->getMock();
 
-        $event = \Mockery::mock('\Symfony\Component\Console\Event\ConsoleEvent')
+        $event = \Mockery::mock(ConsoleEvent::class)
             ->shouldReceive('getOutput')->andReturn($output)
             ->getMock();
 
@@ -176,7 +180,7 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
     protected function getEvent(Request $request, Response $response = null)
     {
         return new PostResponseEvent(
-            \Mockery::mock('\Symfony\Component\HttpKernel\HttpKernelInterface'),
+            \Mockery::mock(HttpKernelInterface::class),
             $request,
             null !== $response ? $response : new Response()
         );
@@ -186,7 +190,7 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
     {
         return new InvalidationListener(
             $this->cacheManager,
-            \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface')
+            \Mockery::mock(UrlGeneratorInterface::class)
         );
     }
 }
