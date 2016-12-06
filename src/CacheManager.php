@@ -12,7 +12,7 @@
 namespace FOS\HttpCacheBundle;
 
 use FOS\HttpCache\CacheInvalidator;
-use FOS\HttpCache\ProxyClient\ProxyClientInterface;
+use FOS\HttpCache\ProxyClient\ProxyClient;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -39,10 +39,10 @@ class CacheManager extends CacheInvalidator
     /**
      * Constructor.
      *
-     * @param ProxyClientInterface  $cache        HTTP cache proxy client
+     * @param ProxyClient           $cache        HTTP cache proxy client
      * @param UrlGeneratorInterface $urlGenerator Symfony route generator
      */
-    public function __construct(ProxyClientInterface $cache, UrlGeneratorInterface $urlGenerator)
+    public function __construct(ProxyClient $cache, UrlGeneratorInterface $urlGenerator)
     {
         parent::__construct($cache);
         $this->urlGenerator = $urlGenerator;

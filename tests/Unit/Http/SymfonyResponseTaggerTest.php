@@ -12,8 +12,8 @@
 namespace FOS\HttpCacheBundle\Tests\Unit;
 
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
-use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
-use FOS\HttpCache\ProxyClient\ProxyClientInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
+use FOS\HttpCache\ProxyClient\ProxyClient;
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Mockery\MockInterface;
@@ -25,12 +25,12 @@ class SymfonyResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->proxyClient = \Mockery::mock(ProxyClientInterface::class);
+        $this->proxyClient = \Mockery::mock(ProxyClient::class);
     }
 
     public function testTagResponse()
     {
-        /** @var TagsInterface|MockInterface $tag */
+        /** @var TagCapable|MockInterface $tag */
         $tag = new Varnish(\Mockery::mock(HttpDispatcher::class));
 
         $tags1 = ['post-1', 'posts'];

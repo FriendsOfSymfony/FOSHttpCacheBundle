@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Security\Http\Logout;
 
-use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -22,7 +22,7 @@ class ContextInvalidationLogoutHandler implements LogoutHandlerInterface
     /**
      * Service used to ban hash request.
      *
-     * @var \FOS\HttpCache\ProxyClient\Invalidation\BanInterface
+     * @var \FOS\HttpCache\ProxyClient\Invalidation\BanCapable
      */
     private $banner;
 
@@ -40,7 +40,7 @@ class ContextInvalidationLogoutHandler implements LogoutHandlerInterface
      */
     private $userIdentifierHeaders;
 
-    public function __construct(BanInterface $banner, $userIdentifierHeaders, $acceptHeader)
+    public function __construct(BanCapable $banner, $userIdentifierHeaders, $acceptHeader)
     {
         $this->banner = $banner;
         $this->acceptHeader = $acceptHeader;
