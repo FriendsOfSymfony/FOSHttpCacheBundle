@@ -9,15 +9,15 @@
  * file that was distributed with this source code.
  */
 
-$container->loadFromExtension('fos_http_cache', array(
-    'proxy_client' => array(
-        'nginx' => array(
+$container->loadFromExtension('fos_http_cache', [
+    'proxy_client' => [
+        'nginx' => [
             'purge_location' => '/purge',
-            'http' => array(
-                'servers' => array('22.22.22.22'),
+            'http' => [
+                'servers' => ['22.22.22.22'],
                 'base_url' => '/test',
                 'http_client' => 'acme.guzzle.nginx',
-            ),
-        ),
-    ),
-));
+            ],
+        ],
+    ],
+]);

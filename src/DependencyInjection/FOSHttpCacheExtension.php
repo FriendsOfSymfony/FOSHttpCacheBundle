@@ -146,7 +146,7 @@ class FOSHttpCacheExtension extends Extension
                 $rule['headers']['overwrite'] = $config['defaults']['overwrite'];
             }
 
-            $controlDefinition->addMethodCall('addRule', array($ruleMatcher, $rule['headers']));
+            $controlDefinition->addMethodCall('addRule', [$ruleMatcher, $rule['headers']]);
         }
     }
 
@@ -163,8 +163,8 @@ class FOSHttpCacheExtension extends Extension
             $match['attributes']
         );
 
-        $extraCriteria = array();
-        foreach (array('additional_cacheable_status', 'match_response') as $extra) {
+        $extraCriteria = [];
+        foreach (['additional_cacheable_status', 'match_response'] as $extra) {
             if (isset($match[$extra])) {
                 $extraCriteria[$extra] = $match[$extra];
             }
@@ -179,7 +179,7 @@ class FOSHttpCacheExtension extends Extension
 
     private function createRuleMatcher(ContainerBuilder $container, Reference $requestMatcher, array $extraCriteria)
     {
-        $arguments = array((string) $requestMatcher, $extraCriteria);
+        $arguments = [(string) $requestMatcher, $extraCriteria];
         $serialized = serialize($arguments);
         $id = $this->getAlias().'.rule_matcher.'.md5($serialized).sha1($serialized);
 
@@ -227,9 +227,9 @@ class FOSHttpCacheExtension extends Extension
         }
     }
 
-    private function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null, $methods = null, $ips = null, array $attributes = array())
+    private function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null, $methods = null, $ips = null, array $attributes = [])
     {
-        $arguments = array($path, $host, $methods, $ips, $attributes);
+        $arguments = [$path, $host, $methods, $ips, $attributes];
         $serialized = serialize($arguments);
         $id = $this->getAlias().'.request_matcher.'.md5($serialized).sha1($serialized);
 
@@ -328,7 +328,7 @@ class FOSHttpCacheExtension extends Extension
 
             return;
         }
-        if (!in_array($client, array('varnish', 'custom'))) {
+        if (!in_array($client, ['varnish', 'custom'])) {
             throw new InvalidConfigurationException(sprintf('You can not enable cache tagging with the %s client', $client));
         }
 
@@ -402,12 +402,12 @@ class FOSHttpCacheExtension extends Extension
         foreach ($config as $rule) {
             $ruleMatcher = $this->parseRuleMatcher($container, $rule['match']);
 
-            $tags = array(
+            $tags = [
                 'tags' => $rule['tags'],
                 'expressions' => $rule['tag_expressions'],
-            );
+            ];
 
-            $tagDefinition->addMethodCall('addRule', array($ruleMatcher, $tags));
+            $tagDefinition->addMethodCall('addRule', [$ruleMatcher, $tags]);
         }
     }
 
@@ -417,7 +417,7 @@ class FOSHttpCacheExtension extends Extension
 
         foreach ($config as $rule) {
             $ruleMatcher = $this->parseRuleMatcher($container, $rule['match']);
-            $tagDefinition->addMethodCall('addRule', array($ruleMatcher, $rule['routes']));
+            $tagDefinition->addMethodCall('addRule', [$ruleMatcher, $rule['routes']]);
         }
     }
 

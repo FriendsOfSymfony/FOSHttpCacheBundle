@@ -9,17 +9,17 @@
  * file that was distributed with this source code.
  */
 
-$container->loadFromExtension('fos_http_cache', array(
-    'cache_control' => array(
-        'rules' => array(
-            array(
-                'match' => array(
+$container->loadFromExtension('fos_http_cache', [
+    'cache_control' => [
+        'rules' => [
+            [
+                'match' => [
                     'path' => '/abc',
-                ),
-                'headers' => array(
+                ],
+                'headers' => [
                     'last_modified' => 'this is no date',
-                ),
-            ),
-        ),
-    ),
-));
+                ],
+            ],
+        ],
+    ],
+]);

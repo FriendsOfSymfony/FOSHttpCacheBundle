@@ -28,33 +28,33 @@ class TagListenerPassTest extends \PHPUnit_Framework_TestCase
         $tagListenerPass = new TagListenerPass();
         $container = $this->createContainer();
         $config = $this->getConfig();
-        $extension->load(array($config), $container);
+        $extension->load([$config], $container);
         $tagListenerPass->process($container);
     }
 
     protected function createContainer()
     {
-        return new ContainerBuilder(new ParameterBag(array(
+        return new ContainerBuilder(new ParameterBag([
             'kernel.debug' => false,
-        )));
+        ]));
     }
 
     protected function getConfig()
     {
-        return array(
-            'proxy_client' => array(
-                'varnish' => array(
+        return [
+            'proxy_client' => [
+                'varnish' => [
                     'http' => [
                         'base_url' => 'my_hostname',
-                        'servers' => array(
+                        'servers' => [
                             '127.0.0.1',
-                        ),
+                        ],
                     ],
-                ),
-            ),
-            'tags' => array(
+                ],
+            ],
+            'tags' => [
                 'enabled' => true,
-            ),
-        );
+            ],
+        ];
     }
 }

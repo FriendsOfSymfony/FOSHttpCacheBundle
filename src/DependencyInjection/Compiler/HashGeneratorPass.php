@@ -34,7 +34,7 @@ class HashGeneratorPass implements CompilerPassInterface
 
         $definition = $container->getDefinition('fos_http_cache.user_context.hash_generator');
 
-        $prioritisedTags = array();
+        $prioritisedTags = [];
         $taggedProviders = $container->findTaggedServiceIds(self::TAG_NAME);
 
         if (!count($taggedProviders)) {
@@ -51,7 +51,7 @@ class HashGeneratorPass implements CompilerPassInterface
         krsort($prioritisedTags, SORT_NUMERIC);
         $prioritisedProviders = call_user_func_array('array_merge', $prioritisedTags);
 
-        $providers = array();
+        $providers = [];
         foreach ($prioritisedProviders as $id) {
             $providers[] = new Reference($id);
         }

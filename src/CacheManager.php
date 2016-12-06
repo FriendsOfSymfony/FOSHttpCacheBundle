@@ -99,7 +99,7 @@ class CacheManager extends CacheInvalidator
      *
      * @return $this
      */
-    public function invalidateRoute($name, array $parameters = array(), array $headers = array())
+    public function invalidateRoute($name, array $parameters = [], array $headers = [])
     {
         $this->invalidatePath($this->urlGenerator->generate($name, $parameters, $this->generateUrlType), $headers);
 
@@ -115,7 +115,7 @@ class CacheManager extends CacheInvalidator
      *
      * @return $this
      */
-    public function refreshRoute($route, array $parameters = array(), array $headers = array())
+    public function refreshRoute($route, array $parameters = [], array $headers = [])
     {
         $this->refreshPath($this->urlGenerator->generate($route, $parameters, $this->generateUrlType), $headers);
 

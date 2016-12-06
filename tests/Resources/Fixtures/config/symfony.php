@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  */
 
-$container->loadFromExtension('fos_http_cache', array(
-    'proxy_client' => array(
-        'symfony' => array(
+$container->loadFromExtension('fos_http_cache', [
+    'proxy_client' => [
+        'symfony' => [
             'http' => [
-                'servers' => array('22.22.22.22'),
+                'servers' => ['22.22.22.22'],
                 'base_url' => '/test',
                 'http_client' => 'acme.guzzle.symfony',
             ],
-        ),
-    ),
-));
+        ],
+    ],
+]);

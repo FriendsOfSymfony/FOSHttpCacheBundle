@@ -135,12 +135,12 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
      */
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             KernelEvents::TERMINATE => 'onKernelTerminate',
             KernelEvents::EXCEPTION => 'onKernelException',
             ConsoleEvents::TERMINATE => 'onConsoleTerminate',
             ConsoleEvents::EXCEPTION => 'onConsoleTerminate',
-        );
+        ];
     }
 
     /**
@@ -208,7 +208,7 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
         $values['request'] = $request;
 
         foreach ($routes as $route) {
-            $params = array();
+            $params = [];
 
             if (null !== $route->getParams()) {
                 // Iterate over route params and try to evaluate their values

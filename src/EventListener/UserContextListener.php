@@ -79,7 +79,7 @@ class UserContextListener implements EventSubscriberInterface
     public function __construct(
         RequestMatcherInterface $requestMatcher,
         HashGenerator $hashGenerator,
-        array $userIdentifierHeaders = array('Cookie', 'Authorization'),
+        array $userIdentifierHeaders = ['Cookie', 'Authorization'],
         $hashHeader = 'X-User-Context-Hash',
         $ttl = 0,
         $addVaryOnHash = true,
@@ -122,10 +122,10 @@ class UserContextListener implements EventSubscriberInterface
         $hash = $this->hashGenerator->generateHash();
 
         // status needs to be 200 as otherwise varnish will not cache the response.
-        $response = new Response('', 200, array(
+        $response = new Response('', 200, [
             $this->hashHeader => $hash,
             'Content-Type' => 'application/vnd.fos.user-context-hash',
-        ));
+        ]);
 
         if ($this->ttl > 0) {
             $response->setClientTtl($this->ttl);
@@ -204,9 +204,9 @@ class UserContextListener implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             KernelEvents::RESPONSE => 'onKernelResponse',
-            KernelEvents::REQUEST => array('onKernelRequest', 7),
-        );
+            KernelEvents::REQUEST => ['onKernelRequest', 7],
+        ];
     }
 }

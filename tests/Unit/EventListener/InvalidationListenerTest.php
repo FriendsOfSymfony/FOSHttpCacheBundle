@@ -68,7 +68,7 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
         $routes->add('route_invalidated', new Route('/retrieve/something/{id}'));
         $routes->add('route_invalidated_special', new Route('/retrieve/something/{id}/{special}'));
 
-        $requestParams = array('id' => 123, 'special' => 'bla');
+        $requestParams = ['id' => 123, 'special' => 'bla'];
         $router = \Mockery::mock('\Symfony\Component\Routing\Router')
             ->shouldDeferMissing()
             ->shouldReceive('generate')
@@ -85,14 +85,14 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
             null,
             null,
             null,
-            array('_route' => 'route_invalidator')
-        ), array());
+            ['_route' => 'route_invalidator']
+        ), []);
 
         $listener = new InvalidationListener($cacheManager, $router);
-        $listener->addRule($ruleMatcher, array(
-            'route_invalidated' => array('ignore_extra_params' => true),
-            'route_invalidated_special' => array('ignore_extra_params' => true),
-        ));
+        $listener->addRule($ruleMatcher, [
+            'route_invalidated' => ['ignore_extra_params' => true],
+            'route_invalidated_special' => ['ignore_extra_params' => true],
+        ]);
 
         $request = new Request();
         $request->attributes->set('_route', 'route_invalidator');
@@ -122,10 +122,10 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
     public function testInvalidatePath()
     {
         $request = new Request();
-        $request->attributes->set('_invalidate_path', array(
-            new InvalidatePath(array('value' => '/some/path')),
-            new InvalidatePath(array('value' => array('/other/path', 'http://absolute.com/path'))),
-        ));
+        $request->attributes->set('_invalidate_path', [
+            new InvalidatePath(['value' => '/some/path']),
+            new InvalidatePath(['value' => ['/other/path', 'http://absolute.com/path']]),
+        ]);
 
         $event = $this->getEvent($request);
 
@@ -142,16 +142,16 @@ class InvalidationListenerTest extends \PHPUnit_Framework_TestCase
     {
         $request = new Request();
         $request->attributes->set('request_id', 123);
-        $request->attributes->set('_invalidate_route', array(
-            new InvalidateRoute(array('name' => 'some_route')),
-            new InvalidateRoute(array('name' => 'other_route', 'params' => array('id' => array('expression' => 'request_id')))),
-        ));
+        $request->attributes->set('_invalidate_route', [
+            new InvalidateRoute(['name' => 'some_route']),
+            new InvalidateRoute(['name' => 'other_route', 'params' => ['id' => ['expression' => 'request_id']]]),
+        ]);
 
         $event = $this->getEvent($request);
 
         $this->cacheManager
-            ->shouldReceive('invalidateRoute')->with('some_route', array())->once()
-            ->shouldReceive('invalidateRoute')->with('other_route', array('id' => 123))->once()
+            ->shouldReceive('invalidateRoute')->with('some_route', [])->once()
+            ->shouldReceive('invalidateRoute')->with('other_route', ['id' => 123])->once()
             ->shouldReceive('flush')->once();
 
         $this->getListener()->onKernelTerminate($event);

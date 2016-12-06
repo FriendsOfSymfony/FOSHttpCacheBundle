@@ -25,7 +25,7 @@ class LoggerPassTest extends \PHPUnit_Framework_TestCase
         $loggerPass = new LoggerPass();
         $container = $this->createContainer();
         $config = $this->getConfig();
-        $extension->load(array($config), $container);
+        $extension->load([$config], $container);
         $container->setDefinition('logger', new Definition());
         $loggerPass->process($container);
 
@@ -38,7 +38,7 @@ class LoggerPassTest extends \PHPUnit_Framework_TestCase
         $loggerPass = new LoggerPass();
         $container = $this->createContainer();
         $config = $this->getConfig();
-        $extension->load(array($config), $container);
+        $extension->load([$config], $container);
         $loggerPass->process($container);
 
         $this->assertIsAbstract($container, 'fos_http_cache.event_listener.log');
@@ -61,27 +61,27 @@ class LoggerPassTest extends \PHPUnit_Framework_TestCase
 
     private function createContainer()
     {
-        return new ContainerBuilder(new ParameterBag(array(
+        return new ContainerBuilder(new ParameterBag([
             'kernel.debug' => false,
-        )));
+        ]));
     }
 
     private function getConfig()
     {
-        return array(
-            'proxy_client' => array(
-                'varnish' => array(
+        return [
+            'proxy_client' => [
+                'varnish' => [
                     'http' => [
                         'base_url' => 'my_hostname',
-                        'servers' => array(
+                        'servers' => [
                             '127.0.0.1',
-                        ),
+                        ],
                     ],
-                ),
-            ),
-            'tags' => array(
+                ],
+            ],
+            'tags' => [
                 'enabled' => true,
-            ),
-        );
+            ],
+        ];
     }
 }

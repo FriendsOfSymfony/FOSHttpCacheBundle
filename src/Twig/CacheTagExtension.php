@@ -33,9 +33,9 @@ class CacheTagExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return array(
-            new \Twig_SimpleFunction('fos_httpcache_tag', array($this, 'addTag')),
-        );
+        return [
+            new \Twig_SimpleFunction('fos_httpcache_tag', [$this, 'addTag']),
+        ];
     }
 
     /**

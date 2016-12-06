@@ -74,7 +74,7 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
         $request = $event->getRequest();
         $response = $event->getResponse();
 
-        $tags = array();
+        $tags = [];
         // Only set cache tags or invalidate them if response is successful
         if ($response->isSuccessful()) {
             $tags = $this->getAnnotationTags($request);
@@ -105,9 +105,9 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
      */
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             KernelEvents::RESPONSE => 'onKernelResponse',
-        );
+        ];
     }
 
     /**
@@ -124,10 +124,10 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
         // annotation
         /** @var $tagConfigurations Tag[] */
         if (!$tagConfigurations = $request->attributes->get('_tag')) {
-            return array();
+            return [];
         }
 
-        $tags = array();
+        $tags = [];
         foreach ($tagConfigurations as $tagConfiguration) {
             if (null !== $tagConfiguration->getExpression()) {
                 $tags[] = $this->evaluateTag(

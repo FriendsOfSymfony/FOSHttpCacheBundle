@@ -34,39 +34,39 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
 
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, array(
+        }, [
             'config/empty.yml',
             'config/empty.xml',
             'config/empty.php',
-        ));
+        ]);
 
         foreach ($formats as $format) {
-            $this->assertProcessedConfigurationEquals($expectedConfiguration, array($format));
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
         }
     }
 
     public function testSupportsAllConfigFormats()
     {
-        $expectedConfiguration = array(
-            'cache_control' => array(
-                'defaults' => array(
+        $expectedConfiguration = [
+            'cache_control' => [
+                'defaults' => [
                     'overwrite' => true,
-                ),
-                'rules' => array(
-                    array(
-                        'match' => array(
+                ],
+                'rules' => [
+                    [
+                        'match' => [
                             'path' => '/abc',
                             'host' => 'fos',
-                            'methods' => array('GET', 'POST'),
-                            'ips' => array('1.2.3.4', '1.1.1.1'),
-                            'attributes' => array('_controller' => 'fos.user_bundle.*'),
-                            'additional_cacheable_status' => array(100, 500),
+                            'methods' => ['GET', 'POST'],
+                            'ips' => ['1.2.3.4', '1.1.1.1'],
+                            'attributes' => ['_controller' => 'fos.user_bundle.*'],
+                            'additional_cacheable_status' => [100, 500],
                             'match_response' => '',
                             // TODO 'match_response' => '',
-                        ),
-                        'headers' => array(
+                        ],
+                        'headers' => [
                             'overwrite' => false,
-                            'cache_control' => array(
+                            'cache_control' => [
                                 'max_age' => 1,
                                 's_maxage' => 2,
                                 'public' => true,
@@ -76,156 +76,156 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                                 'no_cache' => false,
                                 'stale_if_error' => 3,
                                 'stale_while_revalidate' => 4,
-                            ),
+                            ],
                             'etag' => true,
                             'last_modified' => '-1 hour',
                             'reverse_proxy_ttl' => 42,
-                            'vary' => array('Cookie', 'Authorization'),
-                        ),
-                    ),
-                ),
-            ),
-            'proxy_client' => array(
-                'varnish' => array(
+                            'vary' => ['Cookie', 'Authorization'],
+                        ],
+                    ],
+                ],
+            ],
+            'proxy_client' => [
+                'varnish' => [
                     'http' => [
-                        'servers' => array('22.22.22.22'),
+                        'servers' => ['22.22.22.22'],
                         'base_url' => '/test',
                         'http_client' => 'acme.guzzle.varnish',
                     ],
-                ),
-            ),
-            'cache_manager' => array(
+                ],
+            ],
+            'cache_manager' => [
                 'enabled' => true,
                 'custom_proxy_client' => 'acme.proxy_client',
                 'generate_url_type' => 'auto',
-            ),
-            'tags' => array(
+            ],
+            'tags' => [
                 'enabled' => 'auto',
                 'header' => 'FOS-Tags',
                 'expression_language' => 'acme.expression_language',
-                'rules' => array(
-                    array(
-                        'match' => array(
+                'rules' => [
+                    [
+                        'match' => [
                             'path' => '/def',
                             'host' => 'friends',
-                            'methods' => array('PUT', 'DELETE'),
-                            'ips' => array('99.99.99.99'),
-                            'attributes' => array(
+                            'methods' => ['PUT', 'DELETE'],
+                            'ips' => ['99.99.99.99'],
+                            'attributes' => [
                                 '_foo' => 'bar',
-                            ),
-                            'additional_cacheable_status' => array(501, 502),
+                            ],
+                            'additional_cacheable_status' => [501, 502],
                             'match_response' => '',
                             // TODO match_response
-                        ),
-                        'tags' => array('a', 'b'),
-                        'tag_expressions' => array('"a"', '"b"'),
-                    ),
-                ),
-            ),
-            'invalidation' => array(
+                        ],
+                        'tags' => ['a', 'b'],
+                        'tag_expressions' => ['"a"', '"b"'],
+                    ],
+                ],
+            ],
+            'invalidation' => [
                 'enabled' => 'auto',
                 'expression_language' => 'acme.expression_language',
-                'rules' => array(
-                    array(
-                        'match' => array(
+                'rules' => [
+                    [
+                        'match' => [
                             'path' => '/hij',
                             'host' => 'symfony',
-                            'methods' => array('PATCH'),
-                            'ips' => array('42.42.42.42'),
-                            'attributes' => array(
+                            'methods' => ['PATCH'],
+                            'ips' => ['42.42.42.42'],
+                            'attributes' => [
                                 '_format' => 'json',
-                            ),
-                            'additional_cacheable_status' => array(404, 403),
+                            ],
+                            'additional_cacheable_status' => [404, 403],
                             'match_response' => '',
                             // TODO match_response
-                        ),
-                        'routes' => array(
-                            'invalidate_route1' => array(
+                        ],
+                        'routes' => [
+                            'invalidate_route1' => [
                                 'ignore_extra_params' => false,
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'user_context' => array(
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'user_context' => [
                 'enabled' => true,
-                'match' => array(
+                'match' => [
                     'matcher_service' => 'fos_http_cache.user_context.request_matcher',
                     'accept' => 'application/vnd.fos.user-context-hash',
                     'method' => 'GET',
-                ),
+                ],
                 'hash_cache_ttl' => 300,
                 'always_vary_on_context_hash' => true,
-                'user_identifier_headers' => array('Cookie', 'Authorization'),
+                'user_identifier_headers' => ['Cookie', 'Authorization'],
                 'user_hash_header' => 'FOS-User-Context-Hash',
                 'role_provider' => true,
-                'logout_handler' => array(
+                'logout_handler' => [
                     'enabled' => 'auto',
-                ),
-            ),
-            'flash_message' => array(
+                ],
+            ],
+            'flash_message' => [
                 'enabled' => true,
                 'name' => 'flashtest',
                 'path' => '/x',
                 'host' => 'y',
                 'secure' => true,
-            ),
-            'debug' => array(
+            ],
+            'debug' => [
                 'enabled' => true,
                 'header' => 'FOS-Cache-Debug',
-            ),
-        );
+            ],
+        ];
 
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, array(
+        }, [
             'config/full.yml',
             'config/full.xml',
             'config/full.php',
-        ));
+        ]);
 
         foreach ($formats as $format) {
-            $this->assertProcessedConfigurationEquals($expectedConfiguration, array($format));
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
         }
     }
 
     public function testCustomProxyClient()
     {
         $expectedConfiguration = $this->getEmptyConfig();
-        $expectedConfiguration['cache_manager'] = array(
+        $expectedConfiguration['cache_manager'] = [
             'enabled' => true,
             'custom_proxy_client' => 'acme.proxy_client',
             'generate_url_type' => 'auto',
-        );
+        ];
         $expectedConfiguration['tags']['enabled'] = 'auto';
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
 
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, array(
+        }, [
             'config/custom-client.yml',
             'config/custom-client.xml',
             'config/custom-client.php',
-        ));
+        ]);
 
         foreach ($formats as $format) {
-            $this->assertProcessedConfigurationEquals($expectedConfiguration, array($format));
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
         }
     }
 
     public function testSupportsNginx()
     {
         $expectedConfiguration = $this->getEmptyConfig();
-        $expectedConfiguration['proxy_client'] = array(
-            'nginx' => array(
+        $expectedConfiguration['proxy_client'] = [
+            'nginx' => [
                 'purge_location' => '/purge',
                 'http' => [
-                    'servers' => array('22.22.22.22'),
+                    'servers' => ['22.22.22.22'],
                     'base_url' => '/test',
                     'http_client' => 'acme.guzzle.nginx',
                 ],
-            ),
-        );
+            ],
+        ];
         $expectedConfiguration['cache_manager']['enabled'] = 'auto';
         $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
         $expectedConfiguration['tags']['enabled'] = 'auto';
@@ -234,29 +234,29 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
 
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, array(
+        }, [
             'config/nginx.yml',
             'config/nginx.xml',
             'config/nginx.php',
-        ));
+        ]);
 
         foreach ($formats as $format) {
-            $this->assertProcessedConfigurationEquals($expectedConfiguration, array($format));
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
         }
     }
 
     public function testSupportsSymfony()
     {
         $expectedConfiguration = $this->getEmptyConfig();
-        $expectedConfiguration['proxy_client'] = array(
-            'symfony' => array(
+        $expectedConfiguration['proxy_client'] = [
+            'symfony' => [
                 'http' => [
-                    'servers' => array('22.22.22.22'),
+                    'servers' => ['22.22.22.22'],
                     'base_url' => '/test',
                     'http_client' => 'acme.guzzle.symfony',
                 ],
-            ),
-        );
+            ],
+        ];
         $expectedConfiguration['cache_manager']['enabled'] = 'auto';
         $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
         $expectedConfiguration['tags']['enabled'] = 'auto';
@@ -265,61 +265,61 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
 
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, array(
+        }, [
             'config/symfony.yml',
             'config/symfony.xml',
             'config/symfony.php',
-        ));
+        ]);
 
         foreach ($formats as $format) {
-            $this->assertProcessedConfigurationEquals($expectedConfiguration, array($format));
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
         }
     }
 
     public function testSplitOptions()
     {
         $expectedConfiguration = $this->getEmptyConfig();
-        $expectedConfiguration['cache_control'] = array(
-            'rules' => array(
-                array(
-                    'match' => array(
+        $expectedConfiguration['cache_control'] = [
+            'rules' => [
+                [
+                    'match' => [
                         'path' => null,
                         'host' => null,
-                        'attributes' => array(),
-                        'additional_cacheable_status' => array(),
+                        'attributes' => [],
+                        'additional_cacheable_status' => [],
                         'match_response' => null,
-                        'methods' => array('GET', 'POST'),
-                        'ips' => array('1.2.3.4', '1.1.1.1'),
-                    ),
-                    'headers' => array(
+                        'methods' => ['GET', 'POST'],
+                        'ips' => ['1.2.3.4', '1.1.1.1'],
+                    ],
+                    'headers' => [
                         'reverse_proxy_ttl' => null,
-                        'vary' => array('Cookie', 'Authorization'),
+                        'vary' => ['Cookie', 'Authorization'],
                         'overwrite' => 'default',
                         'etag' => false,
-                    ),
-                ),
-            ),
-            'defaults' => array(
+                    ],
+                ],
+            ],
+            'defaults' => [
                 'overwrite' => false,
-            ),
-        );
-        $expectedConfiguration['proxy_client'] = array(
-            'varnish' => array(
+            ],
+        ];
+        $expectedConfiguration['proxy_client'] = [
+            'varnish' => [
                 'http' => [
                     'base_url' => null,
                     'http_client' => null,
-                    'servers' => array('1.1.1.1:80', '2.2.2.2:80'),
+                    'servers' => ['1.1.1.1:80', '2.2.2.2:80'],
                 ],
-            ),
-            'nginx' => array(
+            ],
+            'nginx' => [
                 'purge_location' => false,
                 'http' => [
                     'base_url' => null,
                     'http_client' => null,
-                    'servers' => array('1.1.1.1:81', '2.2.2.2:81'),
+                    'servers' => ['1.1.1.1:81', '2.2.2.2:81'],
                 ],
-            ),
-        );
+            ],
+        ];
         $expectedConfiguration['cache_manager']['enabled'] = 'auto';
         $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
         $expectedConfiguration['tags']['enabled'] = 'auto';
@@ -328,14 +328,14 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
 
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, array(
+        }, [
             'config/split.yml',
             'config/split.xml',
             'config/split.php',
-        ));
+        ]);
 
         foreach ($formats as $format) {
-            $this->assertProcessedConfigurationEquals($expectedConfiguration, array($format));
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
         }
     }
 
@@ -343,15 +343,15 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     {
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, array(
+        }, [
             'config/cachemanager_noclient.yml',
             'config/cachemanager_noclient.xml',
             'config/cachemanager_noclient.php',
-        ));
+        ]);
 
         foreach ($formats as $format) {
             try {
-                $this->assertProcessedConfigurationEquals(array(), array($format));
+                $this->assertProcessedConfigurationEquals([], [$format]);
                 $this->fail('No exception thrown on invalid configuration');
             } catch (InvalidConfigurationException $e) {
                 $this->assertContains('need to configure a proxy_client', $e->getMessage());
@@ -363,15 +363,15 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     {
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, array(
+        }, [
             'config/tags_nocachemanager.yml',
             'config/tags_nocachemanager.xml',
             'config/tags_nocachemanager.php',
-        ));
+        ]);
 
         foreach ($formats as $format) {
             try {
-                $this->assertProcessedConfigurationEquals(array(), array($format));
+                $this->assertProcessedConfigurationEquals([], [$format]);
                 $this->fail('No exception thrown on invalid configuration');
             } catch (InvalidConfigurationException $e) {
                 $this->assertContains('cache_manager needed for tag handling', $e->getMessage());
@@ -383,15 +383,15 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     {
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, array(
+        }, [
             'config/invalidation_nocachemanager.yml',
             'config/invalidation_nocachemanager.xml',
             'config/invalidation_nocachemanager.php',
-        ));
+        ]);
 
         foreach ($formats as $format) {
             try {
-                $this->assertProcessedConfigurationEquals(array(), array($format));
+                $this->assertProcessedConfigurationEquals([], [$format]);
                 $this->fail('No exception thrown on invalid configuration');
             } catch (InvalidConfigurationException $e) {
                 $this->assertContains('cache_manager needed for invalidation handling', $e->getMessage());
@@ -403,15 +403,15 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     {
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, array(
+        }, [
             'config/invalid_date.yml',
             'config/invalid_date.xml',
             'config/invalid_date.php',
-        ));
+        ]);
 
         foreach ($formats as $format) {
             try {
-                $this->assertProcessedConfigurationEquals(array(), array($format));
+                $this->assertProcessedConfigurationEquals([], [$format]);
                 $this->fail('No exception thrown on invalid configuration');
             } catch (InvalidConfigurationException $e) {
                 $this->assertContains('Failed to parse time string', $e->getMessage());
@@ -426,15 +426,15 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     {
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, array(
+        }, [
             'config/rules_matchstatusandexpression.yml',
             'config/rules_matchstatusandexpression.xml',
             'config/rules_matchstatusandexpression.php',
-        ));
+        ]);
 
         foreach ($formats as $format) {
             try {
-                $this->assertProcessedConfigurationEquals(array(), array($format));
+                $this->assertProcessedConfigurationEquals([], [$format]);
                 $this->fail('No exception thrown on invalid configuration');
             } catch (InvalidConfigurationException $e) {
                 $this->assertContains('may not set both additional_cacheable_status and match_response', $e->getMessage());
@@ -447,49 +447,49 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
      */
     private function getEmptyConfig()
     {
-        return array(
-            'cache_manager' => array(
+        return [
+            'cache_manager' => [
                 'enabled' => false,
                 'generate_url_type' => 'auto',
-            ),
-            'tags' => array(
+            ],
+            'tags' => [
                 'enabled' => false,
                 'header' => 'X-Cache-Tags',
                 'expression_language' => null,
-                'rules' => array(),
-            ),
-            'invalidation' => array(
+                'rules' => [],
+            ],
+            'invalidation' => [
                 'enabled' => false,
                 'expression_language' => null,
-                'rules' => array(),
-            ),
-            'user_context' => array(
+                'rules' => [],
+            ],
+            'user_context' => [
                 'enabled' => false,
-                'match' => array(
+                'match' => [
                     'matcher_service' => 'fos_http_cache.user_context.request_matcher',
                     'accept' => 'application/vnd.fos.user-context-hash',
                     'method' => null,
-                ),
+                ],
                 'hash_cache_ttl' => 0,
                 'always_vary_on_context_hash' => true,
-                'user_identifier_headers' => array('Cookie', 'Authorization'),
+                'user_identifier_headers' => ['Cookie', 'Authorization'],
                 'user_hash_header' => 'X-User-Context-Hash',
                 'role_provider' => false,
-                'logout_handler' => array(
+                'logout_handler' => [
                     'enabled' => false,
-                ),
-            ),
-            'flash_message' => array(
+                ],
+            ],
+            'flash_message' => [
                 'enabled' => false,
                 'name' => 'flashes',
                 'path' => '/',
                 'host' => null,
                 'secure' => false,
-            ),
-            'debug' => array(
+            ],
+            'debug' => [
                 'enabled' => false,
                 'header' => 'X-Cache-Debug',
-            ),
-        );
+            ],
+        ];
     }
 }

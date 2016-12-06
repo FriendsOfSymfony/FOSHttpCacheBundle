@@ -31,27 +31,27 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
     public function testInvalidateRoute()
     {
         $httpCache = \Mockery::mock(PurgeInterface::class)
-            ->shouldReceive('purge')->once()->with('/my/route', array())
-            ->shouldReceive('purge')->once()->with('/route/with/params/id/123', array())
-            ->shouldReceive('purge')->once()->with('/route/with/params/id/123', array('X-Foo' => 'bar'))
+            ->shouldReceive('purge')->once()->with('/my/route', [])
+            ->shouldReceive('purge')->once()->with('/route/with/params/id/123', [])
+            ->shouldReceive('purge')->once()->with('/route/with/params/id/123', ['X-Foo' => 'bar'])
             ->shouldReceive('flush')->once()
             ->getMock();
 
         $router = \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface')
             ->shouldReceive('generate')
-            ->with('my_route', array(), UrlGeneratorInterface::ABSOLUTE_PATH)
+            ->with('my_route', [], UrlGeneratorInterface::ABSOLUTE_PATH)
             ->andReturn('/my/route')
 
             ->shouldReceive('generate')
-            ->with('route_with_params', array('id' => 123), UrlGeneratorInterface::ABSOLUTE_PATH)
+            ->with('route_with_params', ['id' => 123], UrlGeneratorInterface::ABSOLUTE_PATH)
             ->andReturn('/route/with/params/id/123')
             ->getMock();
 
         $cacheManager = new CacheManager($httpCache, $router);
 
         $cacheManager->invalidateRoute('my_route')
-            ->invalidateRoute('route_with_params', array('id' => 123))
-            ->invalidateRoute('route_with_params', array('id' => 123), array('X-Foo' => 'bar'))
+            ->invalidateRoute('route_with_params', ['id' => 123])
+            ->invalidateRoute('route_with_params', ['id' => 123], ['X-Foo' => 'bar'])
             ->flush();
     }
 
@@ -60,17 +60,17 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
         $httpCache = \Mockery::mock(RefreshInterface::class)
             ->shouldReceive('refresh')->once()->with('/my/route', null)
             ->shouldReceive('refresh')->once()->with('/route/with/params/id/123', null)
-            ->shouldReceive('refresh')->once()->with('/route/with/params/id/123', array('X-Foo' => 'bar'))
+            ->shouldReceive('refresh')->once()->with('/route/with/params/id/123', ['X-Foo' => 'bar'])
             ->shouldReceive('flush')->never()
             ->getMock();
 
-        $router = \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface')
+        $router = \Mockery::mock(UrlGeneratorInterface::class)
             ->shouldReceive('generate')
-            ->with('my_route', array(), UrlGeneratorInterface::ABSOLUTE_PATH)
+            ->with('my_route', [], UrlGeneratorInterface::ABSOLUTE_PATH)
             ->andReturn('/my/route')
 
             ->shouldReceive('generate')
-            ->with('route_with_params', array('id' => 123), UrlGeneratorInterface::ABSOLUTE_PATH)
+            ->with('route_with_params', ['id' => 123], UrlGeneratorInterface::ABSOLUTE_PATH)
             ->andReturn('/route/with/params/id/123')
             ->getMock();
 
@@ -78,8 +78,8 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
 
         $cacheManager
             ->refreshRoute('my_route')
-            ->refreshRoute('route_with_params', array('id' => 123))
-            ->refreshRoute('route_with_params', array('id' => 123), array('X-Foo' => 'bar'))
+            ->refreshRoute('route_with_params', ['id' => 123])
+            ->refreshRoute('route_with_params', ['id' => 123], ['X-Foo' => 'bar'])
         ;
     }
 
@@ -92,9 +92,9 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
         $ban = \Mockery::mock(BanInterface::class);
         $router = \Mockery::mock(UrlGeneratorInterface::class);
 
-        $tags1 = array('post-1', 'posts');
-        $tags2 = array('post-2');
-        $tags3 = array('different');
+        $tags1 = ['post-1', 'posts'];
+        $tags2 = ['post-2'];
+        $tags3 = ['different'];
 
         $cacheManager = new CacheManager($ban, $router);
         $response = new Response();

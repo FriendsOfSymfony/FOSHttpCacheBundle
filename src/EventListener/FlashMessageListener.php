@@ -42,7 +42,7 @@ class FlashMessageListener implements EventSubscriberInterface
      * @param Session $session A session instance
      * @param array   $options
      */
-    public function __construct($session, array $options = array())
+    public function __construct($session, array $options = [])
     {
         $this->session = $session;
         $this->options = $options;
@@ -53,9 +53,9 @@ class FlashMessageListener implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             KernelEvents::RESPONSE => 'onKernelResponse',
-        );
+        ];
     }
 
     /**
