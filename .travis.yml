@@ -48,7 +48,7 @@ matrix:
       env:
         - SYMFONY_VERSION='3.1.*'
 install:
-  - pip install -qr Resources/doc/requirements.txt --user
+  - pip install -qr doc/requirements.txt --user
 
 before_install:
   - sh -c 'if [ "$SYMFONY_VERSION" != "" ]; then composer require --dev --no-update symfony/symfony=$SYMFONY_VERSION; fi;'
@@ -58,8 +58,8 @@ before_script:
 
 script:
   - SYMFONY_DEPRECATIONS_HELPER=weak vendor/bin/phpunit ${PHPUNIT_FLAGS}
-  - make -C Resources/doc SPHINXOPTS='-nW' html
-  - make -C Resources/doc spelling
+  - make -C doc SPHINXOPTS='-nW' html
+  - make -C doc spelling
 
 after_script:
   - if [[ "$COVERAGE" = true ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi

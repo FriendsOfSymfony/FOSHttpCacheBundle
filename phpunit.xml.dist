@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="./Tests/bootstrap.php"
+<phpunit bootstrap="./tests/bootstrap.php"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
@@ -9,20 +9,18 @@
     <testsuites>
         <testsuite name="unit">
             <directory suffix="Test.php">./Tests</directory>
-            <exclude>./Tests/Functional</exclude>
+            <exclude>./tests/Unit</exclude>
         </testsuite>
         <testsuite name="functional">
-            <directory suffix="Test.php">./Tests/Functional</directory>
+            <directory suffix="Test.php">./tests/Functional</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
-            <directory>./</directory>
+            <directory>./src</directory>
             <exclude>
-                <directory>./Resources</directory>
-                <directory>./Tests</directory>
-                <directory>./vendor</directory>
+                <directory>./src/Resources</directory>
             </exclude>
         </whitelist>
     </filter>
@@ -32,6 +30,6 @@
     </listeners>
 
     <php>
-        <server name="KERNEL_DIR" value="./Tests/Functional/Fixtures/app" />
+        <server name="KERNEL_DIR" value="./tests/Functional/Fixtures/app" />
     </php>
 </phpunit>
