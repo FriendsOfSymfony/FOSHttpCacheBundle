@@ -59,38 +59,6 @@ class CacheManager extends CacheInvalidator
     }
 
     /**
-     * Assign cache tags to a response.
-     *
-     * @param Response $response
-     * @param array    $tags
-     * @param bool     $replace  Whether to replace the current tags on the
-     *                           response
-     *
-     * @return $this
-     *
-     * @deprecated Add tags with TagHandler::addTags and then use TagHandler::tagResponse
-     */
-    public function tagResponse(Response $response, array $tags, $replace = false)
-    {
-        @trigger_error('The '.__METHOD__.' method is deprecated since version 1.2 and will be removed in 2.0. Use the TagHandler instead.', E_USER_DEPRECATED);
-
-        if (!$replace && $response->headers->has($this->getTagsHeader())) {
-            $header = $response->headers->get($this->getTagsHeader());
-            if ('' !== $header) {
-                $tags = array_merge(
-                    explode(',', $response->headers->get($this->getTagsHeader())),
-                    $tags
-                );
-            }
-        }
-
-        $uniqueTags = array_unique($tags);
-        $response->headers->set($this->getTagsHeader(), implode(',', $uniqueTags));
-
-        return $this;
-    }
-
-    /**
      * Invalidate a route.
      *
      * @param string $name       Route name

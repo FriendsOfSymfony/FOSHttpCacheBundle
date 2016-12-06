@@ -4,24 +4,16 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <parameters>
-        <parameter key="fos_http_cache.event_listener.user_context.class">FOS\HttpCacheBundle\EventListener\UserContextListener</parameter>
-        <parameter key="fos_http_cache.user_context.hash_generator.class">FOS\HttpCache\UserContext\HashGenerator</parameter>
-        <parameter key="fos_http_cache.user_context.role_provider.class">FOS\HttpCacheBundle\UserContext\RoleProvider</parameter>
-        <parameter key="fos_http_cache.user_context.request_matcher.class">FOS\HttpCacheBundle\UserContext\RequestMatcher</parameter>
-        <parameter key="fos_http_cache.user_context.logout_handler.class">FOS\HttpCacheBundle\Security\Http\Logout\ContextInvalidationLogoutHandler</parameter>
-    </parameters>
-
     <services>
-        <service id="fos_http_cache.user_context.hash_generator" class="%fos_http_cache.user_context.hash_generator.class%">
+        <service id="fos_http_cache.user_context.hash_generator" class="FOS\HttpCache\UserContext\HashGenerator">
         </service>
 
-        <service id="fos_http_cache.user_context.request_matcher" class="%fos_http_cache.user_context.request_matcher.class%">
+        <service id="fos_http_cache.user_context.request_matcher" class="FOS\HttpCacheBundle\UserContext\RequestMatcher">
             <argument />
             <argument />
         </service>
 
-        <service id="fos_http_cache.event_listener.user_context" class="%fos_http_cache.event_listener.user_context.class%">
+        <service id="fos_http_cache.event_listener.user_context" class="FOS\HttpCacheBundle\EventListener\UserContextListener">
             <argument type="service" id="fos_http_cache.user_context.request_matcher" />
             <argument type="service" id="fos_http_cache.user_context.hash_generator" />
             <argument />
@@ -32,11 +24,11 @@
             <tag name="kernel.event_subscriber" />
         </service>
 
-        <service id="fos_http_cache.user_context.role_provider" class="%fos_http_cache.user_context.role_provider.class%" abstract="true">
+        <service id="fos_http_cache.user_context.role_provider" class="FOS\HttpCacheBundle\UserContext\RoleProvider" abstract="true">
             <argument type="service" id="security.token_storage" on-invalid="ignore" />
         </service>
 
-        <service id="fos_http_cache.user_context.logout_handler" class="%fos_http_cache.user_context.logout_handler.class%">
+        <service id="fos_http_cache.user_context.logout_handler" class="FOS\HttpCacheBundle\Security\Http\Logout\ContextInvalidationLogoutHandler">
             <argument type="service" id="fos_http_cache.default_proxy_client" />
             <argument />
             <argument />

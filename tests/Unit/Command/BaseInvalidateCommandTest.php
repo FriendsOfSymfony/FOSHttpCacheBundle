@@ -15,6 +15,7 @@ use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Command\InvalidatePathCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class BaseInvalidateCommandTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +27,7 @@ class BaseInvalidateCommandTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('invalidatePath')->once()->with('/another')
             ->getMock()
         ;
-        $container = \Mockery::mock('\Symfony\Component\DependencyInjection\ContainerInterface')
+        $container = \Mockery::mock(ContainerInterface::class)
             ->shouldReceive('get')->once()->with('fos_http_cache.cache_manager')->andReturn($invalidator)
             ->getMock()
         ;

@@ -165,7 +165,7 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
     protected function getEvent(Request $request, Response $response = null)
     {
         return new FilterResponseEvent(
-            \Mockery::mock('\Symfony\Component\HttpKernel\HttpKernelInterface'),
+            \Mockery::mock(HttpKernelInterface::class),
             $request,
             HttpKernelInterface::MASTER_REQUEST,
             $response ?: new Response()

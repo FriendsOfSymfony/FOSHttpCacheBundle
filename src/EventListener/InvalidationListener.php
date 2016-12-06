@@ -69,7 +69,7 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
     ) {
         $this->cacheManager = $cacheManager;
         $this->urlGenerator = $urlGenerator;
-        $this->expressionLanguage = $expressionLanguage;
+        $this->expressionLanguage = $expressionLanguage ?: new ExpressionLanguage();
     }
 
     /**
@@ -214,7 +214,7 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
                 // Iterate over route params and try to evaluate their values
                 foreach ($route->getParams() as $key => $value) {
                     if (is_array($value)) {
-                        $value = $this->getExpressionLanguage()->evaluate($value['expression'], $values);
+                        $value = $this->expressionLanguage->evaluate($value['expression'], $values);
                     }
 
                     $params[$key] = $value;
@@ -223,20 +223,5 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
 
             $this->cacheManager->invalidateRoute($route->getName(), $params);
         }
-    }
-
-    /**
-     * Delay instantiating the expression language instance until we need it,
-     * to support a setup with only symfony 2.3.
-     *
-     * @return ExpressionLanguage
-     */
-    private function getExpressionLanguage()
-    {
-        if (!$this->expressionLanguage) {
-            $this->expressionLanguage = new ExpressionLanguage();
-        }
-
-        return $this->expressionLanguage;
     }
 }

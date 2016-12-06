@@ -11,12 +11,10 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit;
 
-use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 use FOS\HttpCacheBundle\CacheManager;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CacheManagerTest extends \PHPUnit_Framework_TestCase
@@ -37,7 +35,7 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('flush')->once()
             ->getMock();
 
-        $router = \Mockery::mock('\Symfony\Component\Routing\Generator\UrlGeneratorInterface')
+        $router = \Mockery::mock(UrlGeneratorInterface::class)
             ->shouldReceive('generate')
             ->with('my_route', [], UrlGeneratorInterface::ABSOLUTE_PATH)
             ->andReturn('/my/route')
@@ -81,32 +79,5 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
             ->refreshRoute('route_with_params', ['id' => 123])
             ->refreshRoute('route_with_params', ['id' => 123], ['X-Foo' => 'bar'])
         ;
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testTagResponse()
-    {
-        $this->markTestSkipped('TODO refactor to use tag handler');
-        $ban = \Mockery::mock(BanInterface::class);
-        $router = \Mockery::mock(UrlGeneratorInterface::class);
-
-        $tags1 = ['post-1', 'posts'];
-        $tags2 = ['post-2'];
-        $tags3 = ['different'];
-
-        $cacheManager = new CacheManager($ban, $router);
-        $response = new Response();
-        $response->headers->set($cacheManager->getTagsHeader(), '');
-        $cacheManager->tagResponse($response, $tags1);
-        $this->assertTrue($response->headers->has($cacheManager->getTagsHeader()));
-        $this->assertEquals(implode(',', $tags1), $response->headers->get($cacheManager->getTagsHeader()));
-
-        $cacheManager->tagResponse($response, $tags2);
-        $this->assertEquals(implode(',', array_merge($tags1, $tags2)), $response->headers->get($cacheManager->getTagsHeader()));
-
-        $cacheManager->tagResponse($response, $tags3, true);
-        $this->assertEquals(implode(',', $tags3), $response->headers->get($cacheManager->getTagsHeader()));
     }
 }

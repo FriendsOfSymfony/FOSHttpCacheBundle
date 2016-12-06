@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\Routing\Router;
 
 class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -372,7 +373,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         // The cache_manager service depends on the router service
         $container->setDefinition(
             'router',
-            new Definition('\Symfony\Component\Routing\Router')
+            new Definition(Router::class)
         );
 
         return $container;
