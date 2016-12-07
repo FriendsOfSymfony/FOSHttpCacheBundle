@@ -30,7 +30,7 @@ if a proxy client is configured. It can not be enabled without a proxy client.
 **type**: ``string``
 
 Instead of configuring a :doc:`Proxy Client <proxy-client>`, you can define
-your own service that implements ``FOS\HttpCache\ProxyClientInterface``.
+your own service that implements ``FOS\HttpCache\ProxyClient``.
 
 .. code-block:: yaml
 

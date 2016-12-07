@@ -213,7 +213,7 @@ Custom Context Providers
 
 Custom providers need to:
 
-* implement ``FOS\HttpCache\UserContext\ContextProviderInterface``
+* implement the ``FOS\HttpCache\UserContext\ContextProvider`` interface
 * be tagged with ``fos_http_cache.user_context_provider``.
 
 If you need context providers to run in a specific order, you can specify the
