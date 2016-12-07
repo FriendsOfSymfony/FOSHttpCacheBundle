@@ -7,9 +7,7 @@
     <services>
         <service id="fos_http_cache.proxy_client.symfony"
                  class="FOS\HttpCache\ProxyClient\Symfony">
-            <argument>%fos_http_cache.proxy_client.symfony.servers%</argument>
-            <argument>%fos_http_cache.proxy_client.symfony.base_url%</argument>
-            <argument type="service" id="fos_http_cache.proxy_client.symfony.guzzle_client" on-invalid="ignore"/>
+            <argument type="service" id="fos_http_cache.proxy_client.symfony.http_dispatcher"/>
         </service>
     </services>
 
