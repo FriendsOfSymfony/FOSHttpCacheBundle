@@ -220,6 +220,6 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
      */
     protected function isRequestSafe(Request $request)
     {
-        return $request->isMethodSafe();
+        return method_exists($request, 'isMethodCacheable') ? $request->isMethodCacheable() : $request->isMethodSafe();
     }
 }
