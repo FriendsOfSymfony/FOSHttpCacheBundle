@@ -224,7 +224,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onKernelResponse($event);
         $newHeaders = $event->getResponse()->headers->all();
 
-        $this->assertEquals('no-cache', $newHeaders['cache-control'][0]);
+        $this->assertContains('no-cache', $newHeaders['cache-control'][0]);
     }
 
     public function testSkip()
@@ -242,7 +242,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->onKernelResponse($event);
         $newHeaders = $event->getResponse()->headers->all();
 
-        $this->assertEquals('no-cache', $newHeaders['cache-control'][0]);
+        $this->assertContains('no-cache', $newHeaders['cache-control'][0]);
     }
 
     public function testVary()
@@ -332,7 +332,7 @@ class CacheControlSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $subscriber->onKernelResponse($event2);
         $newHeaders = $response2->headers->all();
-        $this->assertEquals('no-cache', $newHeaders['cache-control'][0]);
+        $this->assertContains('no-cache', $newHeaders['cache-control'][0]);
     }
 
     /**

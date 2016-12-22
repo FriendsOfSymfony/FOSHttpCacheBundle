@@ -54,4 +54,16 @@ class AbstractRuleSubscriber
 
         return false;
     }
+
+    /**
+     * Decide whether to even look for matching rules with the current request.
+     *
+     * @param Request $request
+     *
+     * @return bool True if the request is safe and headers can be set
+     */
+    protected function isRequestSafe(Request $request)
+    {
+        return method_exists($request, 'isMethodCacheable') ? $request->isMethodCacheable() : $request->isMethodSafe();
+    }
 }

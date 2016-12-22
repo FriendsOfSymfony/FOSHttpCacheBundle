@@ -64,6 +64,14 @@ matrix:
       env:
         - SYMFONY_VERSION='3.0.*'
         - FRAMEWORK_EXTRA_VERSION='~3.0'
+    - php: 5.6
+      env:
+        - SYMFONY_VERSION='3.1.*'
+        - FRAMEWORK_EXTRA_VERSION='~3.0'
+    - php: 5.6
+      env:
+        - SYMFONY_VERSION='3.2.*'
+        - FRAMEWORK_EXTRA_VERSION='~3.0'
 
 install:
   - pip install -qr Resources/doc/requirements.txt --user
