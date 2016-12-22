@@ -47,6 +47,9 @@ matrix:
     - php: 7.1
       env:
         - SYMFONY_VERSION='3.1.*'
+    - php: 7.1
+      env:
+        - SYMFONY_VERSION='3.2.*'
 install:
   - pip install -qr doc/requirements.txt --user
 

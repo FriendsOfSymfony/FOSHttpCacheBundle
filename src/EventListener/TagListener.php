@@ -88,7 +88,7 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
             }
         }
 
-        if ($request->isMethodSafe()) {
+        if ($request->isMethodCacheable()) {
             $this->symfonyResponseTagger->addTags($tags);
             if (HttpKernelInterface::MASTER_REQUEST === $event->getRequestType()) {
                 // For safe requests (GET and HEAD), set cache tags on response

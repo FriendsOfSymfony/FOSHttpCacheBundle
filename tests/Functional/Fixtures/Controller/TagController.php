@@ -32,7 +32,7 @@ class TagController extends Controller
      */
     public function itemAction(Request $request, $id)
     {
-        if (!$request->isMethodSafe()) {
+        if (!$request->isMethodCacheable()) {
             $this->container->get('fos_http_cache.cache_manager')->invalidateTags(['all-items']);
         }
 

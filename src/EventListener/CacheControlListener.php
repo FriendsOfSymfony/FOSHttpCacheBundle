@@ -158,7 +158,7 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
             return;
         }
 
-        if ('no-cache' === $response->headers->get('cache-control')) {
+        if (false !== strpos($response->headers->get('Cache-Control'), 'no-cache')) {
             // this single header is set by default. if its the only thing, we override it.
             $response->setCache($directives);
 
