@@ -30,6 +30,7 @@ class CacheControlListenerTest extends WebTestCase
 
         $client->request('GET', '/noncached');
         $response = $client->getResponse();
-        $this->assertEquals('no-cache', $response->headers->get('Cache-Control'));
+        // using contains because Symfony 3.2 add `private` when the cache is not public
+        $this->assertContains('no-cache', $response->headers->get('Cache-Control'));
     }
 }
