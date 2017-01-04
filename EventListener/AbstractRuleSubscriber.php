@@ -62,7 +62,7 @@ class AbstractRuleSubscriber
      *
      * @return bool True if the request is safe and headers can be set
      */
-    protected function isRequestSafe(Request $request)
+    protected function isRequestCacheable(Request $request)
     {
         return method_exists($request, 'isMethodCacheable') ? $request->isMethodCacheable() : $request->isMethodSafe();
     }

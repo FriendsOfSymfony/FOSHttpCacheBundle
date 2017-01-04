@@ -102,7 +102,7 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
         }
 
         // do not change cache directives on unsafe requests.
-        if ($this->skip || !$this->isRequestSafe($request)) {
+        if ($this->skip || !$this->isRequestCacheable($request)) {
             return;
         }
 

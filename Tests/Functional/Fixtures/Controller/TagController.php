@@ -23,9 +23,9 @@ class TagController extends Controller
      *
      * @param Request $request
      *
-     * @return bool True if the request is safe
+     * @return bool True if the request is cacheable
      */
-    private function isRequestSafe(Request $request)
+    private function isRequestCacheable(Request $request)
     {
         return method_exists($request, 'isMethodCacheable') ? $request->isMethodCacheable() : $request->isMethodSafe();
     }
@@ -44,7 +44,7 @@ class TagController extends Controller
      */
     public function itemAction(Request $request, $id)
     {
-        if (!$this->isRequestSafe($request)) {
+        if (!$this->isRequestCacheable($request)) {
             $this->container->get('fos_http_cache.handler.tag_handler')->invalidateTags(array('all-items'));
         }
 
