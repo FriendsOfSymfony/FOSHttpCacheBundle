@@ -30,6 +30,6 @@ class CacheControlSubscriberTest extends WebTestCase
 
         $client->request('GET', '/noncached');
         $response = $client->getResponse();
-        $this->assertEquals('no-cache', $response->headers->get('Cache-Control'));
+        $this->assertContains('no-cache', $response->headers->get('Cache-Control'));
     }
 }

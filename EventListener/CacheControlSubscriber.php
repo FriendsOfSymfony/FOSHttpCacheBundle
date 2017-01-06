@@ -102,7 +102,7 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
         }
 
         // do not change cache directives on unsafe requests.
-        if ($this->skip || !$this->isRequestSafe($request)) {
+        if ($this->skip || !$this->isRequestCacheable($request)) {
             return;
         }
 
@@ -158,7 +158,7 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
             return;
         }
 
-        if ('no-cache' === $response->headers->get('cache-control')) {
+        if (false !== strpos($response->headers->get('Cache-Control'), 'no-cache')) {
             // this single header is set by default. if its the only thing, we override it.
             $response->setCache($directives);
 
@@ -209,17 +209,5 @@ class CacheControlSubscriber extends AbstractRuleSubscriber implements EventSubs
                 $response->headers->addCacheControlDirective($option, $controls[$key]);
             }
         }
-    }
-
-    /**
-     * Decide whether to even look for matching rules with the current request.
-     *
-     * @param Request $request
-     *
-     * @return bool True if the request is safe and headers can be set
-     */
-    protected function isRequestSafe(Request $request)
-    {
-        return $request->isMethodSafe();
     }
 }

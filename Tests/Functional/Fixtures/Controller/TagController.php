@@ -19,6 +19,18 @@ use FOS\HttpCacheBundle\Configuration\Tag;
 class TagController extends Controller
 {
     /**
+     * Workaround to be compliant with all Symfony version.
+     *
+     * @param Request $request
+     *
+     * @return bool True if the request is cacheable
+     */
+    private function isRequestCacheable(Request $request)
+    {
+        return method_exists($request, 'isMethodCacheable') ? $request->isMethodCacheable() : $request->isMethodSafe();
+    }
+
+    /**
      * @Tag("all-items")
      * @Tag("item-123")
      */
@@ -32,7 +44,7 @@ class TagController extends Controller
      */
     public function itemAction(Request $request, $id)
     {
-        if (!$request->isMethodSafe()) {
+        if (!$this->isRequestCacheable($request)) {
             $this->container->get('fos_http_cache.handler.tag_handler')->invalidateTags(array('all-items'));
         }
 
