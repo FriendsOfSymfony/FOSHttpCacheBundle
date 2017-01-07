@@ -102,7 +102,7 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
         }
 
         // do not change cache directives on unsafe requests.
-        if ($this->skip || !$this->isRequestSafe($request)) {
+        if ($this->skip || !$request->isMethodCacheable()) {
             return;
         }
 
@@ -209,17 +209,5 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
                 $response->headers->addCacheControlDirective($option, $controls[$key]);
             }
         }
-    }
-
-    /**
-     * Decide whether to even look for matching rules with the current request.
-     *
-     * @param Request $request
-     *
-     * @return bool True if the request is safe and headers can be set
-     */
-    protected function isRequestSafe(Request $request)
-    {
-        return $request->isMethodCacheable();
     }
 }
