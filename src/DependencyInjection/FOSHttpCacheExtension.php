@@ -78,10 +78,12 @@ class FOSHttpCacheExtension extends Extension
                     $generateUrlType = UrlGeneratorInterface::ABSOLUTE_URL;
                 } else {
                     $defaultClient = $this->getDefaultProxyClient($config['proxy_client']);
-                    $generateUrlType = array_key_exists('base_url', $config['proxy_client'][$defaultClient])
-                        ? UrlGeneratorInterface::ABSOLUTE_PATH
-                        : UrlGeneratorInterface::ABSOLUTE_URL
-                    ;
+                    if ($defaultClient !== 'noop'
+                        && array_key_exists('base_url', $config['proxy_client'][$defaultClient])) {
+                        $generateUrlType = UrlGeneratorInterface::ABSOLUTE_PATH;
+                    } else {
+                        $generateUrlType = UrlGeneratorInterface::ABSOLUTE_URL;
+                    }
                 }
             } else {
                 $generateUrlType = $config['cache_manager']['generate_url_type'];
@@ -253,6 +255,9 @@ class FOSHttpCacheExtension extends Extension
         }
         if (isset($config['symfony'])) {
             $this->loadSymfony($container, $loader, $config['symfony']);
+        }
+        if (isset($config['noop'])) {
+            $loader->load('noop.xml');
         }
 
         $container->setAlias(
@@ -455,6 +460,10 @@ class FOSHttpCacheExtension extends Extension
 
         if (isset($config['symfony'])) {
             return 'symfony';
+        }
+
+        if (isset($config['noop'])) {
+            return 'noop';
         }
 
         throw new InvalidConfigurationException('No proxy client configured');

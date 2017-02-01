@@ -117,6 +117,16 @@ symfony
 
 For ``servers`` and ``base_url``, see above.
 
+noop
+----
+
+.. code-block:: yaml
+
+    # app/config/config.yml
+    fos_http_cache:
+        proxy_client:
+            noop: ~
+
 default
 -------
 

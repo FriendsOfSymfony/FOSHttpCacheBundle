@@ -284,7 +284,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('proxy_client')
                     ->children()
                         ->enumNode('default')
-                            ->values(['varnish', 'nginx', 'symfony'])
+                            ->values(['varnish', 'nginx', 'symfony', 'noop'])
                             ->info('If you configure more than one proxy client, you need to specify which client is the default.')
                         ->end()
                         ->arrayNode('varnish')
@@ -308,6 +308,8 @@ class Configuration implements ConfigurationInterface
                                 ->append($this->getHttpDispatcherNode())
                             ->end()
                         ->end()
+
+                        ->booleanNode('noop')->end()
 
                     ->end()
                 ->end()
