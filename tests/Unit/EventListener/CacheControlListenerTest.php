@@ -365,7 +365,8 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function buildEvent($method = 'GET')
     {
-        $kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
+        $kernel = $this->getMockBuilder('Symfony\Component\HttpKernel\HttpKernelInterface')
+            ->getMock();
         $response = new Response();
         $request = new Request();
         $request->setMethod($method);
