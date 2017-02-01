@@ -11,8 +11,8 @@ PHPUnit:
 
     $ git clone https://github.com/FriendsOfSymfony/FOSHttpCacheBundle.git
     $ cd FOSHttpCacheBundle
-    $ composer install --dev
-    $ phpunit
+    $ composer install
+    $ vendor/bin/phpunit
 
 .. tip::
 
