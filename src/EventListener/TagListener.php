@@ -12,14 +12,14 @@
 namespace FOS\HttpCacheBundle\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
-use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use FOS\HttpCacheBundle\Configuration\Tag;
+use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 /**
  * Event handler for the cache tagging tags.
