@@ -11,10 +11,10 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 
+use FOS\HttpCacheBundle\Configuration\Tag;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use FOS\HttpCacheBundle\Configuration\Tag;
 
 class TagController extends Controller
 {

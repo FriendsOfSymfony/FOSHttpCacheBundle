@@ -11,10 +11,10 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 
+use FOS\HttpCacheBundle\Configuration\InvalidatePath;
+use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
-use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 
 class InvalidationController extends Controller
 {
