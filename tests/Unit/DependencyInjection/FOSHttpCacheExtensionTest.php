@@ -120,6 +120,25 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($container->hasDefinition('fos_http_cache.http.symfony_response_tagger'));
     }
 
+    public function testConfigLoadNoop()
+    {
+        $container = $this->createContainer();
+        $this->extension->load([
+            [
+                'proxy_client' => [
+                    'noop' => true,
+                ],
+            ],
+        ], $container);
+
+        $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
+        $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.nginx'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.noop'));
+        $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
+        $this->assertFalse($container->hasDefinition('fos_http_cache.http.symfony_response_tagger'));
+    }
+
     public function testConfigCustomClient()
     {
         $container = $this->createContainer();

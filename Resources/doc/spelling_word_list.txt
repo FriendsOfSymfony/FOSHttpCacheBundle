@@ -3,6 +3,7 @@ backend
 cacheable
 hostname
 nginx
+noop
 symfony
 github
 subdomains
