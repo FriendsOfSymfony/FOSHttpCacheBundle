@@ -171,6 +171,7 @@ class Configuration implements ConfigurationInterface
                             ->booleanNode('proxy_revalidate')->end()
                             ->booleanNode('no_transform')->end()
                             ->booleanNode('no_cache')->end()
+                            ->booleanNode('no_store')->end()
                             ->scalarNode('stale_if_error')->end()
                             ->scalarNode('stale_while_revalidate')->end()
                         ->end()

@@ -189,7 +189,7 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
      */
     private function setExtraCacheDirectives(Response $response, array $controls, $overwrite)
     {
-        $flags = ['must_revalidate', 'proxy_revalidate', 'no_transform', 'no_cache'];
+        $flags = ['must_revalidate', 'proxy_revalidate', 'no_transform', 'no_cache', 'no_store'];
         $options = ['stale_if_error', 'stale_while_revalidate'];
 
         foreach ($flags as $key) {
