@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * A matcher similar to the Symfony2 RequestMatcher but also considering the
+ * A matcher similar to the Symfony RequestMatcher but also considering the
  * response to decide if a rule should apply to this response.
  *
  * @author David Buchmann <mail@davidbu.ch>

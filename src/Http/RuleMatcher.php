@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * This matcher wraps a Symfony2 RequestMatcher and adds some criteria for the
+ * This matcher wraps a Symfony RequestMatcher and adds some criteria for the
  * response.
  *
  * @author David Buchmann <mail@davidbu.ch>

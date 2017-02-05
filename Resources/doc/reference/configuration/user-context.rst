@@ -25,7 +25,7 @@ Set up Symfony reverse proxy as explained in the :doc:`Symfony HttpCache documen
 Context Hash Route
 ~~~~~~~~~~~~~~~~~~
 
-Then add the route you specified in the hash lookup request to the Symfony2
+Then add the route you specified in the hash lookup request to the Symfony
 routing configuration, so that the user context event subscriber can get
 triggered:
 
@@ -37,7 +37,7 @@ triggered:
 
 .. important::
 
-    If you are using `Symfony2 security <http://symfony.com/doc/current/book/security.html>`_
+    If you are using `Symfony security <http://symfony.com/doc/current/book/security.html>`_
     for the hash generation, make sure that this route is inside the firewall
     for which you are doing the cache groups.
 

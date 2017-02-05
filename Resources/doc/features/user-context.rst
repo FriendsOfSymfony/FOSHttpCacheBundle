@@ -28,7 +28,7 @@ These five steps resemble the Overview in the FOSHttpCache documentation.
    It first sends a *hash request* to the *context hash route*.
 3. The :term:`foshttpcache:application` receives the hash request. An event
    listener (``UserContextListener``) aborts the request immediately after
-   the Symfony2 firewall was applied. The application calculates the hash
+   the Symfony firewall was applied. The application calculates the hash
    (``HashGenerator``) and then sends a response with the hash in a custom
    header (``X-User-Context-Hash`` by default).
 4. The caching proxy receives the hash response, copies the hash header to the
