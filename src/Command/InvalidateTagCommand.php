@@ -12,7 +12,6 @@
 namespace FOS\HttpCacheBundle\Command;
 
 use FOS\HttpCacheBundle\CacheManager;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,22 +21,24 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author David Buchmann <mail@davidbu.ch>
  */
-class InvalidateTagCommand extends ContainerAwareCommand
+class InvalidateTagCommand extends BaseInvalidateCommand
 {
-    /**
-     * @var CacheManager
-     */
-    private $cacheManager;
-
     /**
      * @var string
      */
     private $commandName;
 
-    public function __construct(CacheManager $cacheManager)
+    /**
+     * If no cache manager is specified explicitly, fos_http_cache.cache_manager
+     * is automatically loaded.
+     *
+     * @param CacheManager|null $cacheManager The cache manager to talk to
+     * @param string            $commandName  Name of this command, in case you want to reuse it
+     */
+    public function __construct(CacheManager $cacheManager = null, $commandName = 'fos:httpcache:invalidate:tag')
     {
-        $this->cacheManager = $cacheManager;
-        parent::__construct();
+        $this->commandName = $commandName;
+        parent::__construct($cacheManager);
     }
 
     /**
@@ -71,6 +72,6 @@ EOF
     {
         $tags = $input->getArgument('tags');
 
-        $this->cacheManager->invalidateTags($tags);
+        $this->getCacheManager()->invalidateTags($tags);
     }
 }
