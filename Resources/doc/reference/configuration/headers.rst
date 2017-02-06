@@ -143,7 +143,8 @@ You can use the standard cache control directives:
 * ``s_maxage`` time in seconds for proxy caches (also public caches);
 * ``private`` true or false;
 * ``public`` true or false;
-* ``no_cache`` true or false (use exclusively to support HTTP 1.0).
+* ``no_cache`` true or false (use exclusively to support HTTP 1.0);
+* ``no_store``: true or false.
 
 .. code-block:: yaml
 

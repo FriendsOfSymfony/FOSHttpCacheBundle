@@ -98,6 +98,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
                 's_maxage' => '0',
                 'private' => true,
                 'no_cache' => true,
+                'no_store' => true,
                 'must_revalidate' => true,
             ],
             'last_modified' => '13.07.2003',
@@ -107,7 +108,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         $listener->onKernelResponse($event);
         $newHeaders = $event->getResponse()->headers->all();
 
-        $this->assertEquals('max-age=0, must-revalidate, no-cache, private, s-maxage=0', $newHeaders['cache-control'][0]);
+        $this->assertEquals('max-age=0, must-revalidate, no-cache, no-store, private, s-maxage=0', $newHeaders['cache-control'][0]);
     }
 
     public function testMergeHeaders()
@@ -227,6 +228,23 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         $newHeaders = $event->getResponse()->headers->all();
 
         $this->assertContains('no-cache', $newHeaders['cache-control'][0]);
+    }
+
+    public function testSetOnlyNoStoreHeader()
+    {
+        $event = $this->buildEvent();
+        $headers = [
+            'overwrite' => false,
+            'cache_control' => [
+                'no_store' => true,
+            ],
+        ];
+        $listener = $this->getCacheControl($headers);
+
+        $listener->onKernelResponse($event);
+        $newHeaders = $event->getResponse()->headers->all();
+
+        $this->assertContains('no-store', $newHeaders['cache-control'][0]);
     }
 
     public function testSkip()
