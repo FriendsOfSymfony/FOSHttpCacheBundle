@@ -449,6 +449,7 @@ class Configuration implements ConfigurationInterface
                             ->defaultValue('auto')
                             ->info('Allows to disable the event subscriber for tag configuration and annotations when your project does not use the annotations. Enabled by default if you configured the cache manager.')
                         ->end()
+                        ->booleanNode('strict')->defaultFalse()->end()
                         ->scalarNode('expression_language')
                             ->defaultNull()
                             ->info('Service name of a custom ExpressionLanugage to use.')

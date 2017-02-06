@@ -41,6 +41,20 @@ section of the tag configuration and ``@tag`` :ref:`annotations<tag>`.
         tags:
             expression_language: app.expression_language
 
+``strict``
+----------
+
+**type**: ``boolean`` **default**: ``false``
+
+Set this to ``true`` to throw an exception when an empty or null tag is added.
+
+.. code-block:: yaml
+
+    # app/config/config.yml
+    fos_http_cache:
+        tags:
+            strict: true
+
 ``rules``
 ---------
 

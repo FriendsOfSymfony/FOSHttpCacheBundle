@@ -101,6 +101,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ],
             'tags' => [
                 'enabled' => 'auto',
+                'strict' => false,
                 'header' => 'FOS-Tags',
                 'expression_language' => 'acme.expression_language',
                 'rules' => [
@@ -404,6 +405,24 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
+    public function testTagsStrict()
+    {
+        $expectedConfiguration = $this->getEmptyConfig();
+        $expectedConfiguration['tags']['strict'] = true;
+
+        $formats = array_map(function ($path) {
+            return __DIR__.'/../../Resources/Fixtures/'.$path;
+        }, [
+            'config/tags_strict.yml',
+            'config/tags_strict.xml',
+            'config/tags_strict.php',
+        ]);
+
+        foreach ($formats as $format) {
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
+        }
+    }
+
     public function testInvalidationNoCacheManager()
     {
         $formats = array_map(function ($path) {
@@ -479,6 +498,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ],
             'tags' => [
                 'enabled' => false,
+                'strict' => false,
                 'header' => 'X-Cache-Tags',
                 'expression_language' => null,
                 'rules' => [],

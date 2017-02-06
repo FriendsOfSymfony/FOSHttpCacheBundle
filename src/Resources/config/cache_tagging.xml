@@ -7,6 +7,9 @@
     <services>
         <service id="fos_http_cache.http.symfony_response_tagger" class="FOS\HttpCacheBundle\Http\SymfonyResponseTagger">
             <argument type="service" id="fos_http_cache.default_proxy_client"/>
+            <argument type="collection">
+                <argument key="strict">%fos_http_cache.tag_handler.strict%</argument>
+            </argument>
         </service>
 
         <service id="fos_http_cache.twig.tag_extension" class="FOS\HttpCacheBundle\Twig\CacheTagExtension">
