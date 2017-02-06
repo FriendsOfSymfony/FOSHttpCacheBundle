@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * This event handler reads all flash messages and moves them into a cookie.
@@ -45,7 +46,13 @@ class FlashMessageListener implements EventSubscriberInterface
     public function __construct($session, array $options = [])
     {
         $this->session = $session;
-        $this->options = $options;
+
+        $resolver = new OptionsResolver();
+        $resolver->setAllowedTypes('name', 'string');
+        $resolver->setAllowedTypes('path', 'string');
+        $resolver->setAllowedTypes('host', 'string');
+        $resolver->setAllowedTypes('secure', 'bool');
+        $this->options = $resolver->resolve($options);
     }
 
     /**
