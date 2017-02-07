@@ -34,7 +34,6 @@ cache headers even if they are already set:
                 -
                     match:
                         attributes: { _controller: ^Acme\\TestBundle\\Controller\\DefaultController::.* }
-                        additional_cacheable_status: [400]
                     headers:
                         cache_control:
                             public: true

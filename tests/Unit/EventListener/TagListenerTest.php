@@ -17,6 +17,7 @@ use FOS\HttpCacheBundle\EventListener\TagListener;
 use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -38,6 +39,16 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
      */
     private $listener;
 
+    /**
+     * @var RuleMatcherInterface|\Mockery\Mock
+     */
+    private $mustInvalidateRule;
+
+    /**
+     * @var RuleMatcherInterface|\Mockery\Mock
+     */
+    private $cacheableRule;
+
     public function setUp()
     {
         $this->cacheManager = \Mockery::mock(
@@ -48,7 +59,15 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
             SymfonyResponseTagger::class
         );
 
-        $this->listener = new TagListener($this->cacheManager, $this->symfonyResponseTagger);
+        $this->cacheableRule = \Mockery::mock(RuleMatcherInterface::class);
+        $this->mustInvalidateRule = \Mockery::mock(RuleMatcherInterface::class);
+
+        $this->listener = new TagListener(
+            $this->cacheManager,
+            $this->symfonyResponseTagger,
+            $this->cacheableRule,
+            $this->mustInvalidateRule
+        );
     }
 
     public function testOnKernelResponseGet()
@@ -62,14 +81,18 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
 
         $event = $this->getEvent($request);
 
+        $this->cacheableRule->shouldReceive('matches')->andReturn(true);
+
         $this->symfonyResponseTagger
             ->shouldReceive('addTags')
-            ->withArgs([['item-1', 'item-1', 'item-2']])
+            ->once()
+            ->with(['item-1', 'item-1', 'item-2'])
         ;
 
         $this->symfonyResponseTagger
             ->shouldReceive('tagSymfonyResponse')
-            ->withArgs([$event->getResponse()])
+            ->once()
+            ->with($event->getResponse())
             ->andReturn($this->symfonyResponseTagger);
 
         $this->listener->onKernelResponse($event);
@@ -86,6 +109,8 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
 
         $event = $this->getEvent($request);
 
+        $this->cacheableRule->shouldReceive('matches')->andReturn(true);
+
         $this->symfonyResponseTagger
             ->shouldReceive('addTags')
             ->withArgs([['item-1', 'configured-tag', 'item-2']]);
@@ -96,8 +121,8 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
             ->andReturn($this->symfonyResponseTagger);
 
         /** @var RuleMatcherInterface $mockMatcher */
-        $mockMatcher = \Mockery::mock(RuleMatcherInterface::class)
-            ->shouldReceive('matches')->once()->with($request, $event->getResponse())->andReturn(true)
+        $mockMatcher = \Mockery::mock(RequestMatcherInterface::class)
+            ->shouldReceive('matches')->once()->with($request)->andReturn(true)
             ->getMock()
         ;
         $this->listener->addRule($mockMatcher, [
@@ -117,6 +142,9 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
         $request->attributes->set('id', '123');
 
         $event = $this->getEvent($request);
+
+        $this->cacheableRule->shouldReceive('matches')->andReturn(true);
+
         $this->symfonyResponseTagger
             ->shouldReceive('addTags')
             ->withArgs([['item-123']]);
@@ -140,6 +168,9 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
 
         $event = $this->getEvent($request);
 
+        $this->cacheableRule->shouldReceive('matches')->andReturn(false);
+        $this->mustInvalidateRule->shouldReceive('matches')->andReturn(true);
+
         $this->cacheManager
             ->shouldReceive('invalidateTags')
             ->once()
@@ -151,8 +182,8 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
             ->once()
             ->with(['item-1', 'item-2', 'configured-tag', 'item-2']);
         /** @var RuleMatcherInterface $mockMatcher */
-        $mockMatcher = \Mockery::mock(RuleMatcherInterface::class)
-            ->shouldReceive('matches')->once()->with($request, $event->getResponse())->andReturn(true)
+        $mockMatcher = \Mockery::mock(RequestMatcherInterface::class)
+            ->shouldReceive('matches')->once()->with($request)->andReturn(true)
             ->getMock()
         ;
         $this->listener->addRule($mockMatcher, [
@@ -162,7 +193,7 @@ class TagListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onKernelResponse($event);
     }
 
-    protected function getEvent(Request $request, Response $response = null)
+    private function getEvent(Request $request, Response $response = null)
     {
         return new FilterResponseEvent(
             \Mockery::mock(HttpKernelInterface::class),

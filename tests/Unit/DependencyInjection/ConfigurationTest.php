@@ -48,6 +48,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     public function testSupportsAllConfigFormats()
     {
         $expectedConfiguration = [
+            'cacheable' => [
+                'response' => [
+                    'additional_status' => [100, 500],
+                    'expression' => null,
+                ],
+            ],
             'cache_control' => [
                 'defaults' => [
                     'overwrite' => true,
@@ -60,9 +66,6 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                             'methods' => ['GET', 'POST'],
                             'ips' => ['1.2.3.4', '1.1.1.1'],
                             'attributes' => ['_controller' => 'fos.user_bundle.*'],
-                            'additional_cacheable_status' => [100, 500],
-                            'match_response' => '',
-                            // TODO 'match_response' => '',
                         ],
                         'headers' => [
                             'overwrite' => false,
@@ -113,9 +116,6 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                             'attributes' => [
                                 '_foo' => 'bar',
                             ],
-                            'additional_cacheable_status' => [501, 502],
-                            'match_response' => '',
-                            // TODO match_response
                         ],
                         'tags' => ['a', 'b'],
                         'tag_expressions' => ['"a"', '"b"'],
@@ -135,9 +135,6 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                             'attributes' => [
                                 '_format' => 'json',
                             ],
-                            'additional_cacheable_status' => [404, 403],
-                            'match_response' => '',
-                            // TODO match_response
                         ],
                         'routes' => [
                             'invalidate_route1' => [
@@ -311,8 +308,6 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                         'path' => null,
                         'host' => null,
                         'attributes' => [],
-                        'additional_cacheable_status' => [],
-                        'match_response' => null,
                         'methods' => ['GET', 'POST'],
                         'ips' => ['1.2.3.4', '1.1.1.1'],
                     ],
@@ -357,6 +352,25 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             'config/split.yml',
             'config/split.xml',
             'config/split.php',
+        ]);
+
+        foreach ($formats as $format) {
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
+        }
+    }
+
+    public function testSupportsCacheableResponseExpression()
+    {
+        $expectedConfiguration = $this->getEmptyConfig();
+        $expectedConfiguration['cacheable']['response']['expression']
+            = 'response.getStatusCode() >= 300';
+
+        $formats = array_map(function ($path) {
+            return __DIR__.'/../../Resources/Fixtures/'.$path;
+        }, [
+            'config/cacheable_response_expression.yml',
+            'config/cacheable_response_expression.xml',
+            'config/cacheable_response_expression.php',
         ]);
 
         foreach ($formats as $format) {
@@ -445,34 +459,17 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     }
 
     /**
-     * The configuration is reused, we only need to test this once.
-     */
-    public function testRulesBothStatusAndExpression()
-    {
-        $formats = array_map(function ($path) {
-            return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, [
-            'config/rules_matchstatusandexpression.yml',
-            'config/rules_matchstatusandexpression.xml',
-            'config/rules_matchstatusandexpression.php',
-        ]);
-
-        foreach ($formats as $format) {
-            try {
-                $this->assertProcessedConfigurationEquals([], [$format]);
-                $this->fail('No exception thrown on invalid configuration');
-            } catch (InvalidConfigurationException $e) {
-                $this->assertContains('may not set both additional_cacheable_status and match_response', $e->getMessage());
-            }
-        }
-    }
-
-    /**
      * @return array The configuration when nothing is specified
      */
     private function getEmptyConfig()
     {
         return [
+            'cacheable' => [
+                'response' => [
+                    'additional_status' => [],
+                    'expression' => null,
+                ],
+            ],
             'cache_manager' => [
                 'enabled' => false,
                 'generate_url_type' => 'auto',

@@ -17,7 +17,39 @@
                  abstract="true"
         >
             <argument/>
-            <argument/>
+            <argument on-invalid="null"/>
         </service>
+
+        <service id="fos_http_cache.rule_matcher.cacheable"
+                 class="FOS\HttpCacheBundle\Http\RuleMatcher"
+                 public="false">
+            <argument type="service" id="fos_http_cache.request_matcher.cacheable" />
+            <argument type="service" id="fos_http_cache.response_matcher.cacheable" />
+        </service>
+
+        <service id="fos_http_cache.rule_matcher.must_invalidate"
+                 class="FOS\HttpCacheBundle\Http\RuleMatcher"
+                 public="false">
+            <argument type="service" id="fos_http_cache.request_matcher.unsafe" />
+            <argument type="service" id="fos_http_cache.response_matcher.non_error" />
+        </service>
+
+        <service id="fos_http_cache.request_matcher.cacheable"
+                 class="FOS\HttpCacheBundle\Http\RequestMatcher\CacheableRequestMatcher"
+                 public="false"/>
+
+        <service id="fos_http_cache.request_matcher.unsafe"
+                 class="FOS\HttpCacheBundle\Http\RequestMatcher\UnsafeRequestMatcher"
+                 public="false"/>
+
+        <service id="fos_http_cache.response_matcher.cacheable"
+                 class="FOS\HttpCacheBundle\Http\ResponseMatcher\CacheableResponseMatcher"
+                 public="false">
+            <argument>%fos_http_cache.cacheable.response.additional_status%</argument>
+        </service>
+
+        <service id="fos_http_cache.response_matcher.non_error"
+                 class="FOS\HttpCacheBundle\Http\ResponseMatcher\NonErrorResponseMatcher"
+                 public="false"/>
     </services>
 </container>

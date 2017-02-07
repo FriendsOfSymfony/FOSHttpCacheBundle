@@ -121,50 +121,6 @@ regular expressions.
     match:
         attributes: { _controller: ^AcmeBundle:Default:.* }
 
-.. _additional_cacheable_status:
-
-``additional_cacheable_status``
--------------------------------
-
-**type**: ``array``
-
-By default, a rule will only match cacheable status codes: 200, 203, 300, 301,
-302, 404 and 410 (as described in the `RFC 7231`_).
-
-`additional_cacheable_status` let you define a list of additional HTTP
-status codes of the response for which to also apply the rule.
-
-.. code-block:: yaml
-
-    match:
-        additional_cacheable_status: [400, 403]
-
-.. _match_response:
-
-``match_response``
-------------------
-
-**type**: ``string``
-
-.. note::
-
-    ``match_response`` :ref:`requires the ExpressionLanguage component <requirements>`.
-
-An ExpressionLanguage expression to decide whether the response should have
-the effect applied. If not set, headers are applied if the request is
-:term:`safe`. The expression can access the ``Response`` object with the
-``response`` variable. For example, to handle all failed requests, you can do:
-
-.. code-block:: yaml
-
-    -
-        match:
-            match_response: response.getStatusCode() >= 400
-        # ...
-
-You cannot set both ``match_response`` and ``additional_cacheable_status``
-inside the same rule.
-
 .. _Trusting Proxies: http://symfony.com/doc/current/components/http_foundation/trusting_proxies.html
 .. _controllers as services: http://symfony.com/doc/current/cookbook/controller/service.html
 .. _RFC 7231: http://tools.ietf.org/html/rfc7231#page-48

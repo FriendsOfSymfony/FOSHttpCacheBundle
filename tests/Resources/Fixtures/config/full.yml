@@ -1,5 +1,11 @@
 fos_http_cache:
 
+    cacheable:
+        response:
+            additional_status:
+                - 100
+                - 500
+
     cache_control:
         defaults:
             overwrite: true
@@ -16,9 +22,6 @@ fos_http_cache:
                         - 1.1.1.1
                     attributes:
                         _controller: fos.user_bundle.*
-                    additional_cacheable_status:
-                        - 100
-                        - 500
                 headers:
                     overwrite: false
                     cache_control:
@@ -62,9 +65,6 @@ fos_http_cache:
                     ips: 99.99.99.99
                     attributes:
                         _foo: bar
-                    additional_cacheable_status:
-                        - 501
-                        - 502
                 tags:
                     - a
                     - b
@@ -83,9 +83,6 @@ fos_http_cache:
                     ips: 42.42.42.42
                     attributes:
                         _format: json
-                    additional_cacheable_status:
-                        - 404
-                        - 403
                 routes:
                     invalidate_route1:
                         ignore_extra_params: false

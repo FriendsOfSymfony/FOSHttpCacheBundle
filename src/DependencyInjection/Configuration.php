@@ -111,6 +111,7 @@ class Configuration implements ConfigurationInterface
                 })
         ;
 
+        $this->addCacheableResponseSection($rootNode);
         $this->addCacheControlSection($rootNode);
         $this->addProxyClientSection($rootNode);
         $this->addCacheManagerSection($rootNode);
@@ -122,6 +123,37 @@ class Configuration implements ConfigurationInterface
         $this->addDebugSection($rootNode);
 
         return $treeBuilder;
+    }
+
+    private function addCacheableResponseSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('cacheable')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('response')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('additional_status')
+                                    ->prototype('scalar')->end()
+                                    ->info('Additional response HTTP status codes that will be considered cacheable.')
+                                ->end()
+                                ->scalarNode('expression')
+                                    ->defaultNull()
+                                    ->info('Expression to decide whether response is cacheable.')
+                            ->end()
+                        ->end()
+
+                        ->validate()
+                            ->ifTrue(function ($v) {
+                                return !empty($v['additional_status']) && !empty($v['expression']);
+                            })
+                            ->thenInvalid('You may not set both additional_status and expression.')
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 
     /**
@@ -224,12 +256,6 @@ class Configuration implements ConfigurationInterface
                 ->fixXmlConfig('attribute')
                 ->validate()
                     ->ifTrue(function ($v) {
-                        return !empty($v['additional_cacheable_status']) && !empty($v['match_response']);
-                    })
-                    ->thenInvalid('You may not set both additional_cacheable_status and match_response.')
-                ->end()
-                ->validate()
-                    ->ifTrue(function ($v) {
                         return !empty($v['match_response']) && !class_exists('Symfony\Component\ExpressionLanguage\ExpressionLanguage');
                     })
                     ->thenInvalid('Configured a match_response but ExpressionLanguage is not available')
@@ -263,14 +289,6 @@ class Configuration implements ConfigurationInterface
                         ->useAttributeAsKey('name')
                         ->prototype('scalar')->end()
                         ->info('Regular expressions on request attributes.')
-                    ->end()
-                    ->arrayNode('additional_cacheable_status')
-                        ->prototype('scalar')->end()
-                        ->info('Additional response HTTP status codes that will match.')
-                    ->end()
-                    ->scalarNode('match_response')
-                        ->defaultNull()
-                        ->info('Expression to decide whether response should be matched. Replaces HTTP code check and additional_cacheable_status.')
                     ->end()
                 ->end()
             ->end()

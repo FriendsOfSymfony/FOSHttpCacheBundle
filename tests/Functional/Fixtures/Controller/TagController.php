@@ -69,6 +69,6 @@ class TagController extends Controller
 
     public function twigAction()
     {
-        $this->render('::tag.html.twig');
+        return $this->render('::tag.html.twig');
     }
 }
