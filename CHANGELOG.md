@@ -41,7 +41,7 @@ Changelog
   to take a `ResponseMatcherInterface`.
   
 * Cacheable status codes are now configured globally 
-  (`cacheable.response.additional_status`).
+  (`cacheable.response.additional_status` or `cacheable.response.expression`).
 
 1.3.7
 -----
