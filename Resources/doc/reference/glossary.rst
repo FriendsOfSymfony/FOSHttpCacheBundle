@@ -8,6 +8,9 @@ Glossary
         status code is one of 200, 203, 204, 206, 300, 301, 404, 405, 410, 414
         or 501.
 
+        In FOSHttpCacheBundle, this can be changed by configuring the
+        :doc:`cacheable.response section <configuration/cacheable>`.
+
     Safe
         A *request* is safe if its HTTP method is GET or HEAD. Safe methods
         only retrieve data and do not change the application state, and

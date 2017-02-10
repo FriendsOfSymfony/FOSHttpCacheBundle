@@ -141,7 +141,7 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                                 ->scalarNode('expression')
                                     ->defaultNull()
-                                    ->info('Expression to decide whether response is cacheable.')
+                                    ->info('Expression to decide whether response is cacheable. Replaces the default status codes.')
                             ->end()
                         ->end()
 

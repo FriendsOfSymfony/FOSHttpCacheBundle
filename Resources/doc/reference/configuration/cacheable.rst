@@ -7,6 +7,8 @@ cacheable
 Configure which responses are considered :term:`cacheable`. This bundle will
 only set Cache-Control headers, including tags etc., on cacheable responses.
 
+You can only set one of ``expression`` or ``additional_status``.
+
 .. _additional_status:
 
 ``additional_status``
@@ -34,7 +36,7 @@ You can add status codes to this list by setting ``additional_status``:
 **type**: ``string``
 
 An ExpressionLanguage expression to decide whether the response is considered
-cacheable. The expression can access the Response object with the response variable.
+cacheable. The expression can access the Response object with the response variable:
 
 .. code-block:: yaml
 
@@ -44,6 +46,8 @@ cacheable. The expression can access the Response object with the response varia
             response:
                 expression: "response.getStatusCode() >= 300"
 
-You cannot set both ``expression`` and ``additional_status``.
+When you configure an expression, *only* the expression is used to decide
+whether the response is cacheable. The default status codes from RFC 7231
+are ignored when specifying an expression.
 
 .. _RFC 7231: https://tools.ietf.org/html/rfc7231#section-6.1
