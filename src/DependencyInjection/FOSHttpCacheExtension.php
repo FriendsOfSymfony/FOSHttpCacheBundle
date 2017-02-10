@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\DependencyInjection;
 
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
+use FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -52,6 +53,8 @@ class FOSHttpCacheExtension extends Extension
             $container->setParameter($this->getAlias().'.debug_header', $debugHeader);
             $loader->load('cache_control_listener.xml');
         }
+
+        $this->loadCacheable($container, $config['cacheable']);
 
         if (!empty($config['cache_control'])) {
             $this->loadCacheControl($container, $config['cache_control']);
@@ -131,6 +134,22 @@ class FOSHttpCacheExtension extends Extension
         }
     }
 
+    private function loadCacheable(ContainerBuilder $container, array $config)
+    {
+        $definition = $container->getDefinition($this->getAlias().'.response_matcher.cacheable');
+
+        // Change CacheableResponseMatcher to ExpressionResponseMatcher
+        if ($config['response']['expression']) {
+            $definition->setClass(ExpressionResponseMatcher::class)
+                ->setArguments([$config['response']['expression']]);
+        } else {
+            $container->setParameter(
+                $this->getAlias().'.cacheable.response.additional_status',
+                $config['response']['additional_status']
+            );
+        }
+    }
+
     /**
      * @param ContainerBuilder $container
      * @param array            $config
@@ -156,7 +175,7 @@ class FOSHttpCacheExtension extends Extension
     {
         $match['ips'] = (empty($match['ips'])) ? null : $match['ips'];
 
-        $requestMatcher = $this->createRequestMatcher(
+        return $this->createRequestMatcher(
             $container,
             $match['path'],
             $match['host'],
@@ -164,36 +183,6 @@ class FOSHttpCacheExtension extends Extension
             $match['ips'],
             $match['attributes']
         );
-
-        $extraCriteria = [];
-        foreach (['additional_cacheable_status', 'match_response'] as $extra) {
-            if (isset($match[$extra])) {
-                $extraCriteria[$extra] = $match[$extra];
-            }
-        }
-
-        return $this->createRuleMatcher(
-            $container,
-            $requestMatcher,
-            $extraCriteria
-        );
-    }
-
-    private function createRuleMatcher(ContainerBuilder $container, Reference $requestMatcher, array $extraCriteria)
-    {
-        $arguments = [(string) $requestMatcher, $extraCriteria];
-        $serialized = serialize($arguments);
-        $id = $this->getAlias().'.rule_matcher.'.md5($serialized).sha1($serialized);
-
-        if (!$container->hasDefinition($id)) {
-            $container
-                ->setDefinition($id, new DefinitionDecorator($this->getAlias().'.rule_matcher'))
-                ->replaceArgument(0, $requestMatcher)
-                ->replaceArgument(1, $extraCriteria)
-            ;
-        }
-
-        return new Reference($id);
     }
 
     private function loadUserContext(ContainerBuilder $container, XmlFileLoader $loader, array $config)

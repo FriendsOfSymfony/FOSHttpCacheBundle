@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\Http;
 
+use FOS\HttpCacheBundle\Http\ResponseMatcher\CacheableResponseMatcher;
 use FOS\HttpCacheBundle\Http\RuleMatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
@@ -21,7 +22,7 @@ class RuleMatcherTest extends \PHPUnit_Framework_TestCase
     public function testRequestMatcherCalled()
     {
         $requestMatcher = new RequestMatcher(null, null, null, null, ['_controller' => '^AcmeBundle:Default:index$']);
-        $ruleMatcher = new RuleMatcher($requestMatcher, []);
+        $ruleMatcher = new RuleMatcher($requestMatcher);
 
         $request = new Request();
         $request->attributes->set('_controller', 'AcmeBundle:Default:index');
@@ -31,18 +32,10 @@ class RuleMatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testAdditionalCacheableStatus()
     {
-        $ruleMatcher = new RuleMatcher(new RequestMatcher(), ['additional_cacheable_status' => [400, 500]]);
+        $ruleMatcher = new RuleMatcher(new RequestMatcher(), new CacheableResponseMatcher([400, 500]));
 
         $this->assertFalse($ruleMatcher->matches(new Request(), new Response('', 504)));
         $this->assertTrue($ruleMatcher->matches(new Request(), new Response('', 500)));
         $this->assertTrue($ruleMatcher->matches(new Request(), new Response('', 200)));
-    }
-
-    public function testMatchResponse()
-    {
-        $ruleMatcher = new RuleMatcher(new RequestMatcher(), ['match_response' => 'response.getStatusCode() >= 300']);
-
-        $this->assertFalse($ruleMatcher->matches(new Request(), new Response('', 100)));
-        $this->assertTrue($ruleMatcher->matches(new Request(), new Response('', 500)));
     }
 }

@@ -15,6 +15,7 @@ use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
+use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleEvent;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -56,6 +57,11 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
     private $expressionLanguage;
 
     /**
+     * @var RuleMatcherInterface
+     */
+    private $mustInvalidateRule;
+
+    /**
      * Constructor.
      *
      * @param CacheManager            $cacheManager
@@ -65,11 +71,13 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
     public function __construct(
         CacheManager $cacheManager,
         UrlGeneratorInterface $urlGenerator,
+        RuleMatcherInterface $mustInvalidateRule,
         ExpressionLanguage $expressionLanguage = null
     ) {
         $this->cacheManager = $cacheManager;
         $this->urlGenerator = $urlGenerator;
         $this->expressionLanguage = $expressionLanguage ?: new ExpressionLanguage();
+        $this->mustInvalidateRule = $mustInvalidateRule;
     }
 
     /**
@@ -89,9 +97,7 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
         $response = $event->getResponse();
 
         // Don't invalidate any caches if the request was unsuccessful
-        if ($response->getStatusCode() >= 200
-            && $response->getStatusCode() < 400
-        ) {
+        if ($this->mustInvalidateRule->matches($request, $response)) {
             $this->handleInvalidation($request, $response);
         }
 

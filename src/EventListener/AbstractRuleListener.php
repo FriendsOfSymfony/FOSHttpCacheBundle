@@ -11,14 +11,13 @@
 
 namespace FOS\HttpCacheBundle\EventListener;
 
-use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
 abstract class AbstractRuleListener
 {
     /**
-     * @var array List of arrays with RuleMatcher, settings array
+     * @var array List of arrays with RequestMatcher, settings array
      */
     private $rulesMap = [];
 
@@ -26,28 +25,27 @@ abstract class AbstractRuleListener
      * Add a rule matcher with a list of header directives to apply if the
      * request and response are matched.
      *
-     * @param RuleMatcherInterface $ruleMatcher The headers apply to responses matched by this matcher
-     * @param array                $settings    An array of header configuration
+     * @param RequestMatcherInterface $requestMatcher The headers apply to responses matched by this matcher
+     * @param array                   $settings       An array of header configuration
      */
     public function addRule(
-        RuleMatcherInterface $ruleMatcher,
+        RequestMatcherInterface $requestMatcher,
         array $settings = []
     ) {
-        $this->rulesMap[] = [$ruleMatcher, $settings];
+        $this->rulesMap[] = [$requestMatcher, $settings];
     }
 
     /**
      * Return the settings for the current request if any rule matches.
      *
-     * @param Request  $request
-     * @param Response $response
+     * @param Request $request
      *
      * @return array|false Settings to apply or false if no rule matched
      */
-    protected function matchRule(Request $request, Response $response)
+    protected function matchRule(Request $request)
     {
         foreach ($this->rulesMap as $elements) {
-            if ($elements[0]->matches($request, $response)) {
+            if ($elements[0]->matches($request)) {
                 return $elements[1];
             }
         }

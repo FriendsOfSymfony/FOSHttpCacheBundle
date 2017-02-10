@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services">
+
+    <config xmlns="http://example.org/schema/dic/fos_http_cache">
+        <cacheable>
+            <response>
+                <expression>response.getStatusCode() >= 300</expression>
+            </response>
+        </cacheable>
+    </config>
+</container>

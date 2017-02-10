@@ -15,5 +15,6 @@ for the bundle.
     configuration/user-context
     configuration/flash-message
     configuration/debug
+    configuration/cacheable
     configuration/match
     configuration/test

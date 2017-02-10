@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
+use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -44,6 +45,16 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
     private $expressionLanguage;
 
     /**
+     * @var RuleMatcherInterface
+     */
+    private $mustInvalidateRule;
+
+    /**
+     * @var RuleMatcherInterface
+     */
+    private $cacheableRule;
+
+    /**
      * Constructor.
      *
      * @param CacheManager            $cacheManager
@@ -53,10 +64,14 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
     public function __construct(
         CacheManager $cacheManager,
         SymfonyResponseTagger $tagHandler,
+        RuleMatcherInterface $cacheableRule,
+        RuleMatcherInterface $mustInvalidateRule,
         ExpressionLanguage $expressionLanguage = null
     ) {
         $this->cacheManager = $cacheManager;
         $this->symfonyResponseTagger = $tagHandler;
+        $this->cacheableRule = $cacheableRule;
+        $this->mustInvalidateRule = $mustInvalidateRule;
         $this->expressionLanguage = $expressionLanguage ?: new ExpressionLanguage();
     }
 
@@ -74,11 +89,13 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
         $request = $event->getRequest();
         $response = $event->getResponse();
 
-        $tags = [];
-        // Only set cache tags or invalidate them if response is successful
-        if ($response->isSuccessful()) {
-            $tags = $this->getAnnotationTags($request);
+        if (!$this->cacheableRule->matches($request, $response)
+            && !$this->mustInvalidateRule->matches($request, $response)
+        ) {
+            return;
         }
+
+        $tags = $this->getAnnotationTags($request);
 
         $configuredTags = $this->matchRule($request, $response);
         if ($configuredTags) {
@@ -88,14 +105,15 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
             }
         }
 
-        if ($request->isMethodCacheable()) {
+        if ($this->cacheableRule->matches($request, $response)) {
+            // For safe requests (GET and HEAD), set cache tags on response
             $this->symfonyResponseTagger->addTags($tags);
             if (HttpKernelInterface::MASTER_REQUEST === $event->getRequestType()) {
-                // For safe requests (GET and HEAD), set cache tags on response
                 $this->symfonyResponseTagger->tagSymfonyResponse($response);
             }
-        } elseif (count($tags)) {
-            // For non-safe methods, invalidate the tags
+        } elseif (count($tags)
+            && $this->mustInvalidateRule->matches($request, $response)
+        ) {
             $this->cacheManager->invalidateTags($tags);
         }
     }

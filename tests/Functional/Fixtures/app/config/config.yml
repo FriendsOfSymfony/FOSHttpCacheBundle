@@ -9,6 +9,10 @@ framework:
     storage_id:  session.test_storage
 
 fos_http_cache:
+  cacheable:
+    response:
+      additional_status:
+        - 100
   cache_control:
     rules:
       -

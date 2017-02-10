@@ -12,8 +12,8 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
 use FOS\HttpCacheBundle\EventListener\CacheControlListener;
-use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
@@ -335,9 +335,9 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        $mockMatcher = \Mockery::mock(RuleMatcherInterface::class)
-            ->shouldReceive('matches')->once()->with($request, $response)->andReturn(true)
-            ->shouldReceive('matches')->once()->with($request2, $response2)->andReturn(false)
+        $mockMatcher = \Mockery::mock(RequestMatcherInterface::class)
+            ->shouldReceive('matches')->once()->with($request)->andReturn(true)
+            ->shouldReceive('matches')->once()->with($request2)->andReturn(false)
             ->getMock()
         ;
 

@@ -1,0 +1,4 @@
+fos_http_cache:
+    cacheable:
+        response:
+            expression: 'response.getStatusCode() >= 300'

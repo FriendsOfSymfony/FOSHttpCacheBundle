@@ -32,6 +32,17 @@ Changelog
 
 * Deprecated methods have been removed.
 
+### Rule matcher
+
+* **BC break:** The `match_response` and `additional_cacheable_status` 
+  configuration parameters were removed for individual match rules. 
+
+* **BC break:** The second argument of the `RuleMatcher` constructor was changed 
+  to take a `ResponseMatcherInterface`.
+  
+* Cacheable status codes are now configured globally 
+  (`cacheable.response.additional_status`).
+
 1.3.7
 -----
 

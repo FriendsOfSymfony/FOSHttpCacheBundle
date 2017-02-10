@@ -41,7 +41,6 @@ This is an example configuration. For more, see the
                 -
                     match:
                         attributes: { _controller: ^AcmeBundle:Default:.* }
-                        additional_cacheable_status: [400]
                     headers:
                         cache_control: { public: true, max_age: 15, s_maxage: 30 }
                         last_modified: "-1 hour"

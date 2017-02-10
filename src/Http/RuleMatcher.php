@@ -11,14 +11,15 @@
 
 namespace FOS\HttpCacheBundle\Http;
 
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use FOS\HttpCacheBundle\Http\ResponseMatcher\ResponseMatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * This matcher wraps a Symfony RequestMatcher and adds some criteria for the
- * response.
+ * Combines a RequestMatcherInterface and a ResponseMatcherInterface.
+ *
+ * Both must match for the RuleMatcher to match.
  *
  * @author David Buchmann <mail@davidbu.ch>
  */
@@ -30,23 +31,20 @@ class RuleMatcher implements RuleMatcherInterface
     private $requestMatcher;
 
     /**
-     * @var array
+     * @var ResponseMatcherInterface
      */
-    private $criteria;
+    private $responseMatcher;
 
     /**
-     * @var ExpressionLanguage
+     * @param RequestMatcherInterface  $requestMatcher|null  Request matcher
+     * @param ResponseMatcherInterface $responseMatcher|null Response matcher
      */
-    private $expressionLanguage;
-
-    /**
-     * @param RequestMatcherInterface $requestMatcher Strategy to match the request
-     * @param array                   $criteria       Additional criteria not covered by request matcher
-     */
-    public function __construct(RequestMatcherInterface $requestMatcher, array $criteria)
-    {
+    public function __construct(
+        RequestMatcherInterface $requestMatcher = null,
+        ResponseMatcherInterface $responseMatcher = null
+    ) {
         $this->requestMatcher = $requestMatcher;
-        $this->criteria = $criteria;
+        $this->responseMatcher = $responseMatcher;
     }
 
     /**
@@ -54,42 +52,14 @@ class RuleMatcher implements RuleMatcherInterface
      */
     public function matches(Request $request, Response $response)
     {
-        if (!$this->requestMatcher->matches($request)) {
+        if ($this->requestMatcher && !$this->requestMatcher->matches($request)) {
             return false;
         }
 
-        if (!empty($this->criteria['match_response'])) {
-            if (!$this->getExpressionLanguage()->evaluate($this->criteria['match_response'], [
-                'response' => $response,
-            ])) {
-                return false;
-            }
-        } else {
-            /* We can't use Response::isCacheable because that also checks if cache
-             * headers are already set. As we are about to set them, that would
-             * always return false.
-             */
-            $status = [200, 203, 204, 300, 301, 302, 404, 410];
-            if (!empty($this->criteria['additional_cacheable_status'])) {
-                $status = array_merge($status, $this->criteria['additional_cacheable_status']);
-            }
-            if (!in_array($response->getStatusCode(), $status)) {
-                return false;
-            }
+        if ($this->responseMatcher && !$this->responseMatcher->matches($response)) {
+            return false;
         }
 
         return true;
-    }
-
-    /**
-     * @return ExpressionLanguage
-     */
-    private function getExpressionLanguage()
-    {
-        if (!$this->expressionLanguage) {
-            $this->expressionLanguage = new ExpressionLanguage();
-        }
-
-        return $this->expressionLanguage;
     }
 }

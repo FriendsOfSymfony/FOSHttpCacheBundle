@@ -9,6 +9,7 @@
                  class="FOS\HttpCacheBundle\EventListener\InvalidationListener">
             <argument type="service" id="fos_http_cache.cache_manager" />
             <argument type="service" id="router" />
+            <argument type="service" id="fos_http_cache.rule_matcher.must_invalidate" />
             <argument type="service" id="fos_http_cache.invalidation.expression_language" on-invalid="ignore" />
             <tag name="kernel.event_subscriber" />
         </service>

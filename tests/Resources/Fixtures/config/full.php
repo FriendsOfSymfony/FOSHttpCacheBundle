@@ -10,6 +10,11 @@
  */
 
 $container->loadFromExtension('fos_http_cache', [
+    'cacheable' => [
+        'response' => [
+            'additional_status' => [100, 500],
+        ],
+    ],
     'cache_control' => [
         'defaults' => [
             'overwrite' => true,
@@ -22,7 +27,6 @@ $container->loadFromExtension('fos_http_cache', [
                     'methods' => ['GET', 'POST'],
                     'ips' => ['1.2.3.4', '1.1.1.1'],
                     'attributes' => ['_controller' => 'fos.user_bundle.*'],
-                    'additional_cacheable_status' => [100, 500],
                 ],
                 'headers' => [
                     'overwrite' => false,
@@ -72,7 +76,6 @@ $container->loadFromExtension('fos_http_cache', [
                     'attributes' => [
                         '_foo' => 'bar',
                     ],
-                    'additional_cacheable_status' => [501, 502],
                 ],
                 'tags' => ['a', 'b'],
                 'tag_expressions' => ['"a"', '"b"'],
@@ -92,7 +95,6 @@ $container->loadFromExtension('fos_http_cache', [
                     'attributes' => [
                         '_format' => 'json',
                     ],
-                    'additional_cacheable_status' => [404, 403],
                 ],
                 'routes' => [
                     'invalidate_route1' => [
