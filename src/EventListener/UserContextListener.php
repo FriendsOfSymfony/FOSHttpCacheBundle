@@ -20,6 +20,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Check requests and responses with the matcher.
@@ -43,29 +44,14 @@ class UserContextListener implements EventSubscriberInterface
     private $hashGenerator;
 
     /**
-     * @var string[]
+     * @var array
      */
-    private $userIdentifierHeaders;
+    private $options;
 
     /**
      * @var string
      */
     private $hash;
-
-    /**
-     * @var string
-     */
-    private $hashHeader;
-
-    /**
-     * @var int
-     */
-    private $ttl;
-
-    /**
-     * @var bool Whether to automatically add the Vary header for the hash / user identifier if there was no hash
-     */
-    private $addVaryOnHash;
 
     /**
      * Used to exclude anonymous requests (no authentication nor session) from user hash sanity check.
@@ -76,25 +62,41 @@ class UserContextListener implements EventSubscriberInterface
      */
     private $anonymousRequestMatcher;
 
+    /**
+     * Constructor.
+     *
+     * @param RequestMatcherInterface      $requestMatcher
+     * @param HashGenerator                $hashGenerator
+     * @param RequestMatcherInterface|null $anonymousRequestMatcher
+     * @param array                        $options
+     */
     public function __construct(
         RequestMatcherInterface $requestMatcher,
         HashGenerator $hashGenerator,
-        array $userIdentifierHeaders = ['Cookie', 'Authorization'],
-        $hashHeader = 'X-User-Context-Hash',
-        $ttl = 0,
-        $addVaryOnHash = true,
-        RequestMatcherInterface $anonymousRequestMatcher = null
+        RequestMatcherInterface $anonymousRequestMatcher = null,
+        array $options = []
     ) {
-        if (!count($userIdentifierHeaders)) {
-            throw new \InvalidArgumentException('The user context must vary on some request headers');
-        }
         $this->requestMatcher = $requestMatcher;
         $this->hashGenerator = $hashGenerator;
-        $this->userIdentifierHeaders = $userIdentifierHeaders;
-        $this->hashHeader = $hashHeader;
-        $this->ttl = $ttl;
-        $this->addVaryOnHash = $addVaryOnHash;
         $this->anonymousRequestMatcher = $anonymousRequestMatcher;
+
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'user_identifier_headers' => ['Cookie', 'Authorization'],
+            'user_hash_header' => 'X-User-Context-Hash',
+            'ttl' => 0,
+            'add_vary_on_hash' => true,
+        ]);
+        $resolver->setRequired(['user_identifier_headers', 'user_hash_header']);
+        $resolver->setAllowedTypes('user_identifier_headers', 'array');
+        $resolver->setAllowedTypes('user_hash_header', 'string');
+        $resolver->setAllowedTypes('ttl', 'int');
+        $resolver->setAllowedTypes('add_vary_on_hash', 'bool');
+        $resolver->setAllowedValues('user_hash_header', function ($value) {
+            return strlen($value) > 0;
+        });
+
+        $this->options = $resolver->resolve($options);
     }
 
     /**
@@ -112,7 +114,9 @@ class UserContextListener implements EventSubscriberInterface
         }
 
         if (!$this->requestMatcher->matches($event->getRequest())) {
-            if ($event->getRequest()->headers->has($this->hashHeader) && !$this->isAnonymous($event->getRequest())) {
+            if ($event->getRequest()->headers->has($this->options['user_hash_header'])
+                && !$this->isAnonymous($event->getRequest())
+            ) {
                 $this->hash = $this->hashGenerator->generateHash();
             }
 
@@ -123,13 +127,13 @@ class UserContextListener implements EventSubscriberInterface
 
         // status needs to be 200 as otherwise varnish will not cache the response.
         $response = new Response('', 200, [
-            $this->hashHeader => $hash,
+            $this->options['user_hash_header'] => $hash,
             'Content-Type' => 'application/vnd.fos.user-context-hash',
         ]);
 
-        if ($this->ttl > 0) {
-            $response->setClientTtl($this->ttl);
-            $response->setVary($this->userIdentifierHeaders);
+        if ($this->options['ttl'] > 0) {
+            $response->setClientTtl($this->options['ttl']);
+            $response->setVary($this->options['user_identifier_headers']);
             $response->setPublic();
         } else {
             $response->setClientTtl(0);
@@ -170,26 +174,28 @@ class UserContextListener implements EventSubscriberInterface
 
         $vary = $response->getVary();
 
-        if ($request->headers->has($this->hashHeader)) {
+        if ($request->headers->has($this->options['user_hash_header'])) {
             // hash has changed, session has most certainly changed, prevent setting incorrect cache
-            if (!is_null($this->hash) && $this->hash !== $request->headers->get($this->hashHeader)) {
+            if (!is_null($this->hash) && $this->hash !== $request->headers->get($this->options['user_hash_header'])) {
                 $response->setClientTtl(0);
                 $response->headers->addCacheControlDirective('no-cache');
 
                 return;
             }
 
-            if ($this->addVaryOnHash && !in_array($this->hashHeader, $vary)) {
-                $vary[] = $this->hashHeader;
+            if ($this->options['add_vary_on_hash']
+                && !in_array($this->options['user_hash_header'], $vary)
+            ) {
+                $vary[] = $this->options['user_hash_header'];
             }
-        } elseif ($this->addVaryOnHash) {
+        } elseif ($this->options['add_vary_on_hash']) {
             /*
              * Additional precaution: If for some reason we get requests without a user hash, vary
              * on user identifier headers to avoid the caching proxy mixing up caches between
              * users. For the hash lookup request, those Vary headers are already added in
              * onKernelRequest above.
              */
-            foreach ($this->userIdentifierHeaders as $header) {
+            foreach ($this->options['user_identifier_headers'] as $header) {
                 if (!in_array($header, $vary)) {
                     $vary[] = $header;
                 }
