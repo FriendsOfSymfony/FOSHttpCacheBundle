@@ -30,7 +30,10 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         new UserContextListener(
             \Mockery::mock(RequestMatcherInterface::class),
             \Mockery::mock(HashGenerator::class),
-            []
+            null,
+            [
+                'user_hash_header' => '',
+            ]
         );
     }
 
@@ -43,7 +46,15 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $hashGenerator = \Mockery::mock(HashGenerator::class);
         $hashGenerator->shouldReceive('generateHash')->andReturn('hash');
 
-        $userContextListener = new UserContextListener($requestMatcher, $hashGenerator, ['X-SessionId'], 'X-Hash');
+        $userContextListener = new UserContextListener(
+            $requestMatcher,
+            $hashGenerator,
+            null,
+            [
+                'user_identifier_headers' => ['X-SessionId'],
+                'user_hash_header' => 'X-Hash',
+            ]
+        );
         $event = $this->getKernelRequestEvent($request);
 
         $userContextListener->onKernelRequest($event);
@@ -66,7 +77,15 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $hashGenerator = \Mockery::mock(HashGenerator::class);
         $hashGenerator->shouldReceive('generateHash')->never();
 
-        $userContextListener = new UserContextListener($requestMatcher, $hashGenerator, ['X-SessionId'], 'X-Hash');
+        $userContextListener = new UserContextListener(
+            $requestMatcher,
+            $hashGenerator,
+            null,
+            [
+                'user_identifier_headers' => ['X-SessionId'],
+                'user_hash_header' => 'X-Hash',
+            ]
+        );
         $event = $this->getKernelRequestEvent($request, HttpKernelInterface::SUB_REQUEST);
 
         $userContextListener->onKernelRequest($event);
@@ -83,7 +102,16 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $hashGenerator = \Mockery::mock(HashGenerator::class);
         $hashGenerator->shouldReceive('generateHash')->andReturn('hash');
 
-        $userContextListener = new UserContextListener($requestMatcher, $hashGenerator, ['X-SessionId'], 'X-Hash', 30);
+        $userContextListener = new UserContextListener(
+            $requestMatcher,
+            $hashGenerator,
+            null,
+            [
+                'user_identifier_headers' => ['X-SessionId'],
+                'user_hash_header' => 'X-Hash',
+                'ttl' => 30,
+            ]
+        );
         $event = $this->getKernelRequestEvent($request);
 
         $userContextListener->onKernelRequest($event);
@@ -106,7 +134,15 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $hashGenerator = \Mockery::mock(HashGenerator::class);
         $hashGenerator->shouldReceive('generateHash')->andReturn('hash');
 
-        $userContextListener = new UserContextListener($requestMatcher, $hashGenerator, ['X-SessionId'], 'X-Hash');
+        $userContextListener = new UserContextListener(
+            $requestMatcher,
+            $hashGenerator,
+            null,
+            [
+                'user_identifier_headers' => ['X-SessionId'],
+                'user_hash_header' => 'X-Hash',
+            ]
+        );
         $event = $this->getKernelRequestEvent($request);
 
         $userContextListener->onKernelRequest($event);
@@ -125,7 +161,15 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $requestMatcher = $this->getRequestMatcher($request, false);
         $hashGenerator = \Mockery::mock(HashGenerator::class);
 
-        $userContextListener = new UserContextListener($requestMatcher, $hashGenerator, ['X-SessionId'], 'X-Hash');
+        $userContextListener = new UserContextListener(
+            $requestMatcher,
+            $hashGenerator,
+            null,
+            [
+                'user_identifier_headers' => ['X-SessionId'],
+                'user_hash_header' => 'X-Hash',
+            ]
+        );
         $event = $this->getKernelResponseEvent($request);
 
         $userContextListener->onKernelResponse($event);
@@ -143,7 +187,15 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $requestMatcher = $this->getRequestMatcher($request, false);
         $hashGenerator = \Mockery::mock(HashGenerator::class);
 
-        $userContextListener = new UserContextListener($requestMatcher, $hashGenerator, ['X-SessionId'], 'X-Hash');
+        $userContextListener = new UserContextListener(
+            $requestMatcher,
+            $hashGenerator,
+            null,
+            [
+                'user_identifier_headers' => ['X-SessionId'],
+                'user_hash_header' => 'X-Hash',
+            ]
+        );
         $event = $this->getKernelResponseEvent($request, null, HttpKernelInterface::SUB_REQUEST);
 
         $userContextListener->onKernelResponse($event);
@@ -162,7 +214,15 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $requestMatcher = $this->getRequestMatcher($request, false);
         $hashGenerator = \Mockery::mock(HashGenerator::class);
 
-        $userContextListener = new UserContextListener($requestMatcher, $hashGenerator, ['X-SessionId'], 'X-Hash');
+        $userContextListener = new UserContextListener(
+            $requestMatcher,
+            $hashGenerator,
+            null,
+            [
+                'user_identifier_headers' => ['X-SessionId'],
+                'user_hash_header' => 'X-Hash',
+            ]
+        );
         $event = $this->getKernelResponseEvent($request);
 
         $userContextListener->onKernelResponse($event);
@@ -184,7 +244,15 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $hashGenerator->shouldReceive('generateHash')->andReturn('hash');
 
         // onKernelRequest
-        $userContextListener = new UserContextListener($requestMatcher, $hashGenerator, ['X-SessionId'], 'X-Hash');
+        $userContextListener = new UserContextListener(
+            $requestMatcher,
+            $hashGenerator,
+            null,
+            [
+                'user_identifier_headers' => ['X-SessionId'],
+                'user_hash_header' => 'X-Hash',
+            ]
+        );
         $event = $this->getKernelRequestEvent($request);
 
         $userContextListener->onKernelRequest($event);
@@ -217,7 +285,15 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $anonymousRequestMatcher->shouldReceive('matches')->andReturn(true);
 
         // onKernelRequest
-        $userContextListener = new UserContextListener($requestMatcher, $hashGenerator, ['X-SessionId'], 'X-Hash', 0, true, $anonymousRequestMatcher);
+        $userContextListener = new UserContextListener(
+            $requestMatcher,
+            $hashGenerator,
+            $anonymousRequestMatcher,
+            [
+                'user_identifier_headers' => ['X-SessionId'],
+                'user_hash_header' => 'X-Hash',
+            ]
+        );
         $event = $this->getKernelRequestEvent($request);
 
         $userContextListener->onKernelRequest($event);
@@ -247,7 +323,15 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $hashGenerator->shouldReceive('generateHash')->andReturn('hash-changed');
 
         // onKernelRequest
-        $userContextListener = new UserContextListener($requestMatcher, $hashGenerator, ['X-SessionId'], 'X-Hash');
+        $userContextListener = new UserContextListener(
+            $requestMatcher,
+            $hashGenerator,
+            null,
+            [
+                'user_identifier_headers' => ['X-SessionId'],
+                'user_hash_header' => 'X-Hash',
+            ]
+        );
         $event = $this->getKernelRequestEvent($request);
 
         $userContextListener->onKernelRequest($event);

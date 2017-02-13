@@ -11,8 +11,6 @@ Changelog
 * [User Context] Added an option always_vary_on_context_hash to make it
   possible to disable automatically setting the vary headers for the user
   hash.
-  
-* [Event Listeners] Renamed the event listener classes to XxxLlistener.
 
 * Updated the version of FOSHttpCache to 2.*. See [FOSHttpCache changelog]
   (https://github.com/FriendsOfSymfony/FOSHttpCache/blob/master/CHANGELOG.md).  
@@ -31,6 +29,12 @@ Changelog
   no longer exist.
 
 * Deprecated methods have been removed.
+
+### Event listeners
+
+* **BC break:** the `UserContextListener` constructor signature was changed to
+  take an array of options.
+* **BC break:** renamed the event listener classes to XyzListener.
 
 ### Rule matcher
 

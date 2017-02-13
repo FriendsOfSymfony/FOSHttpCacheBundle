@@ -16,11 +16,8 @@
         <service id="fos_http_cache.event_listener.user_context" class="FOS\HttpCacheBundle\EventListener\UserContextListener">
             <argument type="service" id="fos_http_cache.user_context.request_matcher" />
             <argument type="service" id="fos_http_cache.user_context.hash_generator" />
-            <argument />
-            <argument />
-            <argument />
-            <argument />
             <argument type="service" id="fos_http_cache.user_context.anonymous_request_matcher" />
+            <argument>%fos_http_cache.event_listener.user_context.options%</argument>
             <tag name="kernel.event_subscriber" />
         </service>
 

@@ -193,12 +193,14 @@ class FOSHttpCacheExtension extends Extension
             ->replaceArgument(0, $config['match']['accept'])
             ->replaceArgument(1, $config['match']['method']);
 
+        $container->setParameter($this->getAlias().'.event_listener.user_context.options', [
+            'user_identifier_headers' => $config['user_identifier_headers'],
+            'user_hash_header' => $config['user_hash_header'],
+            'ttl' => $config['hash_cache_ttl'],
+            'add_vary_on_hash' => $config['always_vary_on_context_hash'],
+        ]);
         $container->getDefinition($this->getAlias().'.event_listener.user_context')
-            ->replaceArgument(0, new Reference($config['match']['matcher_service']))
-            ->replaceArgument(2, $config['user_identifier_headers'])
-            ->replaceArgument(3, $config['user_hash_header'])
-            ->replaceArgument(4, $config['hash_cache_ttl'])
-            ->replaceArgument(5, $config['always_vary_on_context_hash']);
+            ->replaceArgument(0, new Reference($config['match']['matcher_service']));
 
         $container->getDefinition($this->getAlias().'.user_context.anonymous_request_matcher')
             ->replaceArgument(0, $config['user_identifier_headers']);
