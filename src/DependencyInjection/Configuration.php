@@ -117,6 +117,7 @@ class Configuration implements ConfigurationInterface
         $this->addCacheManagerSection($rootNode);
         $this->addTagSection($rootNode);
         $this->addInvalidationSection($rootNode);
+        $this->addHeaderReplayListenerSection($rootNode);
         $this->addUserContextListenerSection($rootNode);
         $this->addFlashMessageSection($rootNode);
         $this->addTestSection($rootNode);
@@ -542,6 +543,29 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
+     * Replay headers section.
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addHeaderReplayListenerSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('replay_headers')
+            ->info('Listener that allows replaying certain headers.')
+            ->addDefaultsIfNotSet()
+            ->canBeEnabled()
+                ->children()
+                    ->arrayNode('identifying_headers')
+                        ->prototype('scalar')->end()
+                        ->defaultValue(['Cookie', 'Authorization'])
+                        ->info('List of headers that triggers replaying headers.')
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
      * User context main section.
      *
      * @param ArrayNodeDefinition $rootNode
@@ -580,11 +604,6 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('always_vary_on_context_hash')
                             ->defaultTrue()
                             ->info('Whether to always add the user context hash header name in the response Vary header.')
-                        ->end()
-                        ->arrayNode('user_identifier_headers')
-                            ->prototype('scalar')->end()
-                            ->defaultValue(['Cookie', 'Authorization'])
-                            ->info('List of headers that contains the unique identifier for the user in the hash request.')
                         ->end()
                         ->scalarNode('user_hash_header')
                             ->defaultValue('X-User-Context-Hash')

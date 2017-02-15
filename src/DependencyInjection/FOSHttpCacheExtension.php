@@ -123,7 +123,16 @@ class FOSHttpCacheExtension extends Extension
             }
         }
 
+        if ($config['replay_headers']['enabled']) {
+            $this->loadReplayHeaders($container, $loader, $config['replay_headers']);
+        }
+
         if ($config['user_context']['enabled']) {
+
+            if (!$config['replay_headers']['enabled']) {
+                throw new InvalidConfigurationException('user_context requires replay_headers to be enabled!');
+            }
+
             $this->loadUserContext($container, $loader, $config['user_context']);
         }
 
@@ -185,6 +194,14 @@ class FOSHttpCacheExtension extends Extension
         );
     }
 
+    private function loadReplayHeaders(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        $loader->load('replay_headers.xml');
+
+        $container->getDefinition($this->getAlias().'.event_listener.replay_headers')
+            ->replaceArgument(1, new Reference($config['identifying_headers']));
+    }
+
     private function loadUserContext(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
         $loader->load('user_context.xml');
@@ -194,16 +211,12 @@ class FOSHttpCacheExtension extends Extension
             ->replaceArgument(1, $config['match']['method']);
 
         $container->setParameter($this->getAlias().'.event_listener.user_context.options', [
-            'user_identifier_headers' => $config['user_identifier_headers'],
             'user_hash_header' => $config['user_hash_header'],
             'ttl' => $config['hash_cache_ttl'],
             'add_vary_on_hash' => $config['always_vary_on_context_hash'],
         ]);
         $container->getDefinition($this->getAlias().'.event_listener.user_context')
             ->replaceArgument(0, new Reference($config['match']['matcher_service']));
-
-        $container->getDefinition($this->getAlias().'.user_context.anonymous_request_matcher')
-            ->replaceArgument(0, $config['user_identifier_headers']);
 
         if ($config['logout_handler']['enabled']) {
             $container->getDefinition($this->getAlias().'.user_context.logout_handler')

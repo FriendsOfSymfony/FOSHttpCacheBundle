@@ -32,6 +32,9 @@ Changelog
 
 ### Event listeners
 
+* **BC break:**  The preflight request to extract context information from
+  `Authorization` and `Cookie` headers is no longer part of the `UserContextListener`
+  but has instead been moved to a dedicated `ReplyHeadersListener`.
 * **BC break:** the `UserContextListener` constructor signature was changed to
   take an array of options.
 * **BC break:** renamed the event listener classes to XyzListener.
