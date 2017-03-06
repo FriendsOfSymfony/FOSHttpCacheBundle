@@ -1,40 +1,30 @@
 Changelog
 =========
 
-2.0.0 (unreleased)
-------------------
+2.0.0
+-----
 
-* [Proxy Client Configuration] The configuration for the proxy client has been
-  adjusted. Proxy servers are now configured under `http` and `servers` must be
-  a list - a comma separated string of server IPs is no longer supported.
+### General 
 
-* [User Context] Added an option always_vary_on_context_hash to make it
-  possible to disable automatically setting the vary headers for the user
-  hash.
-
-* Updated the version of FOSHttpCache to 2.*. See [FOSHttpCache changelog]
-  (https://github.com/FriendsOfSymfony/FOSHttpCache/blob/master/CHANGELOG.md).  
-  Most important, there is no more hard coupling on Guzzle HTTP client. We now
-  use the HTTPlug HTTP client abstraction. Your composer.json now needs to
-  specify which HTTP client to install, see [installation instructions]
+* Updated the version of FOSHttpCache to 2.0.0. See the [FOSHttpCache changelog]
+  (https://github.com/FriendsOfSymfony/FOSHttpCache/blob/master/CHANGELOG.md) 
+  for more information. Most importantly, we removed the hard coupling on the
+  Guzzle HTTP client (using HTTPlug). Your composer.json now needs to
+  specify which HTTP client to install; see the [installation instructions].
   (http://foshttpcachebundle.readthedocs.org/en/stable/installation.html)
-
-* [Tags] The TagHandler has been split. Invalidating tags happens through the
-  CacheManager (if you use annotations for tag invalidation, you don't need to
-  change anything). Recording tags and writing them into the responses is done
-  through the SymfonyResponseTagger now.
-
-* [Test] Dropped the proxy client services as they where not used anywhere. The
-  services `fos_http_cache.test.client.varnish` and `fos_http_cache.test.client.nginx`
-  no longer exist.
-
 * Deprecated methods have been removed.
+
+### Proxy client
+
+* The configuration for the proxy client has been adjusted. Proxy servers are 
+  now configured under `http` and `servers` must be a list - a comma separated 
+  string of server IPs is no longer supported.
 
 ### Event listeners
 
 * **BC break:** the `UserContextListener` constructor signature was changed to
   take an array of options.
-* **BC break:** renamed the event listener classes to XyzListener.
+* **BC break:** renamed the event listener classes to `XyzListener`.
 
 ### Rule matcher
 
@@ -46,6 +36,24 @@ Changelog
   
 * Cacheable status codes are now configured globally 
   (`cacheable.response.additional_status` or `cacheable.response.expression`).
+  
+### Tags
+  
+* **BC break:** The TagHandler has been split. Invalidating tags happens through the
+  CacheManager (if you use annotations for tag invalidation, you don't need to
+  change anything). Recording tags and writing them into the responses is now 
+  done through the SymfonyResponseTagger.
+  
+### Tests
+
+* **BC break:** Dropped the proxy client services as they where not used anywhere. The
+  services `fos_http_cache.test.client.varnish` and 
+  `fos_http_cache.test.client.nginx` no longer exist.
+  
+### User context
+
+* Added an option `always_vary_on_context_hash` to make it possible to disable 
+  automatically setting the vary headers for the user hash.
 
 1.3.7
 -----
