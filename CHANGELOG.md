@@ -39,10 +39,10 @@ Changelog
   
 ### Tags
   
-* **BC break:** The TagHandler has been split. Invalidating tags happens through the
-  CacheManager (if you use annotations for tag invalidation, you don't need to
-  change anything). Recording tags and writing them into the responses is now 
-  done through the SymfonyResponseTagger.
+* **BC break:** The TagHandler has been split. Invalidating tags happens through
+  CacheManager::invalidateTags (if you use annotations for tag invalidation, you 
+  don't need to change anything). Recording tags and writing them into the 
+  responses is now done through the SymfonyResponseTagger.
   
 ### Tests
 
