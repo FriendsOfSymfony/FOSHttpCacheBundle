@@ -18,3 +18,4 @@ multi
 login
 logout
 Packagist
+preflight
