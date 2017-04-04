@@ -46,8 +46,8 @@ These five steps resemble the Overview in the FOSHttpCache documentation.
     header.
     
     This concept can be generalized to handle more than the user context scenario.
-    The `terminal42/header-replay-bundle`_ builds on top of the FOSHttpCacheBundle
-    to add support for more complicated use cases. Read the `HeaderReplayBundl`
+    The `terminal42/header-replay-bundle`_ builds on top of the ``FOSHttpCacheBundle``
+    to add support for more complicated use cases. Read the ``HeaderReplayBundle``
     documentation if the user context is not flexible enough for your needs.
     
 Configuration
