@@ -41,11 +41,14 @@ These five steps resemble the Overview in the FOSHttpCache documentation.
 
     This concept basically executes a "preflight request" ("preflight" was term
     was chosen here because it's a request prior to the real request which is
-    also done for `CORS requests`_ which is where we borrowed the term from) and decorates the real master request with an additional ``X-User-Context-Hash`` header.
-    This concept, however, is not only interesting for the user context this
-    bundle works with but might also be interesting in various other use cases.
-    Checkout the `terminal42/header-replay-bundle`_ for more
-    use cases and description on how the preflight request concept works.
+    also done for `CORS requests`_ which is where we borrowed the term from) and
+    decorates the real master request with an additional ``X-User-Context-Hash``
+    header.
+    
+    This concept can be generalized to handle more than the user context scenario.
+    The `terminal42/header-replay-bundle`_ builds on top of the FOSHttpCacheBundle
+    to add support for more complicated use cases. Read the `HeaderReplayBundl`
+    documentation if the user context is not flexible enough for your needs.
     
 Configuration
 -------------
