@@ -36,7 +36,17 @@ These five steps resemble the Overview in the FOSHttpCache documentation.
 5. If the response to ``/foo`` should differ per user context, the application
    sets a ``Vary: X-User-Context-Hash`` header. The appropriate user context
    dependent representation of ``/foo`` will then be returned to the client.
+   
+.. note::
 
+    This concept basically executes a "preflight request" ("preflight" was term
+    was chosen here because it's a request prior to the real request which is
+    also done for `CORS <https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS>`_ requests which is where we borrowed the term from) and decorates the real master request with an additional ``X-User-Context-Hash`` header.
+    This concept, however, is not only interesting for the user context this
+    bundle works with but might also be interesting in various other use cases.
+    Checkout the `terminal42/header-replay-bundle <https://github.com/terminal42/header-replay-bundle>`_ for more
+    use cases and description on how the preflight request concept works.
+    
 Configuration
 -------------
 
