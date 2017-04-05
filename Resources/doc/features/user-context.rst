@@ -36,7 +36,20 @@ These five steps resemble the Overview in the FOSHttpCache documentation.
 5. If the response to ``/foo`` should differ per user context, the application
    sets a ``Vary: X-User-Context-Hash`` header. The appropriate user context
    dependent representation of ``/foo`` will then be returned to the client.
+   
+.. note::
 
+    This concept basically executes a "preflight request" ("preflight" as term
+    was chosen here because it's a request prior to the real request which is
+    also done for `CORS requests`_ which is where we borrowed the term from) and
+    decorates the real master request with an additional ``X-User-Context-Hash``
+    header.
+    
+    This concept can be generalized to handle more than the user context scenario.
+    The `terminal42/header-replay-bundle`_ builds on top of the ``FOSHttpCacheBundle``
+    to add support for more complicated use cases. Read the ``HeaderReplayBundle``
+    documentation if the user context is not flexible enough for your needs.
+    
 Configuration
 -------------
 
@@ -111,3 +124,6 @@ Caching Hash Responses
 
 To improve User Context Caching performance, you should cache the hash responses.
 You can do so by configuring :ref:`hash_cache_ttl`.
+
+.. _CORS requests: https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
+.. _terminal42/header-replay-bundle: https://github.com/terminal42/header-replay-bundle#terminal42header-replay-bundle
