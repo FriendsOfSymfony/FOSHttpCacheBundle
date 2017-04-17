@@ -61,6 +61,7 @@ class RuleMatcher implements RuleMatcherInterface
         if (!empty($this->criteria['match_response'])) {
             if (!$this->getExpressionLanguage()->evaluate($this->criteria['match_response'], array(
                 'response' => $response,
+                'request' => $request,
             ))) {
                 return false;
             }
