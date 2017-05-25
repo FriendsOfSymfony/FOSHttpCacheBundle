@@ -1,8 +1,8 @@
 The Cache Manager
 =================
 
-Use the CacheManager to explicitly invalidate or refresh paths, URLs, routes or
-headers.
+Use the CacheManager to explicitly invalidate or refresh paths, URLs, routes,
+tags or responses with specific headers.
 
 By *invalidating* a piece of content, you tell your caching proxy to no longer
 serve it to clients. When next requested, the proxy will fetch a fresh copy
@@ -82,12 +82,16 @@ Refresh a Route::
 
 .. _cache_manager_tags:
 
-``tagResponse()``, ``invalidateTags()``
----------------------------------------
+``invalidateTags()``
+--------------------
 
-.. versionadded:: 1.3
-    Since version 1.3, use the :doc:`TagHandler <tag-handler>` instead of the
-    CacheManager for working with tags.
+Invalidate cache tags::
+
+    $cacheManager->invalidateTags(array('some-tag', 'other-tag'));
+
+.. note::
+
+    Marking a response with tags can be done through the :doc:`ResponseTagger <../features/tagging>`.
 
 .. _flushing:
 

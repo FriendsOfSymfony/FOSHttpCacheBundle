@@ -90,6 +90,9 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ],
             'proxy_client' => [
                 'varnish' => [
+                    'tags_header' => 'My-Cache-Tags',
+                    'header_length' => 1234,
+                    'default_ban_headers' => ['Foo' => 'Bar'],
                     'http' => [
                         'servers' => ['22.22.22.22'],
                         'base_url' => '/test',
@@ -105,7 +108,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             'tags' => [
                 'enabled' => 'auto',
                 'strict' => false,
-                'header' => 'FOS-Tags',
+                'response_header' => 'FOS-Tags',
                 'expression_language' => 'acme.expression_language',
                 'rules' => [
                     [
@@ -331,6 +334,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     'http_client' => null,
                     'servers' => ['1.1.1.1:80', '2.2.2.2:80'],
                 ],
+                'tags_header' => 'X-Cache-Tags',
             ],
             'nginx' => [
                 'purge_location' => false,
@@ -496,7 +500,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             'tags' => [
                 'enabled' => false,
                 'strict' => false,
-                'header' => 'X-Cache-Tags',
+                'response_header' => 'X-Cache-Tags',
                 'expression_language' => null,
                 'rules' => [],
             ],

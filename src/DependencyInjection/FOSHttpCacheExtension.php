@@ -292,6 +292,17 @@ class FOSHttpCacheExtension extends Extension
     private function loadVarnish(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
         $this->createHttpDispatcherDefinition($container, $config['http'], $this->getAlias().'.proxy_client.varnish.http_dispatcher');
+        $options = [
+            'tags_header' => $config['tags_header'],
+        ];
+        if (!empty($config['header_length'])) {
+            $options['header_length'] = $config['header_length'];
+        }
+        if (!empty($config['default_ban_headers'])) {
+            $options['default_ban_headers'] = $config['default_ban_headers'];
+        }
+        $container->setParameter($this->getAlias().'.proxy_client.varnish.options', $options);
+
         $loader->load('varnish.xml');
     }
 
@@ -329,7 +340,7 @@ class FOSHttpCacheExtension extends Extension
         }
 
         $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', true);
-        $container->setParameter($this->getAlias().'.tag_handler.header', $config['header']);
+        $container->setParameter($this->getAlias().'.tag_handler.response_header', $config['response_header']);
         $container->setParameter($this->getAlias().'.tag_handler.strict', $config['strict']);
         $loader->load('cache_tagging.xml');
 

@@ -42,7 +42,8 @@
             </rule>
         </cache-control>
         <proxy-client>
-            <varnish>
+            <varnish tags-header="My-Cache-Tags" header-length="1234">
+                <default-ban-header name="Foo">Bar</default-ban-header>
                 <http base-url="/test" http-client="acme.guzzle.varnish">
                    <server>22.22.22.22</server>
                 </http>
@@ -51,7 +52,7 @@
 
         <cache-manager enabled="true" custom-proxy-client="acme.proxy_client"/>
 
-        <tags header="FOS-Tags" expression-language="acme.expression_language">
+        <tags response-header="FOS-Tags" expression-language="acme.expression_language">
             <rule>
                 <match path="/def" host="friends">
                     <method>PUT</method>
