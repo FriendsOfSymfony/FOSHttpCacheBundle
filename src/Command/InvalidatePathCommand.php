@@ -23,6 +23,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class InvalidatePathCommand extends BaseInvalidateCommand
 {
+    use PathSanityCheck;
+
     /**
      * @var string
      */
@@ -73,6 +75,10 @@ EOF
         $paths = $input->getArgument('paths');
 
         foreach ($paths as $path) {
+            if ($this->looksLikeRegularExpression($path)) {
+                $output->writeln(sprintf('Path %s looks like a regular expression. Invalidation requests operate on exact paths. Use regex invalidation for regular expressions.', $path));
+            }
+
             $this->getCacheManager()->invalidatePath($path);
         }
     }
