@@ -10,5 +10,4 @@ annotations and public methods.
     reference/configuration
     reference/annotations
     reference/cache-manager
-    reference/tag-handler
     reference/glossary

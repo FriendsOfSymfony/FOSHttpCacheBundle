@@ -51,6 +51,9 @@ $container->loadFromExtension('fos_http_cache', [
     ],
     'proxy_client' => [
         'varnish' => [
+            'tags_header' => 'My-Cache-Tags',
+            'header_length' => 1234,
+            'default_ban_headers' => ['Foo' => 'Bar'],
             'http' => [
                 'servers' => ['22.22.22.22'],
                 'base_url' => '/test',
@@ -64,7 +67,7 @@ $container->loadFromExtension('fos_http_cache', [
         'custom_proxy_client' => 'acme.proxy_client',
     ],
     'tags' => [
-        'header' => 'FOS-Tags',
+        'response_header' => 'FOS-Tags',
         'expression_language' => 'acme.expression_language',
         'rules' => [
             [

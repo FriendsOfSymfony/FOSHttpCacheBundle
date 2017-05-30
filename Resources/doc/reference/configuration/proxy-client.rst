@@ -27,14 +27,42 @@ varnish
     fos_http_cache:
         proxy_client:
             varnish:
+                tags_header: My-Cache-Tags
+                header_length: 1234
+                default_ban_headers:
+                    Foo: Bar
                 http:
                     servers:
                         - 123.123.123.1:6060
                         - 123.123.123.2
                     base_url: yourwebsite.com
 
-``servers``
-"""""""""""
+``tags_header``
+"""""""""""""""
+
+**type**: ``string`` **default**: ``X-Cache-Tags``
+
+Header for sending tag invalidation requests to Varnish.
+
+``header_length``
+"""""""""""""""""
+
+**type**: ``integer`` **default**: ``7500``
+
+Maximum header length when invalidating tags. If there are more tags to
+invalidate than fit into the header, the invalidation request is split into
+multiple requests.
+
+``default_ban_headers``
+"""""""""""""""""""""""
+
+**type**: ``array``
+
+Map of header name header value that have to be set on each ban request. This
+list is merged with the built-in headers for bans.
+
+``http.servers``
+""""""""""""""""
 
 **type**: ``array``
 
@@ -46,8 +74,8 @@ When using a multi-server setup, make sure to include **all** proxy servers in
 this list. Invalidation must happen on all systems or you will end up with
 inconsistent caches.
 
-``base_url``
-""""""""""""
+``http.base_url``
+"""""""""""""""""
 
 **type**: ``string``
 

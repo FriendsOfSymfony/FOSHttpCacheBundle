@@ -34,56 +34,71 @@ For more information, see :doc:`/reference/configuration/tags`.
 Setting and Invalidating Tags
 -----------------------------
 
-You can tag responses in different ways: with the tag handler from PHP or with
-a twig function, from configuration or using annotations on controller actions.
+You can tag responses in different ways:
+
+* From PHP code by using the response tagger to set tags and the cache manager
+  to invalidate tags;
+* Set tags from twig templates with a function;
+* In project configuration or using annotations on controller actions.
+
+You can add tags before the response object exists. The tags are automatically
+added to the response by a listener. The listener also detects pending tag
+invalidations and flushes them. As with other invalidation operations, tag
+invalidation requests are flushed to the caching proxy
+:ref:`after the response has been sent <flushing>`.
 
 Tagging from Code
 ~~~~~~~~~~~~~~~~~
 
-Inject the ``TagHandler`` (service ``fos_http_cache.handler.tag_handler``) and
-use ``addTags($tags)`` to add tags that will be set on the response::
+To add tags to responses, inject the ``ResponseTagger`` (service
+``fos_http_cache.http.symfony_response_tagger``) and use ``addTags($tags)`` to
+add tags that will be set on the response::
 
-    use FOS\HttpCacheBundle\Handler\TagHandler;
+    use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 
     class NewsController
     {
         /**
-         * @var TagHandler
+         * @var SymfonyResponseTagger
          */
-        private $tagHandler;
+        private $responseTagger;
 
         public function articleAction($id)
         {
-            $this->tagHandler->addTags(array('news', 'news-' . $id));
+            $this->responseTagger->addTags(array('news', 'news-' . $id));
 
             // ...
         }
     }
 
-To invalidate tags, call ``TagHandler::invalidateTags($tags)``::
+To invalidate tags, inject the ``CacheManager`` (service ``fos_http_cache.cache_manager``)
+and call ``invalidateTags($tags)`` on it::
+
+    use FOS\HttpCacheBundle\CacheManager;
 
     class NewsController
     {
-        // ...
+        /**
+         * @var CacheManager
+         */
+        private $cacheManager;
 
         public function editAction($id)
         {
             // ...
 
-            $this->tagHandler->invalidateTags(array('news-' . $id));
+            $this->cacheManager->invalidateTags(array('news-' . $id));
 
             // ...
         }
     }
-
-See the :ref:`Tag Handler reference <tag_handler_addtags>` for full details.
 
 Tagging from Twig Templates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In situations where a page is assembled in the templating layer, it can be more
 convenient to add tags from inside the template. This works the same way as
-with the tag handler and can also be mixed with the other methods:
+with the response tagger and can also be mixed with the other methods:
 
 .. code-block:: jinja
 

@@ -11,6 +11,8 @@
 
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
+use FOS\HttpCache\ProxyClient\Varnish;
+use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatter;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
@@ -307,8 +309,30 @@ class Configuration implements ConfigurationInterface
                             ->info('If you configure more than one proxy client, you need to specify which client is the default.')
                         ->end()
                         ->arrayNode('varnish')
+                            ->fixXmlConfig('default_ban_header')
+                            ->validate()
+                                ->always(function ($v) {
+                                    if (!count($v['default_ban_headers'])) {
+                                        unset($v['default_ban_headers']);
+                                    }
+
+                                    return $v;
+                                })
+                            ->end()
                             ->children()
-                                    ->append($this->getHttpDispatcherNode())
+                                ->scalarNode('tags_header')
+                                    ->defaultValue(Varnish::DEFAULT_HTTP_HEADER_CACHE_TAGS)
+                                    ->info('HTTP header to use when sending tag invalidation requests to Varnish')
+                                ->end()
+                                ->scalarNode('header_length')
+                                    ->info('Maximum header length when invalidating tags. If there are more tags to invalidate than fit into the header, the invalidation request is split into several requests.')
+                                ->end()
+                                ->arrayNode('default_ban_headers')
+                                    ->useAttributeAsKey('name')
+                                    ->info('Map of additional headers to include in each ban request.')
+                                    ->prototype('scalar')->end()
+                                ->end()
+                                ->append($this->getHttpDispatcherNode())
                             ->end()
                         ->end()
 
@@ -473,8 +497,8 @@ class Configuration implements ConfigurationInterface
                             ->defaultNull()
                             ->info('Service name of a custom ExpressionLanugage to use.')
                         ->end()
-                        ->scalarNode('header')
-                            ->defaultValue('X-Cache-Tags')
+                        ->scalarNode('response_header')
+                            ->defaultValue(TagHeaderFormatter::DEFAULT_HEADER_NAME)
                             ->info('HTTP header that contains cache tags')
                         ->end()
                         ->arrayNode('rules')

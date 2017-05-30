@@ -13,7 +13,6 @@ namespace FOS\HttpCacheBundle;
 
 use FOS\HttpCache\CacheInvalidator;
 use FOS\HttpCache\ProxyClient\ProxyClient;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**

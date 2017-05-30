@@ -43,6 +43,13 @@ Changelog
   CacheManager::invalidateTags (if you use annotations for tag invalidation, you 
   don't need to change anything). Recording tags and writing them into the 
   responses is now done through the SymfonyResponseTagger.
+  The service `fos_http_cache.handler.tag_handler` no longer exists. For
+  tagging responses, use `fos_http_cache.http.symfony_response_tagger` instead,
+  and to invalidate tags use the service `fos_http_cache.cache_manager`.
+* **BC break:** The configuration `tags.header` has been removed. Configuring
+  the header for tagging responses is now done at `tags.response_header`.
+  Configuring the header for tag invalidation requests is now done at
+  `proxy_client.varnish.tags_header`.
   
 ### Tests
 

@@ -8,6 +8,7 @@ symfony
 github
 subdomains
 yaml
+invalidations
 invalidator
 ETag
 templating
