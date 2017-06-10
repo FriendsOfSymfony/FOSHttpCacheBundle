@@ -24,7 +24,7 @@ How It Works
 These five steps resemble the Overview in the FOSHttpCache documentation.
 
 1. A :term:`foshttpcache:client` requests ``/foo``.
-2. The :term:`foshttpcache:caching proxy` receives the request and holds it.
+2. The :term:`foshttpcache:proxy server` receives the request and holds it.
    It first sends a *hash request* to the *context hash route*.
 3. The :term:`foshttpcache:application` receives the hash request. An event
    listener (``UserContextListener``) aborts the request immediately after
