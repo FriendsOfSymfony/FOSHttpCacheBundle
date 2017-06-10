@@ -44,7 +44,12 @@ class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
         $config = $this->getBaseConfig();
         $this->extension->load([$config], $container);
         $this->userContextListenerPass->process($container);
-        $this->assertCount(21, $container->getDefinitions());
+        if ($container->hasDefinition('service_container')) {
+            // symfony 3.3+
+            $this->assertCount(22, $container->getDefinitions());
+        } else {
+            $this->assertCount(21, $container->getDefinitions());
+        }
     }
 
     /**
