@@ -19,7 +19,7 @@ php:
   - 7.1
 
 env:
-  - SYMFONY_VERSION='3.1.*'
+  - SYMFONY_VERSION='3.3.*'
 
 branches:
   only:
@@ -37,6 +37,7 @@ matrix:
         - SYMFONY_VERSION='3.1.*'
         - PHPUNIT_FLAGS="--coverage-clover=coverage.clover"
         - COVERAGE=true
+        - DOCCHECK=true
     - php: 7.1
       env:
         - SYMFONY_VERSION='2.8.*'
@@ -60,8 +61,8 @@ before_script:
 
 script:
   - SYMFONY_DEPRECATIONS_HELPER=weak vendor/bin/phpunit ${PHPUNIT_FLAGS}
-  - make -C Resources/doc SPHINXOPTS='-nW' html
-  - make -C Resources/doc spelling
+  - if [[ "$DOCCHECK" = true ]]; then make -C Resources/doc SPHINXOPTS='-nW' html; fi
+  - if [[ "$DOCCHECK" = true ]]; then make -C Resources/doc spelling; fi
 
 after_script:
   - if [[ "$COVERAGE" = true ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi

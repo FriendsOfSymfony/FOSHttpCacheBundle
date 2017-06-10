@@ -16,6 +16,7 @@ use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
@@ -227,10 +228,17 @@ class FOSHttpCacheExtension extends Extension
         $id = $this->getAlias().'.request_matcher.'.md5($serialized).sha1($serialized);
 
         if (!$container->hasDefinition($id)) {
-            $container
-                ->setDefinition($id, new DefinitionDecorator($this->getAlias().'.request_matcher'))
-                ->setArguments($arguments)
-            ;
+            if (class_exists(ChildDefinition::class)) {
+                $container
+                    ->setDefinition($id, new ChildDefinition($this->getAlias().'.request_matcher'))
+                    ->setArguments($arguments)
+                ;
+            } else {
+                $container
+                    ->setDefinition($id, new DefinitionDecorator($this->getAlias().'.request_matcher'))
+                    ->setArguments($arguments)
+                ;
+            }
         }
 
         return new Reference($id);
