@@ -6,12 +6,10 @@ Changelog
 
 ### General 
 
-* Updated the version of FOSHttpCache to 2.0.0. See the [FOSHttpCache changelog]
-  (https://github.com/FriendsOfSymfony/FOSHttpCache/blob/master/CHANGELOG.md) 
+* Updated the version of FOSHttpCache to 2.0.0. See the [FOSHttpCache changelog](https://github.com/FriendsOfSymfony/FOSHttpCache/blob/master/CHANGELOG.md) 
   for more information. Most importantly, we removed the hard coupling on the
   Guzzle HTTP client (using HTTPlug). Your composer.json now needs to
-  specify which HTTP client to install; see the [installation instructions]
-  (http://foshttpcachebundle.readthedocs.org/en/stable/installation.html)
+  specify which HTTP client to install; see the [installation instructions](http://foshttpcachebundle.readthedocs.org/en/stable/installation.html)
 * Deprecated methods have been removed.
 
 ### Proxy client
