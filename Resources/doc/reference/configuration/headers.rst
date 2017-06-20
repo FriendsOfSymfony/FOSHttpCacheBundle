@@ -56,6 +56,8 @@ cache headers even if they are already set:
                 -
                     match:
                         path: ^/
+                        additional_response_status:
+                            - 500
                     headers:
                         cache_control:
                             public: true
@@ -71,6 +73,15 @@ cache headers even if they are already set:
 A set of cache control rules consisting of *match* criteria and *header* instructions.
 
 .. include:: /includes/match.rst
+
+The cache control rules additionally allow to overwrite the global
+:doc:`cacheable <cacheable>` configuration for a specific rule. Put the
+``match_response`` (semantics of ``response.expression``) or
+``additional_response_status`` setting under ``match`` with the same semantics as
+explained in :doc:`cacheable`.
+
+Be aware that ``additional_response_status`` completely replaces
+``cacheable.response.additional_status``. There is *no* merge taking place.
 
 headers
 ^^^^^^^

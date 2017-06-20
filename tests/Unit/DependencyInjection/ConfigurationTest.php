@@ -66,6 +66,8 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                             'methods' => ['GET', 'POST'],
                             'ips' => ['1.2.3.4', '1.1.1.1'],
                             'attributes' => ['_controller' => 'fos.user_bundle.*'],
+                            'match_response' => 'response.getStatusCode() == 404',
+                            'additional_response_status' => [],
                         ],
                         'headers' => [
                             'overwrite' => false,
@@ -314,6 +316,8 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                         'attributes' => [],
                         'methods' => ['GET', 'POST'],
                         'ips' => ['1.2.3.4', '1.1.1.1'],
+                        'additional_response_status' => [],
+                        'match_response' => null,
                     ],
                     'headers' => [
                         'reverse_proxy_ttl' => null,

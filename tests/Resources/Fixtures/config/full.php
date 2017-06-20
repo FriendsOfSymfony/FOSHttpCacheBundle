@@ -27,6 +27,7 @@ $container->loadFromExtension('fos_http_cache', [
                     'methods' => ['GET', 'POST'],
                     'ips' => ['1.2.3.4', '1.1.1.1'],
                     'attributes' => ['_controller' => 'fos.user_bundle.*'],
+                    'match_response' => 'response.getStatusCode() == 404',
                 ],
                 'headers' => [
                     'overwrite' => false,

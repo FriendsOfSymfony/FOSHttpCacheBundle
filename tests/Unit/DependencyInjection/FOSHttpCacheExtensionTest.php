@@ -12,6 +12,8 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection;
 
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
@@ -218,7 +220,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainer();
         $this->extension->load([$config], $container);
 
-        $this->assertMatcherCreated($container, ['_controller' => '^AcmeBundle:Default:index$']);
+        $this->assertRequestMatcherCreated($container, ['_controller' => '^AcmeBundle:Default:index$']);
         $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.tag');
     }
 
@@ -245,7 +247,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainer();
         $this->extension->load([$config], $container);
 
-        $this->assertMatcherCreated($container, ['_route' => 'my_route']);
+        $this->assertRequestMatcherCreated($container, ['_route' => 'my_route']);
         $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.invalidation');
 
         // Test for runtime errors
@@ -280,7 +282,75 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainer();
         $this->extension->load([$config], $container);
 
-        $this->assertMatcherCreated($container, ['_controller' => '^AcmeBundle:Default:index$']);
+        $requestMatcherId = $this->assertRequestMatcherCreated($container, ['_controller' => '^AcmeBundle:Default:index$']);
+        $signature = serialize([$requestMatcherId, 'fos_http_cache.response_matcher.cacheable']);
+        $id = 'fos_http_cache.cache_control.rule_matcher.'.md5($signature);
+        $this->assertTrue($container->hasDefinition($id), 'rule matcher not created as expected');
+
+        $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.cache_control');
+    }
+
+    public function testConfigLoadCacheControlResponseStatus()
+    {
+        $config = [
+            'cache_control' => [
+                'rules' => [
+                    [
+                        'match' => [
+                            'methods' => ['GET', 'HEAD'],
+                            'additional_response_status' => [500],
+                        ],
+                        'headers' => [
+                            'cache_control' => ['public' => true],
+                            'reverse_proxy_ttl' => 42,
+                            'vary' => ['Cookie', 'Accept-Language'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $container = $this->createContainer();
+        $this->extension->load([$config], $container);
+
+        $requestMatcherId = $this->assertRequestMatcherCreated($container, []);
+        $responseMatcherId = $this->assertResponseCacheableMatcherCreated($container, [500]);
+        $signature = serialize([$requestMatcherId, $responseMatcherId]);
+        $id = 'fos_http_cache.cache_control.rule_matcher.'.md5($signature);
+        $this->assertTrue($container->hasDefinition($id), 'rule matcher not created as expected');
+
+        $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.cache_control');
+    }
+
+    public function testConfigLoadCacheControlExpression()
+    {
+        $config = [
+            'cache_control' => [
+                'rules' => [
+                    [
+                        'match' => [
+                            'methods' => ['GET', 'HEAD'],
+                            'match_response' => 'foobar',
+                        ],
+                        'headers' => [
+                            'cache_control' => ['public' => true],
+                            'reverse_proxy_ttl' => 42,
+                            'vary' => ['Cookie', 'Accept-Language'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $container = $this->createContainer();
+        $this->extension->load([$config], $container);
+
+        $requestMatcherId = $this->assertRequestMatcherCreated($container, []);
+        $responseMatcherId = $this->assertResponseExpressionMatcherCreated($container, 'foobar');
+        $signature = serialize([$requestMatcherId, $responseMatcherId]);
+        $id = 'fos_http_cache.cache_control.rule_matcher.'.md5($signature);
+        $this->assertTrue($container->hasDefinition($id), 'rule matcher not created as expected');
+
         $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.cache_control');
     }
 
@@ -311,8 +381,42 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $container = $this->createContainer();
         $this->extension->load([$config], $container);
 
-        $matcherDefinition = $this->assertMatcherCreated($container, ['_controller' => '^AcmeBundle:Default:index$']);
-        $this->assertEquals(['GET', 'HEAD'], $matcherDefinition->getArgument(2));
+        $this->assertRequestMatcherCreated($container, ['_controller' => '^AcmeBundle:Default:index$'], ['GET', 'HEAD']);
+    }
+
+    public function testConfigLoadCacheControlDuplicateRule()
+    {
+        $config = [
+            'cache_control' => [
+                'rules' => [
+                    [
+                        'match' => [
+                            'methods' => ['GET', 'HEAD'],
+                            'match_response' => 'foobar',
+                        ],
+                        'headers' => [
+                            'cache_control' => ['public' => true],
+                            'reverse_proxy_ttl' => 42,
+                            'vary' => ['Cookie', 'Accept-Language'],
+                        ],
+                    ],
+                    [
+                        'match' => [
+                            'methods' => ['GET', 'HEAD'],
+                            'match_response' => 'foobar',
+                        ],
+                        'headers' => [
+                            'etag' => true,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $container = $this->createContainer();
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Duplicate');
+        $this->extension->load([$config], $container);
     }
 
     public function testConfigUserContext()
@@ -417,32 +521,98 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     /**
      * @param ContainerBuilder $container
      * @param array            $attributes
+     * @param array            $methods    List of methods for the matcher. Empty array to not check.
      *
-     * @return DefinitionDecorator
+     * @return string Service id of the matcher
      */
-    private function assertMatcherCreated(ContainerBuilder $container, array $attributes)
+    private function assertRequestMatcherCreated(ContainerBuilder $container, array $attributes, array $methods = [])
     {
         // Extract the corresponding definition
         $matcherDefinition = null;
         $matcherId = null;
         foreach ($container->getDefinitions() as $id => $definition) {
-            if ($definition instanceof DefinitionDecorator &&
-                $definition->getParent() === 'fos_http_cache.request_matcher'
+            if (($definition instanceof DefinitionDecorator
+                    || $definition instanceof ChildDefinition)
+                && $definition->getParent() === 'fos_http_cache.request_matcher'
             ) {
                 if ($matcherDefinition) {
                     $this->fail('More then one request matcher was created');
                 }
                 $matcherDefinition = $definition;
+                $matcherId = $id;
             }
         }
 
-        // definition should exist
-        $this->assertNotNull($matcherDefinition);
+        $this->assertNotNull($matcherDefinition, 'No matcher found');
 
+        if ($methods) {
+            // 3rd argument should be the request methods
+            $this->assertEquals($methods, $matcherDefinition->getArgument(2));
+        }
         // 5th argument should contain the request attribute criteria
         $this->assertEquals($attributes, $matcherDefinition->getArgument(4));
 
-        return $matcherDefinition;
+        return $matcherId;
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param int[]            $additionalStatus
+     *
+     * @return DefinitionDecorator|ChildDefinition
+     */
+    private function assertResponseCacheableMatcherCreated(ContainerBuilder $container, array $additionalStatus)
+    {
+        // Extract the corresponding definition
+        $matcherDefinition = null;
+        $matcherId = null;
+        foreach ($container->getDefinitions() as $id => $definition) {
+            if (($definition instanceof DefinitionDecorator
+                    || $definition instanceof ChildDefinition)
+                && $definition->getParent() === 'fos_http_cache.response_matcher.cache_control.cacheable_response'
+            ) {
+                if ($matcherDefinition) {
+                    $this->fail('More then one request matcher was created');
+                }
+                $matcherDefinition = $definition;
+                $matcherId = $id;
+            }
+        }
+
+        $this->assertNotNull($matcherDefinition, 'No matcher found');
+        $this->assertEquals($additionalStatus, $matcherDefinition->getArgument(0));
+
+        return $matcherId;
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param string           $expression
+     *
+     * @return DefinitionDecorator|ChildDefinition
+     */
+    private function assertResponseExpressionMatcherCreated(ContainerBuilder $container, $expression)
+    {
+        // Extract the corresponding definition
+        $matcherDefinition = null;
+        $matcherId = null;
+        foreach ($container->getDefinitions() as $id => $definition) {
+            if (($definition instanceof DefinitionDecorator
+                    || $definition instanceof ChildDefinition)
+                && $definition->getParent() === 'fos_http_cache.response_matcher.cache_control.expression'
+            ) {
+                if ($matcherDefinition) {
+                    $this->fail('More then one request matcher was created');
+                }
+                $matcherDefinition = $definition;
+                $matcherId = $id;
+            }
+        }
+
+        $this->assertNotNull($matcherDefinition, 'No matcher found');
+        $this->assertEquals($expression, $matcherDefinition->getArgument(0));
+
+        return $matcherId;
     }
 
     /**

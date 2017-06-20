@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\EventListener;
 
+use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +26,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * @author Lea Haensenberger <lea.haensenberger@gmail.com>
  * @author David Buchmann <mail@davidbu.ch>
  */
-class CacheControlListener extends AbstractRuleListener implements EventSubscriberInterface
+class CacheControlListener implements EventSubscriberInterface
 {
     /**
      * Whether to skip this response and not set any cache headers.
@@ -45,6 +46,11 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
         'private' => true,
         'public' => true,
     ];
+
+    /**
+     * @var array List of arrays with RuleMatcherInterface, settings array
+     */
+    private $rulesMap = [];
 
     /**
      * If not empty, add a debug header with that name to all responses,
@@ -101,46 +107,81 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
             $response->headers->set($this->debugHeader, 1, false);
         }
 
-        // do not change cache directives on unsafe requests.
+        // do not change cache directives on non-cacheable requests.
         if ($this->skip || !$request->isMethodCacheable()) {
             return;
         }
 
         $options = $this->matchRule($request, $response);
-        if (false !== $options) {
-            if (!empty($options['cache_control'])) {
-                $directives = array_intersect_key($options['cache_control'], $this->supportedDirectives);
-                $extraDirectives = array_diff_key($options['cache_control'], $directives);
-                if (!empty($directives)) {
-                    $this->setCache($response, $directives, $options['overwrite']);
-                }
-                if (!empty($extraDirectives)) {
-                    $this->setExtraCacheDirectives($response, $extraDirectives, $options['overwrite']);
-                }
-            }
 
-            if (isset($options['reverse_proxy_ttl'])
-                && null !== $options['reverse_proxy_ttl']
-                && !$response->headers->has('X-Reverse-Proxy-TTL')
-            ) {
-                $response->headers->set('X-Reverse-Proxy-TTL', (int) $options['reverse_proxy_ttl'], false);
-            }
+        if (false === $options) {
+            return;
+        }
 
-            if (!empty($options['vary'])) {
-                $response->setVary($options['vary'], $options['overwrite']);
+        if (!empty($options['cache_control'])) {
+            $directives = array_intersect_key($options['cache_control'], $this->supportedDirectives);
+            $extraDirectives = array_diff_key($options['cache_control'], $directives);
+            if (!empty($directives)) {
+                $this->setCache($response, $directives, $options['overwrite']);
             }
-
-            if (!empty($options['etag'])
-                && ($options['overwrite'] || null === $response->getEtag())
-            ) {
-                $response->setEtag(md5($response->getContent()));
-            }
-            if (isset($options['last_modified'])
-                && ($options['overwrite'] || null === $response->getLastModified())
-            ) {
-                $response->setLastModified(new \DateTime($options['last_modified']));
+            if (!empty($extraDirectives)) {
+                $this->setExtraCacheDirectives($response, $extraDirectives, $options['overwrite']);
             }
         }
+
+        if (isset($options['reverse_proxy_ttl'])
+            && null !== $options['reverse_proxy_ttl']
+            && !$response->headers->has('X-Reverse-Proxy-TTL')
+        ) {
+            $response->headers->set('X-Reverse-Proxy-TTL', (int) $options['reverse_proxy_ttl'], false);
+        }
+
+        if (!empty($options['vary'])) {
+            $response->setVary($options['vary'], $options['overwrite']);
+        }
+
+        if (!empty($options['etag'])
+            && ($options['overwrite'] || null === $response->getEtag())
+        ) {
+            $response->setEtag(md5($response->getContent()));
+        }
+        if (isset($options['last_modified'])
+            && ($options['overwrite'] || null === $response->getLastModified())
+        ) {
+            $response->setLastModified(new \DateTime($options['last_modified']));
+        }
+    }
+
+    /**
+     * Add a rule matcher with a list of header directives to apply if the
+     * request and response are matched.
+     *
+     * @param RuleMatcherInterface $ruleMatcher The headers apply to request and response matched by this matcher
+     * @param array                $settings    An array of header configuration
+     */
+    public function addRule(
+        RuleMatcherInterface $ruleMatcher,
+        array $settings = []
+    ) {
+        $this->rulesMap[] = [$ruleMatcher, $settings];
+    }
+
+    /**
+     * Return the settings for the current request if any rule matches.
+     *
+     * @param Request $request
+     *
+     * @return array|false Settings to apply or false if no rule matched
+     */
+    private function matchRule(Request $request, Response $response)
+    {
+        foreach ($this->rulesMap as $elements) {
+            if ($elements[0]->matches($request, $response)) {
+                return $elements[1];
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -181,7 +222,7 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
     }
 
     /**
-     * Add extra cache control directives.
+     * Add extra cache control directives on response.
      *
      * @param Response $response
      * @param array    $controls
