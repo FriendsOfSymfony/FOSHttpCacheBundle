@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\EventListener;
 
+use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,6 +48,14 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
     ];
 
     /**
+     * Global matcher to tell whether the request and response are considered
+     * cacheable and headers should be set.
+     *
+     * @var RuleMatcherInterface
+     */
+    private $cacheableMatcher;
+
+    /**
      * If not empty, add a debug header with that name to all responses,
      * telling the cache proxy to add debug output.
      *
@@ -55,10 +64,12 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
     private $debugHeader;
 
     /**
-     * @param string|bool $debugHeader Header to set to trigger debugging, or false to send no header
+     * @param RuleMatcherInterface $cacheableMatcher Matcher to decide whether caching headers should be set
+     * @param string|bool          $debugHeader      Header to set to trigger debugging, or false to send no header
      */
-    public function __construct($debugHeader = false)
+    public function __construct(RuleMatcherInterface $cacheableMatcher, $debugHeader = false)
     {
+        $this->cacheableMatcher = $cacheableMatcher;
         $this->debugHeader = $debugHeader;
     }
 
@@ -101,8 +112,8 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
             $response->headers->set($this->debugHeader, 1, false);
         }
 
-        // do not change cache directives on unsafe requests.
-        if ($this->skip || !$request->isMethodCacheable()) {
+        // do not change cache directives on non-cacheable requests.
+        if ($this->skip || !$this->cacheableMatcher->matches($request, $response)) {
             return;
         }
 
@@ -181,7 +192,7 @@ class CacheControlListener extends AbstractRuleListener implements EventSubscrib
     }
 
     /**
-     * Add extra cache control directives.
+     * Add extra cache control directives on response.
      *
      * @param Response $response
      * @param array    $controls

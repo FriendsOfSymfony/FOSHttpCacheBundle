@@ -1,6 +1,16 @@
 Changelog
 =========
 
+2.0.1
+-----
+
+### Fixes
+
+* When setting cache headers on the response, the `cacheable` configuration is
+  now respected.
+  **BC BREAK**: The signature of the CacheControlListener has changed. It now
+  needs a RuleMatcherInterface as first argument.
+
 2.0.0
 -----
 
