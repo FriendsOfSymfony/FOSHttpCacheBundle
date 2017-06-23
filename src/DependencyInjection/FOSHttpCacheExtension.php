@@ -172,18 +172,98 @@ class FOSHttpCacheExtension extends Extension
         }
     }
 
+    /**
+     * Parse one cache control rule match configuration.
+     *
+     * @param ContainerBuilder $container
+     * @param array            $match     Request and response match criteria
+     *
+     * @return Reference pointing to a rule matcher service
+     */
     private function parseRuleMatcher(ContainerBuilder $container, array $match)
+    {
+        $requestMatcher = $this->parseRequestMatcher($container, $match);
+        $responseMatcher = $this->parseResponseMatcher($container, $match);
+
+        $signature = serialize([(string) $requestMatcher, (string) $responseMatcher]);
+        $id = $this->getAlias().'.cache_control.rule_matcher.'.md5($signature);
+
+        if ($container->hasDefinition($id)) {
+            throw new InvalidConfigurationException('Duplicate match criteria. Would be hidden by a previous rule. match: '.json_encode($match));
+        }
+
+        $container
+            ->setDefinition($id, $this->createChildDefinition($this->getAlias().'.rule_matcher'))
+            ->replaceArgument(0, $requestMatcher)
+            ->replaceArgument(1, $responseMatcher)
+        ;
+
+        return new Reference($id);
+    }
+
+    /**
+     * Used for cache control, tag and invalidation rules.
+     *
+     * @param ContainerBuilder $container
+     * @param array            $match
+     *
+     * @return Reference to the request matcher
+     */
+    private function parseRequestMatcher(ContainerBuilder $container, array $match)
     {
         $match['ips'] = (empty($match['ips'])) ? null : $match['ips'];
 
-        return $this->createRequestMatcher(
-            $container,
+        $arguments = [
             $match['path'],
             $match['host'],
             $match['methods'],
             $match['ips'],
-            $match['attributes']
-        );
+            $match['attributes'],
+        ];
+        $serialized = serialize($arguments);
+        $id = $this->getAlias().'.request_matcher.'.md5($serialized).sha1($serialized);
+
+        if (!$container->hasDefinition($id)) {
+            $container
+                ->setDefinition($id, $this->createChildDefinition($this->getAlias().'.request_matcher'))
+                ->setArguments($arguments)
+            ;
+        }
+
+        return new Reference($id);
+    }
+
+    /**
+     * Used only for cache control rules.
+     *
+     * @param ContainerBuilder $container
+     * @param array            $config
+     *
+     * @return Reference to the correct response matcher service
+     */
+    private function parseResponseMatcher(ContainerBuilder $container, array $config)
+    {
+        if (!empty($config['additional_response_status'])) {
+            $id = $this->getAlias().'cache_control.expression.'.md5(serialize($config['additional_response_status']));
+            if (!$container->hasDefinition($id)) {
+                $container
+                    ->setDefinition($id, $this->createChildDefinition($this->getAlias().'.response_matcher.cache_control.cacheable_response'))
+                    ->setArguments([$config['additional_response_status']])
+                ;
+            }
+        } elseif (!empty($config['match_response'])) {
+            $id = $this->getAlias().'cache_control.match_response.'.md5($config['match_response']);
+            if (!$container->hasDefinition($id)) {
+                $container
+                    ->setDefinition($id, $this->createChildDefinition($this->getAlias().'.response_matcher.cache_control.expression'))
+                    ->replaceArgument(0, $config['match_response'])
+                ;
+            }
+        } else {
+            $id = $this->getAlias().'.response_matcher.cacheable';
+        }
+
+        return new Reference($id);
     }
 
     private function loadUserContext(ContainerBuilder $container, XmlFileLoader $loader, array $config)
@@ -219,29 +299,6 @@ class FOSHttpCacheExtension extends Extension
                 ->addTag(HashGeneratorPass::TAG_NAME)
                 ->setAbstract(false);
         }
-    }
-
-    private function createRequestMatcher(ContainerBuilder $container, $path = null, $host = null, $methods = null, $ips = null, array $attributes = [])
-    {
-        $arguments = [$path, $host, $methods, $ips, $attributes];
-        $serialized = serialize($arguments);
-        $id = $this->getAlias().'.request_matcher.'.md5($serialized).sha1($serialized);
-
-        if (!$container->hasDefinition($id)) {
-            if (class_exists(ChildDefinition::class)) {
-                $container
-                    ->setDefinition($id, new ChildDefinition($this->getAlias().'.request_matcher'))
-                    ->setArguments($arguments)
-                ;
-            } else {
-                $container
-                    ->setDefinition($id, new DefinitionDecorator($this->getAlias().'.request_matcher'))
-                    ->setArguments($arguments)
-                ;
-            }
-        }
-
-        return new Reference($id);
     }
 
     private function loadProxyClient(ContainerBuilder $container, XmlFileLoader $loader, array $config)
@@ -416,7 +473,7 @@ class FOSHttpCacheExtension extends Extension
         $tagDefinition = $container->getDefinition($this->getAlias().'.event_listener.tag');
 
         foreach ($config as $rule) {
-            $ruleMatcher = $this->parseRuleMatcher($container, $rule['match']);
+            $ruleMatcher = $this->parseRequestMatcher($container, $rule['match']);
 
             $tags = [
                 'tags' => $rule['tags'],
@@ -432,7 +489,7 @@ class FOSHttpCacheExtension extends Extension
         $tagDefinition = $container->getDefinition($this->getAlias().'.event_listener.invalidation');
 
         foreach ($config as $rule) {
-            $ruleMatcher = $this->parseRuleMatcher($container, $rule['match']);
+            $ruleMatcher = $this->parseRequestMatcher($container, $rule['match']);
             $tagDefinition->addMethodCall('addRule', [$ruleMatcher, $rule['routes']]);
         }
     }
@@ -478,5 +535,21 @@ class FOSHttpCacheExtension extends Extension
         }
 
         throw new InvalidConfigurationException('No proxy client configured');
+    }
+
+    /**
+     * Build the child definition with fallback for Symfony versions < 3.3.
+     *
+     * @param string $id Id of the service to extend
+     *
+     * @return ChildDefinition|DefinitionDecorator
+     */
+    private function createChildDefinition($id)
+    {
+        if (class_exists(ChildDefinition::class)) {
+            return new ChildDefinition($id);
+        }
+
+        return new DefinitionDecorator($id);
     }
 }

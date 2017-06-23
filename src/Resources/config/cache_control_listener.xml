@@ -10,5 +10,20 @@
             <argument>%fos_http_cache.debug_header%</argument>
             <tag name="kernel.event_subscriber" />
         </service>
+
+        <service id="fos_http_cache.response_matcher.cache_control.cacheable_response"
+                 class="FOS\HttpCacheBundle\Http\ResponseMatcher\CacheableResponseMatcher"
+                 abstract="true"
+                 public="false">
+            <argument/>
+        </service>
+
+        <service id="fos_http_cache.response_matcher.cache_control.expression"
+                 class="FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher"
+                 abstract="true"
+                 public="false">
+            <argument/>
+        </service>
+
     </services>
 </container>

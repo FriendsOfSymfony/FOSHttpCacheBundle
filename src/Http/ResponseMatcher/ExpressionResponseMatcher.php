@@ -19,7 +19,7 @@ class ExpressionResponseMatcher implements ResponseMatcherInterface
     private $expressionLanguage;
     private $expression;
 
-    public function __construct($expression, ExpressionLanguage $expressionLanguage)
+    public function __construct($expression, ExpressionLanguage $expressionLanguage = null)
     {
         $this->expression = $expression;
         $this->expressionLanguage = $expressionLanguage;

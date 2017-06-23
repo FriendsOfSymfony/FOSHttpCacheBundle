@@ -183,7 +183,7 @@ class Configuration implements ConfigurationInterface
                             ->prototype('array')
                                 ->children();
 
-        $this->addMatch($rules);
+        $this->addMatch($rules, true);
         $rules
             ->arrayNode('headers')
                 ->isRequired()
@@ -247,10 +247,11 @@ class Configuration implements ConfigurationInterface
      * Shared configuration between cache control, tags and invalidation.
      *
      * @param NodeBuilder $rules
+     * @param bool        $matchResponse whether to also add fields to match response
      */
-    private function addMatch(NodeBuilder $rules)
+    private function addMatch(NodeBuilder $rules, $matchResponse = false)
     {
-        $rules
+        $match = $rules
             ->arrayNode('match')
                 ->cannotBeOverwritten()
                 ->isRequired()
@@ -259,9 +260,9 @@ class Configuration implements ConfigurationInterface
                 ->fixXmlConfig('attribute')
                 ->validate()
                     ->ifTrue(function ($v) {
-                        return !empty($v['match_response']) && !class_exists('Symfony\Component\ExpressionLanguage\ExpressionLanguage');
+                        return !empty($v['additional_response_status']) && !empty($v['match_response']);
                     })
-                    ->thenInvalid('Configured a match_response but ExpressionLanguage is not available')
+                    ->thenInvalid('You may not set both additional_response_status and match_response.')
                 ->end()
                 ->children()
                     ->scalarNode('path')
@@ -293,9 +294,19 @@ class Configuration implements ConfigurationInterface
                         ->prototype('scalar')->end()
                         ->info('Regular expressions on request attributes.')
                     ->end()
-                ->end()
-            ->end()
         ;
+        if ($matchResponse) {
+            $match
+                ->arrayNode('additional_response_status')
+                    ->prototype('scalar')->end()
+                    ->info('Additional response HTTP status codes that will match. Replaces cacheable configuration.')
+                ->end()
+                ->scalarNode('match_response')
+                    ->defaultNull()
+                    ->info('Expression to decide whether response should be matched. Replaces cacheable configuration.')
+                ->end()
+            ;
+        }
     }
 
     private function addProxyClientSection(ArrayNodeDefinition $rootNode)

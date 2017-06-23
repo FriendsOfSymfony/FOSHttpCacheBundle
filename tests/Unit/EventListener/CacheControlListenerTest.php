@@ -12,8 +12,8 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
 use FOS\HttpCacheBundle\EventListener\CacheControlListener;
+use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
@@ -250,13 +250,11 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     public function testSkip()
     {
         $event = $this->buildEvent();
-        $listener = $this->getMockBuilder(CacheControlListener::class)
-            ->setMethods(['matchRule'])
-            ->getMock()
-        ;
-        $listener->expects($this->never())
-            ->method('matchRule')
-        ;
+        $listener = new CacheControlListener();
+        $matcher = \Mockery::mock(RuleMatcherInterface::class)
+            ->shouldReceive('matches')->never()
+            ->getMock();
+        $listener->addRule($matcher);
 
         $listener->setSkip();
         $listener->onKernelResponse($event);
@@ -302,11 +300,11 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testDebugHeader()
     {
-        $listener = \Mockery::mock(CacheControlListener::class.'[matchRule]', ['X-Cache-Debug'])
-            ->shouldAllowMockingProtectedMethods()
-            ->shouldReceive('matchRule')->once()->andReturn(false)
-            ->getMock()
-        ;
+        $listener = new CacheControlListener('X-Cache-Debug');
+        $matcher = \Mockery::mock(RuleMatcherInterface::class)
+            ->shouldReceive('matches')->once()->andReturn(false)
+            ->getMock();
+        $listener->addRule($matcher);
         $event = $this->buildEvent();
 
         $listener->onKernelResponse($event);
@@ -335,9 +333,9 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        $mockMatcher = \Mockery::mock(RequestMatcherInterface::class)
-            ->shouldReceive('matches')->once()->with($request)->andReturn(true)
-            ->shouldReceive('matches')->once()->with($request2)->andReturn(false)
+        $mockMatcher = \Mockery::mock(RuleMatcherInterface::class)
+            ->shouldReceive('matches')->once()->with($request, $response)->andReturn(true)
+            ->shouldReceive('matches')->once()->with($request2, $response2)->andReturn(false)
             ->getMock()
         ;
 
@@ -393,20 +391,20 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * We mock the matchRule method for tests about applying the rules.
+     * We mock a rule matcher for tests about applying the rules.
      *
-     * @param array $headers The headers to return in matchRule
+     * @param array $headers The headers to return from the matcher
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|CacheControlListener
      */
     protected function getCacheControl(array $headers)
     {
-        $listener = $this->getMockBuilder(CacheControlListener::class)
-            ->setMethods(['matchRule'])
-            ->getMock()
-        ;
+        $listener = new CacheControlListener();
 
-        $listener->expects($this->once())->method('matchRule')->will($this->returnValue($headers));
+        $matcher = \Mockery::mock(RuleMatcherInterface::class)
+            ->shouldReceive(['matches' => true])
+            ->getMock();
+        $listener->addRule($matcher, $headers);
 
         return $listener;
     }

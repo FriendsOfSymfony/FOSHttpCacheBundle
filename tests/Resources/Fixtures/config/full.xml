@@ -16,6 +16,7 @@
                 <match
                     path="/abc"
                     host="fos"
+                    match_response="response.getStatusCode() == 404"
                 >
                     <method>GET</method>
                     <method>POST</method>
