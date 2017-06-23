@@ -1,21 +1,29 @@
 Changelog
 =========
 
-2.0.1
+2.1.0
 -----
 
 ### Added
 
 * Individual rules in the `cache_control` can now again have a `match_response`
-  or `additional_response_status` configuration to limit the rule to certain responses. 
-  If not configured, the global `cacheable` configuration is now respected.
-  **BC BREAK**: The signature of CacheControlListener::addRule has changed. It
-  now expects a RuleMatcherInterface instead of the ResponseMatcherInterface.
-  **BC BREAK**: The global `cacheable` configuration is now respected when
-  adding cache headers. By default, this follows RFC 7234, only responses with
-  status 200, 203, 204, 206, 300,  301, 404, 405, 410, 414 or 501 get cache
-  headers. You can change this list in `cacheable` or with the re-added
-  `match_response` / `additional_response_status` for individual rules.
+  or `additional_response_status` configuration to limit the rule to certain
+  responses.
+
+  For this, the signature of CacheControlListener::addRule had to be changed.
+  It now expects a RuleMatcherInterface instead of the
+  ResponseMatcherInterface. If you extended the listener or change the service
+  configuration, this could be a **BC BREAK** for your application.
+
+### Fixed
+
+* If no response matching is configured on `cache_control`, the global
+  `cacheable` configuration is now respected to decide whether cache headers
+  should be set. By default, this follows RFC 7234, only responses with status
+  200, 203, 204, 206, 300,  301, 404, 405, 410, 414 or 501 get cache headers.
+
+  We decided to consider this a bugfix, but if your relied on this behaviour it
+  will be a **BC BREAK** for your application.
 
 2.0.0
 -----
