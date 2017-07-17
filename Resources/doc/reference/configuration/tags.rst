@@ -7,9 +7,17 @@ for an introduction.
 
 .. include:: /includes/enabled.rst
 
-If you use a :doc:`proxy client that does not support banning </features/tagging>`,
-cache tagging is not possible. If you leave ``enabled`` on ``auto``, tagging will
-be deactivated.
+.. note::
+
+    If you use a :doc:`proxy client that does not support tag invalidation </features/tagging>`,
+    cache tagging is not possible.
+
+    If you leave ``enabled`` on ``auto``, tagging will only be activated when
+    using the varnish client.
+
+    When using the noop proxy client or a custom service, ``auto`` will also
+    lead to tagging being disabled. If you want to use tagging in one of those
+    cases, you need to explicitly enable tagging.
 
 Enables tag annotations and rules. If you want to use tagging, it is recommended
 that you set this to ``true`` so you are notified of missing dependencies and

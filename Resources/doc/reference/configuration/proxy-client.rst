@@ -145,20 +145,26 @@ symfony
 
 For ``servers`` and ``base_url``, see above.
 
+.. _configuration_noop_proxy_client:
+
 noop
 ----
 
 .. code-block:: yaml
 
-    # app/config/config.yml
+    # app/config/config_test.yml
     fos_http_cache:
         proxy_client:
+            default: noop
             noop: ~
+
+This proxy client supports all invalidation methods, but implements doing
+nothing (hence the name "no operation" client). This can be useful for testing.
 
 default
 -------
 
-**type**: ``enum`` **options**: ``varnish``, ``nginx``, ``symfony``
+**type**: ``enum`` **options**: ``varnish``, ``nginx``, ``symfony``, ``noop``
 
 .. code-block:: yaml
 
