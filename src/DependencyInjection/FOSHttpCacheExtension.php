@@ -400,7 +400,7 @@ class FOSHttpCacheExtension extends Extension
 
             return;
         }
-        if (!in_array($client, ['varnish', 'custom'])) {
+        if (!in_array($client, ['varnish', 'custom', 'noop'])) {
             throw new InvalidConfigurationException(sprintf('You can not enable cache tagging with the %s client', $client));
         }
 
