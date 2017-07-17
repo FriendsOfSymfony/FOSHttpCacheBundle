@@ -47,8 +47,8 @@ invalidations and flushes them. As with other invalidation operations, tag
 invalidation requests are flushed to the caching proxy
 :ref:`after the response has been sent <flushing>`.
 
-Tagging from Code
-~~~~~~~~~~~~~~~~~
+Tagging and Invalidating from PHP Code
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To add tags to responses, inject the ``ResponseTagger`` (service
 ``fos_http_cache.http.symfony_response_tagger``) and use ``addTags($tags)`` to
@@ -116,8 +116,8 @@ with the response tagger and can also be mixed with the other methods:
     Tag invalidation from twig would be a strange architecture and is therefore
     not supported.
 
-Tagging with Configuration Rules
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Tagging and Invalidating with Configuration Rules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Alternatively, you can :doc:`configure rules </reference/configuration/tags>`
 for setting and invalidating tags:
@@ -137,8 +137,8 @@ Now if a :term:`safe` request matches the criteria under ``match``, the response
 will be tagged with ``news``. When an unsafe request matches, the tag ``news``
 will be invalidated.
 
-Tagging with Controller Annotations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Tagging and Invalidating with Controller Annotations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Add the ``@Tag`` annotations to your controllers to set and invalidate tags::
 
