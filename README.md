@@ -8,7 +8,7 @@ FOSHttpCacheBundle
 Introduction
 ------------
 
-This bundle offers tools to improve HTTP caching with Symfony2. It provides
+This bundle offers tools to improve HTTP caching with Symfony. It provides
 global configuration options to set caching headers based on the path,
 controller and other aspects of the request. In addition, it provides services
 for the [FOSHttpCache library](https://github.com/FriendsOfSymfony/FOSHttpCache) 
@@ -34,9 +34,7 @@ Roadmap
 -------
 
 This bundle is fully functional with Varnish and used in production in several 
-systems. With Nginx, many features are supported too.
-
-Work for using the Symfony built-in HttpCache is in progress.
+systems. Nginx and the Symfony built-in HttpCache only support a part of the features.
 
 See the [GitHub issues](https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/issues)
 if you are interested in the development of this bundle.
