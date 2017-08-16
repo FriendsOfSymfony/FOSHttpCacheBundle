@@ -1,6 +1,15 @@
 Changelog
 =========
 
+2.2.0 (unreleased)
+------------------
+
+### Added
+
+* You can now also match requests with regular expressions on the query string.
+  The new option `match.query_string` is available for cache control rules, tags
+  and invalidation.
+
 2.1.0
 -----
 

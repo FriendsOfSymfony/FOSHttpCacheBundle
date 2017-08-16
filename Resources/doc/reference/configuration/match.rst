@@ -13,6 +13,13 @@ All criteria are regular expressions. For instance:
     match:
         host: ^login.example.com$
         path: ^/$
+        query_string: (^|&)token=
+
+.. note::
+
+    Some parts of the URL are URL-encoded. But the expressions in this
+    configuration MUST NOT be URL-encoded as the matcher takes care of encoding
+    them before the matching.
 
 ``host``
 --------
@@ -36,6 +43,27 @@ serve more than one host from your Symfony application.
 
 For example, ``path: ^/`` will match every request. To only match the home
 page, use ``path: ^/$``.
+
+``query_string``
+----------------
+
+**type**: ``string``
+
+Regular expression to match against the query string.
+
+To only match that have a ``token`` parameter, use:
+
+.. code-block:: yaml
+
+    match:
+        query_string: (^|&)token=
+
+To test if a ``token`` parameter exists and has the value ``foo``, use:
+
+.. code-block:: yaml
+
+    match:
+        query_string: (^|&)token=foo(&|$)
 
 ``methods``
 -----------
