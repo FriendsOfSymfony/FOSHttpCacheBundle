@@ -14,6 +14,7 @@ fos_http_cache:
                 match:
                     path: /abc
                     host: fos
+                    query_string: (^|&)foo=
                     methods:
                         - GET
                         - POST
@@ -64,6 +65,7 @@ fos_http_cache:
                 match:
                     path: /def
                     host: friends
+                    query_string: (^|&)bar=
                     methods:
                         - PUT
                         - DELETE
@@ -84,6 +86,7 @@ fos_http_cache:
                 match:
                     path: /hij
                     host: symfony
+                    query_string: (^|&)baz=
                     methods: PATCH
                     ips: 42.42.42.42
                     attributes:

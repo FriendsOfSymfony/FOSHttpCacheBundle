@@ -1,6 +1,14 @@
 Changelog
 =========
 
+2.2.0 (unreleased)
+-----
+
+### Added
+
+* Add a `query_string` node in the `match` nodes to validate a regular expression
+against the request query string.
+
 2.1.0
 -----
 

@@ -24,6 +24,7 @@ $container->loadFromExtension('fos_http_cache', [
                 'match' => [
                     'path' => '/abc',
                     'host' => 'fos',
+                    'query_string' => '(^|&)foo=',
                     'methods' => ['GET', 'POST'],
                     'ips' => ['1.2.3.4', '1.1.1.1'],
                     'attributes' => ['_controller' => 'fos.user_bundle.*'],
@@ -75,6 +76,7 @@ $container->loadFromExtension('fos_http_cache', [
                 'match' => [
                     'path' => '/def',
                     'host' => 'friends',
+                    'query_string' => '(^|&)bar=',
                     'methods' => ['PUT', 'DELETE'],
                     'ips' => '99.99.99.99',
                     'attributes' => [
@@ -94,6 +96,7 @@ $container->loadFromExtension('fos_http_cache', [
                 'match' => [
                     'path' => '/hij',
                     'host' => 'symfony',
+                    'query_string' => '(^|&)baz=',
                     'methods' => ['PATCH'],
                     'ips' => ['42.42.42.42'],
                     'attributes' => [

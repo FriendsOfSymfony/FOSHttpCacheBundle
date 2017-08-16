@@ -64,6 +64,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                             'path' => '/abc',
                             'host' => 'fos',
                             'methods' => ['GET', 'POST'],
+                            'query_string' => '(^|&)foo=',
                             'ips' => ['1.2.3.4', '1.1.1.1'],
                             'attributes' => ['_controller' => 'fos.user_bundle.*'],
                             'match_response' => 'response.getStatusCode() == 404',
@@ -117,6 +118,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                         'match' => [
                             'path' => '/def',
                             'host' => 'friends',
+                            'query_string' => '(^|&)bar=',
                             'methods' => ['PUT', 'DELETE'],
                             'ips' => ['99.99.99.99'],
                             'attributes' => [
@@ -136,6 +138,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                         'match' => [
                             'path' => '/hij',
                             'host' => 'symfony',
+                            'query_string' => '(^|&)baz=',
                             'methods' => ['PATCH'],
                             'ips' => ['42.42.42.42'],
                             'attributes' => [
@@ -313,6 +316,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     'match' => [
                         'path' => null,
                         'host' => null,
+                        'query_string' => null,
                         'attributes' => [],
                         'methods' => ['GET', 'POST'],
                         'ips' => ['1.2.3.4', '1.1.1.1'],

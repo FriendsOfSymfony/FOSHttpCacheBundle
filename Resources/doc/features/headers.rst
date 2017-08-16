@@ -45,6 +45,13 @@ This is an example configuration. For more, see the
                         cache_control: { public: true, max_age: 15, s_maxage: 30 }
                         last_modified: "-1 hour"
 
+                # only match URLs having a specific parameter
+                -
+                    match:
+                        query_string: (^|&)token=
+                    headers:
+                        cache_control: { public: false, max_age: 0, s_maxage: 0 }
+
                 -
                     match:
                         path: ^/$

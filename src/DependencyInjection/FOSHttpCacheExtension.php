@@ -228,6 +228,10 @@ class FOSHttpCacheExtension extends Extension
                 ->setDefinition($id, $this->createChildDefinition($this->getAlias().'.request_matcher'))
                 ->setArguments($arguments)
             ;
+
+            if (!empty($match['query_string'])) {
+                $container->getDefinition($id)->addMethodCall('setQueryString', [$match['query_string']]);
+            }
         }
 
         return new Reference($id);

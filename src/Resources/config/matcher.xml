@@ -6,7 +6,7 @@
 
     <services>
         <service id="fos_http_cache.request_matcher"
-                 class="Symfony\Component\HttpFoundation\RequestMatcher"
+                 class="FOS\HttpCacheBundle\Http\RequestMatcher\QuerystringRequestMatcher"
                  public="false"
                  abstract="true"
         />
