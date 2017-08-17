@@ -16,6 +16,7 @@
                 <match
                     path="/abc"
                     host="fos"
+                    query_string="(^|&amp;)foo="
                     match_response="response.getStatusCode() == 404"
                 >
                     <method>GET</method>
@@ -55,7 +56,7 @@
 
         <tags response-header="FOS-Tags" expression-language="acme.expression_language">
             <rule>
-                <match path="/def" host="friends">
+                <match path="/def" host="friends" query_string="(^|&amp;)bar=">
                     <method>PUT</method>
                     <method>DELETE</method>
                     <ip>99.99.99.99</ip>
@@ -70,7 +71,7 @@
 
         <invalidation expression-language="acme.expression_language">
             <rule>
-                <match path="/hij" host="symfony">
+                <match path="/hij" host="symfony" query_string="(^|&amp;)baz=">
                     <method>PATCH</method>
                     <ip>42.42.42.42</ip>
                     <attribute name="_format">json</attribute>
