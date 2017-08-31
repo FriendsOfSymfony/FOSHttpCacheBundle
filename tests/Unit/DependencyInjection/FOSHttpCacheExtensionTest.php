@@ -479,15 +479,18 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
     public function testConfigLoadFlashMessageListener()
     {
         $config = [
-            ['flash_message' => true,
+            [
+                'flash_message' => true,
             ],
         ];
 
         $container = $this->createContainer();
         $this->extension->load($config, $container);
+
+        $this->assertTrue($container->has('fos_http_cache.event_listener.flash_message'));
     }
 
-    protected function createContainer()
+    private function createContainer()
     {
         $container = new ContainerBuilder(
             new ParameterBag(['kernel.debug' => false])
@@ -502,7 +505,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         return $container;
     }
 
-    protected function getBaseConfig()
+    private function getBaseConfig()
     {
         return [
             'proxy_client' => [

@@ -47,7 +47,7 @@ fos_http_cache:
   test:
     proxy_server:
       varnish:
-        config_file: varnish.vcl
+        config_file: %kernel.root_dir%/Resources/varnish/fos.vcl
 
 monolog:
   handlers:
