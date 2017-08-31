@@ -246,7 +246,7 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'foshttpcache': ('http://foshttpcache.readthedocs.org/en/stable/', None)}
+intersphinx_mapping = {'foshttpcache': ('http://foshttpcache.readthedocs.org/en/1.4/', None)}
 
 rst_epilog = """
 .. _expressions: http://symfony.com/doc/current/components/expression_language/index.html
