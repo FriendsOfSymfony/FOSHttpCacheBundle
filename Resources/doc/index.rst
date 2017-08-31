@@ -1,11 +1,6 @@
 FOSHttpCacheBundle
 ==================
 
-.. note::
-
-    This documentation is for the (outdated) version 1.x of the bundle. For the
-    current 2.x versions, please refer to the `current documentation`_.
-
 This is the documentation for the `FOSHttpCacheBundle <https://github.com/FriendsOfSymfony/FOSHttpCacheBundle>`_.
 Use the FOSHttpCacheBundle to:
 
@@ -28,5 +23,3 @@ Contents
 
     testing
     contributing
-
-.. _current documentation: http://foshttpcachebundle.readthedocs.org/en/latest/
