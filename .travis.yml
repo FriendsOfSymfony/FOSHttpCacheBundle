@@ -60,7 +60,7 @@ before_script:
   - composer update $COMPOSER_FLAGS
 
 script:
-  - SYMFONY_DEPRECATIONS_HELPER=weak vendor/bin/phpunit ${PHPUNIT_FLAGS}
+  - SYMFONY_DEPRECATIONS_HELPER=weak vendor/bin/simple-phpunit ${PHPUNIT_FLAGS}
   - if [[ "$DOCCHECK" = true ]]; then make -C Resources/doc SPHINXOPTS='-nW' html; fi
   - if [[ "$DOCCHECK" = true ]]; then make -C Resources/doc spelling; fi
 
