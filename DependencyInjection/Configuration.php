@@ -64,6 +64,7 @@ class Configuration implements ConfigurationInterface
 
                         return $v;
                     }
+
                     throw new InvalidConfigurationException('You need to configure a proxy_client or specify a custom_proxy_client to use the cache_manager.');
                 })
             ->end()
@@ -77,6 +78,7 @@ class Configuration implements ConfigurationInterface
 
                         return $v;
                     }
+
                     throw new InvalidConfigurationException('You need to configure a proxy_client to get the cache_manager needed for tag handling.');
                 })
             ->end()
@@ -96,6 +98,7 @@ class Configuration implements ConfigurationInterface
 
                         return $v;
                     }
+
                     throw new InvalidConfigurationException('You need to configure a proxy_client to get the cache_manager needed for invalidation handling.');
                 })
             ->end()
@@ -117,6 +120,7 @@ class Configuration implements ConfigurationInterface
 
                         return $v;
                     }
+
                     throw new InvalidConfigurationException('You need to configure the Varnish proxy_client to use the Varnish test client');
                 })
             ->end()
@@ -132,6 +136,7 @@ class Configuration implements ConfigurationInterface
 
                         return $v;
                     }
+
                     throw new InvalidConfigurationException('You need to configure the Nginx proxy_client to use the Nginx test client');
                 })
             ->end()
@@ -148,6 +153,7 @@ class Configuration implements ConfigurationInterface
 
                         return $v;
                     }
+
                     throw new InvalidConfigurationException('You need to configure a proxy_client for the logout_handler.');
                 })
         ;
