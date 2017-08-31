@@ -1,11 +1,6 @@
 FOSHttpCacheBundle
 ==================
 
-.. note::
-
-    This documentation is for the (upcoming) 2.0 of the library. For the stable
-    1.* version, please refer to the `stable documentation`_.
-
 This is the documentation for the `FOSHttpCacheBundle <https://github.com/FriendsOfSymfony/FOSHttpCacheBundle>`_.
 Use the FOSHttpCacheBundle to:
 
