@@ -17,10 +17,9 @@ php:
   - 5.5
   - 5.6
   - 7.0
-  - hhvm
 
 env:
-  - SYMFONY_VERSION='3.0.*'
+  - SYMFONY_VERSION='3.2.*'
 
 branches:
   only:
@@ -35,9 +34,10 @@ matrix:
         - SYMFONY_VERSION='2.3.*'
     - php: 5.6
       env:
-        - SYMFONY_VERSION='2.4.*'
+        - SYMFONY_VERSION='3.2.*'
         - PHPUNIT_FLAGS="--coverage-clover=coverage.clover"
         - COVERAGE=true
+        - DOCCHECK=true
     - php: 5.6
       env: SYMFONY_VERSION='2.3.*'
     - php: 5.6
@@ -62,31 +62,29 @@ matrix:
         - FRAMEWORK_EXTRA_VERSION='~3.0'
     - php: 5.6
       env:
-        - SYMFONY_VERSION='3.0.*'
-        - FRAMEWORK_EXTRA_VERSION='~3.0'
-    - php: 5.6
-      env:
         - SYMFONY_VERSION='3.1.*'
         - FRAMEWORK_EXTRA_VERSION='~3.0'
     - php: 5.6
       env:
         - SYMFONY_VERSION='3.2.*'
         - FRAMEWORK_EXTRA_VERSION='~3.0'
+    - php: hhvm
+      dist: trusty
 
 install:
-  - pip install -qr Resources/doc/requirements.txt --user
+  - if [ "$DOCCHECK" = true ]; then pip install -qr Resources/doc/requirements.txt --user; fi
 
 before_install:
-  - sh -c 'if [ "$SYMFONY_VERSION" != "" ]; then composer require --dev --no-update symfony/symfony=$SYMFONY_VERSION; fi;'
-  - sh -c 'if [ "$FRAMEWORK_EXTRA_VERSION" != "" ]; then composer require --dev --no-update sensio/framework-extra-bundle=$FRAMEWORK_EXTRA_VERSION; fi;'
+  - sh -c 'if [ "$SYMFONY_VERSION" != "" ]; then composer require --dev --no-update symfony/symfony=$SYMFONY_VERSION; fi'
+  - sh -c 'if [ "$FRAMEWORK_EXTRA_VERSION" != "" ]; then composer require --dev --no-update sensio/framework-extra-bundle=$FRAMEWORK_EXTRA_VERSION; fi'
 
 before_script:
   - composer update $COMPOSER_FLAGS
 
 script:
-  - SYMFONY_DEPRECATIONS_HELPER=weak phpunit ${PHPUNIT_FLAGS}
-  - make -C Resources/doc SPHINXOPTS='-nW' html
-  - make -C Resources/doc spelling
+  - SYMFONY_DEPRECATIONS_HELPER=weak vendor/bin/simple-phpunit ${PHPUNIT_FLAGS}
+  - if [ "$DOCCHECK" = true ]; then make -C Resources/doc SPHINXOPTS='-nW' html; fi
+  - if [ "$DOCCHECK" = true ]; then make -C Resources/doc spelling; fi
 
 after_script:
   - if [[ "$COVERAGE" = true ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
