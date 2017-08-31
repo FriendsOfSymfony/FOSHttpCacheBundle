@@ -126,6 +126,8 @@ The default proxy client that will be used by the cache manager. You can
 *configure Nginx, Varnish and Symfony proxy clients in parallel*. There is
 however only one cache manager and it will only use the default client.
 
+.. _custom guzzle client:
+
 Custom Guzzle Client
 --------------------
 
