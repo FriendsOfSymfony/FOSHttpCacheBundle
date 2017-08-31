@@ -145,7 +145,6 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
             KernelEvents::TERMINATE => 'onKernelTerminate',
             KernelEvents::EXCEPTION => 'onKernelException',
             ConsoleEvents::TERMINATE => 'onConsoleTerminate',
-            ConsoleEvents::EXCEPTION => 'onConsoleTerminate',
         ];
     }
 
