@@ -23,5 +23,3 @@ Contents
 
     testing
     contributing
-
-.. _stable documentation: http://foshttpcachebundle.readthedocs.org/en/stable/
