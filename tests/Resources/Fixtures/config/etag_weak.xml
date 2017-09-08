@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services">
+
+    <config xmlns="http://example.org/schema/dic/fos_http_cache">
+        <cache-control>
+            <rule>
+                <match>
+                </match>
+                <headers etag="weak">
+                </headers>
+            </rule>
+        </cache-control>
+    </config>
+
+</container>

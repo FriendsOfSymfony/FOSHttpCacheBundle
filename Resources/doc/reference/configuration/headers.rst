@@ -215,9 +215,13 @@ directives are flags that are included when set to true:
 ``etag``
 """"""""
 
-**type**: ``boolean``
+**type**: ``enum`` **options**: ``false``, ``"strong"``, ``"weak"``
 
 This enables a simplistic ETag calculated as md5 hash of the response body:
+
+.. versionadded:: 2.2
+
+    You can set up ETag to be strong or weak by setting the option to "strong" or "weak" respectively.
 
 .. code-block:: yaml
 
@@ -227,7 +231,7 @@ This enables a simplistic ETag calculated as md5 hash of the response body:
             rules:
                 -
                     headers:
-                        etag: true
+                        etag: "strong"
 
 .. tip::
 
@@ -244,6 +248,12 @@ This enables a simplistic ETag calculated as md5 hash of the response body:
     with an empty "304 Not Modified" response. This avoids rendering the whole
     page. If the page depends on permissions, make sure to make the ETag differ
     based on those permissions (e.g. by appending the :doc:`user context hash </features/user-context>`).
+
+    You want to set weak ETag when you are using gzip compression on web server.
+    Because while strong ETag means that entity is byte-to-byte identical, weak ETag means
+    semantically equivalent entities.
+    See: :rfc:`2616#section-13.3.3` that describes weak and strong validation.
+
 
 ``last_modified``
 """""""""""""""""
