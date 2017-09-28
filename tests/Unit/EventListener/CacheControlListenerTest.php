@@ -42,6 +42,36 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(strtotime('13.07.2003'), strtotime($newHeaders['last-modified'][0]));
     }
 
+    public function testEtagStrong()
+    {
+        $event = $this->buildEvent();
+        $headers = [
+            'overwrite' => false,
+            'etag' => 'strong',
+        ];
+        $listener = $this->getCacheControl($headers);
+
+        $listener->onKernelResponse($event);
+        $newHeaders = $event->getResponse()->headers->all();
+
+        $this->assertEquals('"d41d8cd98f00b204e9800998ecf8427e"', $newHeaders['etag'][0]);
+    }
+
+    public function testEtagWeak()
+    {
+        $event = $this->buildEvent();
+        $headers = [
+            'overwrite' => false,
+            'etag' => 'weak',
+        ];
+        $listener = $this->getCacheControl($headers);
+
+        $listener->onKernelResponse($event);
+        $newHeaders = $event->getResponse()->headers->all();
+
+        $this->assertEquals('W/"d41d8cd98f00b204e9800998ecf8427e"', $newHeaders['etag'][0]);
+    }
+
     public function testExtraHeaders()
     {
         $event = $this->buildEvent();
