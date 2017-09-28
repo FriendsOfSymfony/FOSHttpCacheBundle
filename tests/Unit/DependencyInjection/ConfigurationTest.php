@@ -83,7 +83,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                                 'stale_if_error' => 3,
                                 'stale_while_revalidate' => 4,
                             ],
-                            'etag' => true,
+                            'etag' => 'strong',
                             'last_modified' => '-1 hour',
                             'reverse_proxy_ttl' => 42,
                             'vary' => ['Cookie', 'Authorization'],
@@ -442,6 +442,90 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             'config/tags_strict.yml',
             'config/tags_strict.xml',
             'config/tags_strict.php',
+        ]);
+
+        foreach ($formats as $format) {
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
+        }
+    }
+
+    public function testWeakETags()
+    {
+        $expectedConfiguration = $this->getEmptyConfig();
+        $expectedConfiguration['cache_control'] = [
+            'rules' => [
+                [
+                    'match' => [
+                        'path' => null,
+                        'host' => null,
+                        'query_string' => null,
+                        'attributes' => [],
+                        'methods' => [],
+                        'ips' => [],
+                        'additional_response_status' => [],
+                        'match_response' => null,
+                    ],
+                    'headers' => [
+                        'reverse_proxy_ttl' => null,
+                        'overwrite' => 'default',
+                        'etag' => 'weak',
+                        'vary' => [],
+                    ],
+                ],
+            ],
+            'defaults' => [
+                'overwrite' => false,
+            ],
+        ];
+
+        $formats = array_map(function ($path) {
+            return __DIR__.'/../../Resources/Fixtures/'.$path;
+        }, [
+            'config/etag_weak.yml',
+            'config/etag_weak.xml',
+            'config/etag_weak.php',
+        ]);
+
+        foreach ($formats as $format) {
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
+        }
+    }
+
+    public function testStrongETags()
+    {
+        $expectedConfiguration = $this->getEmptyConfig();
+        $expectedConfiguration['cache_control'] = [
+            'rules' => [
+                [
+                    'match' => [
+                        'path' => null,
+                        'host' => null,
+                        'query_string' => null,
+                        'attributes' => [],
+                        'methods' => [],
+                        'ips' => [],
+                        'additional_response_status' => [],
+                        'match_response' => null,
+                    ],
+                    'headers' => [
+                        'reverse_proxy_ttl' => null,
+                        'overwrite' => 'default',
+                        'etag' => 'strong',
+                        'vary' => [],
+                    ],
+                ],
+            ],
+            'defaults' => [
+                'overwrite' => false,
+            ],
+        ];
+
+        $formats = array_map(function ($path) {
+            return __DIR__.'/../../Resources/Fixtures/'.$path;
+        }, [
+            'config/etag_true.yml',
+            'config/etag_true.xml',
+            'config/etag_true.php',
         ]);
 
         foreach ($formats as $format) {

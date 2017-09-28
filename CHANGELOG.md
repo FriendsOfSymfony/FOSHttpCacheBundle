@@ -9,6 +9,10 @@ Changelog
 * You can now also match requests with regular expressions on the query string.
   The new option `match.query_string` is available for cache control rules, tags
   and invalidation.
+  
+* ETags can now be false, strong or weak by setting `headers.etag` option to
+  `"strong"` or `"weak"` respectively.
+  Value `true` due to backward compatibility will be resolved as `"strong"`.
 
 2.1.0
 -----

@@ -34,7 +34,7 @@ This is an example configuration. For more, see the
                         host: ^login.example.com$
                     headers:
                         cache_control: { public: false, max_age: 0, s_maxage: 0 }
-                        etag: true
+                        etag: "strong"
                         vary: [Accept-Encoding, Accept-Language]
 
                 # match all actions of a specific controller
@@ -57,7 +57,7 @@ This is an example configuration. For more, see the
                         path: ^/$
                     headers:
                         cache_control: { public: true, max_age: 64000, s_maxage: 64000 }
-                        etag: true
+                        etag: "strong"
                         vary: [Accept-Encoding, Accept-Language]
 
                 # match everything to set defaults
@@ -67,7 +67,7 @@ This is an example configuration. For more, see the
                     headers:
                         overwrite: false
                         cache_control: { public: true, max_age: 15, s_maxage: 30 }
-                        etag: true
+                        etag: "strong"
 
 .. _manually setting cache headers: http://symfony.com/doc/current/book/http_cache.html#the-cache-control-header
 .. _setting caching headers through annotations: http://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/cache.html

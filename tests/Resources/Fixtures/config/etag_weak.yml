@@ -1,0 +1,8 @@
+fos_http_cache:
+    cache_control:
+        rules:
+            -
+                match:
+                    path: null
+                headers:
+                    etag: "weak"
