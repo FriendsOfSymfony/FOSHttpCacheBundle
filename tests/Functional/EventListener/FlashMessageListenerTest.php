@@ -11,14 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
-use FOS\HttpCacheBundle\CacheManager;
-use FOS\HttpCacheBundle\Configuration\Tag;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class FlashMessageListenerTest extends WebTestCase
 {
@@ -32,7 +25,7 @@ class FlashMessageListenerTest extends WebTestCase
         $cookies = $client->getResponse()->headers->getCookies();
         $this->assertCount(1, $cookies);
 
-        /** @var Cookie $cookie */
+        /** @var \Symfony\Component\HttpFoundation\Cookie $cookie */
         $cookie = $cookies[0];
 
         $this->assertEquals('/', $cookie->getPath());
