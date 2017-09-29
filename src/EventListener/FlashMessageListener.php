@@ -48,6 +48,7 @@ class FlashMessageListener implements EventSubscriberInterface
         $this->session = $session;
 
         $resolver = new OptionsResolver();
+        $resolver->setDefined(['name', 'path', 'host', 'secure']);
         $resolver->setAllowedTypes('name', 'string');
         $resolver->setAllowedTypes('path', 'string');
         $resolver->setAllowedTypes('host', 'string');
