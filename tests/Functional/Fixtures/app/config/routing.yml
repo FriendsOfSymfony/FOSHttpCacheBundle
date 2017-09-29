@@ -43,3 +43,7 @@ test_noncached:
 
 test_logout:
   path:  /secured_area/logout
+
+test_flash:
+  path: /flash
+  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\FlashMessageController::flashAction }

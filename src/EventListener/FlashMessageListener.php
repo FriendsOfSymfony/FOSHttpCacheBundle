@@ -48,7 +48,7 @@ class FlashMessageListener implements EventSubscriberInterface
         $this->session = $session;
 
         $resolver = new OptionsResolver();
-        $resolver->setDefined(['name', 'path', 'host', 'secure']);
+        $resolver->setDefined(['name', 'path', 'host', 'secure', 'enabled']);
         $resolver->setAllowedTypes('name', 'string');
         $resolver->setAllowedTypes('path', 'string');
         $resolver->setAllowedTypes('host', 'string');
@@ -77,13 +77,7 @@ class FlashMessageListener implements EventSubscriberInterface
             return;
         }
 
-        // Flash messages are stored in the session. If there is none, there
-        // can't be any flash messages in it. $session->getFlashBag() would
-        // create a session, we need to avoid that.
-        if (!$this->session->isStarted()) {
-            return;
-        }
-
+        // As of Symfony 3.3 directly accessing the flashbag does not start a session.
         $flashBag = $this->session->getFlashBag();
         $flashes = $flashBag->all();
 

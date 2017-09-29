@@ -48,6 +48,12 @@ fos_http_cache:
     proxy_server:
       varnish:
         config_file: %kernel.root_dir%/Resources/varnish/fos.vcl
+  flash_message:
+    enabled: true
+    host: mydomain.com
+    name: flash_cookie_name
+    path: /
+    secure: true
 
 monolog:
   handlers:
