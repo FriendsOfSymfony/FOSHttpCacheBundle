@@ -129,6 +129,7 @@ class FOSHttpCacheExtension extends Extension
         }
 
         if (!empty($config['flash_message']) && $config['flash_message']['enabled']) {
+            unset($config['flash_message']['enabled']);
             $container->setParameter($this->getAlias().'.event_listener.flash_message.options', $config['flash_message']);
 
             $loader->load('flash_message.xml');

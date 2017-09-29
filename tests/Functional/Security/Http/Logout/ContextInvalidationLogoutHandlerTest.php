@@ -14,12 +14,19 @@ namespace FOS\HttpCacheBundle\Tests\Functional\Security\Http\Logout;
 use FOS\HttpCache\ProxyClient\Varnish;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class ContextInvalidationLogoutHandlerTest extends WebTestCase
 {
     public function testLogout()
     {
         $client = static::createClient();
+        $session = $client->getContainer()->get('session');
+
+        $token = new UsernamePasswordToken('user', null, 'secured_area', ['ROLE_USER']);
+        $session->setId('test');
+        $session->set('_security_secured_area', serialize($token));
+        $session->save();
         $client->getContainer()->mock(
             'fos_http_cache.proxy_client.varnish',
             Varnish::class
@@ -35,7 +42,7 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
             ->shouldReceive('flush')->once()
         ;
 
-        $client->getCookieJar()->set(new Cookie('TESTSESSID', 'test'));
+        $client->getCookieJar()->set(new Cookie($session->getName(), 'test'));
         $client->request('GET', '/secured_area/logout');
 
         $this->assertEquals(302, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
