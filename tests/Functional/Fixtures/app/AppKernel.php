@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-use FOS\HttpCacheBundle\Tests\Functional\Fixtures\Session\TestSessionStorage;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
 use Symfony\Component\HttpKernel\Kernel;
 
 class AppKernel extends Kernel
@@ -78,7 +78,7 @@ class AppKernel extends Kernel
 
         $container->setDefinition(
             'session.test_storage',
-            new \Symfony\Component\DependencyInjection\Definition(TestSessionStorage::class)
+            new \Symfony\Component\DependencyInjection\Definition(MockFileSessionStorage::class)
         );
     }
 }
