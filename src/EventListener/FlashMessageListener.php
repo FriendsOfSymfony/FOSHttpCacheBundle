@@ -88,7 +88,7 @@ final class FlashMessageListener implements EventSubscriberInterface
         $response = $event->getResponse();
 
         $cookies = $response->headers->getCookies(ResponseHeaderBag::COOKIES_ARRAY);
-        $host = (null === $this->options['host']) ? '': $this->options['host'];
+        $host = (null === $this->options['host']) ? '' : $this->options['host'];
         if (isset($cookies[$host][$this->options['path']][$this->options['name']])) {
             $rawCookie = $cookies[$host][$this->options['path']][$this->options['name']]->getValue();
             $flashes = array_merge($flashes, json_decode($rawCookie));
