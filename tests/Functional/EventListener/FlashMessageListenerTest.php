@@ -18,18 +18,20 @@ class FlashMessageListenerTest extends WebTestCase
     public function testFlashMessageCookieIsSet()
     {
         $client = static::createClient();
+        $session = static::$kernel->getContainer()->get('session');
 
         $client->request('GET', '/flash');
+        $this->assertFalse($session->isStarted());
         $response = $client->getResponse();
         $this->assertEquals('flash', $response->getContent());
-        $cookies = $client->getResponse()->headers->getCookies();
+        $cookies = $response->headers->getCookies();
         $this->assertCount(1, $cookies);
 
         /** @var \Symfony\Component\HttpFoundation\Cookie $cookie */
         $cookie = $cookies[0];
 
         $this->assertEquals('/', $cookie->getPath());
-        $this->assertEquals('mydomain.com', $cookie->getDomain());
+        $this->assertNull($cookie->getDomain());
         $this->assertTrue($cookie->isSecure());
         $this->assertEquals('flash_cookie_name', $cookie->getName());
         $this->assertJsonStringEqualsJsonString(json_encode(['notice' => ['Flash Message!']]), $cookie->getValue());
