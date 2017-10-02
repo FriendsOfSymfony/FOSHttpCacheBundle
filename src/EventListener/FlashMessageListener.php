@@ -51,7 +51,7 @@ final class FlashMessageListener implements EventSubscriberInterface
         $resolver->setRequired(['name', 'path', 'host', 'secure']);
         $resolver->setAllowedTypes('name', 'string');
         $resolver->setAllowedTypes('path', 'string');
-        $resolver->setAllowedTypes('host', 'string');
+        $resolver->setAllowedTypes('host', ['string', 'null']);
         $resolver->setAllowedTypes('secure', 'bool');
         $this->options = $resolver->resolve($options);
     }
@@ -88,8 +88,9 @@ final class FlashMessageListener implements EventSubscriberInterface
         $response = $event->getResponse();
 
         $cookies = $response->headers->getCookies(ResponseHeaderBag::COOKIES_ARRAY);
-        if (isset($cookies[$this->options['host']][$this->options['path']][$this->options['name']])) {
-            $rawCookie = $cookies[$this->options['host']][$this->options['path']][$this->options['name']]->getValue();
+        $host = (null === $this->options['host']) ? '': $this->options['host'];
+        if (isset($cookies[$host][$this->options['path']][$this->options['name']])) {
+            $rawCookie = $cookies[$host][$this->options['path']][$this->options['name']]->getValue();
             $flashes = array_merge($flashes, json_decode($rawCookie));
         }
 
