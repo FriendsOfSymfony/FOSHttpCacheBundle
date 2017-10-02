@@ -50,7 +50,6 @@ fos_http_cache:
         config_file: %kernel.root_dir%/Resources/varnish/fos.vcl
   flash_message:
     enabled: true
-#    host: mydomain.com
     name: flash_cookie_name
     path: /
     secure: true
