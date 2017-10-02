@@ -23,7 +23,7 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
         $client = static::createClient();
         $session = $client->getContainer()->get('session');
 
-        $token = new UsernamePasswordToken('user', null, 'secured_area', array('ROLE_USER'));
+        $token = new UsernamePasswordToken('user', null, 'secured_area', ['ROLE_USER']);
         $session->setId('test');
         $session->set('_security_secured_area', serialize($token));
         $session->save();
