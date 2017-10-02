@@ -82,7 +82,7 @@ final class FlashMessageListener implements EventSubscriberInterface
         // create a session, we need to avoid that.
         if (!$this->session->isStarted()) {
             return;
-         }
+        }
 
         $flashBag = $this->session->getFlashBag();
         $flashes = $flashBag->all();

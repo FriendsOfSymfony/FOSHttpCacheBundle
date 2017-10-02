@@ -24,9 +24,9 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
         $session = $client->getContainer()->get('session');
 
         $token = new UsernamePasswordToken('user', null, 'secured_area', array('ROLE_USER'));
+        $session->setId('test');
         $session->set('_security_secured_area', serialize($token));
         $session->save();
-
         $client->getContainer()->mock(
             'fos_http_cache.proxy_client.varnish',
             Varnish::class
@@ -42,7 +42,7 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
             ->shouldReceive('flush')->once()
         ;
 
-        $client->getCookieJar()->set(new Cookie($session->getName(), $session->getId()));
+        $client->getCookieJar()->set(new Cookie($session->getName(), 'test'));
         $client->request('GET', '/secured_area/logout');
 
         $this->assertEquals(302, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
