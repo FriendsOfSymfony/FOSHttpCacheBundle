@@ -25,7 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @author Lukas Kahwe Smith <smith@pooteeweet.org>
  */
-class FlashMessageListener implements EventSubscriberInterface
+final class FlashMessageListener implements EventSubscriberInterface
 {
     /**
      * @var array
@@ -48,7 +48,7 @@ class FlashMessageListener implements EventSubscriberInterface
         $this->session = $session;
 
         $resolver = new OptionsResolver();
-        $resolver->setDefined(['name', 'path', 'host', 'secure', 'enabled']);
+        $resolver->setRequired(['name', 'path', 'host', 'secure']);
         $resolver->setAllowedTypes('name', 'string');
         $resolver->setAllowedTypes('path', 'string');
         $resolver->setAllowedTypes('host', 'string');

@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class FlashMessageListenerTest extends WebTestCase
 {
-    public function testAnnotationTagsAreSet()
+    public function testFlashMessageCookieIsSet()
     {
         $client = static::createClient();
 
