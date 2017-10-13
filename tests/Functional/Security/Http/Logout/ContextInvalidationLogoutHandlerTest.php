@@ -20,11 +20,11 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
 {
     public function testLogout()
     {
-        $this->markTestSkipped(<<<'EOF'
-Session is invalidated in LogoutListener before Proxy Client can invalidate cache.
-@see https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/pull/390#issuecomment-333545374
-EOF
-        );
+//        $this->markTestSkipped(<<<'EOF'
+//Session is invalidated in LogoutListener before Proxy Client can invalidate cache.
+//@see https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/pull/390#issuecomment-333545374
+//EOF
+//        );
 
         $client = static::createClient();
         $session = $client->getContainer()->get('session');

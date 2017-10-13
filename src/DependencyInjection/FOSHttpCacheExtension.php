@@ -14,6 +14,7 @@ namespace FOS\HttpCacheBundle\DependencyInjection;
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher;
+use FOS\HttpCacheBundle\Security\Http\Logout\ContextInvalidationLogoutHandler;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
@@ -295,6 +296,13 @@ class FOSHttpCacheExtension extends Extension
             $container->getDefinition($this->getAlias().'.user_context.logout_handler')
                 ->replaceArgument(1, $config['user_identifier_headers'])
                 ->replaceArgument(2, $config['match']['accept']);
+
+            $container->register($this->getAlias().'.user_context.logout.handler.session', ContextInvalidationLogoutHandler::class)
+                ->setDecoratedService('security.logout.handler.session')
+                ->addArgument(new Reference($this->getAlias().'.user_context.logout_handler'))
+                ->addArgument(new Reference($this->getAlias().'.user_context.logout.handler.session.inner'))
+                ->setPublic(false)
+            ;
         } else {
             $container->removeDefinition($this->getAlias().'.user_context.logout_handler');
         }

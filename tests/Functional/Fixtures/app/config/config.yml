@@ -74,5 +74,3 @@ security:
       anonymous:
       logout:
         path:     /secured_area/logout
-        handlers:
-          - fos_http_cache.user_context.logout_handler
