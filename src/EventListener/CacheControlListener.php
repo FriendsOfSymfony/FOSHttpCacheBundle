@@ -143,7 +143,7 @@ class CacheControlListener implements EventSubscriberInterface
         if (!empty($options['etag'])
             && ($options['overwrite'] || null === $response->getEtag())
         ) {
-            $response->setEtag(md5($response->getContent()), $options['etag'] === 'weak');
+            $response->setEtag(md5($response->getContent()), 'weak' === $options['etag']);
         }
         if (isset($options['last_modified'])
             && ($options['overwrite'] || null === $response->getLastModified())
