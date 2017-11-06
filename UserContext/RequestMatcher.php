@@ -31,11 +31,11 @@ class RequestMatcher implements RequestMatcherInterface
      */
     public function matches(Request $request)
     {
-        if ($this->accept !== null && $this->accept != $request->headers->get('accept', null)) {
+        if (null !== $this->accept && $this->accept != $request->headers->get('accept', null)) {
             return false;
         }
 
-        if ($this->method !== null && $this->method != $request->getMethod()) {
+        if (null !== $this->method && $this->method != $request->getMethod()) {
             return false;
         }
 

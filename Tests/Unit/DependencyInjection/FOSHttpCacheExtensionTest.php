@@ -401,7 +401,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $matcherId = null;
         foreach ($container->getDefinitions() as $id => $definition) {
             if ($definition instanceof DefinitionDecorator &&
-                $definition->getParent() === 'fos_http_cache.request_matcher'
+                'fos_http_cache.request_matcher' === $definition->getParent()
             ) {
                 if ($matcherDefinition) {
                     $this->fail('More then one request matcher was created');
@@ -420,7 +420,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $ruleDefinition = null;
         foreach ($container->getDefinitions() as $definition) {
             if ($definition instanceof DefinitionDecorator &&
-                $definition->getParent() === 'fos_http_cache.rule_matcher'
+                'fos_http_cache.rule_matcher' === $definition->getParent()
             ) {
                 if ($ruleDefinition) {
                     $this->fail('More then one rule matcher was created');
