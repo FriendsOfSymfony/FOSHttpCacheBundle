@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\DependencyInjection\Compiler;
 
+use Sensio\Bundle\FrameworkExtraBundle\EventListener\ControllerListener;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -37,6 +38,6 @@ class TagListenerPass implements CompilerPassInterface
     private function hasControllerListener(ContainerBuilder $container)
     {
         return $container->has('sensio_framework_extra.controller.listener') ||
-            $container->has('Sensio\\Bundle\\FrameworkExtraBundle\\EventListener\\ControllerListener');
+            $container->has(ControllerListener::class);
     }
 }
