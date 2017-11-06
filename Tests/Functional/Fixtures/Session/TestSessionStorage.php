@@ -105,7 +105,7 @@ class TestSessionStorage implements SessionStorageInterface
      */
     public function registerBag(SessionBagInterface $bag)
     {
-        if ($bag->getName() == 'attributes') {
+        if ('attributes' == $bag->getName()) {
             $bag->set('_security_secured_area', serialize(new UsernamePasswordToken('user', 'user', 'in_memory', array('ROLE_USER'))));
         }
 

@@ -33,7 +33,7 @@ class AnonymousRequestMatcher implements RequestMatcherInterface
     {
         foreach ($this->userIdentifierHeaders as $header) {
             if ($request->headers->has($header)) {
-                if (strtolower($header) === 'cookie' && 0 === $request->cookies->count()) {
+                if ('cookie' === strtolower($header) && 0 === $request->cookies->count()) {
                     // ignore empty cookie header
                     continue;
                 }
