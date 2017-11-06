@@ -25,12 +25,18 @@ class TagListenerPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         if (true === $container->getParameter('fos_http_cache.compiler_pass.tag_annotations')
-            && !$container->has('sensio_framework_extra.controller.listener')
+            && !$this->hasControllerListener($container)
         ) {
             throw new \RuntimeException(
                 'Tag support requires SensioFrameworkExtraBundle’s ControllerListener for the annotations. '
                 .'Please install sensio/framework-extra-bundle and add it to your AppKernel.'
             );
         }
+    }
+
+    private function hasControllerListener(ContainerBuilder $container)
+    {
+        return $container->has('sensio_framework_extra.controller.listener') ||
+            $container->has('Sensio\\Bundle\\FrameworkExtraBundle\\EventListener\\ControllerListener');
     }
 }
