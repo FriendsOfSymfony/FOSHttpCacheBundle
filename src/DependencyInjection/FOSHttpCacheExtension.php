@@ -297,7 +297,6 @@ class FOSHttpCacheExtension extends Extension
                 ->replaceArgument(2, $config['match']['accept']);
 
             $container->setAlias('security.logout.handler.session', $this->getAlias().'.user_context.session_logout_handler');
-
         } else {
             $container->removeDefinition($this->getAlias().'.user_context.logout_handler');
             $container->removeDefinition($this->getAlias().'.user_context.session_logout_handler');
