@@ -11,50 +11,30 @@
 
 namespace FOS\HttpCacheBundle\Security\Http\Logout;
 
-use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
+use FOS\HttpCacheBundle\UserContextInvalidator;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Http\Logout\LogoutHandlerInterface;
 
-class ContextInvalidationLogoutHandler
+/**
+ * @deprecated Use ContextInvalidationSessionLogoutHandler in this same namespace as a replacement.
+ */
+class ContextInvalidationLogoutHandler implements LogoutHandlerInterface
 {
-    /**
-     * Service used to ban hash request.
-     *
-     * @var \FOS\HttpCache\ProxyClient\Invalidation\BanCapable
-     */
-    private $banner;
+    private $invalidator;
 
-    /**
-     * Accept header.
-     *
-     * @var string
-     */
-    private $acceptHeader;
-
-    /**
-     * User identifier headers.
-     *
-     * @var string[]
-     */
-    private $userIdentifierHeaders;
-
-    public function __construct(BanCapable $banner, $userIdentifierHeaders, $acceptHeader)
+    public function __construct(UserContextInvalidator $invalidator)
     {
-        $this->banner = $banner;
-        $this->acceptHeader = $acceptHeader;
-        $this->userIdentifierHeaders = $userIdentifierHeaders;
+        $this->invalidator = $invalidator;
     }
 
     /**
-     * Invalidate the user context hash.
-     *
-     * @param string $sessionId
+     * {@inheritdoc}
      */
-    public function invalidateContext($sessionId)
+    public function logout(Request $request, Response $response, TokenInterface $token)
     {
-        foreach ($this->userIdentifierHeaders as $header) {
-            $this->banner->ban([
-                'accept' => $this->acceptHeader,
-                $header => sprintf('.*%s.*', $sessionId),
-            ]);
-        }
+        @trigger_error('Using the ContextInvalidationLogoutHandler is deprecated', E_USER_DEPRECATED);
+        $this->invalidator->invalidateContext($request->getSession()->getId());
     }
 }
