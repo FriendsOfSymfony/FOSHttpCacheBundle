@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Http\Logout\LogoutHandlerInterface;
 
 /**
- * @deprecated Use ContextInvalidationSessionLogoutHandler in this same namespace as a replacement.
+ * @deprecated Use ContextInvalidationSessionLogoutHandler in this same namespace as a replacement
  */
 class ContextInvalidationLogoutHandler implements LogoutHandlerInterface
 {

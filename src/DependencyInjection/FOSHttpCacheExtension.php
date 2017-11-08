@@ -14,7 +14,6 @@ namespace FOS\HttpCacheBundle\DependencyInjection;
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher;
-use FOS\HttpCacheBundle\Security\Http\Logout\ContextInvalidationLogoutHandler;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
