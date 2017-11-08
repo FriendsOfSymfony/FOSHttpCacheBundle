@@ -91,12 +91,19 @@ Finally, enable the listener with the default settings:
         user_context:
             enabled: true
 
+.. warning::
+
+    If your site is using flash messages to display information to users after
+    redirects, you need to configure the
+    :doc:`flash message listener <helpers/flash-message>` to avoid mixing up
+    messages between your users.
+
 .. note::
 
     When using the FOSRestBundle ``format_listener`` configuration on all paths
     of your site, the hash lookup will fail with "406 Not Acceptable - No
     matching accepted Response format could be determined". To avoid this
-    problem, you can add a rule to the format listener configuration:
+    problem, you need to add a rule to the format listener configuration:
 
     ``- { path: '^/_fos_user_context_hash', stop: true }``
 

@@ -3,16 +3,26 @@ Flash Message Listener
 
 **Prerequisites**: *none*
 
-When flash messages are rendered into the content of a page, you can't cache
-the page anymore. When enabled, this listener reads all flash messages into a
-cookie, leading to them not being there anymore when rendering the template.
-This will return the page with a set-cookie header which you of course must
-make sure to not cache in varnish. By default, varnish will simply not cache
-the whole response when there is a set-cookie header. (Maybe you could do
-something more clever — if you do, please provide a VCL example.)
+Symfony flash messages are used to track notifications when the response to a
+POST request redirects to another page. For example, after logging out, the
+user is redirected to the home page and a notification "You have been logged
+out" is displayed.
+
+To achieve this, flash messages are stored in the user session. For caching, you
+want to avoid sessions. And if you use the :doc:`user context <../user-context>`
+feature to cache pages of logged in users, its important to not include flash
+messages in the rendered pages to avoid mixing up notifications.
+
+When the flash message listener is enabled, it moves all flash messages out of
+the session into a cookie. Instead of rendering the messages in Twig, you need
+to render them on client side in Javascript. The flash message cookie is sent
+to the client as a ``SET-COOKIE`` header. Responses that set a cookie are never
+cached. This should not be an issue, as a message typically happens after an
+action was triggered on the server, and such requests must be sent as POST
+(or PUT or other non-cacheable) requests.
 
 The flash message listener is automatically enabled if you configure any of
-the options under ``flash_message``.
+the :doc:`options under flash_message <../../reference/configuration/flash-message>`.
 
 .. code-block:: yaml
 
@@ -71,5 +81,6 @@ to only show the flash message once. Something along these lines:
 
 The parts about adding the flash messages in the DOM and registering your handler depend on the JavaScript framework you use in your page.
 
-Your VCL configuration should `filter out this cookie <https://www.varnish-cache.org/trac/wiki/VCLExampleRemovingSomeCookies>`_
-on subsequent requests, in case the JavaScript failed to remove it.
+Your cache must filter cookies from requests to only keep the session cookie,
+for when the redirected request is send, and in case the JavaScript failed to
+remove the flash message cookie.

@@ -83,7 +83,7 @@ class FOSHttpCacheExtension extends Extension
                     $generateUrlType = UrlGeneratorInterface::ABSOLUTE_URL;
                 } else {
                     $defaultClient = $this->getDefaultProxyClient($config['proxy_client']);
-                    if ($defaultClient !== 'noop'
+                    if ('noop' !== $defaultClient
                         && array_key_exists('base_url', $config['proxy_client'][$defaultClient])) {
                         $generateUrlType = UrlGeneratorInterface::ABSOLUTE_PATH;
                     } else {
