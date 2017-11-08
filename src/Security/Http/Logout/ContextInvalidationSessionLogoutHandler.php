@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Http\Logout\LogoutHandlerInterface;
 
-class ContextInvalidationSessionLogoutHandler implements LogoutHandlerInterface
+final class ContextInvalidationSessionLogoutHandler implements LogoutHandlerInterface
 {
     private $invalidator;
 
