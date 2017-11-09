@@ -14,6 +14,17 @@ Changelog
   `"strong"` or `"weak"` respectively.
   Value `true` due to backward compatibility will be resolved as `"strong"`.
 
+### Fixed
+
+* The FlashMessageListener has been broken during refactoring for 2.0 and now
+  works again. Constructor uses an options array.
+
+* Tag annotations now work with SensioFrameworkExtraBundle 4. An accidental
+  exception prevents using them with FOSHttpCacheBundle 2.0 and 2.1.
+
+* User context is more reliable not cache when the hash mismatches. (E.g. after
+  login/logout.)
+
 2.1.0
 -----
 
