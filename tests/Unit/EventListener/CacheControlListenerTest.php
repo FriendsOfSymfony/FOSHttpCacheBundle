@@ -16,6 +16,7 @@ use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -389,6 +390,7 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testUnsafeMethod()
     {
+        /** @var CacheControlListener|\PHPUnit_Framework_MockObject_MockObject $listener */
         $listener = $this->getMockBuilder(CacheControlListener::class)
             ->setMethods(['matchRule'])
             ->getMock()
@@ -411,8 +413,8 @@ class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function buildEvent($method = 'GET')
     {
-        $kernel = $this->getMockBuilder('Symfony\Component\HttpKernel\HttpKernelInterface')
-            ->getMock();
+        /** @var HttpKernelInterface|\PHPUnit_Framework_MockObject_MockObject $kernel */
+        $kernel = $this->createMock(HttpKernelInterface::class);
         $response = new Response();
         $request = new Request();
         $request->setMethod($method);

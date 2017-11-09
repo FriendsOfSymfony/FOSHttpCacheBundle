@@ -14,6 +14,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\UserContext;
 use FOS\HttpCache\UserContext\UserContext;
 use FOS\HttpCacheBundle\UserContext\RoleProvider;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Role\Role;
 
 class RoleProviderTest extends \PHPUnit_Framework_TestCase
@@ -22,7 +23,7 @@ class RoleProviderTest extends \PHPUnit_Framework_TestCase
     {
         $roles = [new Role('ROLE_USER')];
 
-        $token = \Mockery::mock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = \Mockery::mock(TokenInterface::class);
 
         $securityContext = $this->getTokenStorageMock();
         $securityContext->shouldReceive('getToken')->andReturn($token);

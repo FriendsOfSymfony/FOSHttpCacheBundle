@@ -12,6 +12,7 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class FlashMessageListenerTest extends WebTestCase
 {
@@ -27,7 +28,7 @@ class FlashMessageListenerTest extends WebTestCase
         $cookies = $response->headers->getCookies();
         $this->assertCount(2, $cookies);
 
-        /** @var \Symfony\Component\HttpFoundation\Cookie $cookie */
+        /** @var Cookie $cookie */
         $cookie = $cookies[0];
 
         $this->assertEquals('/', $cookie->getPath());

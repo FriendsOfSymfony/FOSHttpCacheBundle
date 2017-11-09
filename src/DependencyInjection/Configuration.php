@@ -19,6 +19,7 @@ use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -529,7 +530,7 @@ class Configuration implements ConfigurationInterface
                                 ->fixXmlConfig('tag_expression')
                                 ->validate()
                                     ->ifTrue(function ($v) {
-                                        return !empty($v['tag_expressions']) && !class_exists('Symfony\Component\ExpressionLanguage\ExpressionLanguage');
+                                        return !empty($v['tag_expressions']) && !class_exists(ExpressionLanguage::class);
                                     })
                                     ->thenInvalid('Configured a tag_expression but ExpressionLanugage is not available')
                                 ->end()
