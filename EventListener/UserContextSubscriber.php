@@ -166,8 +166,13 @@ class UserContextSubscriber implements EventSubscriberInterface
         if ($request->headers->has($this->hashHeader)) {
             // hash has changed, session has most certainly changed, prevent setting incorrect cache
             if (!is_null($this->hash) && $this->hash !== $request->headers->get($this->hashHeader)) {
-                $response->setClientTtl(0);
+                $response->setCache([
+                    'max_age' => 0,
+                    's_maxage' => 0,
+                    'private' => true,
+                ]);
                 $response->headers->addCacheControlDirective('no-cache');
+                $response->headers->addCacheControlDirective('no-store');
 
                 return;
             }
