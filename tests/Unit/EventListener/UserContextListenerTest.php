@@ -345,7 +345,7 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $userContextListener->onKernelResponse($event);
 
         $this->assertFalse($event->getResponse()->headers->has('Vary'));
-        $this->assertEquals('max-age=0, no-cache, private', $event->getResponse()->headers->get('Cache-Control'));
+        $this->assertEquals('max-age=0, no-cache, no-store, private, s-maxage=0', $event->getResponse()->headers->get('Cache-Control'));
     }
 
     protected function getKernelRequestEvent(Request $request, $type = HttpKernelInterface::MASTER_REQUEST)
