@@ -36,7 +36,7 @@
             <deprecated>The "%service_id%" service is deprecated since 2.2 and will be removed in 3.0.</deprecated>
         </service>
 
-        <service id="fos_http_cache.user_context.session_logout_handler" class="FOS\HttpCacheBundle\Security\Http\Logout\ContextInvalidationSessionLogoutHandler" public="false">
+        <service id="fos_http_cache.user_context.session_logout_handler" class="FOS\HttpCacheBundle\Security\Http\Logout\ContextInvalidationSessionLogoutHandler" parent="security.logout.handler.session" public="false">
             <argument type="service" id="fos_http_cache.user_context_invalidator" />
         </service>
 

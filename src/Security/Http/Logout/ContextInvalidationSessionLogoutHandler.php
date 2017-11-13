@@ -15,9 +15,9 @@ use FOS\HttpCacheBundle\UserContextInvalidator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Http\Logout\LogoutHandlerInterface;
+use Symfony\Component\Security\Http\Logout\SessionLogoutHandler;
 
-final class ContextInvalidationSessionLogoutHandler implements LogoutHandlerInterface
+final class ContextInvalidationSessionLogoutHandler extends SessionLogoutHandler
 {
     private $invalidator;
 
@@ -29,6 +29,6 @@ final class ContextInvalidationSessionLogoutHandler implements LogoutHandlerInte
     public function logout(Request $request, Response $response, TokenInterface $token)
     {
         $this->invalidator->invalidateContext($request->getSession()->getId());
-        $request->getSession()->invalidate();
+        parent::logout($request, $response, $token);
     }
 }
