@@ -24,6 +24,13 @@ Changelog
 
 * User context is more reliable not cache when the hash mismatches. (E.g. after
   login/logout.)
+  
+* The ContextInvalidationLogoutHandler has been deprecated in favor of the 
+  ContextInvalidationSessionLogoutHandler.  The original handler was called 
+  after the invalidation of the session so did not correctly invalidate the 
+  session ID in cache.  You should remove the deprecated service 
+  `fos_http_cache.user_context.logout_handler` from the logout.handlers section
+  of your firewall. 
 
 2.1.0
 -----

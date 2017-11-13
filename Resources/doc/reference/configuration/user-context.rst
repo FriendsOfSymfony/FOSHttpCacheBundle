@@ -139,7 +139,7 @@ or you will end up with mixed up caches.
 ~~~~~~~~~~~~~~~~~~
 
 The logout handler will invalidate any cached user hashes when the user logs
-out.
+out. This behavior applies to all stateful firewalls.
 
 For the handler to work:
 
@@ -147,18 +147,10 @@ For the handler to work:
 * Symfony’s default behavior of regenerating the session id when users log in
   and out must be enabled (``invalidate_session``).
 
-Add the handler to your firewall configuration:
-
-.. code-block:: yaml
-
-    # app/config/security.yml
-    security:
-        firewalls:
-            secured_area:
-                logout:
-                    invalidate_session: true
-                    handlers:
-                        - fos_http_cache.user_context.logout_handler
+Should your application require you to have a per-firewall user context invalidation
+strategy, you should create your own custom context invalidation handler.  Keep in mind that,
+by default, Symfony's LogoutSuccessHandler will place the SessionLogoutHandler first of any
+enabled logout handlers when ``invalidate_session`` is enabled.
 
 enabled
 """""""
