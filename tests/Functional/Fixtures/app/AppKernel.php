@@ -9,6 +9,7 @@
  * file that was distributed with this source code.
  */
 
+use Symfony\Component\Asset\Package;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
@@ -38,7 +39,7 @@ class AppKernel extends Kernel
     {
         $loader->load(__DIR__.'/config/config.yml');
 
-        if (class_exists('Symfony\Component\Asset\Package')) {
+        if (class_exists(Package::class)) {
             $loader->load(function (ContainerBuilder $container) {
                 $container->loadFromExtension('framework', ['assets' => []]);
             });
