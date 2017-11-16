@@ -13,10 +13,11 @@ namespace FOS\HttpCacheBundle\Tests\Unit\Command;
 
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Command\InvalidateTagCommand;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class InvalidateTagCommandTest extends \PHPUnit_Framework_TestCase
+class InvalidateTagCommandTest extends TestCase
 {
     /**
      * @expectedException \RuntimeException

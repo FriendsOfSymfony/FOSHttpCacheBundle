@@ -12,9 +12,10 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\Http\RequestMatcher;
 
 use FOS\HttpCacheBundle\Http\RequestMatcher\QuerystringRequestMatcher;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class QuerystringRequestMatcherTest extends \PHPUnit_Framework_TestCase
+class QuerystringRequestMatcherTest extends TestCase
 {
     public function testMatchesReturnsFalseIfParentCallFails()
     {

@@ -12,10 +12,10 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\UserContext;
 
 use FOS\HttpCacheBundle\UserContext\AnonymousRequestMatcher;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class AnonymousRequestMatcherTest extends PHPUnit_Framework_TestCase
+class AnonymousRequestMatcherTest extends TestCase
 {
     public function testMatchAnonymousRequest()
     {

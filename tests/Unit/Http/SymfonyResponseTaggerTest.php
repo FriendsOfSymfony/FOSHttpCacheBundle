@@ -13,9 +13,10 @@ namespace FOS\HttpCacheBundle\Tests\Unit;
 
 use FOS\HttpCache\ProxyClient\ProxyClient;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class SymfonyResponseTaggerTest extends \PHPUnit_Framework_TestCase
+class SymfonyResponseTaggerTest extends TestCase
 {
     private $proxyClient;
 

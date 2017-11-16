@@ -12,11 +12,12 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\Configuration;
 
 use FOS\HttpCacheBundle\Configuration\Tag;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test the @InvalidateRoute annotation.
  */
-class TagTest extends \PHPUnit_Framework_TestCase
+class TagTest extends TestCase
 {
     /**
      * @expectedException \FOS\HttpCacheBundle\Exception\InvalidTagException

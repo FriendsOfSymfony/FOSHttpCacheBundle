@@ -13,10 +13,11 @@ namespace FOS\HttpCacheBundle\Tests\Unit\Command;
 
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Command\RefreshPathCommand;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class RefreshPathCommandTest extends \PHPUnit_Framework_TestCase
+class RefreshPathCommandTest extends TestCase
 {
     /**
      * @expectedException \RuntimeException
