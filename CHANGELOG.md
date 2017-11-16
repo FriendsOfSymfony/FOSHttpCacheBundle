@@ -27,10 +27,10 @@ Changelog
   
 * The ContextInvalidationLogoutHandler has been deprecated in favor of the 
   ContextInvalidationSessionLogoutHandler.  The original handler was called 
-  after the invalidation of the session so did not correctly invalidate the 
-  session ID in cache.  You should remove the deprecated service 
+  after the invalidation of the session, and thus did not invalidate the seesion
+  it should have but a newly created one.  You should remove the deprecated service
   `fos_http_cache.user_context.logout_handler` from the logout.handlers section
-  of your firewall. 
+  of your firewall configuration.
 
 2.1.0
 -----
