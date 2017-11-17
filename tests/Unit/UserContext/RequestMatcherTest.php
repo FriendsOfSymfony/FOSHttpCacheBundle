@@ -12,9 +12,10 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\UserContext;
 
 use FOS\HttpCacheBundle\UserContext\RequestMatcher;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class RequestMatcherTest extends \PHPUnit_Framework_TestCase
+class RequestMatcherTest extends TestCase
 {
     public function testMatch()
     {

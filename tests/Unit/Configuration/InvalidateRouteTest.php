@@ -12,11 +12,12 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\Configuration;
 
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test the @InvalidateRoute annotation.
  */
-class InvalidateRouteTest extends \PHPUnit_Framework_TestCase
+class InvalidateRouteTest extends TestCase
 {
     /**
      * @expectedException \RuntimeException

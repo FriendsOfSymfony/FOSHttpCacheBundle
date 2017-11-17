@@ -16,13 +16,14 @@ use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\EventListener\TagListener;
 use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-class TagListenerTest extends \PHPUnit_Framework_TestCase
+class TagListenerTest extends TestCase
 {
     /**
      * @var CacheManager|\Mockery\Mock

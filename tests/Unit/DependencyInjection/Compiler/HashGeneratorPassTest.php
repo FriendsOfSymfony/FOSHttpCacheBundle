@@ -13,11 +13,12 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
-class HashGeneratorPassTest extends \PHPUnit_Framework_TestCase
+class HashGeneratorPassTest extends TestCase
 {
     /**
      * @var FOSHttpCacheExtension

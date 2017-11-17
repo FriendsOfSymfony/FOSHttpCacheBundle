@@ -13,10 +13,11 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\TagListenerPass;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
-class TagListenerPassTest extends \PHPUnit_Framework_TestCase
+class TagListenerPassTest extends TestCase
 {
     /**
      * @expectedException \RuntimeException

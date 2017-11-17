@@ -12,8 +12,9 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\Command;
 
 use FOS\HttpCacheBundle\Command\PathSanityCheck;
+use PHPUnit\Framework\TestCase;
 
-class PathSanityCheckTest extends \PHPUnit_Framework_TestCase
+class PathSanityCheckTest extends TestCase
 {
     public function pathProvider()
     {

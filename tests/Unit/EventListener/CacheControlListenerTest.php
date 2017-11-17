@@ -13,12 +13,13 @@ namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
 use FOS\HttpCacheBundle\EventListener\CacheControlListener;
 use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-class CacheControlListenerTest extends \PHPUnit_Framework_TestCase
+class CacheControlListenerTest extends TestCase
 {
     public function testDefaultHeaders()
     {
