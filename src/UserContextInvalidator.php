@@ -18,7 +18,7 @@ class UserContextInvalidator
     /**
      * Service used to ban hash request.
      *
-     * @var \FOS\HttpCache\ProxyClient\Invalidation\BanCapable
+     * @var BanCapable
      */
     private $banner;
 
