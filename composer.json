@@ -34,7 +34,7 @@
         "monolog/monolog": "*",
         "sensio/framework-extra-bundle": "^3.0",
         "symfony/symfony": "^2.8||^3.0||^4.0",
-        "symfony/phpunit-bridge": "^3.2||^4.0",
+        "symfony/phpunit-bridge": "^3.2",
         "symfony/expression-language": "^2.4||^3.0||^4.0",
         "symfony/monolog-bundle": "^2.3||^3.0||^4.0",
         "polishsymfonycommunity/symfony-mocker-container": "^1.0",
