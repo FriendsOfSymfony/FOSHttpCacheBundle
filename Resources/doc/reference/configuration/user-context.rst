@@ -150,8 +150,8 @@ For the handler to work:
 .. note::
     The logout handler is active on all firewalls.  If your application has multiple firewalls
     with different user context, you need to create your own custom invalidation handler. Be
-    aware that Symfony's ``LogoutSuccessHandler`` placea the ``SessionLogoutHandler`` before
-    any configured logout handlers.
+    aware that Symfony's `LogoutSuccessHandler` places the `SessionLogoutHandler` before any
+    configured logout handlers.
 
 enabled
 """""""

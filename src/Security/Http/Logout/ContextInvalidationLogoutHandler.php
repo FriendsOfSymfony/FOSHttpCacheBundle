@@ -20,8 +20,8 @@ use Symfony\Component\Security\Http\Logout\LogoutHandlerInterface;
 /**
  * @deprecated use ContextInvalidationSessionLogoutHandler in this same namespace as a replacement
  *
- * This handler is deprecated since in most cases the session has already been invalidated by the SessionLogoutHandler
- * which is always the first logout handler to execute
+ * This handler is deprecated because it never did what it was supposed to do. The session is already invalidated by the SessionLogoutHandler
+ * which is always the first logout handler executed
  */
 final class ContextInvalidationLogoutHandler implements LogoutHandlerInterface
 {
