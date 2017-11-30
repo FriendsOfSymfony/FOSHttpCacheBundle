@@ -147,18 +147,11 @@ For the handler to work:
 * Symfony’s default behavior of regenerating the session id when users log in
   and out must be enabled (``invalidate_session``).
 
-Add the handler to your firewall configuration:
-
-.. code-block:: yaml
-
-    # app/config/security.yml
-    security:
-        firewalls:
-            secured_area:
-                logout:
-                    invalidate_session: true
-                    handlers:
-                        - fos_http_cache.user_context.logout_handler
+.. note::
+    The logout handler is active on all firewalls.  If your application has multiple firewalls
+    with different user context, you need to create your own custom invalidation handler. Be
+    aware that Symfony's `LogoutSuccessHandler` places the `SessionLogoutHandler` before any
+    configured logout handlers.
 
 enabled
 """""""

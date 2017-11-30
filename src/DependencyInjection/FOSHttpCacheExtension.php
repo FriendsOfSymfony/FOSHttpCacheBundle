@@ -292,11 +292,15 @@ class FOSHttpCacheExtension extends Extension
             ->replaceArgument(0, $config['user_identifier_headers']);
 
         if ($config['logout_handler']['enabled']) {
-            $container->getDefinition($this->getAlias().'.user_context.logout_handler')
+            $container->getDefinition($this->getAlias().'.user_context_invalidator')
                 ->replaceArgument(1, $config['user_identifier_headers'])
                 ->replaceArgument(2, $config['match']['accept']);
+
+            $container->setAlias('security.logout.handler.session', $this->getAlias().'.user_context.session_logout_handler');
         } else {
             $container->removeDefinition($this->getAlias().'.user_context.logout_handler');
+            $container->removeDefinition($this->getAlias().'.user_context.session_logout_handler');
+            $container->removeDefinition($this->getAlias().'.user_context_invalidator');
         }
 
         if ($config['role_provider']) {
