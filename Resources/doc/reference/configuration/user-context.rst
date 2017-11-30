@@ -132,7 +132,7 @@ set to vary on the user identifier headers to avoid problems.
 
 If not all your pages depend on the hash, you can set
 ``always_vary_on_context_hash`` to  ``false`` and handle the Vary yourself.
-When doing that, you should be careful to set the Vary header whenever needed,
+When doing that, you have to be careful to set the Vary header whenever needed,
 or you will end up with mixed up caches.
 
 ``logout_handler``
@@ -147,11 +147,16 @@ For the handler to work:
 * Symfony’s default behavior of regenerating the session id when users log in
   and out must be enabled (``invalidate_session``).
 
-.. note::
-    The logout handler is active on all firewalls.  If your application has multiple firewalls
-    with different user context, you need to create your own custom invalidation handler. Be
-    aware that Symfony's `LogoutSuccessHandler` places the `SessionLogoutHandler` before any
-    configured logout handlers.
+.. warning::
+    The cache invalidation feature is broken working as expected in
+    FOSHttpCacheBundle prior to version 2.2.
+
+.. tip::
+    The logout handler is active on all firewalls.  If your application has
+    multiple firewalls with different user context, you need to create your own
+    custom invalidation handler. Be aware that Symfony's ``LogoutSuccessHandler``
+    places the ``SessionLogoutHandler`` that invalidates the old session
+    *before* any configured logout handlers.
 
 enabled
 """""""
