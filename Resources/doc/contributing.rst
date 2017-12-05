@@ -2,10 +2,11 @@ Contributing
 ============
 
 We are happy for contributions. Before you invest a lot of time however, best
-open an issue on github to discuss your idea. Then we can coordinate efforts
+open an issue on GitHub to discuss your idea. Then we can coordinate efforts
 if somebody is already working on the same thing. If your idea is specific to
 the Symfony framework, it belongs into the ``FOSHttpCacheBundle``, otherwise
 it should go into the ``FOSHttpCache`` library.
+You can also find us in the #friendsofsymfony channel of `the Symfony Slack`_.
 
 When you change code, you can run the tests as described in :doc:`testing`.
 
@@ -26,6 +27,8 @@ To build the docs:
     $ cd doc
     $ make html
     $ make spelling
+    
 
 .. _install Sphinx: http://sphinx-doc.org/latest/install.html
 .. _install enchant: http://www.abisource.com/projects/enchant/
+.. _the Symfony Slack: https://symfony.com/slack-invite
