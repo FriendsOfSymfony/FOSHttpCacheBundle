@@ -22,6 +22,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 class Tag extends ConfigurationAnnotation
 {
     private $tags;
+
     private $expression;
 
     /**
