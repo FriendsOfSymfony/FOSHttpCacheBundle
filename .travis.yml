@@ -51,10 +51,6 @@ matrix:
       env:
         - SYMFONY_VERSION='3.2.*'
         - SYMFONY_PHPUNIT_VERSION=5.5
-    - php: 7.1
-      env:
-        - DEPENDENCIES=beta
-        - SYMFONY_PHPUNIT_VERSION=5.5
     - php: hhvm
       dist: trusty
 
@@ -62,7 +58,6 @@ install:
   - if [[ "$DOCCHECK" = true ]]; then pip install -qr Resources/doc/requirements.txt --user; fi
 
 before_install:
-  - if [ "$DEPENDENCIES" = "beta" ]; then composer config minimum-stability beta; fi;
   - sh -c 'if [ "$SYMFONY_VERSION" != "" ]; then composer require --dev --no-update symfony/symfony=$SYMFONY_VERSION; fi;'
 
 before_script:
