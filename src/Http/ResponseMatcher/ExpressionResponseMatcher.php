@@ -16,7 +16,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ExpressionResponseMatcher implements ResponseMatcherInterface
 {
+    /**
+     * @var ExpressionLanguage
+     */
     private $expressionLanguage;
+
+    /**
+     * @var string
+     */
     private $expression;
 
     public function __construct($expression, ExpressionLanguage $expressionLanguage = null)
