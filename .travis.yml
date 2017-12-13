@@ -20,6 +20,7 @@ php:
 
 env:
   - SYMFONY_VERSION='3.3.*'
+  - SYMFONY_DEPRECATIONS_HELPER_VALUE=weak
 
 branches:
   only:
@@ -55,6 +56,7 @@ matrix:
       env:
         - SYMFONY_VERSION='3.4.*'
         - SYMFONY_PHPUNIT_VERSION=5.5
+        - $SYMFONY_DEPRECATIONS_HELPER_VALUE=52
     - php: 7.2
       env:
         - SYMFONY_VERSION='4.0.*'
@@ -72,7 +74,7 @@ before_script:
   - composer update $COMPOSER_FLAGS
 
 script:
-  - SYMFONY_DEPRECATIONS_HELPER=weak vendor/bin/simple-phpunit ${PHPUNIT_FLAGS}
+  - SYMFONY_DEPRECATIONS_HELPER=$SYMFONY_DEPRECATIONS_HELPER_VALUE vendor/bin/simple-phpunit ${PHPUNIT_FLAGS}
   - if [[ "$DOCCHECK" = true ]]; then make -C Resources/doc SPHINXOPTS='-nW' html; fi
   - if [[ "$DOCCHECK" = true ]]; then make -C Resources/doc spelling; fi
 
