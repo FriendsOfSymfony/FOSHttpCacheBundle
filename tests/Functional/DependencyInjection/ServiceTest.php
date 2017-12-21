@@ -30,7 +30,7 @@ class ServiceTest extends KernelTestCase
         }
 
         foreach ($container->getServiceIds() as $id) {
-            if (strncmp('fos_http_cache.', $id, 14)) {
+            if (strncmp('fos_http_cache.', $id, 15)) {
                 continue;
             }
             // skip private services - hopefully getServiceIds will not return those in 4.0

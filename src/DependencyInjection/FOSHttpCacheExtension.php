@@ -392,6 +392,15 @@ class FOSHttpCacheExtension extends Extension
     private function loadSymfony(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
         $this->createHttpDispatcherDefinition($container, $config['http'], $this->getAlias().'.proxy_client.symfony.http_dispatcher');
+        $options = [
+            'tags_header' => $config['tags_header'],
+            'tags_method' => $config['tags_method'],
+        ];
+        if (!empty($config['header_length'])) {
+            $options['header_length'] = $config['header_length'];
+        }
+        $container->setParameter($this->getAlias().'.proxy_client.symfony.options', $options);
+
         $loader->load('symfony.xml');
     }
 
@@ -404,12 +413,12 @@ class FOSHttpCacheExtension extends Extension
      */
     private function loadCacheTagging(ContainerBuilder $container, XmlFileLoader $loader, array $config, $client)
     {
-        if ('auto' === $config['enabled'] && 'varnish' !== $client) {
+        if ('auto' === $config['enabled'] && !in_array($client, ['varnish', 'symfony'])) {
             $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', false);
 
             return;
         }
-        if (!in_array($client, ['varnish', 'custom', 'noop'])) {
+        if (!in_array($client, ['varnish', 'symfony', 'custom', 'noop'])) {
             throw new InvalidConfigurationException(sprintf('You can not enable cache tagging with the %s client', $client));
         }
 

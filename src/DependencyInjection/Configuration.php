@@ -11,7 +11,9 @@
 
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
+use FOS\HttpCache\ProxyClient\Symfony;
 use FOS\HttpCache\ProxyClient\Varnish;
+use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
 use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatter;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
@@ -371,6 +373,17 @@ class Configuration implements ConfigurationInterface
 
                         ->arrayNode('symfony')
                             ->children()
+                                ->scalarNode('tags_header')
+                                    ->defaultValue(PurgeTagsListener::DEFAULT_TAGS_HEADER)
+                                    ->info('HTTP header to use when sending tag invalidation requests to Symfony HttpCache')
+                                ->end()
+                                ->scalarNode('tags_method')
+                                    ->defaultValue(PurgeTagsListener::DEFAULT_TAGS_METHOD)
+                                    ->info('HTTP method for sending tag invalidation requests to Symfony HttpCache')
+                                ->end()
+                                ->scalarNode('header_length')
+                                    ->info('Maximum header length when invalidating tags. If there are more tags to invalidate than fit into the header, the invalidation request is split into several requests.')
+                                ->end()
                                 ->append($this->getHttpDispatcherNode())
                             ->end()
                         ->end()
