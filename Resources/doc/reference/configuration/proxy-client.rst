@@ -137,13 +137,23 @@ symfony
     fos_http_cache:
         proxy_client:
             symfony:
+                tags_header: My-Cache-Tags
+                tags_method: TAGPURGE
+                header_length: 1234
                 http:
                     servers:
                         - 123.123.123.1:6060
                         - 123.123.123.2
                     base_url: yourwebsite.com
 
-For ``servers`` and ``base_url``, see above.
+For ``servers``, ``base_url``, ``tags_header`` and ``header_length``, see above.
+
+``tags_method``
+"""""""""""""""
+
+**type**: ``string`` **default**: ``PURGETAGS``
+
+HTTP method for sending tag invalidation requests to the Symfony HttpCache.
 
 .. _configuration_noop_proxy_client:
 

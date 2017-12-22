@@ -256,6 +256,9 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['proxy_client'] = [
             'symfony' => [
+                'tags_header' => 'My-Cache-Tags',
+                'tags_method' => 'MYMETHOD',
+                'header_length' => 1234,
                 'http' => [
                     'servers' => ['22.22.22.22'],
                     'base_url' => '/test',

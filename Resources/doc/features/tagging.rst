@@ -4,6 +4,7 @@ Tagging
 **Works with**:
 
 * :ref:`Varnish <foshttpcache:varnish_tagging>`
+* :ref:`Symfony <foshttpcache:symfony_httpcache_tagging>`
 
 If your application has many intricate relationships between cached items,
 which makes it complex to invalidate them by route, cache tagging will be
@@ -20,7 +21,8 @@ version of `Linked Cache Invalidation`_ (LCI), allows you to:
 Basic Configuration
 -------------------
 
-First :ref:`configure your proxy <foshttpcache:varnish_tagging>` for tagging.
+First configure your proxy for tagging (:ref:`Varnish <foshttpcache:varnish_tagging>`,
+:ref:`Symfony <foshttpcache:symfony_httpcache_tagging>`).
 Then enable tagging in your application configuration:
 
 .. code-block:: yaml

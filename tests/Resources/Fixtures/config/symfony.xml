@@ -3,7 +3,7 @@
 
     <config xmlns="http://example.org/schema/dic/fos_http_cache">
         <proxy-client>
-            <symfony>
+            <symfony tags-header="My-Cache-Tags" tags-method="MYMETHOD" header-length="1234">
                 <http base-url="/test" http-client="acme.guzzle.symfony">
                     <server>22.22.22.22</server>
                 </http>

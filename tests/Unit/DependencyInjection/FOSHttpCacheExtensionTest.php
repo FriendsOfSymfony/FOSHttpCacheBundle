@@ -120,7 +120,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.symfony'));
         $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
-        $this->assertFalse($container->hasDefinition('fos_http_cache.http.symfony_response_tagger'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.http.symfony_response_tagger'));
     }
 
     public function testConfigLoadNoop()

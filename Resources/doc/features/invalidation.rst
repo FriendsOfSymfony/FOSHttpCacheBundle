@@ -15,10 +15,10 @@ so first:
 1. :ref:`configure your proxy <foshttpcache:proxy-configuration>`
 2. :doc:`enable a proxy client </reference/configuration/proxy-client>`
 
-By *invalidating* a piece of content, you tell your HTTP caching proxy (Varnish
-or Nginx) to no longer serve it to clients. When next requested, the proxy will
-fetch a fresh copy from the backend application and serve that instead. By
-*refreshing* a piece of content, a fresh copy will be fetched right away.
+By *invalidating* a piece of content, you tell your HTTP caching proxy to no
+longer serve it to clients. When next requested, the proxy will fetch a fresh
+copy from the backend application and serve that instead. By *refreshing* a
+piece of content, a fresh copy will be fetched right away.
 
 .. tip::
 

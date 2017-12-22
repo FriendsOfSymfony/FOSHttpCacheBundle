@@ -6,10 +6,15 @@ Changelog
 
 ### Added
 
+* You can now use cache tags and invalidate them with the Symfony `HttpCache`
+  reverse proxy. You can tweak configuration in the `proxy_client.symfony` 
+  section of the configuration. See the FOSHttpCache documentation for
+  instructions on how to set up the cache.
+
 * You can now also match requests with regular expressions on the query string.
   The new option `match.query_string` is available for cache control rules, tags
   and invalidation.
-  
+
 * ETags can now be false, strong or weak by setting `headers.etag` option to
   `"strong"` or `"weak"` respectively.
   Value `true` due to backward compatibility will be resolved as `"strong"`.

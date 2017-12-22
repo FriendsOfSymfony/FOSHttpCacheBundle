@@ -13,7 +13,7 @@ for an introduction.
     cache tagging is not possible.
 
     If you leave ``enabled`` on ``auto``, tagging will only be activated when
-    using the varnish client.
+    using the Varnish or Symfony proxy client.
 
     When using the noop proxy client or a custom service, ``auto`` will also
     lead to tagging being disabled. If you want to use tagging in one of those
