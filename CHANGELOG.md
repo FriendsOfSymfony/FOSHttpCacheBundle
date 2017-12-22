@@ -11,6 +11,8 @@ Changelog
   section of the configuration. See the FOSHttpCache documentation for
   instructions on how to set up the cache.
 
+* Allow to configure the purge method for the Symfony proxy client.
+
 * You can now also match requests with regular expressions on the query string.
   The new option `match.query_string` is available for cache control rules, tags
   and invalidation.
