@@ -6,7 +6,9 @@
 
     <services>
         <service id="fos_http_cache.cache_manager"
-                 class="FOS\HttpCacheBundle\CacheManager">
+                 class="FOS\HttpCacheBundle\CacheManager"
+                 public="true"
+        >
             <argument type="service" id="fos_http_cache.default_proxy_client" />
             <argument type="service" id="router" />
             <call method="setEventDispatcher">
