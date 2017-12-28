@@ -56,7 +56,10 @@
     "autoload-dev": {
         "psr-4": {
             "FOS\\HttpCacheBundle\\Tests\\": "tests/"
-        }
+        },
+        "classmap": [
+            "tests/Functional/Fixtures/app/AppKernel.php"
+        ]
     },
     "extra": {
         "branch-alias": {
