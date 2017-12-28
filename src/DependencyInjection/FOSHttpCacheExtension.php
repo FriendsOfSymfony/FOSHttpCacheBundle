@@ -395,6 +395,7 @@ class FOSHttpCacheExtension extends Extension
         $options = [
             'tags_header' => $config['tags_header'],
             'tags_method' => $config['tags_method'],
+            'purge_method' => $config['purge_method'],
         ];
         if (!empty($config['header_length'])) {
             $options['header_length'] = $config['header_length'];

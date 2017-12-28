@@ -140,6 +140,7 @@ symfony
                 tags_header: My-Cache-Tags
                 tags_method: TAGPURGE
                 header_length: 1234
+                purge_method: PURGE
                 http:
                     servers:
                         - 123.123.123.1:6060
@@ -154,6 +155,17 @@ For ``servers``, ``base_url``, ``tags_header`` and ``header_length``, see above.
 **type**: ``string`` **default**: ``PURGETAGS``
 
 HTTP method for sending tag invalidation requests to the Symfony HttpCache.
+Make sure to configure the tags plugin for your HttpCache with the matching
+header if you change this.
+
+``purge_method``
+""""""""""""""""
+
+**type**: ``string`` **default**: ``PURGE``
+
+HTTP method for sending purge requests to the Symfony HttpCache. Make sure to
+configure the purge plugin for your HttpCache with the matching header if you
+change this.
 
 .. _configuration_noop_proxy_client:
 

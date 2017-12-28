@@ -259,6 +259,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'tags_header' => 'My-Cache-Tags',
                 'tags_method' => 'MYMETHOD',
                 'header_length' => 1234,
+                'purge_method' => 'MYPURGE',
                 'http' => [
                     'servers' => ['22.22.22.22'],
                     'base_url' => '/test',
