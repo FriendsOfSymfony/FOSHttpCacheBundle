@@ -12,19 +12,37 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Make sure all services that are defined can actually be instantiated.
  */
 class ServiceTest extends KernelTestCase
 {
+    /**
+     * Boots a special kernel with a compiler pass to make all services public for this test.
+     *
+     * @return KernelInterface A KernelInterface instance
+     */
+    protected function bootDebugKernel()
+    {
+        static::ensureKernelShutdown();
+
+        /** @var \AppKernel kernel */
+        static::$kernel = static::createKernel();
+        static::$kernel->addCompilerPass(new ServicesPublicPass());
+        static::$kernel->boot();
+
+        return static::$kernel;
+    }
+
     public function testCanBeLoaded()
     {
-        self::bootKernel();
-
         /** @var Container $container */
-        $container = static::$kernel->getContainer();
+        $container = $this->bootDebugKernel()->getContainer();
         if (!$container instanceof Container) {
             $this->markTestSkipped('Container is not of expected class but '.get_class($container));
         }
@@ -42,6 +60,20 @@ class ServiceTest extends KernelTestCase
                 continue;
             }
             $this->assertInternalType('object', $container->get($id));
+        }
+    }
+}
+
+class ServicesPublicPass implements CompilerPassInterface
+{
+    public function process(ContainerBuilder $container)
+    {
+        foreach ($container->getServiceIds() as $id) {
+            if (strncmp('fos_http_cache.', $id, 15)) {
+                continue;
+            }
+
+            $container->getDefinition($id)->setPublic(true);
         }
     }
 }

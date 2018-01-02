@@ -9,14 +9,35 @@
  * file that was distributed with this source code.
  */
 
+use PSS\SymfonyMockerContainer\DependencyInjection\MockerContainer;
 use Symfony\Component\Asset\Package;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
 use Symfony\Component\HttpKernel\Kernel;
 
 class AppKernel extends Kernel
 {
+    /**
+     * @var CompilerPassInterface[]
+     */
+    private $compilerPasses = [];
+
+    public function addCompilerPass(CompilerPassInterface $compilerPass)
+    {
+        $this->compilerPasses[] = $compilerPass;
+    }
+
+    protected function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+        foreach ($this->compilerPasses as $compilerPass) {
+            $compilerPass->process($container);
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -67,19 +88,19 @@ class AppKernel extends Kernel
      */
     protected function getContainerBaseClass()
     {
-        return \PSS\SymfonyMockerContainer\DependencyInjection\MockerContainer::class;
+        return MockerContainer::class;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function prepareContainer(\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    protected function prepareContainer(ContainerBuilder $container)
     {
         parent::prepareContainer($container);
 
         $container->setDefinition(
             'session.test_storage',
-            new \Symfony\Component\DependencyInjection\Definition(MockFileSessionStorage::class)
+            new Definition(MockFileSessionStorage::class)
         );
     }
 }

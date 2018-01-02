@@ -4,6 +4,10 @@ Changelog
 2.2.0 (unreleased)
 ------------------
 
+Support for Symfony 4. (Note that only the `fos_http_cache.cache_manager`
+service is public in Symfony 4. Use dependency injection if you need direct
+access to other services.)
+
 ### Added
 
 * You can now use cache tags and invalidate them with the Symfony `HttpCache`
