@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
+namespace FOS\HttpCacheBundle\Tests\Functional\DependencyInjection;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -73,7 +73,7 @@ class ServicesPublicPass implements CompilerPassInterface
                 continue;
             }
 
-            $container->getDefinition($id)->setPublic(true);
+            $container->setDefinition($id, $container->getDefinition($id)->setPublic(true));
         }
     }
 }
