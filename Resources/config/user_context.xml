@@ -43,6 +43,7 @@
 
         <service id="fos_http_cache.user_context.anonymous_request_matcher" class="FOS\HttpCacheBundle\UserContext\AnonymousRequestMatcher">
             <argument type="collection" />
+            <argument />
         </service>
     </services>
 </container>

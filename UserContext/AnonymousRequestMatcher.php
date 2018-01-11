@@ -21,24 +21,31 @@ class AnonymousRequestMatcher implements RequestMatcherInterface
 {
     private $userIdentifierHeaders;
 
+    private $sessionNamePrefix;
+
     /**
-     * @param array $userIdentifierHeaders List of request headers that authenticate a non-anonymous request
+     * @param array  $userIdentifierHeaders List of request headers that authenticate a non-anonymous request
+     * @param string $sessionNamePrefix     Prefix for session cookies. Must match your PHP session configuration
      */
-    public function __construct(array $userIdentifierHeaders)
+    public function __construct(array $userIdentifierHeaders, $sessionNamePrefix)
     {
         $this->userIdentifierHeaders = $userIdentifierHeaders;
+        $this->sessionNamePrefix = $sessionNamePrefix;
     }
 
     public function matches(Request $request)
     {
         foreach ($this->userIdentifierHeaders as $header) {
             if ($request->headers->has($header)) {
-                if ('cookie' === strtolower($header) && 0 === $request->cookies->count()) {
-                    // ignore empty cookie header
-                    continue;
+                if ('cookie' === strtolower($header)) {
+                    foreach ($request->cookies as $name => $value) {
+                        if (0 === strpos($name, $this->sessionNamePrefix)) {
+                            return false;
+                        }
+                    }
+                } else {
+                    return false;
                 }
-
-                return false;
             }
         }
 
