@@ -153,6 +153,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'hash_cache_ttl' => 300,
                 'user_identifier_headers' => array('Cookie', 'Authorization'),
                 'user_hash_header' => 'FOS-User-Context-Hash',
+                'session_name_prefix' => 'PHPSESSID',
                 'role_provider' => true,
                 'logout_handler' => array(
                     'enabled' => 'auto',
@@ -498,6 +499,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'hash_cache_ttl' => 0,
                 'user_identifier_headers' => array('Cookie', 'Authorization'),
                 'user_hash_header' => 'X-User-Context-Hash',
+                'session_name_prefix' => 'PHPSESSID',
                 'role_provider' => false,
                 'logout_handler' => array(
                     'enabled' => false,

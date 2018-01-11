@@ -21,7 +21,7 @@ class AnonymousRequestMatcherTest extends PHPUnit_Framework_TestCase
     {
         $request = new Request();
 
-        $requestMatcher = new AnonymousRequestMatcher(['Cookie', 'Authorization']);
+        $requestMatcher = new AnonymousRequestMatcher(['Cookie', 'Authorization'], 'PHPSESSID');
 
         $this->assertTrue($requestMatcher->matches($request));
     }
@@ -32,19 +32,9 @@ class AnonymousRequestMatcherTest extends PHPUnit_Framework_TestCase
         $request->headers->set('Cookie', 'PHPSESSID7e476fc9f29f69d2ad6f11dbcd663b42=25f6d9c5a843e3c948cd26902385a527');
         $request->cookies->set('PHPSESSID7e476fc9f29f69d2ad6f11dbcd663b42', '25f6d9c5a843e3c948cd26902385a527');
 
-        $requestMatcher = new AnonymousRequestMatcher(['Cookie', 'Authorization']);
+        $requestMatcher = new AnonymousRequestMatcher(['Cookie', 'Authorization'], 'PHPSESSID');
 
         $this->assertFalse($requestMatcher->matches($request));
-    }
-
-    public function testNoMatchIfEmptyCookieHeader()
-    {
-        $request = new Request();
-        $request->headers->set('Cookie', '');
-
-        $requestMatcher = new AnonymousRequestMatcher(['Cookie', 'Authorization']);
-
-        $this->assertTrue($requestMatcher->matches($request));
     }
 
     public function testNoMatchIfAuthenticationHeader()
@@ -52,17 +42,28 @@ class AnonymousRequestMatcherTest extends PHPUnit_Framework_TestCase
         $request = new Request();
         $request->headers->set('Authorization', 'foo: bar');
 
-        $requestMatcher = new AnonymousRequestMatcher(['Cookie', 'Authorization']);
+        $requestMatcher = new AnonymousRequestMatcher(['Cookie', 'Authorization'], 'PHPSESSID');
 
         $this->assertFalse($requestMatcher->matches($request));
     }
 
-    public function testMatchEmptyCookieHeaderHeader()
+    public function testMatchEmptyCookieHeader()
     {
         $request = new Request();
         $request->headers->set('Cookie', '');
 
-        $requestMatcher = new AnonymousRequestMatcher(['Cookie', 'Authorization']);
+        $requestMatcher = new AnonymousRequestMatcher(['Cookie', 'Authorization'], 'PHPSESSID');
+
+        $this->assertTrue($requestMatcher->matches($request));
+    }
+
+    public function testMatchOtherCookieHeader()
+    {
+        $request = new Request();
+        $request->headers->set('Cookie', 'SOMENAME=SOMEVALUE');
+        $request->cookies->set('SOMENAME', 'SOMEVALUE');
+
+        $requestMatcher = new AnonymousRequestMatcher(['Cookie', 'Authorization'], 'PHPSESSID');
 
         $this->assertTrue($requestMatcher->matches($request));
     }
