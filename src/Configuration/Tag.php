@@ -21,6 +21,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 class Tag extends ConfigurationAnnotation
 {
     private $tags;
+
     private $expression;
 
     /**
