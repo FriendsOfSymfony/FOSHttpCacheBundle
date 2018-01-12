@@ -456,7 +456,7 @@ class FOSHttpCacheExtension extends Extension
         }
 
         if (isset($config['nginx'])) {
-            $this->loadNginxProxyServer($container, $loader, $config['varnish']);
+            $this->loadNginxProxyServer($container, $loader, $config['nginx']);
         }
 
         $container->setAlias(
