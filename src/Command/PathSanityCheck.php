@@ -32,8 +32,8 @@ trait PathSanityCheck
             throw new InvalidArgumentException('Path to invalidate can not be empty. To invalidate the root path, use "/"');
         }
 
-        if ($path[0] === '^'
-            || substr($path, -1) === '$'
+        if ('^' === $path[0]
+            || '$' === substr($path, -1)
             || preg_match('/(\.[\*\+]|\(|\))/', $path)
         ) {
             return true;

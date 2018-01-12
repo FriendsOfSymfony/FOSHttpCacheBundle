@@ -533,7 +533,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         foreach ($container->getDefinitions() as $id => $definition) {
             if (($definition instanceof DefinitionDecorator
                     || $definition instanceof ChildDefinition)
-                && $definition->getParent() === 'fos_http_cache.request_matcher'
+                && 'fos_http_cache.request_matcher' === $definition->getParent()
             ) {
                 if ($matcherDefinition) {
                     $this->fail('More then one request matcher was created');
@@ -569,7 +569,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         foreach ($container->getDefinitions() as $id => $definition) {
             if (($definition instanceof DefinitionDecorator
                     || $definition instanceof ChildDefinition)
-                && $definition->getParent() === 'fos_http_cache.response_matcher.cache_control.cacheable_response'
+                && 'fos_http_cache.response_matcher.cache_control.cacheable_response' === $definition->getParent()
             ) {
                 if ($matcherDefinition) {
                     $this->fail('More then one request matcher was created');
@@ -599,7 +599,7 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         foreach ($container->getDefinitions() as $id => $definition) {
             if (($definition instanceof DefinitionDecorator
                     || $definition instanceof ChildDefinition)
-                && $definition->getParent() === 'fos_http_cache.response_matcher.cache_control.expression'
+                && 'fos_http_cache.response_matcher.cache_control.expression' === $definition->getParent()
             ) {
                 if ($matcherDefinition) {
                     $this->fail('More then one request matcher was created');

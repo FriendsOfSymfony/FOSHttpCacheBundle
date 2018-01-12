@@ -72,7 +72,7 @@ class FlashMessageListener implements EventSubscriberInterface
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        if ($event->getRequestType() !== HttpKernel::MASTER_REQUEST) {
+        if (HttpKernel::MASTER_REQUEST !== $event->getRequestType()) {
             return;
         }
 
