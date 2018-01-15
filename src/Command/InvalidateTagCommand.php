@@ -47,7 +47,7 @@ class InvalidateTagCommand extends BaseInvalidateCommand
     protected function configure()
     {
         $this
-            ->setName('fos:httpcache:invalidate:tag')
+            ->setName($this->commandName)
             ->setDescription('Invalidate cached content matching the specified tags on all configured caching proxies')
             ->addArgument(
                 'tags',
