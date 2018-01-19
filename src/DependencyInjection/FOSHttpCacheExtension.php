@@ -318,6 +318,9 @@ class FOSHttpCacheExtension extends Extension
         if (isset($config['nginx'])) {
             $this->loadNginx($container, $loader, $config['nginx']);
         }
+        if (isset($config['fastly'])) {
+            $this->LoadFastly($container, $loader, $config['fastly']);
+        }
         if (isset($config['symfony'])) {
             $this->loadSymfony($container, $loader, $config['symfony']);
         }
@@ -387,6 +390,35 @@ class FOSHttpCacheExtension extends Extension
             'purge_location' => $config['purge_location'],
         ]);
         $loader->load('nginx.xml');
+    }
+
+    private function loadFastly(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        $httpClient = null;
+        if ($config['http']['http_client']) {
+            $httpClient = new Reference($config['http']['http_client']);
+        }
+
+        if (!empty($config['http']['base_url'])) {
+            $baseUrl = $this->prefixSchema($config['base_url']);
+            $this->validateUrl($baseUrl, 'Not a valid base path: "%s"');
+        } else {
+            $baseUrl = null;
+        }
+
+        $definition = new Definition(HttpDispatcher::class, [
+            ['api.fastly.com'],
+            $baseUrl,
+            $httpClient,
+        ]);
+
+        $container->setDefinition($this->getAlias().'.proxy_client.fastly.http_dispatcher', $definition);
+
+        $options['authentication_token'] = $config['authentication_token'];
+        $options['service_identifier'] = $config['service_identifier'];
+        $container->setParameter($this->getAlias().'.proxy_client.fastly.options', $options);
+
+        $loader->load('fastly.xml');
     }
 
     private function loadSymfony(ContainerBuilder $container, XmlFileLoader $loader, array $config)
@@ -459,6 +491,10 @@ class FOSHttpCacheExtension extends Extension
             $this->loadNginxProxyServer($container, $loader, $config['nginx']);
         }
 
+        if (isset($config['fastly'])) {
+            $this->loadFastlyProxyServer($container, $loader, $config['fastly']);
+        }
+
         $container->setAlias(
             $this->getAlias().'.test.default_proxy_server',
             $this->getAlias().'.test.proxy_server.'.$this->getDefaultProxyClient($config)
@@ -482,6 +518,18 @@ class FOSHttpCacheExtension extends Extension
         foreach ($config as $key => $value) {
             $container->setParameter(
                 $this->getAlias().'.test.proxy_server.nginx.'.$key,
+                $value
+            );
+        }
+    }
+
+    private function loadFastlyProxyServer(ContainerBuilder $container, XmlFileLoader $loader, $config)
+    {
+        $loader->load('fastly_proxy.xml');
+
+        foreach ($config as $key => $value) {
+            $container->setParameter(
+                $this->getAlias().'.test.proxy_server.fastly.'.$key,
                 $value
             );
         }
@@ -543,6 +591,10 @@ class FOSHttpCacheExtension extends Extension
 
         if (isset($config['nginx'])) {
             return 'nginx';
+        }
+
+        if (isset($config['fastly'])) {
+            return 'fastly';
         }
 
         if (isset($config['symfony'])) {
