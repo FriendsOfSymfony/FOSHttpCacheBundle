@@ -73,7 +73,7 @@ class ServicesPublicPass implements CompilerPassInterface
                 continue;
             }
 
-            $container->setDefinition($id, $container->getDefinition($id)->setPublic(true));
+            $container->getDefinition($id)->setPublic(true);
         }
     }
 }
