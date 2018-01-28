@@ -24,26 +24,6 @@
                  abstract="true">
             <argument type="service" id="logger" />
         </service>
-
-        <service id="fos_http_cache.command.invalidate_tag" class="FOS\HttpCacheBundle\Command\InvalidateTagCommand">
-            <argument type="service" id="fos_http_cache.cache_manager" />
-            <tag name="console.command"/>
-        </service>
-
-        <service id="fos_http_cache.command.invalidate_path" class="FOS\HttpCacheBundle\Command\InvalidatePathCommand">
-            <argument type="service" id="fos_http_cache.cache_manager" />
-            <tag name="console.command"/>
-        </service>
-
-        <service id="fos_http_cache.command.invalidate_regex" class="FOS\HttpCacheBundle\Command\InvalidateRegexCommand">
-            <argument type="service" id="fos_http_cache.cache_manager" />
-            <tag name="console.command"/>
-        </service>
-
-        <service id="fos_http_cache.command.refresh_path" class="FOS\HttpCacheBundle\Command\RefreshPathCommand">
-            <argument type="service" id="fos_http_cache.cache_manager" />
-            <tag name="console.command"/>
-        </service>
     </services>
 
 </container>
