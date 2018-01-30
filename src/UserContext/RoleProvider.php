@@ -15,8 +15,7 @@ use FOS\HttpCache\UserContext\ContextProvider;
 use FOS\HttpCache\UserContext\UserContext;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Role\RoleInterface;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Role\Role;
 
 /**
  * The RoleProvider adds roles to the UserContext for the hash generation.
@@ -24,31 +23,22 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 class RoleProvider implements ContextProvider
 {
     /**
-     * @var SecurityContextInterface|null
+     * @var TokenStorageInterface|null
      */
-    private $context;
+    private $tokenStorage;
 
     /**
      * Create the role provider with a security context.
      *
-     * The security context is optional to not fail on routes that have no
+     * The token storage is optional to not fail on routes that have no
      * firewall. It is however not valid to call updateUserContext when not in
      * a firewall context.
      *
-     * @param SecurityContextInterface|TokenStorageInterface $context
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct($context = null)
+    public function __construct(TokenStorageInterface $tokenStorage = null)
     {
-        if ($context
-            && !$context instanceof SecurityContextInterface
-            && !$context instanceof TokenStorageInterface
-        ) {
-            throw new \InvalidArgumentException(
-                'Context must implement either TokenStorageInterface or SecurityContextInterface'
-            );
-        }
-
-        $this->context = $context;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -58,15 +48,15 @@ class RoleProvider implements ContextProvider
      */
     public function updateUserContext(UserContext $context)
     {
-        if (null === $this->context) {
+        if (null === $this->tokenStorage) {
             throw new InvalidConfigurationException('The context hash URL must be under a firewall.');
         }
 
-        if (null === $token = $this->context->getToken()) {
+        if (null === $token = $this->tokenStorage->getToken()) {
             return;
         }
 
-        $roles = array_map(function (RoleInterface $role) {
+        $roles = array_map(function (Role $role) {
             return $role->getRole();
         }, $token->getRoles());
 

@@ -24,10 +24,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class InvalidateRegexCommand extends BaseInvalidateCommand
 {
-    /**
-     * @var string
-     */
-    private $commandName;
+    protected static $defaultName;
 
     /**
      * If no cache manager is specified explicitly, fos_http_cache.cache_manager
@@ -38,7 +35,7 @@ class InvalidateRegexCommand extends BaseInvalidateCommand
      */
     public function __construct(CacheManager $cacheManager = null, $commandName = 'fos:httpcache:invalidate:regex')
     {
-        $this->commandName = $commandName;
+        static::$defaultName = $commandName;
         parent::__construct($cacheManager);
     }
 
@@ -48,7 +45,7 @@ class InvalidateRegexCommand extends BaseInvalidateCommand
     protected function configure()
     {
         $this
-            ->setName($this->commandName)
+            ->setName(static::$defaultName) // BC with 2.8
             ->setDescription('Invalidate everything matching a regular expression on all configured caching proxies')
             ->addArgument(
                 'regex',

@@ -11,42 +11,18 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Command;
 
-use FOS\HttpCacheBundle\CacheManager;
-use Symfony\Component\Console\Output\OutputInterface;
-
 class InvalidatePathCommandTest extends CommandTestCase
 {
-    public function testExecute()
-    {
-        $client = self::createClient();
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )
-            ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidatePath')->once()->with('http://example.com/my/path')
-            ->shouldReceive('invalidatePath')->once()->with('http://example.com/other/path')
-            ->shouldReceive('flush')->once()->andReturn(2)
-        ;
-
-        $output = $this->runCommand($client, 'fos:httpcache:invalidate:path http://example.com/my/path http://example.com/other/path');
-        $this->assertEquals('', $output);
-    }
-
     public function testExecuteVerbose()
     {
         $client = self::createClient();
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )
-            ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidatePath')->once()->with('http://example.com/my/path')
-            ->shouldReceive('invalidatePath')->once()->with('http://example.com/other/path')
-            ->shouldReceive('flush')->once()->andReturn(2)
-        ;
+        $mock = $client->getContainer()->get('fos_http_cache.cache_manager.prophecy');
+        $mock->supports()->willReturn(true);
+        $mock->invalidatePath('http://example.com/my/path')->willReturn(null);
+        $mock->invalidatePath('http://example.com/other/path')->willReturn(null);
+        $mock->flush()->willReturn(2);
 
-        $output = $this->runCommand($client, 'fos:httpcache:invalidate:path http://example.com/my/path http://example.com/other/path', OutputInterface::VERBOSITY_VERBOSE);
+        $output = $this->runCommand($client, 'fos:httpcache:invalidate:path http://example.com/my/path http://example.com/other/path');
 
         $this->assertEquals("Sent 2 invalidation request(s)\n", $output);
     }

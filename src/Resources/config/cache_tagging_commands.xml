@@ -7,7 +7,7 @@
     <services>
         <service id="fos_http_cache.command.invalidate_tag" class="FOS\HttpCacheBundle\Command\InvalidateTagCommand">
             <argument type="service" id="fos_http_cache.cache_manager" />
-            <tag name="console.command"/>
+            <tag name="console.command" command="fos:httpcache:invalidate:tag"/>
         </service>
     </services>
 </container>

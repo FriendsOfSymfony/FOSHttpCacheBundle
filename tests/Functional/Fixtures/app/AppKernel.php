@@ -9,8 +9,6 @@
  * file that was distributed with this source code.
  */
 
-use PSS\SymfonyMockerContainer\DependencyInjection\MockerContainer;
-use Symfony\Component\Asset\Package;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -50,6 +48,7 @@ class AppKernel extends Kernel
             new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
             new \FOS\HttpCacheBundle\FOSHttpCacheBundle(),
+            new \DocteurKlein\TestDoubleBundle(),
         ];
     }
 
@@ -59,12 +58,6 @@ class AppKernel extends Kernel
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(__DIR__.'/config/config.yml');
-
-        if (class_exists(Package::class)) {
-            $loader->load(function (ContainerBuilder $container) {
-                $container->loadFromExtension('framework', ['assets' => []]);
-            });
-        }
     }
 
     /**
@@ -81,14 +74,6 @@ class AppKernel extends Kernel
     public function getLogDir()
     {
         return sys_get_temp_dir().'/fos-http-cache-bundle/logs';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getContainerBaseClass()
-    {
-        return MockerContainer::class;
     }
 
     /**

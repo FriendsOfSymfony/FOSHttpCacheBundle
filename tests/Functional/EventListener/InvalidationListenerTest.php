@@ -20,16 +20,12 @@ class InvalidationListenerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )
-            ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidateRoute')->once()->with('test_noncached', [])
-            ->shouldReceive('invalidateRoute')->once()->with('test_cached', ['id' => 'myhardcodedid'])
-            ->shouldReceive('invalidateRoute')->once()->with('tag_one', ['id' => '42'])
-            ->shouldReceive('flush')->once()
-        ;
+        $mock = $client->getContainer()->get('fos_http_cache.cache_manager.prophecy');
+        $mock->supports()->willReturn(true);
+        $mock->invalidateRoute('test_noncached', [])->willReturn(null);
+        $mock->invalidateRoute('test_cached', ['id' => 'myhardcodedid'])->willReturn(null);
+        $mock->invalidateRoute('tag_one', ['id' => 42])->willReturn(null);
+        $mock->flush()->willReturn(3);
 
         $client->request('POST', '/invalidate/route/42');
     }
@@ -41,17 +37,11 @@ class InvalidationListenerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )
-            ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidatePath')->once()->with('/cached')
-            ->shouldReceive('invalidatePath')->once()->with(
-                sprintf('/invalidate/path/%s', $statusCode)
-            )
-            ->shouldReceive('flush')->once()
-        ;
+        $mock = $client->getContainer()->get('fos_http_cache.cache_manager.prophecy');
+        $mock->supports()->willReturn(true);
+        $mock->invalidatePath('/cached')->willReturn(null);
+        $mock->invalidatePath(sprintf('/invalidate/path/%s', $statusCode))->willReturn(null);
+        $mock->flush()->willReturn(2);
 
         $client->request('POST', sprintf('/invalidate/path/%s', $statusCode));
     }
@@ -60,14 +50,9 @@ class InvalidationListenerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )
-            ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidatePath')->never()
-            ->shouldReceive('flush')->once()
-        ;
+        $mock = $client->getContainer()->get('fos_http_cache.cache_manager.prophecy');
+        $mock->supports()->willReturn(true);
+        $mock->flush()->willReturn(0);
 
         $client->request('POST', '/invalidate/error');
     }
@@ -75,10 +60,5 @@ class InvalidationListenerTest extends WebTestCase
     public function getStatusCodesThatTriggerInvalidation()
     {
         return [[200], [204], [302]];
-    }
-
-    protected function tearDown()
-    {
-        static::createClient()->getContainer()->unmock('fos_http_cache.cache_manager');
     }
 }

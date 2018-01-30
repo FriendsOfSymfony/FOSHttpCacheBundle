@@ -26,7 +26,7 @@ class FlashMessageListenerTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertEquals('flash', $response->getContent());
         $cookies = $response->headers->getCookies();
-        $this->assertCount(2, $cookies);
+        $this->assertCount(1, $cookies, implode(',', $cookies));
 
         /** @var Cookie $cookie */
         $cookie = $cookies[0];

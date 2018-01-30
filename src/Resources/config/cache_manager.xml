@@ -17,6 +17,7 @@
             <call method="setGenerateUrlType">
                 <argument>%fos_http_cache.cache_manager.generate_url_type%</argument>
             </call>
+            <tag name="test_double"/>
         </service>
 
         <service id="fos_http_cache.event_listener.log"

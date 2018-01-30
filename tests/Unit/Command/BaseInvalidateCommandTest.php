@@ -20,6 +20,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class BaseInvalidateCommandTest extends TestCase
 {
+    /**
+     * @group legacy
+     */
     public function testContainerAccess()
     {
         $invalidator = \Mockery::mock(CacheManager::class)

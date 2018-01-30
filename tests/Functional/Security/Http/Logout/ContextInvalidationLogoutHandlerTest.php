@@ -11,7 +11,6 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Security\Http\Logout;
 
-use FOS\HttpCache\ProxyClient\Varnish;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -27,20 +26,17 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
         $session->setId('test');
         $session->set('_security_secured_area', serialize($token));
         $session->save();
-        $client->getContainer()->mock(
-            'fos_http_cache.proxy_client.varnish',
-            Varnish::class
-        )
-            ->shouldReceive('ban')->once()->with([
-                'accept' => 'application/vnd.fos.user-context-hash',
-                'Cookie' => '.*test.*',
-            ])
-            ->shouldReceive('ban')->once()->with([
-                'accept' => 'application/vnd.fos.user-context-hash',
-                'Authorization' => '.*test.*',
-            ])
-            ->shouldReceive('flush')->once()
-        ;
+
+        $mock = $client->getContainer()->get('fos_http_cache.proxy_client.varnish.prophecy');
+        $mock->ban([
+            'accept' => 'application/vnd.fos.user-context-hash',
+            'Cookie' => '.*test.*',
+        ])->willReturn(null);
+        $mock->ban([
+            'accept' => 'application/vnd.fos.user-context-hash',
+            'Authorization' => '.*test.*',
+        ])->willReturn(null);
+        $mock->flush()->willReturn(2);
 
         $client->getCookieJar()->set(new Cookie($session->getName(), 'test'));
         $client->request('GET', '/secured_area/logout');

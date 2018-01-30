@@ -25,10 +25,7 @@ class RefreshPathCommand extends BaseInvalidateCommand
 {
     use PathSanityCheck;
 
-    /**
-     * @var string
-     */
-    private $commandName;
+    protected static $defaultName;
 
     /**
      * If no cache manager is specified explicitly, fos_http_cache.cache_manager
@@ -39,7 +36,7 @@ class RefreshPathCommand extends BaseInvalidateCommand
      */
     public function __construct(CacheManager $cacheManager = null, $commandName = 'fos:httpcache:refresh:path')
     {
-        $this->commandName = $commandName;
+        self::$defaultName = $commandName;
         parent::__construct($cacheManager);
     }
 
@@ -49,7 +46,7 @@ class RefreshPathCommand extends BaseInvalidateCommand
     protected function configure()
     {
         $this
-            ->setName($this->commandName)
+            ->setName(static::$defaultName) // BC with 2.8
             ->setDescription('Refresh paths on all configured caching proxies')
             ->addArgument(
                 'paths',
