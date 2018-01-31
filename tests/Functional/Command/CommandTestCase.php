@@ -15,7 +15,6 @@ use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
 
@@ -28,7 +27,7 @@ abstract class CommandTestCase extends WebTestCase
      *
      * @param Client $client
      * @param string $command
-     * @param int    $exitCode  Expected command exit code
+     * @param int    $exitCode Expected command exit code
      *
      * @return string
      */
@@ -47,7 +46,7 @@ abstract class CommandTestCase extends WebTestCase
         fseek($fp, 0);
         $output = '';
         while (!feof($fp)) {
-            $output = fread($fp, 4096);
+            $output .= fread($fp, 4096);
         }
         fclose($fp);
 

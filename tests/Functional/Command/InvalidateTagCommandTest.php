@@ -12,7 +12,6 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\Command;
 
 use FOS\HttpCacheBundle\CacheManager;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class InvalidateTagCommandTest extends CommandTestCase
 {
@@ -20,10 +19,20 @@ class InvalidateTagCommandTest extends CommandTestCase
     {
         $client = self::createClient();
 
-        $mock = $client->getContainer()->get('fos_http_cache.cache_manager.prophecy');
-        $mock->supports()->willReturn(true);
-        $mock->invalidateTags(['my-tag', 'other-tag'])->willReturn(null);
-        $mock->flush()->willReturn(1);
+        $mock = $this->createMock(CacheManager::class);
+        $mock->expects($this->any())
+            ->method('supports')
+            ->willReturn(true)
+        ;
+        $mock->expects($this->once())
+            ->method('invalidateTags')
+            ->with(['my-tag', 'other-tag'])
+        ;
+        $mock->expects($this->once())
+            ->method('flush')
+            ->willReturn(1)
+        ;
+        $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
         $output = $this->runCommand($client, 'fos:httpcache:invalidate:tag my-tag other-tag');
 

@@ -48,7 +48,6 @@ class AppKernel extends Kernel
             new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
             new \FOS\HttpCacheBundle\FOSHttpCacheBundle(),
-            new \DocteurKlein\TestDoubleBundle(),
         ];
     }
 

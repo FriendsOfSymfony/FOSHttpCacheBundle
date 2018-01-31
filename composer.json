@@ -40,8 +40,7 @@
         "symfony/yaml": "^2.8||^3.3||^4.0",
         "symfony/expression-language": "^2.8||^3.3||^4.0",
         "symfony/monolog-bundle": "^2.8||^3.3||^4.0",
-        "matthiasnoback/symfony-dependency-injection-test": "^1.2",
-        "docteurklein/test-double-bundle": "^1.0"
+        "matthiasnoback/symfony-dependency-injection-test": "^1.2"
     },
     "suggest": {
         "sensio/framework-extra-bundle": "For Tagged Cache Invalidation",

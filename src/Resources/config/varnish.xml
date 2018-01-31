@@ -9,7 +9,6 @@
                  class="FOS\HttpCache\ProxyClient\Varnish">
             <argument type="service" id="fos_http_cache.proxy_client.varnish.http_dispatcher"/>
             <argument>%fos_http_cache.proxy_client.varnish.options%</argument>
-            <tag name="test_double"/>
         </service>
     </services>
 
