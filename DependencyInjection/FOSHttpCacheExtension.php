@@ -198,8 +198,12 @@ class FOSHttpCacheExtension extends Extension
             ->replaceArgument(3, $config['user_hash_header'])
             ->replaceArgument(4, $config['hash_cache_ttl']);
 
+        $options = array(
+            'user_identifier_headers' => $config['user_identifier_headers'],
+            'session_name_prefix' => $config['session_name_prefix'],
+        );
         $container->getDefinition($this->getAlias().'.user_context.anonymous_request_matcher')
-            ->replaceArgument(0, $config['user_identifier_headers']);
+            ->replaceArgument(0, $options);
 
         if ($config['logout_handler']['enabled']) {
             $container->getDefinition($this->getAlias().'.user_context.logout_handler')
