@@ -35,8 +35,9 @@ fos_http_cache:
                     last_modified: -1 hour
                     reverse_proxy_ttl: 42
                     vary:
-                        - Cookie
                         - Authorization
+                        - HTTP_AUTHORIZATION
+                        - PHP_AUTH_USER
     proxy_client:
         varnish:
             servers: 22.22.22.22
@@ -93,8 +94,9 @@ fos_http_cache:
         hash_cache_ttl: 300
         role_provider: true
         user_identifier_headers:
-            - Cookie
             - Authorization
+            - HTTP_AUTHORIZATION
+            - PHP_AUTH_USER
         user_hash_header: FOS-User-Context-Hash
 
     flash_message:

@@ -32,8 +32,9 @@
                         stale-if-error="3"
                         stale-while-revalidate="4"
                     />
-                    <vary>Cookie</vary>
                     <vary>Authorization</vary>
+                    <vary>HTTP_AUTHORIZATION</vary>
+                    <vary>PHP_AUTH_USER</vary>
                 </headers>
             </rule>
         </cache-control>
@@ -77,8 +78,9 @@
 
         <user-context hash-cache-ttl="300" role-provider="true" user-hash-header="FOS-User-Context-Hash">
             <match method="GET"/>
-            <user-identifier-header>Cookie</user-identifier-header>
             <user-identifier-header>Authorization</user-identifier-header>
+            <user-identifier-header>HTTP_AUTHORIZATION</user-identifier-header>
+            <user-identifier-header>PHP_AUTH_USER</user-identifier-header>
         </user-context>
 
         <flash-message name="flashtest" path="/x" host="y" secure="true" />

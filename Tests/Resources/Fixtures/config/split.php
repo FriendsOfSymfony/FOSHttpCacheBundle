@@ -18,7 +18,7 @@ $container->loadFromExtension('fos_http_cache', array(
                     'ips' => '1.2.3.4, 1.1.1.1',
                 ),
                 'headers' => array(
-                    'vary' => 'Cookie,Authorization',
+                    'vary' => 'Authorization,HTTP_AUTHORIZATION,PHP_AUTH_USER',
                 ),
             ),
         ),
