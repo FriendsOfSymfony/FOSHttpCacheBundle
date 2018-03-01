@@ -1,5 +1,5 @@
 services:
-    FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController:
+    tag_controller:
         class: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController
         public: true
         arguments:
