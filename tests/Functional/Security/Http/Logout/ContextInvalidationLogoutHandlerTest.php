@@ -29,21 +29,21 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
         $session->save();
 
         $mock = $this->createMock(Varnish::class);
-        $mock->expects($this->any())
+        $mock->expects($this->at(0))
             ->method('ban')
-/*            ->with([
+            ->with([
                 'accept' => 'application/vnd.fos.user-context-hash',
                 'Cookie' => '.*test.*',
             ])
         ;
-        $mock->expects($this->once())
+        $mock->expects($this->at(1))
             ->method('ban')
             ->with([
                 'accept' => 'application/vnd.fos.user-context-hash',
                 'Authorization' => '.*test.*',
             ])
-  */      ;
-        $mock->expects($this->once())
+        ;
+        $mock->expects($this->atLeast(1))
             ->method('flush')
         ;
 
