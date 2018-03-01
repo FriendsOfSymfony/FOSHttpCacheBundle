@@ -32,7 +32,7 @@ class AppKernel extends Kernel
     {
         parent::build($container);
         foreach ($this->compilerPasses as $compilerPass) {
-            $compilerPass->process($container);
+            $container->addCompilerPass($compilerPass);
         }
     }
 
@@ -57,6 +57,7 @@ class AppKernel extends Kernel
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(__DIR__.'/config/config.yml');
+        $loader->load(__DIR__.'/config/services.yml');
     }
 
     /**

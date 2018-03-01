@@ -6,6 +6,9 @@ framework:
   session:
     storage_id:  session.test_storage
 
+twig:
+  default_path: "%kernel.root_dir%/Resources/views"
+
 fos_http_cache:
   cacheable:
     response:

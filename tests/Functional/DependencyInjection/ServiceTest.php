@@ -15,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
@@ -31,9 +32,11 @@ class ServiceTest extends KernelTestCase
     {
         static::ensureKernelShutdown();
 
-        /** @var \AppKernel kernel */
+        /** @var \AppKernel $kernel */
         static::$kernel = static::createKernel();
         static::$kernel->addCompilerPass(new ServicesPublicPass());
+        $fs = new Filesystem();
+        $fs->remove(static::$kernel->getCacheDir());
         static::$kernel->boot();
 
         return static::$kernel;
@@ -51,12 +54,8 @@ class ServiceTest extends KernelTestCase
             if (strncmp('fos_http_cache.', $id, 15)) {
                 continue;
             }
-            // skip private services - hopefully getServiceIds will not return those in 4.0
-            if (in_array($id, [
-                'fos_http_cache.response_matcher.cacheable',
-                'fos_http_cache.rule_matcher.must_invalidate',
-                'fos_http_cache.request_matcher.64a9a494836a11b31a578a55f11b9565055870c5bb354ed2b1b25484ff97e5930acb1d84',
-            ])) {
+            // skip deprecated service
+            if ('fos_http_cache.user_context.logout_handler' === $id) {
                 continue;
             }
             $this->assertInternalType('object', $container->get($id));
@@ -72,8 +71,11 @@ class ServicesPublicPass implements CompilerPassInterface
             if (strncmp('fos_http_cache.', $id, 15)) {
                 continue;
             }
-
-            $container->getDefinition($id)->setPublic(true);
+            if ($container->hasDefinition($id)) {
+                $container->getDefinition($id)->setPublic(true);
+            } elseif ($container->hasAlias($id)) {
+                $container->getAlias($id)->setPublic(true);
+            }
         }
     }
 }
