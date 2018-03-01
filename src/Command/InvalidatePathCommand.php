@@ -32,11 +32,13 @@ class InvalidatePathCommand extends BaseInvalidateCommand
      * is automatically loaded.
      *
      * @param CacheManager|null $cacheManager The cache manager to talk to
-     * @param string            $commandName  Deprecated: Do not set this parameter.
      */
-    public function __construct(CacheManager $cacheManager = null, $commandName = 'fos:httpcache:invalidate:path')
+    public function __construct(CacheManager $cacheManager = null)
     {
-        static::$defaultName = $commandName;
+        if (2 <= func_num_args()) {
+            @trigger_error('Passing a command name in the constructor is deprecated and will be removed in version 3', E_USER_DEPRECATED);
+            static::$defaultName = func_get_arg(1);
+        }
         parent::__construct($cacheManager);
     }
 
