@@ -1,0 +1,10 @@
+services:
+    tag_controller:
+        class: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController
+        public: true
+        arguments:
+            - "@fos_http_cache.http.symfony_response_tagger"
+        calls:
+            - method: setContainer
+              arguments:
+                  - "@service_container"

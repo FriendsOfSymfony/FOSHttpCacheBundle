@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="fos_http_cache.command.invalidate_tag" class="FOS\HttpCacheBundle\Command\InvalidateTagCommand">
+            <argument type="service" id="fos_http_cache.cache_manager" />
+            <tag name="console.command" command="fos:httpcache:invalidate:tag"/>
+        </service>
+    </services>
+</container>

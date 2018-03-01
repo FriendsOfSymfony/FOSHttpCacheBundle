@@ -34,6 +34,9 @@ abstract class BaseInvalidateCommand extends ContainerAwareCommand
      */
     public function __construct(CacheManager $cacheManager = null)
     {
+        if (!$cacheManager) {
+            @trigger_error('Instantiating commands without the cache manager is deprecated and will be removed in version 3', E_USER_DEPRECATED);
+        }
         $this->cacheManager = $cacheManager;
         parent::__construct();
     }

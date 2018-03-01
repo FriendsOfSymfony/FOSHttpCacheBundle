@@ -12,41 +12,33 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\Command;
 
 use FOS\HttpCacheBundle\CacheManager;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class RefreshPathCommandTest extends CommandTestCase
 {
-    public function testExecute()
-    {
-        $client = self::createClient();
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )
-            ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('refreshPath')->once()->with('http://example.com/my/path')
-            ->shouldReceive('refreshPath')->once()->with('http://example.com/other/path')
-            ->shouldReceive('flush')->once()->andReturn(2)
-        ;
-
-        $output = $this->runCommand($client, 'fos:httpcache:refresh:path http://example.com/my/path http://example.com/other/path');
-        $this->assertEquals('', $output);
-    }
-
     public function testExecuteVerbose()
     {
         $client = self::createClient();
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )
-            ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('refreshPath')->once()->with('http://example.com/my/path')
-            ->shouldReceive('refreshPath')->once()->with('http://example.com/other/path')
-            ->shouldReceive('flush')->once()->andReturn(2)
-        ;
 
-        $output = $this->runCommand($client, 'fos:httpcache:refresh:path http://example.com/my/path http://example.com/other/path', OutputInterface::VERBOSITY_VERBOSE);
+        $mock = $this->createMock(CacheManager::class);
+        $mock->expects($this->any())
+            ->method('supports')
+            ->willReturn(true)
+        ;
+        $mock->expects($this->at(0))
+            ->method('refreshPath')
+            ->with('http://example.com/my/path', [])
+        ;
+        $mock->expects($this->at(1))
+            ->method('refreshPath')
+            ->with('http://example.com/other/path', [])
+        ;
+        $mock->expects($this->once())
+            ->method('flush')
+            ->willReturn(2)
+        ;
+        $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
+
+        $output = $this->runCommand($client, 'fos:httpcache:refresh:path http://example.com/my/path http://example.com/other/path');
 
         $this->assertEquals("Sent 2 invalidation request(s)\n", $output);
     }

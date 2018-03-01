@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 abstract class AbstractRuleListener
 {
     /**
-     * @var array List of arrays with RequestMatcher, settings array
+     * @var array List of arrays with RequestMatcherInterface, settings array
      */
     private $rulesMap = [];
 

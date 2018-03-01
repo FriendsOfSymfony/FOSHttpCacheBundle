@@ -9,14 +9,35 @@
  * file that was distributed with this source code.
  */
 
-use Symfony\Component\Asset\Package;
+use Symfony\Bundle\TwigBundle\ContainerAwareRuntimeLoader;
+use Symfony\Bundle\TwigBundle\TokenParser\RenderTokenParser;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
 use Symfony\Component\HttpKernel\Kernel;
 
 class AppKernel extends Kernel
 {
+    /**
+     * @var CompilerPassInterface[]
+     */
+    private $compilerPasses = [];
+
+    public function addCompilerPass(CompilerPassInterface $compilerPass)
+    {
+        $this->compilerPasses[] = $compilerPass;
+    }
+
+    protected function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+        foreach ($this->compilerPasses as $compilerPass) {
+            $container->addCompilerPass($compilerPass);
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -37,13 +58,13 @@ class AppKernel extends Kernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load(__DIR__.'/config/config.yml');
-
-        if (class_exists(Package::class)) {
-            $loader->load(function (ContainerBuilder $container) {
-                $container->loadFromExtension('framework', ['assets' => []]);
-            });
+        if (!class_exists(ContainerAwareRuntimeLoader::class)
+            && !class_exists(RenderTokenParser::class)
+        ) {
+            $loader->load(__DIR__.'/config/config_4.yml');
         }
+        $loader->load(__DIR__.'/config/config.yml');
+        $loader->load(__DIR__.'/config/services.yml');
     }
 
     /**
@@ -65,21 +86,13 @@ class AppKernel extends Kernel
     /**
      * {@inheritdoc}
      */
-    protected function getContainerBaseClass()
-    {
-        return \PSS\SymfonyMockerContainer\DependencyInjection\MockerContainer::class;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function prepareContainer(\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    protected function prepareContainer(ContainerBuilder $container)
     {
         parent::prepareContainer($container);
 
         $container->setDefinition(
             'session.test_storage',
-            new \Symfony\Component\DependencyInjection\Definition(MockFileSessionStorage::class)
+            new Definition(MockFileSessionStorage::class)
         );
     }
 }

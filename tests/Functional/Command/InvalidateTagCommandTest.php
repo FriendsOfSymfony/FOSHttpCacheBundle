@@ -12,39 +12,29 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\Command;
 
 use FOS\HttpCacheBundle\CacheManager;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class InvalidateTagCommandTest extends CommandTestCase
 {
-    public function testExecute()
-    {
-        $client = self::createClient();
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )
-            ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidateTags')->once()->with(['my-tag', 'other-tag'])
-            ->shouldReceive('flush')->once()->andReturn(1)
-        ;
-
-        $output = $this->runCommand($client, 'fos:httpcache:invalidate:tag my-tag other-tag');
-        $this->assertEquals('', $output);
-    }
-
     public function testExecuteVerbose()
     {
         $client = self::createClient();
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )
-            ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidateTags')->once()->with(['my-tag', 'other-tag'])
-            ->shouldReceive('flush')->once()->andReturn(1)
-        ;
 
-        $output = $this->runCommand($client, 'fos:httpcache:invalidate:tag my-tag other-tag', OutputInterface::VERBOSITY_VERBOSE);
+        $mock = $this->createMock(CacheManager::class);
+        $mock->expects($this->any())
+            ->method('supports')
+            ->willReturn(true)
+        ;
+        $mock->expects($this->once())
+            ->method('invalidateTags')
+            ->with(['my-tag', 'other-tag'])
+        ;
+        $mock->expects($this->once())
+            ->method('flush')
+            ->willReturn(1)
+        ;
+        $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
+
+        $output = $this->runCommand($client, 'fos:httpcache:invalidate:tag my-tag other-tag');
 
         $this->assertEquals("Sent 1 invalidation request(s)\n", $output);
     }

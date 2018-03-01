@@ -12,39 +12,29 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\Command;
 
 use FOS\HttpCacheBundle\CacheManager;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class InvalidateRegexCommandTest extends CommandTestCase
 {
-    public function testExecute()
-    {
-        $client = self::createClient();
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )
-            ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidateRegex')->once()->with('/my.*/path')
-            ->shouldReceive('flush')->once()->andReturn(1)
-        ;
-
-        $output = $this->runCommand($client, 'fos:httpcache:invalidate:regex /my.*/path');
-        $this->assertEquals('', $output);
-    }
-
     public function testExecuteVerbose()
     {
         $client = self::createClient();
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )
-            ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidateRegex')->once()->with('/my.*/path')
-            ->shouldReceive('flush')->once()->andReturn(1)
-        ;
 
-        $output = $this->runCommand($client, 'fos:httpcache:invalidate:regex /my.*/path', OutputInterface::VERBOSITY_VERBOSE);
+        $mock = $this->createMock(CacheManager::class);
+        $mock->expects($this->any())
+            ->method('supports')
+            ->willReturn(true)
+        ;
+        $mock->expects($this->once())
+            ->method('invalidateRegex')
+            ->with('/my.*/path')
+        ;
+        $mock->expects($this->once())
+            ->method('flush')
+            ->willReturn(1)
+        ;
+        $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
+
+        $output = $this->runCommand($client, 'fos:httpcache:invalidate:regex /my.*/path');
 
         $this->assertEquals("Sent 1 invalidation request(s)\n", $output);
     }

@@ -30,5 +30,6 @@
 
     <php>
         <server name="KERNEL_DIR" value="./tests/Functional/Fixtures/app" />
+        <server name="KERNEL_CLASS" value="AppKernel" />
     </php>
 </phpunit>

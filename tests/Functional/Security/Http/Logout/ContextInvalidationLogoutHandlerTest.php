@@ -27,20 +27,27 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
         $session->setId('test');
         $session->set('_security_secured_area', serialize($token));
         $session->save();
-        $client->getContainer()->mock(
-            'fos_http_cache.proxy_client.varnish',
-            Varnish::class
-        )
-            ->shouldReceive('ban')->once()->with([
+
+        $mock = $this->createMock(Varnish::class);
+        $mock->expects($this->at(0))
+            ->method('ban')
+            ->with([
                 'accept' => 'application/vnd.fos.user-context-hash',
                 'Cookie' => '.*test.*',
             ])
-            ->shouldReceive('ban')->once()->with([
+        ;
+        $mock->expects($this->at(1))
+            ->method('ban')
+            ->with([
                 'accept' => 'application/vnd.fos.user-context-hash',
                 'Authorization' => '.*test.*',
             ])
-            ->shouldReceive('flush')->once()
         ;
+        $mock->expects($this->atLeast(1))
+            ->method('flush')
+        ;
+
+        $client->getContainer()->set('fos_http_cache.proxy_client.varnish', $mock);
 
         $client->getCookieJar()->set(new Cookie($session->getName(), 'test'));
         $client->request('GET', '/secured_area/logout');

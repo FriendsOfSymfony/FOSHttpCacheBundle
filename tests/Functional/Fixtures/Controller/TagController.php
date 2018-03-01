@@ -12,12 +12,20 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 
 use FOS\HttpCacheBundle\Configuration\Tag;
+use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TagController extends Controller
 {
+    private $responseTagger;
+
+    public function __construct(SymfonyResponseTagger $responseTagger)
+    {
+        $this->responseTagger = $responseTagger;
+    }
+
     /**
      * @Tag("all-items")
      * @Tag("item-123")
@@ -52,9 +60,9 @@ class TagController extends Controller
      */
     public function manualAction()
     {
-        $this->get('fos_http_cache.http.symfony_response_tagger')->addTags(['manual-tag']);
+        $this->responseTagger->addTags(['manual-tag']);
 
-        return $this->render('::container.html.twig');
+        return $this->render('container.html.twig');
     }
 
     /**
@@ -62,13 +70,13 @@ class TagController extends Controller
      */
     public function subrequestAction()
     {
-        $this->get('fos_http_cache.http.symfony_response_tagger')->addTags(['sub-tag']);
+        $this->responseTagger->addTags(['sub-tag']);
 
         return new Response('subrequest');
     }
 
     public function twigAction()
     {
-        return $this->render('::tag.html.twig');
+        return $this->render('tag.html.twig');
     }
 }

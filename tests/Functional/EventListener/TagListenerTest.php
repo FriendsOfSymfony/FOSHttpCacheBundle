@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
+use FOS\HttpCacheBundle\EventListener\TagListener;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,6 +32,7 @@ class TagListenerTest extends WebTestCase
 
         $client->request('GET', '/tag/123');
         $response = $client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode(), $response->getContent());
         $this->assertEquals('item-123', $response->headers->get('X-Cache-Tags'));
     }
 
@@ -38,15 +40,24 @@ class TagListenerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )
-            ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidateTags')->with(['all-items'])
-            ->shouldReceive('invalidateTags')->with(['item-123'])
-            ->shouldReceive('flush')->once()
+        $mock = $this->createMock(CacheManager::class);
+        $mock->expects($this->any())
+            ->method('supports')
+            ->willReturn(true)
         ;
+        $mock->expects($this->at(0))
+            ->method('invalidateTags')
+            ->with(['all-items'])
+        ;
+        $mock->expects($this->at(1))
+            ->method('invalidateTags')
+            ->with(['item-123'])
+        ;
+        $mock->expects($this->once())
+            ->method('flush')
+            ->willReturn(2)
+        ;
+        $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
         $client->request('POST', '/tag/123');
         $response = $client->getResponse();
@@ -57,14 +68,19 @@ class TagListenerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )
-            ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidate')->never()
-            ->shouldReceive('flush')->once()
+        $mock = $this->createMock(CacheManager::class);
+        $mock->expects($this->any())
+            ->method('supports')
+            ->willReturn(true)
         ;
+        $mock->expects($this->never())
+            ->method('invalidateTags')
+        ;
+        $mock->expects($this->once())
+            ->method('flush')
+            ->willReturn(0)
+        ;
+        $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
         $client->request('POST', '/tag/error');
     }
@@ -75,6 +91,7 @@ class TagListenerTest extends WebTestCase
 
         $client->request('GET', '/cached/51');
         $response = $client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode(), $response->getContent());
         $this->assertEquals('area,area-51', $response->headers->get('X-Cache-Tags'));
     }
 
@@ -82,14 +99,20 @@ class TagListenerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )
-            ->shouldReceive('supports')->andReturn(true)
-            ->shouldReceive('invalidateTags')->once()->with(['area', 'area-51'])
-            ->shouldReceive('flush')->once()
+        $mock = $this->createMock(CacheManager::class);
+        $mock->expects($this->any())
+            ->method('supports')
+            ->willReturn(true)
         ;
+        $mock->expects($this->once())
+            ->method('invalidateTags')
+            ->with(['area', 'area-51'])
+        ;
+        $mock->expects($this->once())
+            ->method('flush')
+            ->willReturn(1)
+        ;
+        $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
         $client->request('PUT', '/cached/51');
     }
@@ -100,6 +123,7 @@ class TagListenerTest extends WebTestCase
 
         $client->request('GET', '/tag_manual');
         $response = $client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode(), $response->getContent());
         $this->assertEquals('manual-tag,sub-tag,sub-items,manual-items', $response->headers->get('X-Cache-Tags'));
     }
 
@@ -109,6 +133,7 @@ class TagListenerTest extends WebTestCase
 
         $client->request('GET', '/tag_twig');
         $response = $client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode(), $response->getContent());
         $this->assertEquals('tag-from-twig', $response->headers->get('X-Cache-Tags'));
     }
 
@@ -128,11 +153,17 @@ class TagListenerTest extends WebTestCase
         );
 
         // No invalidation
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )->shouldReceive('invalidateTags')->never();
+        $mock = $this->createMock(CacheManager::class);
+        $mock->expects($this->any())
+            ->method('supports')
+            ->willReturn(true)
+        ;
+        $mock->expects($this->never())
+            ->method('invalidateTags')
+        ;
+        $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
+        /** @var TagListener $tagListener */
         $tagListener = $client->getContainer()->get('fos_http_cache.event_listener.tag');
         $tagListener->onKernelResponse($event);
 
@@ -155,12 +186,18 @@ class TagListenerTest extends WebTestCase
             $response
         );
 
-        // No invalidation
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )->shouldReceive('invalidateTags')->with(['invalidated'])->once();
+        $mock = $this->createMock(CacheManager::class);
+        $mock->expects($this->any())
+            ->method('supports')
+            ->willReturn(true)
+        ;
+        $mock->expects($this->once())
+            ->method('invalidateTags')
+            ->with(['invalidated'])
+        ;
+        $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
+        /** @var TagListener $tagListener */
         $tagListener = $client->getContainer()->get('fos_http_cache.event_listener.tag');
         $tagListener->onKernelResponse($event);
 
@@ -186,10 +223,15 @@ class TagListenerTest extends WebTestCase
         );
 
         // No invalidation
-        $client->getContainer()->mock(
-            'fos_http_cache.cache_manager',
-            CacheManager::class
-        )->shouldReceive('invalidateTags')->never();
+        $mock = $this->createMock(CacheManager::class);
+        $mock->expects($this->any())
+            ->method('supports')
+            ->willReturn(true)
+        ;
+        $mock->expects($this->never())
+            ->method('invalidateTags')
+        ;
+        $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
         $tagListener = $client->getContainer()->get('fos_http_cache.event_listener.tag');
         $tagListener->onKernelResponse($event);
@@ -224,10 +266,5 @@ class TagListenerTest extends WebTestCase
             // https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/issues/279
             [Request::create('', 'OPTIONS'), Response::create('', 200)],
         ];
-    }
-
-    protected function tearDown()
-    {
-        static::createClient()->getContainer()->unmock('fos_http_cache.cache_manager');
     }
 }

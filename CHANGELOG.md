@@ -4,6 +4,10 @@ Changelog
 2.2.0 (unreleased)
 ------------------
 
+Support for Symfony 4. (Note that only the `fos_http_cache.cache_manager`
+service is public in Symfony 4. Use dependency injection if you need direct
+access to other services.)
+
 ### Added
 
 * You can now use cache tags and invalidate them with the Symfony `HttpCache`
@@ -38,6 +42,11 @@ Changelog
   it should have but a newly created one. You should remove the deprecated service
   `fos_http_cache.user_context.logout_handler` from the logout.handlers section
   of your firewall configuration.
+
+### Deprecated
+
+* Setting up custom services with the commands provided in this bundle has been
+  deprecated. The `$commandName` constructor argument will be removed in 3.0.
 
 2.1.0
 -----

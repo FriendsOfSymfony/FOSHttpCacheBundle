@@ -16,6 +16,7 @@ use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -94,6 +95,9 @@ class FOSHttpCacheExtension extends Extension
             }
             $container->setParameter($this->getAlias().'.cache_manager.generate_url_type', $generateUrlType);
             $loader->load('cache_manager.xml');
+            if (class_exists(Application::class)) {
+                $loader->load('cache_manager_commands.xml');
+            }
         }
 
         if ($config['tags']['enabled']) {
@@ -427,6 +431,9 @@ class FOSHttpCacheExtension extends Extension
         $container->setParameter($this->getAlias().'.tag_handler.response_header', $config['response_header']);
         $container->setParameter($this->getAlias().'.tag_handler.strict', $config['strict']);
         $loader->load('cache_tagging.xml');
+        if (class_exists(Application::class)) {
+            $loader->load('cache_tagging_commands.xml');
+        }
 
         if (!empty($config['expression_language'])) {
             $container->setAlias(

@@ -1,0 +1,4 @@
+# configuration to make symfony 4 work as expected
+
+twig:
+  default_path: "%kernel.root_dir%/Resources/views"

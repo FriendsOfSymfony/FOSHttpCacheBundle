@@ -97,7 +97,7 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
 
         $tags = $this->getAnnotationTags($request);
 
-        $configuredTags = $this->matchRule($request, $response);
+        $configuredTags = $this->matchRule($request);
         if ($configuredTags) {
             $tags = array_merge($tags, $configuredTags['tags']);
             foreach ($configuredTags['expressions'] as $expression) {
