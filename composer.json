@@ -39,6 +39,7 @@
         "symfony/security-bundle": "^2.8||^3.3||^4.0",
         "symfony/twig-bundle": "^2.8||^3.3||^4.0",
         "symfony/yaml": "^2.8||^3.3||^4.0",
+        "symfony/css-selector": "^2.8||^3.3||^4.0",
         "symfony/expression-language": "^2.8||^3.3||^4.0",
         "symfony/monolog-bundle": "^2.8||^3.3||^4.0",
         "matthiasnoback/symfony-dependency-injection-test": "^1.2",
