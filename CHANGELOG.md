@@ -43,6 +43,11 @@ access to other services.)
   `fos_http_cache.user_context.logout_handler` from the logout.handlers section
   of your firewall configuration.
 
+### Deprecated
+
+* Setting up custom services with the commands provided in this bundle has been
+  deprecated. The `$commandName` constructor argument will be removed in 3.0.
+
 2.1.0
 -----
 
