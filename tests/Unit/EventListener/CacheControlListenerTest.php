@@ -420,7 +420,7 @@ class CacheControlListenerTest extends TestCase
         $request = new Request();
         $request->setMethod($method);
 
-        return new FilterResponseEvent($kernel, $request, $method, $response);
+        return new FilterResponseEvent($kernel, $request, HttpKernelInterface::MASTER_REQUEST, $response);
     }
 
     /**
