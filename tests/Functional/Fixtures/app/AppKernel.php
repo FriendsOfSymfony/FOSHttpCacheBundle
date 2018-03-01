@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+use Symfony\Bundle\TwigBundle\ContainerAwareRuntimeLoader;
+use Symfony\Bundle\TwigBundle\TokenParser\RenderTokenParser;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -56,6 +58,11 @@ class AppKernel extends Kernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
+        if (!class_exists(ContainerAwareRuntimeLoader::class)
+            && !class_exists(RenderTokenParser::class)
+        ) {
+            $loader->load(__DIR__.'/config/config_4.yml');
+        }
         $loader->load(__DIR__.'/config/config.yml');
         $loader->load(__DIR__.'/config/services.yml');
     }
