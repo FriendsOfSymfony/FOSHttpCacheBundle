@@ -417,8 +417,8 @@ class CacheControlListenerTest extends TestCase
      */
     protected function buildEvent($method = 'GET')
     {
-        /** @var HttpKernelInterface|\PHPUnit_Framework_MockObject_MockObject $kernel */
-        $kernel = $this->createMock(HttpKernelInterface::class);
+        /** @var HttpKernelInterface $kernel */
+        $kernel = \Mockery::mock(HttpKernelInterface::class);
         $response = new Response();
         $request = new Request();
         $request->setMethod($method);

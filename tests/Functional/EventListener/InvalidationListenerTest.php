@@ -23,26 +23,26 @@ class InvalidationListenerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $mock = $this->createMock(CacheManager::class);
-        $mock->expects($this->any())
-            ->method('supports')
-            ->willReturn(true)
+        $mock = \Mockery::mock(CacheManager::class);
+        $mock->shouldReceive('supports')
+            ->zeroOrMoreTimes()
+            ->andReturnTrue()
         ;
-        $mock->expects($this->at(0))
-            ->method('invalidateRoute')
-            ->with('test_noncached')
+        $mock->shouldReceive('invalidateRoute')
+            ->once()
+            ->with('test_noncached', [])
         ;
-        $mock->expects($this->at(1))
-            ->method('invalidateRoute')
+        $mock->shouldReceive('invalidateRoute')
+            ->once()
             ->with('test_cached', ['id' => 'myhardcodedid'])
         ;
-        $mock->expects($this->at(2))
-            ->method('invalidateRoute')
+        $mock->shouldReceive('invalidateRoute')
+            ->once()
             ->with('tag_one', ['id' => 42])
         ;
-        $mock->expects($this->once())
-            ->method('flush')
-            ->willReturn(3)
+        $mock->shouldReceive('flush')
+            ->once()
+            ->andReturn(3)
         ;
         $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
@@ -56,22 +56,22 @@ class InvalidationListenerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $mock = $this->createMock(CacheManager::class);
-        $mock->expects($this->any())
-            ->method('supports')
-            ->willReturn(true)
+        $mock = \Mockery::mock(CacheManager::class);
+        $mock->shouldReceive('supports')
+            ->zeroOrMoreTimes()
+            ->andReturnTrue()
         ;
-        $mock->expects($this->at(0))
-            ->method('invalidatePath')
+        $mock->shouldReceive('invalidatePath')
+            ->once()
             ->with('/cached')
         ;
-        $mock->expects($this->at(1))
-            ->method('invalidatePath')
+        $mock->shouldReceive('invalidatePath')
+            ->once()
             ->with(sprintf('/invalidate/path/%s', $statusCode))
         ;
-        $mock->expects($this->once())
-            ->method('flush')
-            ->willReturn(2)
+        $mock->shouldReceive('flush')
+            ->once()
+            ->andReturn(2)
         ;
         $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
@@ -82,17 +82,14 @@ class InvalidationListenerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $mock = $this->createMock(CacheManager::class);
-        $mock->expects($this->any())
-            ->method('supports')
-            ->willReturn(true)
+        $mock = \Mockery::mock(CacheManager::class);
+        $mock->shouldReceive('supports')
+            ->zeroOrMoreTimes()
+            ->andReturnTrue()
         ;
-        $mock->expects($this->never())
-            ->method('invalidateTags')
-        ;
-        $mock->expects($this->once())
-            ->method('flush')
-            ->willReturn(0)
+        $mock->shouldReceive('flush')
+            ->once()
+            ->andReturn(0)
         ;
         $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
