@@ -13,12 +13,15 @@ namespace FOS\HttpCacheBundle\Tests\Unit\Command;
 
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Command\InvalidatePathCommand;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class InvalidatePathCommandTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @expectedException \RuntimeException
      */

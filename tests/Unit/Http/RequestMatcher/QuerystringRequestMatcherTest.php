@@ -12,11 +12,14 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\Http\RequestMatcher;
 
 use FOS\HttpCacheBundle\Http\RequestMatcher\QuerystringRequestMatcher;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 class QuerystringRequestMatcherTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testMatchesReturnsFalseIfParentCallFails()
     {
         $requestMatcher = new QuerystringRequestMatcher('/foo');

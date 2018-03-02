@@ -13,11 +13,14 @@ namespace FOS\HttpCacheBundle\Tests\Unit;
 
 use FOS\HttpCache\ProxyClient\ProxyClient;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class SymfonyResponseTaggerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     private $proxyClient;
 
     public function setUp()

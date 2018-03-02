@@ -12,10 +12,13 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class InvalidationListenerTest extends WebTestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testInvalidateRoute()
     {
         $client = static::createClient();

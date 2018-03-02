@@ -15,11 +15,14 @@ use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\ProxyClient;
 use FOS\HttpCacheBundle\CacheManager;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CacheManagerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     protected $proxyClient;
 
     public function setUp()

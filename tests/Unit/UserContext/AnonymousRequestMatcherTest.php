@@ -12,11 +12,14 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\UserContext;
 
 use FOS\HttpCacheBundle\UserContext\AnonymousRequestMatcher;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 class AnonymousRequestMatcherTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testMatchAnonymousRequest()
     {
         $request = new Request();

@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\LoggerPass;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -20,6 +21,8 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 class LoggerPassTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testLogger()
     {
         $extension = new FOSHttpCacheExtension();

@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
 use FOS\HttpCache\UserContext\HashGenerator;
 use FOS\HttpCacheBundle\EventListener\UserContextListener;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
@@ -23,6 +24,8 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class UserContextListenerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @expectedException \InvalidArgumentException
      */

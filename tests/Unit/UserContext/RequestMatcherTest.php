@@ -12,11 +12,14 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\UserContext;
 
 use FOS\HttpCacheBundle\UserContext\RequestMatcher;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 class RequestMatcherTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testMatch()
     {
         $requestMatcher = new RequestMatcher('application/vnd.test', 'HEAD');

@@ -12,10 +12,13 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\Command;
 
 use FOS\HttpCacheBundle\Command\PathSanityCheck;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 
 class PathSanityCheckTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function pathProvider()
     {
         return [

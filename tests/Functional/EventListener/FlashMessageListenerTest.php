@@ -11,12 +11,14 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpKernel\Kernel;
 
 class FlashMessageListenerTest extends WebTestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testFlashMessageCookieIsSet()
     {
         $client = static::createClient();

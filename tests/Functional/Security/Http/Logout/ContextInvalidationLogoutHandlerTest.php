@@ -12,12 +12,15 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\Security\Http\Logout;
 
 use FOS\HttpCache\ProxyClient\Varnish;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class ContextInvalidationLogoutHandlerTest extends WebTestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testLogout()
     {
         $client = static::createClient();

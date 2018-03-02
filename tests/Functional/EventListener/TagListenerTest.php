@@ -14,6 +14,7 @@ namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\EventListener\TagListener;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +23,8 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class TagListenerTest extends WebTestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testAnnotationTagsAreSet()
     {
         $client = static::createClient();

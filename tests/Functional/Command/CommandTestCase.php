@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Command;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -20,6 +21,8 @@ use Symfony\Component\Console\Output\StreamOutput;
 
 abstract class CommandTestCase extends WebTestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * Runs a command and returns it output.
      *

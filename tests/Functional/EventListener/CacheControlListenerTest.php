@@ -11,10 +11,13 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class CacheControlListenerTest extends WebTestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testIsCached()
     {
         $client = static::createClient();
