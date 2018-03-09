@@ -52,9 +52,6 @@ matrix:
     - php: 7.2
       env: DEPENDENCIES="symfony/lts:^3"
 
-    - php: hhvm
-      dist: trusty
-
       # Latest commit to master
     - php: 7.2
       env: STABILITY="dev"
