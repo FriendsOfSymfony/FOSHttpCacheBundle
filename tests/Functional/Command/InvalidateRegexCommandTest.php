@@ -19,18 +19,18 @@ class InvalidateRegexCommandTest extends CommandTestCase
     {
         $client = self::createClient();
 
-        $mock = $this->createMock(CacheManager::class);
-        $mock->expects($this->any())
-            ->method('supports')
-            ->willReturn(true)
+        $mock = \Mockery::mock(CacheManager::class);
+        $mock->shouldReceive('supports')
+            ->zeroOrMoreTimes()
+            ->andReturnTrue()
         ;
-        $mock->expects($this->once())
-            ->method('invalidateRegex')
+        $mock->shouldReceive('invalidateRegex')
+            ->once()
             ->with('/my.*/path')
         ;
-        $mock->expects($this->once())
-            ->method('flush')
-            ->willReturn(1)
+        $mock->shouldReceive('flush')
+            ->once()
+            ->andReturn(1)
         ;
         $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 

@@ -12,12 +12,15 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\Security\Http\Logout;
 
 use FOS\HttpCache\ProxyClient\Varnish;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class ContextInvalidationLogoutHandlerTest extends WebTestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testLogout()
     {
         $client = static::createClient();
@@ -28,23 +31,24 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
         $session->set('_security_secured_area', serialize($token));
         $session->save();
 
-        $mock = $this->createMock(Varnish::class);
-        $mock->expects($this->at(0))
-            ->method('ban')
+        $mock = \Mockery::mock(Varnish::class);
+        $mock->shouldReceive('ban')
+            ->once()
             ->with([
                 'accept' => 'application/vnd.fos.user-context-hash',
                 'Cookie' => '.*test.*',
             ])
         ;
-        $mock->expects($this->at(1))
-            ->method('ban')
+        $mock->shouldReceive('ban')
+            ->once()
             ->with([
                 'accept' => 'application/vnd.fos.user-context-hash',
                 'Authorization' => '.*test.*',
             ])
         ;
-        $mock->expects($this->atLeast(1))
-            ->method('flush')
+        $mock->shouldReceive('flush')
+            ->once()
+            ->andReturn(2)
         ;
 
         $client->getContainer()->set('fos_http_cache.proxy_client.varnish', $mock);

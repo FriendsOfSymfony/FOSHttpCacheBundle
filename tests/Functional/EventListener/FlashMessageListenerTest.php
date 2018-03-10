@@ -11,12 +11,14 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpKernel\Kernel;
 
 class FlashMessageListenerTest extends WebTestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testFlashMessageCookieIsSet()
     {
         $client = static::createClient();
@@ -27,11 +29,7 @@ class FlashMessageListenerTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertEquals('flash', $response->getContent());
         $cookies = $response->headers->getCookies();
-        if (2 === Kernel::MAJOR_VERSION) {
-            $this->assertCount(2, $cookies, implode(',', $cookies));
-        } else {
-            $this->assertCount(1, $cookies, implode(',', $cookies));
-        }
+        $this->assertCount(2, $cookies, implode(',', $cookies));
 
         /** @var Cookie $cookie */
         $cookie = $cookies[0];

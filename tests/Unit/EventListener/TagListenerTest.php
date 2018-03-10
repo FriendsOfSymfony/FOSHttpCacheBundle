@@ -16,6 +16,7 @@ use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\EventListener\TagListener;
 use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
@@ -25,6 +26,8 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class TagListenerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var CacheManager|\Mockery\Mock
      */

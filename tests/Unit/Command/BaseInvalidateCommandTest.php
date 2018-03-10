@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\Command;
 
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Command\InvalidatePathCommand;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -20,6 +21,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class BaseInvalidateCommandTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @group legacy
      */

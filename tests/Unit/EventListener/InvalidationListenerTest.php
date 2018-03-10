@@ -16,6 +16,7 @@ use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use FOS\HttpCacheBundle\EventListener\InvalidationListener;
 use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Event\ConsoleEvent;
@@ -31,6 +32,8 @@ use Symfony\Component\Routing\RouteCollection;
 
 class InvalidationListenerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var CacheManager|MockInterface
      */

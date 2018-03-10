@@ -13,12 +13,15 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\TagListenerPass;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 class TagListenerPassTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @expectedException \RuntimeException
      * @expectedExceptionMessage requires SensioFrameworkExtraBundle

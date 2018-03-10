@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
 use FOS\HttpCacheBundle\EventListener\CacheControlListener;
 use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +22,8 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class CacheControlListenerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testDefaultHeaders()
     {
         $event = $this->buildEvent();
@@ -414,8 +417,8 @@ class CacheControlListenerTest extends TestCase
      */
     protected function buildEvent($method = 'GET')
     {
-        /** @var HttpKernelInterface|\PHPUnit_Framework_MockObject_MockObject $kernel */
-        $kernel = $this->createMock(HttpKernelInterface::class);
+        /** @var HttpKernelInterface $kernel */
+        $kernel = \Mockery::mock(HttpKernelInterface::class);
         $response = new Response();
         $request = new Request();
         $request->setMethod($method);

@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\Http;
 
 use FOS\HttpCacheBundle\Http\ResponseMatcher\CacheableResponseMatcher;
 use FOS\HttpCacheBundle\Http\RuleMatcher;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
@@ -20,6 +21,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RuleMatcherTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testRequestMatcherCalled()
     {
         $requestMatcher = new RequestMatcher(null, null, null, null, ['_controller' => '^AcmeBundle:Default:index$']);

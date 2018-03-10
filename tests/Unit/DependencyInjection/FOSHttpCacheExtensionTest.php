@@ -12,6 +12,7 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection;
 
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ChildDefinition;
@@ -24,6 +25,8 @@ use Symfony\Component\Routing\Router;
 
 class FOSHttpCacheExtensionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var FOSHttpCacheExtension
      */
