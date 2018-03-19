@@ -8,7 +8,7 @@
                     <methods>GET,POST</methods>
                     <ips>1.2.3.4,1.1.1.1</ips>
                 </match>
-                <headers vary="Cookie,Authorization" />
+                <headers vary="Authorization,HTTP_AUTHORIZATION,PHP_AUTH_USER" />
             </rule>
         </cache-control>
         <proxy-client>

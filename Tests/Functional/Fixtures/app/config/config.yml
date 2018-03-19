@@ -36,8 +36,9 @@ fos_http_cache:
         tag_expressions: ["'area-'~id"]
   user_context:
     user_identifier_headers:
-      - Cookie
       - Authorization
+      - HTTP_AUTHORIZATION
+      - PHP_AUTH_USER
     role_provider: ~
   test:
     proxy_server:

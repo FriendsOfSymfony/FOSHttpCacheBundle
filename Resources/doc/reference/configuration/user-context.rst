@@ -158,7 +158,7 @@ exception if no proxy client is configured.
 ``user_identifier_headers``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**type**: ``array`` **default**: ``['Cookie', 'Authorization']``
+**type**: ``array`` **default**: ``['Authorization', 'HTTP_AUTHORIZATION', 'PHP_AUTH_USER']``
 
 Determines which HTTP request headers the context hash responses will vary on.
 
