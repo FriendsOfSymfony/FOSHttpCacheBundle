@@ -301,10 +301,10 @@ class FOSHttpCacheExtension extends Extension
             ->replaceArgument(0, new Reference($config['match']['matcher_service']))
         ;
 
-        $options = array(
+        $options = [
             'user_identifier_headers' => $configuredUserIdentifierHeaders,
             'session_name_prefix' => $config['session_name_prefix'],
-        );
+        ];
         $container->getDefinition($this->getAlias().'.user_context.anonymous_request_matcher')
             ->replaceArgument(0, $options);
 

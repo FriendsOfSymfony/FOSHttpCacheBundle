@@ -20,7 +20,7 @@ use FOS\HttpCache\UserContext\AnonymousRequestMatcher as BaseAnonymousRequestMat
  */
 class AnonymousRequestMatcher extends BaseAnonymousRequestMatcher
 {
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         @trigger_error(
             'AnonymousRequestMatcher of HttpCacheBundle is deprecated. '.
@@ -31,10 +31,10 @@ class AnonymousRequestMatcher extends BaseAnonymousRequestMatcher
         if (isset($options['user_identifier_headers'], $options['session_name_prefix'])) {
             parent::__construct($options);
         } else {
-            parent::__construct(array(
+            parent::__construct([
                 'user_identifier_headers' => $options,
                 'session_name_prefix' => 'PHPSESSID',
-            ));
+            ]);
         }
     }
 }
