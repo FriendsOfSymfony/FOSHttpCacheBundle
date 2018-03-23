@@ -11,7 +11,6 @@
 
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
-use FOS\HttpCache\ProxyClient\Symfony;
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
 use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
@@ -649,7 +648,11 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('user_identifier_headers')
                             ->prototype('scalar')->end()
                             ->defaultValue(['Cookie', 'Authorization'])
-                            ->info('List of headers that contains the unique identifier for the user in the hash request.')
+                            ->info('List of headers that contain the unique identifier for the user in the hash request.')
+                        ->end()
+                        ->scalarNode('session_name_prefix')
+                            ->defaultValue(false)
+                            ->info('Prefix for session cookies. Must match your PHP session configuration. Set to false to ignore the session in user context.')
                         ->end()
                         ->scalarNode('user_hash_header')
                             ->defaultValue('X-User-Context-Hash')
