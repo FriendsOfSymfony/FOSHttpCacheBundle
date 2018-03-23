@@ -19,6 +19,7 @@ use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -223,6 +224,15 @@ class FOSHttpCacheExtension extends Extension
             $container->getDefinition($this->getAlias().'.user_context.role_provider')
                 ->addTag(HashGeneratorPass::TAG_NAME)
                 ->setAbstract(false);
+        }
+
+        // Only decorate default session listener for Symfony 3.4+
+        if (version_compare(Kernel::VERSION, '3.4', '>=')) {
+            $container->getDefinition('fos_http_cache.user_context.session_listener')
+                ->setArgument(1, strtolower($config['user_hash_header']))
+                ->setArgument(2, array_map('strtolower', $config['user_identifier_headers']));
+        } else {
+            $container->removeDefinition('fos_http_cache.user_context.session_listener');
         }
     }
 

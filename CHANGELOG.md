@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.3.14
+------
+
+* User context compatibility which was broken due to Symfony making responses
+  private if the session is started as of Symfony 3.4+.
+
 1.3.13
 ------
 
