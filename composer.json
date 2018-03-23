@@ -21,8 +21,8 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
-        "friendsofsymfony/http-cache": "~1.4",
+        "php": "^5.4 || ^7.0",
+        "friendsofsymfony/http-cache": "^1.4.5",
         "symfony/framework-bundle": "^2.3||^3.0"
     },
     "require-dev": {

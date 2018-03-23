@@ -23,8 +23,8 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
             'fos_http_cache.proxy_client.varnish',
             '\FOS\HttpCache\ProxyClient\Varnish'
         )
-            ->shouldReceive('ban')->once()->with(array('accept' => 'application/vnd.fos.user-context-hash', 'Cookie' => '.*test.*'))
-            ->shouldReceive('ban')->once()->with(array('accept' => 'application/vnd.fos.user-context-hash', 'Authorization' => '.*test.*'))
+            ->shouldReceive('ban')->once()->with(array('accept' => 'application/vnd.fos.user-context-hash', 'cookie' => '.*test.*'))
+            ->shouldReceive('ban')->once()->with(array('accept' => 'application/vnd.fos.user-context-hash', 'authorization' => '.*test.*'))
             ->shouldReceive('flush')->once()
         ;
 

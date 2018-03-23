@@ -75,7 +75,7 @@
             </rule>
         </invalidation>
 
-        <user-context hash-cache-ttl="300" role-provider="true" user-hash-header="FOS-User-Context-Hash">
+        <user-context hash-cache-ttl="300" role-provider="true" session-name-prefix="PHPSESSID" user-hash-header="FOS-User-Context-Hash">
             <match method="GET"/>
             <user-identifier-header>Cookie</user-identifier-header>
             <user-identifier-header>Authorization</user-identifier-header>

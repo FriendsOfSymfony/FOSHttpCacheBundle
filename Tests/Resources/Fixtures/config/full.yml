@@ -93,9 +93,9 @@ fos_http_cache:
         hash_cache_ttl: 300
         role_provider: true
         user_identifier_headers:
+            - Cookie
             - Authorization
-            - HTTP_AUTHORIZATION
-            - PHP_AUTH_USER
+        session_name_prefix: PHPSESSID
         user_hash_header: FOS-User-Context-Hash
 
     flash_message:
