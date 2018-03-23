@@ -21,6 +21,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Router;
 
 class FOSHttpCacheExtensionTest extends TestCase
@@ -478,6 +479,35 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertFalse($container->has('fos_http_cache.user_context.request_matcher'));
         $this->assertFalse($container->has('fos_http_cache.user_context.role_provider'));
         $this->assertFalse($container->has('fos_http_cache.user_context.logout_handler'));
+        $this->assertFalse($container->has('fos_http_cache.user_context.session_listener'));
+    }
+
+    public function testSessionListenerIsDecoratedIfNeeded()
+    {
+        $config = [[
+           'user_context' => [
+               'user_identifier_headers' => ['X-Foo'],
+               'user_hash_header' => 'X-Bar',
+               'hash_cache_ttl' => 30,
+               'always_vary_on_context_hash' => true,
+               'role_provider' => true,
+           ],
+       ]];
+
+        $container = $this->createContainer();
+        $this->extension->load($config, $container);
+
+        // The whole definition should be removed for Symfony < 3.4
+        if (version_compare(Kernel::VERSION, '3.4', '<')) {
+            $this->assertFalse($container->hasDefinition('fos_http_cache.user_context.session_listener'));
+        } else {
+            $this->assertTrue($container->hasDefinition('fos_http_cache.user_context.session_listener'));
+
+            $definition = $container->getDefinition('fos_http_cache.user_context.session_listener');
+
+            $this->assertSame('X-Bar', $definition->getArgument(1));
+            $this->assertSame(['X-Foo'], $definition->getArgument(2));
+        }
     }
 
     public function testConfigLoadFlashMessageListener()
