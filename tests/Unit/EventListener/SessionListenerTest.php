@@ -19,6 +19,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\EventListener\SessionListener as BaseSessionListener;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 class SessionListenerTest extends TestCase
 {
@@ -42,6 +43,10 @@ class SessionListenerTest extends TestCase
      */
     public function testOnKernelResponse(Response $response, bool $shouldCallDecoratedListener)
     {
+        if (version_compare(Kernel::VERSION, '3.4', '<')) {
+            $this->markTestSkipped('Irrelevant for Symfony < 3.4');
+        }
+
         $event = new FilterResponseEvent(
             $this->createMock(HttpKernelInterface::class),
             new Request(),
