@@ -19,11 +19,12 @@ class UserContextListenerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/_fos_user_context_hash', [
-            'accept' => 'application/vnd.fos.user-context-hash',
+        $client->request('GET', '/_fos_user_context_hash', [], [], [
+            'HTTP_ACCEPT' => 'application/vnd.fos.user-context-hash',
         ]);
         $response = $client->getResponse();
 
         $this->assertTrue($response->headers->has('X-User-Context-Hash'), 'X-User-Context-Hash header missing on the response');
+        $this->assertEquals('max-age=60, public', $response->headers->get('Cache-Control'));
     }
 }
