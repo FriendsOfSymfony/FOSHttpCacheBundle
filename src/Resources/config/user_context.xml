@@ -46,7 +46,7 @@
             <argument /> <!-- set by extension -->
         </service>
 
-        <service id="fos_http_cache.user_context.anonymous_request_matcher" class="FOS\HttpCacheBundle\UserContext\AnonymousRequestMatcher">
+        <service id="fos_http_cache.user_context.anonymous_request_matcher" class="FOS\HttpCache\UserContext\AnonymousRequestMatcher">
             <argument type="collection" />
         </service>
     </services>

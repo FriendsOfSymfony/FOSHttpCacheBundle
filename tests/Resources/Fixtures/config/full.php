@@ -121,6 +121,7 @@ $container->loadFromExtension('fos_http_cache', [
         'hash_cache_ttl' => 300,
         'always_vary_on_context_hash' => true,
         'user_identifier_headers' => ['Cookie', 'Authorization'],
+        'session_name_prefix' => 'PHPSESSID',
         'user_hash_header' => 'FOS-User-Context-Hash',
         'role_provider' => true,
     ],

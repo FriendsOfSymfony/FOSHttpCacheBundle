@@ -36,14 +36,14 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
             ->once()
             ->with([
                 'accept' => 'application/vnd.fos.user-context-hash',
-                'Cookie' => '.*test.*',
+                'cookie' => '.*test.*',
             ])
         ;
         $mock->shouldReceive('ban')
             ->once()
             ->with([
                 'accept' => 'application/vnd.fos.user-context-hash',
-                'Authorization' => '.*test.*',
+                'authorization' => '.*test.*',
             ])
         ;
         $mock->shouldReceive('flush')

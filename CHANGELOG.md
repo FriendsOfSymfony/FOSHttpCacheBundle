@@ -136,6 +136,39 @@ access to other services.)
 * Added an option `always_vary_on_context_hash` to make it possible to disable 
   automatically setting the vary headers for the user hash.
 
+1.3.13
+------
+
+* Symfony HttpCache User Context: Move the AnonymousRequestMatcher to FOSHttpCache.
+
+  The recommended way to ignore cookie based sessions is to set `session_name_prefix` to
+  false rather than omit the Cookie header from `user_identifier_headers`.
+
+1.3.12
+------
+
+* Prevent potential accidental caching on user context hash mismatch (particularly with symfony HttpCache).
+
+1.3.11
+------
+
+* #395 : Compatibility with SensioFrameworkExtraBundle 4.
+
+1.3.10
+------
+
+* Avoid calling deprecated method in Symfony 3.2.
+
+1.3.9
+-----
+
+* Fix configuration handling when only custom proxy client is configured.
+
+1.3.8
+-----
+
+* Do not sanity check hash on anonymous requests.
+
 1.3.7
 -----
 
