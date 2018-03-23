@@ -46,7 +46,7 @@ final class SessionListener implements EventSubscriberInterface
 
     /**
      * @param BaseSessionListener $inner
-     * @param string              $userHashHeader Must be lower-cased
+     * @param string              $userHashHeader        Must be lower-cased
      * @param array               $userIdentifierHeaders Must be lower-cased
      */
     public function __construct(BaseSessionListener $inner, string $userHashHeader, array $userIdentifierHeaders)
