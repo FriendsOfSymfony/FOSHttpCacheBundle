@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.2.0 (unreleased)
-------------------
+2.2.0
+-----
 
 Support for Symfony 4. (Note that only the `fos_http_cache.cache_manager`
 service is public in Symfony 4. Use dependency injection if you need direct
