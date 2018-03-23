@@ -68,12 +68,12 @@ class SessionListenerTest extends TestCase
             'Irrelevant response' => [new Response(), true],
             'Irrelevant response header' => [new Response('', 200, ['Content-Type' => 'Foobar']), true],
             'Context hash header is present in Vary' => [new Response('', 200, ['Vary' => 'X-User-Context-Hash']), false],
-            'User identifier header is present in Vary' => [new Response('', 200, ['Vary' => 'Cookie']), false],
+            'User identifier header is present in Vary' => [new Response('', 200, ['Vary' => 'cookie']), false],
             'Both, context hash and identifier headers are present in Vary' => [new Response('', 200, ['Vary' => 'Cookie, X-User-Context-Hash']), false],
         ];
     }
 
-    private function getListener(BaseSessionListener $inner, $userHashHeader = 'X-User-Context-Hash', $userIdentifierHeaders = ['Cookie', 'Authorization'])
+    private function getListener(BaseSessionListener $inner, $userHashHeader = 'x-user-context-hash', $userIdentifierHeaders = ['cookie', 'authorization'])
     {
         return new SessionListener($inner, $userHashHeader, $userIdentifierHeaders);
     }

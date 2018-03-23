@@ -505,8 +505,8 @@ class FOSHttpCacheExtensionTest extends TestCase
 
             $definition = $container->getDefinition('fos_http_cache.user_context.session_listener');
 
-            $this->assertSame('X-Bar', $definition->getArgument(1));
-            $this->assertSame(['X-Foo'], $definition->getArgument(2));
+            $this->assertSame('x-bar', $definition->getArgument(1));
+            $this->assertSame(['x-foo'], $definition->getArgument(2));
         }
     }
 

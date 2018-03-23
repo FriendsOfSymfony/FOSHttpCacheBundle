@@ -317,8 +317,8 @@ class FOSHttpCacheExtension extends Extension
         // Only decorate default session listener for Symfony 3.4+
         if (version_compare(Kernel::VERSION, '3.4', '>=')) {
             $container->getDefinition('fos_http_cache.user_context.session_listener')
-                ->setArgument(1, $config['user_hash_header'])
-                ->setArgument(2, $config['user_identifier_headers']);
+                ->setArgument(1, strtolower($config['user_hash_header']))
+                ->setArgument(2, array_map('strtolower', $config['user_identifier_headers']));
         } else {
             $container->removeDefinition('fos_http_cache.user_context.session_listener');
         }
