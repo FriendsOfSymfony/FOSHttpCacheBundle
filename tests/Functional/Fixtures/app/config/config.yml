@@ -42,6 +42,7 @@ fos_http_cache:
       - Cookie
       - Authorization
     role_provider: ~
+    hash_cache_ttl: 60
   test:
     proxy_server:
       varnish:
