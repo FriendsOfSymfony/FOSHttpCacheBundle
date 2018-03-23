@@ -42,6 +42,9 @@ access to other services.)
   it should have but a newly created one. You should remove the deprecated service
   `fos_http_cache.user_context.logout_handler` from the logout.handlers section
   of your firewall configuration.
+  
+* User context compatibility which was broken due to Symfony making responses
+  private if the session is started as of Symfony 3.4+.
 
 ### Deprecated
 
