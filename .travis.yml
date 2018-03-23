@@ -31,31 +31,13 @@ matrix:
     - php: 5.4
       env:
         - COMPOSER_FLAGS="--prefer-lowest"
-        - SYMFONY_VERSION='2.3.*'
+        - SYMFONY_VERSION='2.8.*'
     - php: 5.6
       env:
         - SYMFONY_VERSION='3.2.*'
         - PHPUNIT_FLAGS="--coverage-clover=coverage.clover"
         - COVERAGE=true
         - DOCCHECK=true
-    - php: 5.6
-      env: SYMFONY_VERSION='2.3.*'
-    - php: 5.6
-      env:
-        - SYMFONY_VERSION='2.4.*'
-        - FRAMEWORK_EXTRA_VERSION='~3.0'
-    - php: 5.6
-      env:
-        - SYMFONY_VERSION='2.5.*'
-        - FRAMEWORK_EXTRA_VERSION='~3.0'
-    - php: 5.6
-      env:
-        - SYMFONY_VERSION='2.6.*'
-        - FRAMEWORK_EXTRA_VERSION='~3.0'
-    - php: 5.6
-      env:
-        - SYMFONY_VERSION='2.7.*'
-        - FRAMEWORK_EXTRA_VERSION='~3.0'
     - php: 5.6
       env:
         - SYMFONY_VERSION='2.8.*'
