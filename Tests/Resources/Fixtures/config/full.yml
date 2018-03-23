@@ -95,6 +95,7 @@ fos_http_cache:
         user_identifier_headers:
             - Cookie
             - Authorization
+        session_name_prefix: PHPSESSID
         user_hash_header: FOS-User-Context-Hash
 
     flash_message:

@@ -21,15 +21,15 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
-        "friendsofsymfony/http-cache": "~1.4",
+        "php": "^5.4 || ^7.0",
+        "friendsofsymfony/http-cache": "^1.4.5",
         "symfony/framework-bundle": "^2.3||^3.0"
     },
     "require-dev": {
         "mockery/mockery": "0.9.*",
         "monolog/monolog": "*",
         "sensio/framework-extra-bundle": "^2.3||^3.0",
-        "symfony/symfony": "^2.3.4||^3.0",
+        "symfony/symfony": "^2.8||^3.0",
         "symfony/phpunit-bridge": "^3.2",
         "symfony/expression-language": "^2.4||^3.0",
         "symfony/monolog-bundle": "^2.3||^3.0",

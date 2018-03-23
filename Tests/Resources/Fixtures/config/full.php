@@ -107,6 +107,7 @@ $container->loadFromExtension('fos_http_cache', array(
         ),
         'hash_cache_ttl' => 300,
         'user_identifier_headers' => array('Cookie', 'Authorization'),
+        'session_name_prefix' => 'PHPSESSID',
         'user_hash_header' => 'FOS-User-Context-Hash',
         'role_provider' => true,
     ),

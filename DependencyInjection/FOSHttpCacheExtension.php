@@ -186,6 +186,12 @@ class FOSHttpCacheExtension extends Extension
 
     private function loadUserContext(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
+        $configuredUserIdentifierHeaders = array_map('strtolower', $config['user_identifier_headers']);
+        $completeUserIdentifierHeaders = $configuredUserIdentifierHeaders;
+        if (false !== $config['session_name_prefix'] && !in_array('cookie', $completeUserIdentifierHeaders)) {
+            $completeUserIdentifierHeaders[] = 'cookie';
+        }
+
         $loader->load('user_context.xml');
 
         $container->getDefinition($this->getAlias().'.user_context.request_matcher')
@@ -194,16 +200,20 @@ class FOSHttpCacheExtension extends Extension
 
         $container->getDefinition($this->getAlias().'.event_listener.user_context')
             ->replaceArgument(0, new Reference($config['match']['matcher_service']))
-            ->replaceArgument(2, $config['user_identifier_headers'])
+            ->replaceArgument(2, $completeUserIdentifierHeaders)
             ->replaceArgument(3, $config['user_hash_header'])
             ->replaceArgument(4, $config['hash_cache_ttl']);
 
+        $options = array(
+            'user_identifier_headers' => $configuredUserIdentifierHeaders,
+            'session_name_prefix' => $config['session_name_prefix'],
+        );
         $container->getDefinition($this->getAlias().'.user_context.anonymous_request_matcher')
-            ->replaceArgument(0, $config['user_identifier_headers']);
+            ->replaceArgument(0, $options);
 
         if ($config['logout_handler']['enabled']) {
             $container->getDefinition($this->getAlias().'.user_context.logout_handler')
-                ->replaceArgument(1, $config['user_identifier_headers'])
+                ->replaceArgument(1, $completeUserIdentifierHeaders)
                 ->replaceArgument(2, $config['match']['accept']);
         } else {
             $container->removeDefinition($this->getAlias().'.user_context.logout_handler');

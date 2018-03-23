@@ -174,6 +174,23 @@ for 15 minutes, configure:
                 - Authorization
             hash_cache_ttl: 900
 
+The ``Cookie`` header is automatically added to this list unless ``session_name_prefix``
+is set to ``false``.
+
+``session_name_prefix``
+~~~~~~~~~~~~~~~~~~~~~~~
+
+**type**: ``string`` **default**: ``PHPSESSID``
+
+Defines which cookie is the session cookie. Normal cookies will be ignored in
+user context and only the session cookie is taken into account. It is
+recommended that you clean up the cookie header to avoid any other cookies in
+your requests.
+
+If you set this configuration to ``false``, cookies are completely ignored. If
+you add the ``Cookie`` header to ``user_identifier_headers``, any cookie will
+make the request not anonymous.
+
 ``role_provider``
 ~~~~~~~~~~~~~~~~~
 
