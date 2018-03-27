@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.2.1 (unreleased)
+------------------
+
+Adjust session listener decorator to handle Symfony 4.1 breaking behaviour change.
+
 2.2.0
 -----
 

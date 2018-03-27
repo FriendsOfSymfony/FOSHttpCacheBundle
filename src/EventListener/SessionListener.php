@@ -11,7 +11,9 @@
 
 namespace FOS\HttpCacheBundle\EventListener;
 
+use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\EventListener\SessionListener as BaseSessionListener;
@@ -20,15 +22,22 @@ use Symfony\Component\HttpKernel\EventListener\SessionListener as BaseSessionLis
  * Decorates the default Symfony session listener.
  *
  * The default Symfony session listener automatically makes responses private
- * in case the session was started. This kills the user context feature of
+ * in case the session was started. This breaks the user context feature of
  * FOSHttpCache. We disable the default behaviour only if the user context header
- * is part of the Vary headers to reduce the possible impacts on other parts
+ * is part of the Vary headers to reduce the risk of impacts on other parts
  * of your application.
+ *
+ * @internal
  *
  * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */
 final class SessionListener implements EventSubscriberInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
     /**
      * @var BaseSessionListener
      */
@@ -45,12 +54,18 @@ final class SessionListener implements EventSubscriberInterface
     private $userIdentifierHeaders;
 
     /**
+     * @param ContainerInterface  $container             To allow to be extra lazy
      * @param BaseSessionListener $inner
      * @param string              $userHashHeader        Must be lower-cased
      * @param array               $userIdentifierHeaders Must be lower-cased
      */
-    public function __construct(BaseSessionListener $inner, string $userHashHeader, array $userIdentifierHeaders)
-    {
+    public function __construct(
+        ContainerInterface $container,
+        BaseSessionListener $inner,
+        string $userHashHeader,
+        array $userIdentifierHeaders
+    ) {
+        $this->container = $container;
         $this->inner = $inner;
         $this->userHashHeader = $userHashHeader;
         $this->userIdentifierHeaders = $userIdentifierHeaders;
@@ -67,15 +82,30 @@ final class SessionListener implements EventSubscriberInterface
             return;
         }
 
+        // copied from the Symfony SessionListener, to avoid breaking the lazyness
+        if (!$session = $this->container && $this->container->has('initialized_session')
+                ? $this->container->get('initialized_session')
+                : $event->getRequest()->getSession()
+        ) {
+            return;
+        }
+
+        // Check if this response has a vary header that sounds like it is about the user context
         $varyHeaders = array_map('strtolower', $event->getResponse()->getVary());
         $relevantHeaders = array_merge($this->userIdentifierHeaders, [$this->userHashHeader]);
 
-        // Call default behaviour if it's an irrelevant request for the user context
-        if (0 === count(array_intersect($varyHeaders, $relevantHeaders))) {
-            $this->inner->onKernelResponse($event);
+        if (0 < count(array_intersect($varyHeaders, $relevantHeaders))
+            && ($session->isStarted() || ($session instanceof Session && $session->hasBeenStarted()))
+        ) {
+            $session->save();
+
+            if ($session instanceof Session && $session->hasBeenStarted()) {
+                // return early if this flag is set, because there is no way to reset it
+                return;
+            }
         }
 
-        // noop, see class description
+        $this->inner->onKernelResponse($event);
     }
 
     public static function getSubscribedEvents(): array
