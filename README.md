@@ -4,6 +4,7 @@ FOSHttpCacheBundle
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCacheBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCacheBundle/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCacheBundle/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCacheBundle/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/friendsofsymfony/http-cache-bundle/v/stable.svg)](https://packagist.org/packages/friendsofsymfony/http-cache-bundle)
+[![Documentation Status](https://readthedocs.org/projects/foshttpcachebundle/badge/?version=latest)](http://foshttpcachebundle.readthedocs.io/en/latest/?badge=latest)
 
 Introduction
 ------------
