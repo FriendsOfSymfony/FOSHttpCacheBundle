@@ -326,8 +326,12 @@ class FOSHttpCacheExtension extends Extension
                 ->setAbstract(false);
         }
 
-        // Only decorate default session listener for Symfony 3.4+
-        if (version_compare(Kernel::VERSION, '3.4', '>=')) {
+        // Only decorate default SessionListener for Symfony 3.4 - 4.0
+        // For Symfony 4.1+, the UserContextListener sets the header that tells
+        // the SessionListener to leave the cache-control header unchanged.
+        if (version_compare(Kernel::VERSION, '3.4', '>=')
+            && version_compare(Kernel::VERSION, '4.1', '<')
+        ) {
             $container->getDefinition('fos_http_cache.user_context.session_listener')
                 ->setArgument(1, strtolower($config['user_hash_header']))
                 ->setArgument(2, $completeUserIdentifierHeaders);

@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.2.1 (unreleased)
+------------------
+
+### Fixed
+
+* Adjust user context listener to handle Symfony 4.1 breaking behaviour change.
+
 2.2.0
 -----
 

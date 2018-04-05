@@ -19,11 +19,14 @@ use Symfony\Component\HttpKernel\EventListener\SessionListener as BaseSessionLis
 /**
  * Decorates the default Symfony session listener.
  *
- * The default Symfony session listener automatically makes responses private
- * in case the session was started. This kills the user context feature of
- * FOSHttpCache. We disable the default behaviour only if the user context header
- * is part of the Vary headers to reduce the possible impacts on other parts
- * of your application.
+ * Since Symfony 3.4, the default Symfony session listener automatically
+ * overwrites the Cache-Control headers to `private` in case the session has
+ * been started. This destroys the user context feature of FOSHttpCache.
+ * Since Symfony 4.1, there is a header we can set to skip this behaviour. We
+ * set that header in UserContextListener.
+ * For Symfony 3.4 and 4.0, we decorate the listener to only call the default
+ * behaviour if `Vary` contains neither the context hash header nor any of the
+ * user identifier headers, to avoid impacts on other parts of your application.
  *
  * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */

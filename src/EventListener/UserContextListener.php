@@ -18,7 +18,9 @@ use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -135,6 +137,10 @@ class UserContextListener implements EventSubscriberInterface
             $response->setClientTtl($this->options['ttl']);
             $response->setVary($this->options['user_identifier_headers']);
             $response->setPublic();
+            if (version_compare(Kernel::VERSION, '4.1', '>=')) {
+                // header to avoid Symfony SessionListener overwriting the response to private
+                $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 1);
+            }
         } else {
             $response->setClientTtl(0);
             $response->headers->addCacheControlDirective('no-cache');
@@ -192,6 +198,10 @@ class UserContextListener implements EventSubscriberInterface
                 && !in_array($this->options['user_hash_header'], $vary)
             ) {
                 $vary[] = $this->options['user_hash_header'];
+                if (version_compare(Kernel::VERSION, '4.1', '>=')) {
+                    // header to avoid Symfony SessionListener overwriting the response to private
+                    $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 1);
+                }
             }
         } elseif ($this->options['add_vary_on_hash']) {
             /*
