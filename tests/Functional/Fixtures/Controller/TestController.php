@@ -20,4 +20,14 @@ class TestController extends Controller
     {
         return new Response('content '.$id);
     }
+
+    public function sessionAction()
+    {
+        $this->container->get('session')->start();
+
+        $response = new Response('session');
+        $response->setCache(['max_age' => 60, 'public' => true]);
+
+        return $response;
+    }
 }
