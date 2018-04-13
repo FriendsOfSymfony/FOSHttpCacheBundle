@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\EventListener\SessionListener as BaseSessionListener;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
@@ -25,8 +24,15 @@ class SessionListenerTest extends TestCase
 {
     public function testOnKernelRequestRemainsUntouched()
     {
-        $event = $this->createMock(GetResponseEvent::class);
-        $inner = $this->createMock(BaseSessionListener::class);
+        $event = $this
+            ->getMockBuilder('Symfony\Component\HttpKernel\Event\GetResponseEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inner = $this
+            ->getMockBuilder('Symfony\Component\HttpKernel\EventListener\SessionListener')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $inner
             ->expects($this->once())
@@ -47,14 +53,22 @@ class SessionListenerTest extends TestCase
             $this->markTestSkipped('Irrelevant for Symfony < 3.4');
         }
 
+        $httpKernel = $this
+            ->getMockBuilder('Symfony\Component\HttpKernel\HttpKernelInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $event = new FilterResponseEvent(
-            $this->createMock(HttpKernelInterface::class),
+            $httpKernel,
             new Request(),
             HttpKernelInterface::MASTER_REQUEST,
             $response
         );
 
-        $inner = $this->createMock(BaseSessionListener::class);
+        $inner = $this
+            ->getMockBuilder('Symfony\Component\HttpKernel\EventListener\SessionListener')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $inner
             ->expects($shouldCallDecoratedListener ? $this->once() : $this->never())
