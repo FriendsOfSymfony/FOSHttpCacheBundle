@@ -350,6 +350,9 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($container->has('fos_http_cache.user_context.session_listener'));
     }
 
+    /**
+     * @group sf34
+     */
     public function testSessionListenerIsDecoratedIfNeeded()
     {
         $config = array(

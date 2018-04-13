@@ -20,6 +20,9 @@ use Symfony\Component\HttpKernel\EventListener\SessionListener as BaseSessionLis
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
+/**
+ * @group sf34
+ */
 class SessionListenerTest extends TestCase
 {
     public function testOnKernelRequestRemainsUntouched()
