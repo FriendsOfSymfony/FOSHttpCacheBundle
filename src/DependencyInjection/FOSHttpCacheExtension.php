@@ -12,6 +12,7 @@
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
+use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -421,7 +422,17 @@ class FOSHttpCacheExtension extends Extension
 
     private function loadSymfony(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
-        $this->createHttpDispatcherDefinition($container, $config['http'], $this->getAlias().'.proxy_client.symfony.http_dispatcher');
+        $serviceName = $this->getAlias().'.proxy_client.symfony.http_dispatcher';
+
+        if ($config['use_kernel_dispatcher']) {
+            $definition = new Definition(KernelDispatcher::class, [
+                new Reference('kernel'),
+            ]);
+            $container->setDefinition($serviceName, $definition);
+        } else {
+            $this->createHttpDispatcherDefinition($container, $config['http'], $serviceName);
+        }
+
         $options = [
             'tags_header' => $config['tags_header'],
             'tags_method' => $config['tags_method'],

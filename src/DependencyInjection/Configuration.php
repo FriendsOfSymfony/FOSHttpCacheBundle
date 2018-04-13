@@ -388,12 +388,40 @@ class Configuration implements ConfigurationInterface
                                     ->defaultValue(PurgeListener::DEFAULT_PURGE_METHOD)
                                     ->info('HTTP method to use when sending purge requests to Symfony HttpCache')
                                 ->end()
+                                ->booleanNode('use_kernel_dispatcher')
+                                    ->defaultFalse()
+                                    ->info('Dispatches invalidation requests to the kernel directly instead of executing real HTTP requests. Requires special kernel setup! Refer to the documentation for more information.')
+                                ->end()
                                 ->append($this->getHttpDispatcherNode())
                             ->end()
                         ->end()
 
                         ->booleanNode('noop')->end()
+                    ->end()
 
+                    ->validate()
+                        ->always()
+                        ->then(function ($config) {
+                            foreach ($config as $proxyName => $proxyConfig) {
+                                $serversConfigured = isset($proxyConfig['http']) && isset($proxyConfig['http']['servers']) && \is_array($proxyConfig['http']['servers']);
+
+                                if (!\in_array($proxyName, ['noop', 'symfony'])) {
+                                    if (!$serversConfigured) {
+                                        throw new  \InvalidArgumentException(sprintf('The "http.servers" section must be defined for the proxy "%s"', $proxyName));
+                                    }
+
+                                    return $config;
+                                }
+
+                                if ('symfony' === $proxyName) {
+                                    if (!$serversConfigured && false === $proxyConfig['use_kernel_dispatcher']) {
+                                        throw new  \InvalidArgumentException(sprintf('Either configure the "http.servers" section or enable "use_kernel_dispatcher" the proxy "%s"', $proxyName));
+                                    }
+                                }
+                            }
+
+                            return $config;
+                        })
                     ->end()
                 ->end()
             ->end();
@@ -411,7 +439,6 @@ class Configuration implements ConfigurationInterface
 
         $node
             ->fixXmlConfig('server')
-            ->isRequired()
             ->children()
                 ->arrayNode('servers')
                     ->info('Addresses of the hosts the caching proxy is running on. May be hostname or ip, and with :port if not the default port 80.')

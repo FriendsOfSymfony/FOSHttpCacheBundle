@@ -15,6 +15,7 @@ use FOS\HttpCacheBundle\DependencyInjection\Configuration;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionConfigurationTestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends AbstractExtensionConfigurationTestCase
 {
@@ -266,6 +267,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     'base_url' => '/test',
                     'http_client' => 'acme.guzzle.symfony',
                 ],
+                'use_kernel_dispatcher' => false,
             ],
         ];
         $expectedConfiguration['cache_manager']['enabled'] = 'auto';
@@ -285,6 +287,26 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
         }
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @expectedExceptionMessage Either configure the "http.servers" section or enable "use_kernel_dispatcher" the proxy "symfony"
+     */
+    public function testEmptyServerConfigurationIsNotAllowed()
+    {
+        $params = $this->getEmptyConfig();
+        $params['proxy_client'] = [
+            'symfony' => [
+                'tags_header' => 'My-Cache-Tags',
+                'tags_method' => 'MYMETHOD',
+                'header_length' => 1234,
+                'purge_method' => 'MYPURGE',
+            ],
+        ];
+
+        $configuration = new Configuration(false);
+        $configuration = (new Processor())->processConfiguration($configuration, ['fos_http_cache' => $params]);
     }
 
     public function testSupportsNoop()
