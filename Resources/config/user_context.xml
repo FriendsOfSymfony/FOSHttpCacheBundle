@@ -41,12 +41,6 @@
             <argument />
         </service>
 
-        <service id="fos_http_cache.user_context.session_listener" class="FOS\HttpCacheBundle\EventListener\SessionListener" decorates="session_listener" public="false">
-            <argument type="service" id="fos_http_cache.user_context.session_listener.inner" />
-            <argument /> <!-- set by extension -->
-            <argument /> <!-- set by extension -->
-        </service>
-
         <service id="fos_http_cache.user_context.anonymous_request_matcher" class="FOS\HttpCache\UserContext\AnonymousRequestMatcher">
             <argument type="collection" />
         </service>
