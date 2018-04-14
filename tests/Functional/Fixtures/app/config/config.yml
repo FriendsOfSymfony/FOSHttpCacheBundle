@@ -34,7 +34,7 @@ fos_http_cache:
     rules:
       -
         match:
-          path: ^/cached
+          path: ^/cached/
         tags: [area]
         tag_expressions: ["'area-'~id"]
   user_context:

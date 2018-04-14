@@ -18,7 +18,9 @@ use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -135,6 +137,10 @@ class UserContextListener implements EventSubscriberInterface
             $response->setClientTtl($this->options['ttl']);
             $response->setVary($this->options['user_identifier_headers']);
             $response->setPublic();
+            if (4 <= Kernel::MAJOR_VERSION && 1 <= Kernel::MINOR_VERSION) {
+                // header to avoid Symfony SessionListener overwriting the response to private
+                $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 1);
+            }
         } else {
             $response->setClientTtl(0);
             $response->headers->addCacheControlDirective('no-cache');
@@ -175,8 +181,8 @@ class UserContextListener implements EventSubscriberInterface
         $vary = $response->getVary();
 
         if ($request->headers->has($this->options['user_hash_header'])) {
-            // hash has changed, session has most certainly changed, prevent setting incorrect cache
             if (null !== $this->hash && $this->hash !== $request->headers->get($this->options['user_hash_header'])) {
+                // hash has changed, session has most certainly changed, prevent setting incorrect cache
                 $response->setCache([
                     'max_age' => 0,
                     's_maxage' => 0,
@@ -192,6 +198,10 @@ class UserContextListener implements EventSubscriberInterface
                 && !in_array($this->options['user_hash_header'], $vary)
             ) {
                 $vary[] = $this->options['user_hash_header'];
+                if (4 <= Kernel::MAJOR_VERSION && 1 <= Kernel::MINOR_VERSION) {
+                    // header to avoid Symfony SessionListener overwriting the response to private
+                    $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 1);
+                }
             }
         } elseif ($this->options['add_vary_on_hash']) {
             /*
