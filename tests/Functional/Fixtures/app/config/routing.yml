@@ -1,24 +1,24 @@
 tag_list:
   path:  /tag/list
-  defaults: { _controller: tag_controller:listAction }
+  defaults: { _controller: tag_controller::listAction }
   methods:  [GET]
 
 tag_error:
   path:  /tag/error
-  defaults: { _controller: tag_controller:errorAction }
+  defaults: { _controller: tag_controller::errorAction }
 
 tag_one:
   path:  /tag/{id}
-  defaults: { _controller: tag_controller:itemAction }
+  defaults: { _controller: tag_controller::itemAction }
   methods:  [GET,POST]
 
 tag_manual:
   path: /tag_manual
-  defaults: { _controller: tag_controller:manualAction }
+  defaults: { _controller: tag_controller::manualAction }
 
 tag_twig:
   path: /tag_twig
-  defaults: { _controller: tag_controller:twigAction }
+  defaults: { _controller: tag_controller::twigAction }
 
 invalidation_route:
   path: /invalidate/route/{id}

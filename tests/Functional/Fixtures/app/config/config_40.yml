@@ -5,3 +5,4 @@ imports:
 
 twig:
   default_path: "%kernel.root_dir%/Resources/views"
+  strict_variables: "%kernel.debug%"
