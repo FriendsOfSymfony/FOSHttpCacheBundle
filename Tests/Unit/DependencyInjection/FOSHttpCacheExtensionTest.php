@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\HttpKernel\Kernel;
 
 class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -346,6 +347,37 @@ class FOSHttpCacheExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($container->has('fos_http_cache.user_context.request_matcher'));
         $this->assertFalse($container->has('fos_http_cache.user_context.role_provider'));
         $this->assertFalse($container->has('fos_http_cache.user_context.logout_handler'));
+        $this->assertFalse($container->has('fos_http_cache.user_context.session_listener'));
+    }
+
+    /**
+     * @group sf34
+     */
+    public function testSessionListenerIsDecoratedIfNeeded()
+    {
+        $config = array(
+            array('user_context' => array(
+                'user_identifier_headers' => array('X-Foo'),
+                'user_hash_header' => 'X-Bar',
+                'hash_cache_ttl' => 30,
+                'role_provider' => true,
+            )),
+        );
+
+        $container = $this->createContainer();
+        $this->extension->load($config, $container);
+
+        // The whole definition should be removed for Symfony < 3.4
+        if (version_compare(Kernel::VERSION, '3.4', '<')) {
+            $this->assertFalse($container->hasDefinition('fos_http_cache.user_context.session_listener'));
+        } else {
+            $this->assertTrue($container->hasDefinition('fos_http_cache.user_context.session_listener'));
+
+            $definition = $container->getDefinition('fos_http_cache.user_context.session_listener');
+
+            $this->assertSame('x-bar', $definition->getArgument(1));
+            $this->assertSame(array('x-foo'), $definition->getArgument(2));
+        }
     }
 
     public function testConfigLoadFlashMessageSubscriber()

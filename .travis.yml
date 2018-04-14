@@ -50,6 +50,11 @@ matrix:
       env:
         - SYMFONY_VERSION='3.2.*'
         - FRAMEWORK_EXTRA_VERSION='~3.0'
+    - php: 5.6
+      env:
+        - SYMFONY_VERSION='3.4.*'
+        - PHPUNIT_FLAGS="--group sf34"
+        - FRAMEWORK_EXTRA_VERSION='~3.0'
     - php: hhvm
       dist: trusty
 
