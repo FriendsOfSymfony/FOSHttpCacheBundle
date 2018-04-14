@@ -497,16 +497,20 @@ class FOSHttpCacheExtensionTest extends TestCase
         $container = $this->createContainer();
         $this->extension->load($config, $container);
 
-        // The whole definition should be removed for Symfony < 3.4
-        if (version_compare(Kernel::VERSION, '3.4', '<')) {
-            $this->assertFalse($container->hasDefinition('fos_http_cache.user_context.session_listener'));
-        } else {
+        // The decorator is only needed for Symfony 3.4 and 4.0
+        // Before 3.4 the cache header is not overwritten.
+        // From 4.1 on, we use the AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER
+        if (version_compare(Kernel::VERSION, '3.4', '>=')
+            && version_compare(Kernel::VERSION, '4.1', '<')
+        ) {
             $this->assertTrue($container->hasDefinition('fos_http_cache.user_context.session_listener'));
 
             $definition = $container->getDefinition('fos_http_cache.user_context.session_listener');
 
             $this->assertSame('x-bar', $definition->getArgument(1));
             $this->assertSame(['x-foo'], $definition->getArgument(2));
+        } else {
+            $this->assertFalse($container->hasDefinition('fos_http_cache.user_context.session_listener'));
         }
     }
 
