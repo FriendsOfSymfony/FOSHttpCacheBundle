@@ -1,6 +1,18 @@
 Changelog
 =========
 
+2.3.0
+-----
+
+### Added
+
+* You can now configure the Symfony proxy client to directly call the
+  kernel for invalidation requests instead of executing real requests
+  and thus reduce complexity for single node Symfony applications.
+  Use the new configuration `proxy_client.symfony.use_kernel_dispatcher`
+  and follow the setup instructions in both, the bundle and the library
+  to configure your kernel accordingly.
+
 2.2.0
 -----
 
