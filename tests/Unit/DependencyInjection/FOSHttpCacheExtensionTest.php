@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection;
 
+use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
@@ -125,6 +126,29 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.http.symfony_response_tagger'));
+    }
+
+    public function testConfigLoadSymfonyWithKernelDispatcher()
+    {
+        $container = $this->createContainer();
+        $this->extension->load([
+            [
+                'proxy_client' => [
+                    'symfony' => [
+                        'use_kernel_dispatcher' => true,
+                        'http' => [ // TODO: can we get rid of this?
+                            'base_url' => 'my_hostname',
+                            'servers' => [
+                                '127.0.0.1',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ], $container);
+
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.symfony.http_dispatcher'));
+        $this->assertSame(KernelDispatcher::class, $container->getDefinition('fos_http_cache.proxy_client.symfony.http_dispatcher')->getClass());
     }
 
     public function testConfigLoadNoop()
