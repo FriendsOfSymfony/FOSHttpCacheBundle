@@ -388,7 +388,11 @@ class Configuration implements ConfigurationInterface
                                     ->defaultValue(PurgeListener::DEFAULT_PURGE_METHOD)
                                     ->info('HTTP method to use when sending purge requests to Symfony HttpCache')
                                 ->end()
-                                ->append($this->getHttpDispatcherNode())
+                                ->booleanNode('use_kernel_dispatcher')
+                                    ->defaultFalse()
+                                    ->info('Dispatches invalidation requests to the kernel directly instead of executing real HTTP requests. Requires special kernel setup! Refer to the documentation for more information.')
+                                ->end()
+                                ->append($this->getHttpDispatcherNode()) // TODO: Can we make this optional if use_kernel_dispatcher is true?
                             ->end()
                         ->end()
 

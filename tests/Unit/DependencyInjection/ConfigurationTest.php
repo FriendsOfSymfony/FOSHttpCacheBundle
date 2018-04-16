@@ -266,6 +266,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     'base_url' => '/test',
                     'http_client' => 'acme.guzzle.symfony',
                 ],
+                'use_kernel_dispatcher' => false,
             ],
         ];
         $expectedConfiguration['cache_manager']['enabled'] = 'auto';

@@ -10,10 +10,6 @@
             <argument type="service" id="fos_http_cache.proxy_client.symfony.http_dispatcher"/>
             <argument>%fos_http_cache.proxy_client.symfony.options%</argument>
         </service>
-        <service id="fos_http_cache.symfony.kernel_client"
-                 class="FOS\HttpCache\SymfonyCache\KernelClient">
-            <argument type="service" id="kernel"/>
-        </service>
     </services>
 
 </container>
