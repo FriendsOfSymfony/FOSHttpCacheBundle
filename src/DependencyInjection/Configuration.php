@@ -392,12 +392,33 @@ class Configuration implements ConfigurationInterface
                                     ->defaultFalse()
                                     ->info('Dispatches invalidation requests to the kernel directly instead of executing real HTTP requests. Requires special kernel setup! Refer to the documentation for more information.')
                                 ->end()
-                                ->append($this->getHttpDispatcherNode()) // TODO: Can we make this optional if use_kernel_dispatcher is true?
+                                ->append($this->getHttpDispatcherNode())
                             ->end()
                         ->end()
 
                         ->booleanNode('noop')->end()
+                    ->end()
 
+                    ->validate()
+                        ->always()
+                        ->then(function($config) {
+                            foreach ($config as $proxyName => $proxyConfig) {
+
+                                if (!\in_array($proxyName, ['noop', 'symfony'])) {
+                                    if (!isset($proxyConfig['http']['servers']) || !\is_array($proxyConfig['http']['servers'])) {
+                                        throw new  \InvalidArgumentException(sprintf('The "http.servers" section must be defined for the proxy "%s"', $proxyName));
+                                    }
+
+                                    return $config;
+                                }
+
+                                if ('symfony' === $proxyName) {
+
+                                }
+                            }
+
+                            return $config;
+                        })
                     ->end()
                 ->end()
             ->end();
@@ -415,7 +436,6 @@ class Configuration implements ConfigurationInterface
 
         $node
             ->fixXmlConfig('server')
-            ->isRequired()
             ->children()
                 ->arrayNode('servers')
                     ->info('Addresses of the hosts the caching proxy is running on. May be hostname or ip, and with :port if not the default port 80.')

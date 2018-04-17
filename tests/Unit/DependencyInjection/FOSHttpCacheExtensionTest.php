@@ -136,12 +136,6 @@ class FOSHttpCacheExtensionTest extends TestCase
                 'proxy_client' => [
                     'symfony' => [
                         'use_kernel_dispatcher' => true,
-                        'http' => [ // TODO: can we get rid of this?
-                            'base_url' => 'my_hostname',
-                            'servers' => [
-                                '127.0.0.1',
-                            ],
-                        ],
                     ],
                 ],
             ],
