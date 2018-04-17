@@ -403,9 +403,10 @@ class Configuration implements ConfigurationInterface
                         ->always()
                         ->then(function ($config) {
                             foreach ($config as $proxyName => $proxyConfig) {
+                                $serversConfigured = isset($proxyConfig['http']['servers']) && \is_array($proxyConfig['http']['servers']);
 
                                 if (!\in_array($proxyName, ['noop', 'symfony'])) {
-                                    if (!isset($proxyConfig['http']['servers']) || !\is_array($proxyConfig['http']['servers'])) {
+                                    if (!$serversConfigured) {
                                         throw new  \InvalidArgumentException(sprintf('The "http.servers" section must be defined for the proxy "%s"', $proxyName));
                                     }
 
@@ -413,7 +414,9 @@ class Configuration implements ConfigurationInterface
                                 }
 
                                 if ('symfony' === $proxyName) {
-
+                                    if (!$serversConfigured && !isset($proxyConfig['use_kernel_dispatcher'])) {
+                                        throw new  \InvalidArgumentException(sprintf('Either configure the "http.servers" section or enable "use_kernel_dispatcher" the proxy "%s"', $proxyName));
+                                    }
                                 }
                             }
 
