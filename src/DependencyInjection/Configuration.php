@@ -401,7 +401,7 @@ class Configuration implements ConfigurationInterface
 
                     ->validate()
                         ->always()
-                        ->then(function($config) {
+                        ->then(function ($config) {
                             foreach ($config as $proxyName => $proxyConfig) {
 
                                 if (!\in_array($proxyName, ['noop', 'symfony'])) {

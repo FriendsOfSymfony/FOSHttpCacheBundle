@@ -422,7 +422,7 @@ class FOSHttpCacheExtension extends Extension
 
         if ($config['use_kernel_dispatcher']) {
             $definition = new Definition(KernelDispatcher::class, [
-                new Reference('kernel')
+                new Reference('kernel'),
             ]);
             $container->setDefinition($serviceName, $definition);
         } else {
