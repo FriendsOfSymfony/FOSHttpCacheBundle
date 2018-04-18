@@ -331,6 +331,7 @@ class FOSHttpCacheExtension extends Extension
         // the SessionListener to leave the cache-control header unchanged.
         if (version_compare(Kernel::VERSION, '3.4', '>=')
             && version_compare(Kernel::VERSION, '4.1', '<')
+            && $container->hasDefinition('session_listener')
         ) {
             $container->getDefinition('fos_http_cache.user_context.session_listener')
                 ->setArgument(1, strtolower($config['user_hash_header']))
