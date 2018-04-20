@@ -149,6 +149,16 @@ symfony
 
 For ``servers``, ``base_url``, ``tags_header`` and ``header_length``, see above.
 
+
+.. versionadded:: 2.3
+
+    You can omit the whole ``http`` configuration and use ``use_kernel_dispatcher: true``
+    instead. This will call the kernel directly instead of executing a real HTTP request.
+    Note that your kernel has to support this. For more information on how to setup
+    the kernel, please refer to the FOSHttpCache documentation
+    :ref:`for Symfony <foshttpcache:symfony httpcache configuration>`.
+
+
 ``tags_method``
 """""""""""""""
 
