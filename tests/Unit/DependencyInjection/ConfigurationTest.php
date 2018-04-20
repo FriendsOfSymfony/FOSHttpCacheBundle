@@ -290,7 +290,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      * @expectedExceptionMessage Either configure the "http.servers" section or enable "use_kernel_dispatcher" the proxy "symfony"
      */
     public function testEmptyServerConfigurationIsNotAllowed()
