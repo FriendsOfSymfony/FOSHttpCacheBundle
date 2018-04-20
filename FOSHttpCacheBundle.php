@@ -15,8 +15,10 @@ use FOS\HttpCacheBundle\DependencyInjection\Compiler\LoggerPass;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\SecurityContextPass;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\TagSubscriberPass;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
+use FOS\HttpCacheBundle\DependencyInjection\Compiler\SessionListenerRemovePass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\HttpKernel\Kernel;
 
 class FOSHttpCacheBundle extends Bundle
 {
@@ -29,5 +31,8 @@ class FOSHttpCacheBundle extends Bundle
         $container->addCompilerPass(new SecurityContextPass());
         $container->addCompilerPass(new TagSubscriberPass());
         $container->addCompilerPass(new HashGeneratorPass());
+        if (version_compare(Kernel::VERSION, '3.4', '>=')) {
+            $container->addCompilerPass(new SessionListenerRemovePass());
+        }
     }
 }

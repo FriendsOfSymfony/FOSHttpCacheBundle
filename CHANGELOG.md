@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.3.15
+------
+
+* Fix session_listener decoration when session is not enabled.
+
 1.3.14
 ------
 
