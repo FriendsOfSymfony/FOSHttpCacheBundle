@@ -17,7 +17,8 @@ concept is to use event listeners on the HttpCache class.
 
     * Purge
     * Refresh
-    * User context
+    * Cache Tags
+    * User Context
 
 Extending the correct HttpCache
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
