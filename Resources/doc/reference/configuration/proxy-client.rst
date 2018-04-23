@@ -160,7 +160,7 @@ For ``servers``, ``base_url``, ``tags_header`` and ``header_length``, see above.
     instead. This will call the kernel directly instead of executing a real
     HTTP request. Note that your kernel and bootstrapping need to be adjusted
     to support this feature. The setup is explained in the
-    :ref:`FOSHttpCache Symfony Proxy Client documentation section <foshttpcache:kerneldispatcher for single server installations>`.
+    :ref:`FOSHttpCache Symfony Proxy Client documentation section <foshttpcache:proxy client setup#kerneldispatcher-for-single-server-installations>`.
 
 ``tags_method``
 """""""""""""""
