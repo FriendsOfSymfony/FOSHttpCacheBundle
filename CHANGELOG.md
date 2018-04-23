@@ -1,6 +1,18 @@
 Changelog
 =========
 
+2.3.0 (unreleased)
+------------------
+
+### Added
+
+* [Symfony HttpCache] You can now configure the Symfony proxy client to
+  directly call the `HttpCache` for invalidation requests instead of executing
+  real web requests.
+  Use the new configuration option `proxy_client.symfony.use_kernel_dispatcher`
+  and follow the instructions in FOSHttpCache to adjust your kernel and
+  bootstrap things accordingly.
+
 2.2.2
 -----
 

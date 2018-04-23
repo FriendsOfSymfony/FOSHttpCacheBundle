@@ -131,6 +131,9 @@ on how to configure Nginx.
 symfony
 -------
 
+You need to have a ``HttpCache`` capable of handling cache invalidation. Please
+refer to the :ref:`FOSHttpCache documentation for Symfony <foshttpcache:symfony httpcache configuration>`.
+
 .. code-block:: yaml
 
     # app/config/config.yml
@@ -141,6 +144,8 @@ symfony
                 tags_method: TAGPURGE
                 header_length: 1234
                 purge_method: PURGE
+                # for single server installations:
+                # use_kernel_dispatcher: true
                 http:
                     servers:
                         - 123.123.123.1:6060
@@ -148,6 +153,14 @@ symfony
                     base_url: yourwebsite.com
 
 For ``servers``, ``base_url``, ``tags_header`` and ``header_length``, see above.
+
+.. versionadded:: 2.3
+
+    You can omit the whole ``http`` configuration and use ``use_kernel_dispatcher: true``
+    instead. This will call the kernel directly instead of executing a real
+    HTTP request. Note that your kernel and bootstrapping need to be adjusted
+    to support this feature. The setup is explained in the
+    :ref:`FOSHttpCache Symfony Proxy Client documentation section <foshttpcache:kerneldispatcher for single server installations>`.
 
 ``tags_method``
 """""""""""""""

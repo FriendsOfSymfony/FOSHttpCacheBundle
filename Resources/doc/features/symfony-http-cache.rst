@@ -20,6 +20,8 @@ concept is to use event listeners on the HttpCache class.
     * Cache Tags
     * User Context
 
+    Generic ``BAN`` operations are not supported.
+
 Extending the correct HttpCache
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -106,5 +108,19 @@ Event Listeners
 Each cache feature has its own event listener. The listeners are provided by
 the FOSHttpCache_ library. You can find the documentation for those listeners
 in the :ref:`FOSHttpCache Symfony Cache documentation section <foshttpcache:symfony httpcache configuration>`.
+
+Optimization for Single Server Installations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If your application runs on one single server, you can use the kernel
+dispatcher to directly call the ``HttpCache`` rather than sending an actual
+web request. This is more efficient, and you don't need to configure the server
+IP address.
+
+The :ref:`FOSHttpCache Symfony Proxy Client documentation section <foshttpcache:kerneldispatcher for single server installations>`
+explains how to adjust your bootstrap - you will need to do this in both
+``public/index.php`` and ``bin/console``.
+
+Once your bootstrapping is adjusted, set ``fos_http_cache.proxy_client.symfony.use_kernel_dispatcher: true``.
 
 .. _Symfony HttpCache documentation: http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy
