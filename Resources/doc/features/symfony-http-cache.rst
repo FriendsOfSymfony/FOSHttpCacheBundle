@@ -117,7 +117,7 @@ dispatcher to directly call the ``HttpCache`` rather than sending an actual
 web request. This is more efficient, and you don't need to configure the server
 IP address.
 
-The :ref:`FOSHttpCache Symfony Proxy Client documentation section <foshttpcache:proxy client setup>`
+The :ref:`FOSHttpCache Symfony Proxy Client documentation section <foshttpcache:proxy client symfony httpcache kernel dispatcher>`
 explains how to adjust your bootstrap - you will need to do this in both
 ``public/index.php`` and ``bin/console``.
 
