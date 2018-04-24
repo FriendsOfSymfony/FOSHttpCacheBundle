@@ -22,65 +22,13 @@ concept is to use event listeners on the HttpCache class.
 
     Generic ``BAN`` operations are not supported.
 
-Extending the correct HttpCache
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Event Dispatching HttpCache
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Instead of extending ``Symfony\Bundle\FrameworkBundle\HttpCache\HttpCache``, your
-``AppCache`` should extend ``FOS\HttpCacheBundle\SymfonyCache\EventDispatchingHttpCache``::
+You need to adjust your ``AppCache`` to support event handling and register the
+cache event listeners for the functionality you want to use.
 
-    require_once __DIR__.'/AppKernel.php';
-
-    use FOS\HttpCacheBundle\SymfonyCache\EventDispatchingHttpCache;
-
-    class AppCache extends EventDispatchingHttpCache
-    {
-    }
-
-.. tip::
-
-    If your class already needs to extend a different class, simply copy the event
-    handling code from the ``EventDispatchingHttpCache`` into your ``AppCache`` class.
-    The drawback is that you need to manually check whether you need to adjust your
-    ``AppCache`` each time you update the FOSHttpCache library.
-
-By default, the event dispatching cache kernel registers all event listeners it
-knows about. You can disable listeners, or customize how they are instantiated.
-
-If you do not need all listeners, or need to register some yourself to
-customize their behavior, overwrite ``getOptions`` and return the right bitmap
-in ``fos_default_subscribers``. Use the constants provided by the
-``EventDispatchingHttpCache``::
-
-    public function getOptions()
-    {
-        return array(
-            'fos_default_subscribers' => self::SUBSCRIBER_NONE,
-        );
-    }
-
-To register event listeners that you want to instantiate yourself in the cache
-kernel, overwrite ``getDefaultSubscribers``::
-
-    use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
-
-    // ...
-
-    public function getDefaultSubscribers()
-    {
-        // get enabled listeners with default settings
-        $subscribers = parent::getDefaultSubscribers();
-
-        $subscribers[] = new UserContextListener(array(
-            'session_name_prefix' => 'eZSESSID',
-        ));
-
-        $subscribers[] = new CustomListener();
-
-        return $subscribers;
-    }
-
-You can also register event listeners from outside the kernel, e.g. in your
-``app.php`` with the ``addListener`` and ``addSubscriber`` methods.
+To adjust your cache kernel, follow the instructions in the :ref:`FOSHttpCache Symfony Cache documentation section <foshttpcache:symfony httpcache configuration>`.
 
 .. warning::
 
