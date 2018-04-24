@@ -306,7 +306,21 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         ];
 
         $configuration = new Configuration(false);
-        $configuration = (new Processor())->processConfiguration($configuration, ['fos_http_cache' => $params]);
+        (new Processor())->processConfiguration($configuration, ['fos_http_cache' => $params]);
+    }
+
+    public function testDefaultIsNotConsideredAsServerConfig()
+    {
+        $params = $this->getEmptyConfig();
+        $params['proxy_client'] = [
+            'default' => 'varnish',
+        ];
+
+        $configuration = new Configuration(false);
+        (new Processor())->processConfiguration($configuration, ['fos_http_cache' => $params]);
+
+        // Should not throw InvalidConfigurationException because no "http.servers" was configured
+        $this->addToAssertionCount(1);
     }
 
     public function testSupportsNoop()
