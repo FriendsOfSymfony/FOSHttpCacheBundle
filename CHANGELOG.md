@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.3.0 (unreleased)
-------------------
+2.3.0
+-----
 
 ### Added
 
@@ -18,7 +18,7 @@ Changelog
 
 ### Fixed
 
-* Fix session_listener decoration when session is not enabled.
+* Fix `session_listener` decoration when session is not enabled.
 
 2.2.1
 -----
