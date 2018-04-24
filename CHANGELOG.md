@@ -1,5 +1,13 @@
 Changelog
 =========
+2.3.1
+-----
+
+### Fixed
+
+* Regression in the configuration when you explicitly specified the `default`
+  proxy client. This started to be reported as error in 2.3.0 and now works
+  again.
 
 2.3.0
 -----
