@@ -61,14 +61,14 @@ access to other services.)
 
 * User context is more reliable not cache when the hash mismatches. (E.g. after
   login/logout.)
-  
+
 * The `ContextInvalidationLogoutHandler` has been deprecated in favor of the
   `ContextInvalidationSessionLogoutHandler`. The original handler was called
   after the invalidation of the session, and thus did not invalidate the session
   it should have but a newly created one. You should remove the deprecated service
   `fos_http_cache.user_context.logout_handler` from the logout.handlers section
   of your firewall configuration.
-  
+
 * User context compatibility which was broken due to Symfony making responses
   private if the session is started as of Symfony 3.4+.
 
@@ -161,6 +161,17 @@ access to other services.)
 
 * Added an option `always_vary_on_context_hash` to make it possible to disable 
   automatically setting the vary headers for the user hash.
+
+1.3.15
+------
+
+* Fix session_listener decoration when session is not enabled.
+
+1.3.14
+------
+
+* User context compatibility which was broken due to Symfony making responses
+  private if the session is started as of Symfony 3.4+.
 
 1.3.13
 ------
