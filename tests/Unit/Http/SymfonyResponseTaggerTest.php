@@ -9,25 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCacheBundle\Tests\Unit;
+namespace FOS\HttpCacheBundle\Tests\Unit\Http;
 
-use FOS\HttpCache\ProxyClient\ProxyClient;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class SymfonyResponseTaggerTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
-
-    private $proxyClient;
-
-    public function setUp()
-    {
-        $this->proxyClient = \Mockery::mock(ProxyClient::class);
-    }
-
     public function testTagResponse()
     {
         $tags1 = ['post-1', 'posts'];
