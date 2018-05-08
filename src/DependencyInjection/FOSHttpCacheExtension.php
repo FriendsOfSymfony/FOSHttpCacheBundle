@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\DependencyInjection;
 
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\ProxyClient;
+use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher;
@@ -403,15 +404,22 @@ class FOSHttpCacheExtension extends Extension
     {
         $this->createHttpDispatcherDefinition($container, $config['http'], 'fos_http_cache.proxy_client.varnish.http_dispatcher');
         $options = [
+            'tag_mode' => $config['tag_mode'],
             'tags_header' => $config['tags_header'],
         ];
+
         if (!empty($config['header_length'])) {
             $options['header_length'] = $config['header_length'];
         }
         if (!empty($config['default_ban_headers'])) {
             $options['default_ban_headers'] = $config['default_ban_headers'];
         }
+<<<<<<< HEAD
         $container->setParameter('fos_http_cache.proxy_client.varnish.options', $options);
+=======
+
+        $container->setParameter($this->getAlias().'.proxy_client.varnish.options', $options);
+>>>>>>> Added configuration setting for enabling xkey tagging
 
         $loader->load('varnish.xml');
     }
@@ -469,9 +477,17 @@ class FOSHttpCacheExtension extends Extension
             throw new InvalidConfigurationException(sprintf('You can not enable cache tagging with the %s client', $client));
         }
 
+<<<<<<< HEAD
         $container->setParameter('fos_http_cache.compiler_pass.tag_annotations', true);
         $container->setParameter('fos_http_cache.tag_handler.response_header', $config['response_header']);
         $container->setParameter('fos_http_cache.tag_handler.strict', $config['strict']);
+=======
+        $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', true);
+        $container->setParameter($this->getAlias().'.tag_handler.strict', $config['strict']);
+        $container->setParameter($this->getAlias().'.tag_handler.response_header', $config['response_header']);
+        $container->setParameter($this->getAlias().'.tag_handler.separator', $config['separator']);
+
+>>>>>>> Added configuration setting for enabling xkey tagging
         $loader->load('cache_tagging.xml');
         if (class_exists(Application::class)) {
             $loader->load('cache_tagging_commands.xml');

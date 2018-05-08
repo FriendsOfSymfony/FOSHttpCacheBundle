@@ -134,6 +134,48 @@ class Configuration implements ConfigurationInterface
 
                     throw new InvalidConfigurationException('To enable the user context logout handler, you need to configure a ban capable proxy_client.');
                 })
+            ->end()
+            //Set the correct default tags header for the varnish client, depending on whether we use BAN or xkey
+            ->validate()
+                ->ifTrue(
+                    function ($v) {
+                        return
+                            array_key_exists('proxy_client', $v)
+                            && array_key_exists('varnish', $v['proxy_client'])
+                        ;
+                    }
+                )
+                ->then(function ($v) {
+                    // Overide the header name on invalidation requests
+                    if (empty($v['proxy_client']['varnish']['tags_header'])) {
+                        $v['proxy_client']['varnish']['tags_header'] = (Varnish::TAG_XKEY === $v['proxy_client']['varnish']['tag_mode'])
+                            ? Varnish::DEFAULT_HTTP_HEADER_CACHE_XKEY
+                            : Varnish::DEFAULT_HTTP_HEADER_CACHE_TAGS;
+                    }
+
+                    return $v;
+                })
+            ->end()
+            //Set the correct default response header and separator for the tagger, depending on whether we use BAN or xkey
+            ->validate()
+                ->always()
+                ->then(function ($v) {
+                    // Set a default response header name if none is provided in the config file
+                    if (empty($v['tags']['response_header'])) {
+                        $v['tags']['response_header'] = TagHeaderFormatter::DEFAULT_HEADER_NAME;
+                    }
+
+                    // If using Xkey override the response header name and separator
+                    if (array_key_exists('proxy_client', $v)
+                        && array_key_exists('varnish', $v['proxy_client'])
+                        && Varnish::TAG_XKEY === $v['proxy_client']['varnish']['tag_mode']) {
+                        $v['tags']['response_header'] = 'xkey';
+                        $v['tags']['separator'] = ' ';
+                    }
+
+                    return $v;
+                })
+            ->end()
         ;
 
         $this->addCacheableResponseSection($rootNode);
@@ -362,7 +404,6 @@ class Configuration implements ConfigurationInterface
                             ->end()
                             ->children()
                                 ->scalarNode('tags_header')
-                                    ->defaultValue(Varnish::DEFAULT_HTTP_HEADER_CACHE_TAGS)
                                     ->info('HTTP header to use when sending tag invalidation requests to Varnish')
                                 ->end()
                                 ->scalarNode('header_length')
@@ -372,6 +413,11 @@ class Configuration implements ConfigurationInterface
                                     ->useAttributeAsKey('name')
                                     ->info('Map of additional headers to include in each ban request.')
                                     ->prototype('scalar')->end()
+                                ->end()
+                                ->enumNode('tag_mode')
+                                    ->info('If you can enable the xkey module in Varnish, use the purgekeys mode for more efficient tag handling')
+                                    ->values(['ban', 'purgekeys'])
+                                    ->defaultValue('ban')
                                 ->end()
                                 ->append($this->getHttpDispatcherNode())
                             ->end()
@@ -580,8 +626,12 @@ class Configuration implements ConfigurationInterface
                             ->info('Service name of a custom ExpressionLanugage to use.')
                         ->end()
                         ->scalarNode('response_header')
-                            ->defaultValue(TagHeaderFormatter::DEFAULT_HEADER_NAME)
+                            ->defaultNull()
                             ->info('HTTP header that contains cache tags')
+                        ->end()
+                        ->scalarNode('separator')
+                            ->defaultValue(',')
+                            ->info('Character(s) to use to separate multiple tags')
                         ->end()
                         ->arrayNode('rules')
                             ->prototype('array')
@@ -593,8 +643,8 @@ class Configuration implements ConfigurationInterface
                                     })
                                     ->thenInvalid('Configured a tag_expression but ExpressionLanugage is not available')
                                 ->end()
-                                ->children();
-
+                                ->children()
+                        ;
         $this->addMatch($rules);
 
         $rules
