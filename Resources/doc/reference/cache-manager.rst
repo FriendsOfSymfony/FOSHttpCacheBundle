@@ -94,7 +94,7 @@ Invalidate cache tags::
 
 .. note::
 
-    Marking a response with tags can be done through the :doc:`ResponseTagger <../features/tagging>`.
+    Marking a response with tags can be done through the :doc:`ResponseTagger </features/tagging>`.
 
 .. _flushing:
 

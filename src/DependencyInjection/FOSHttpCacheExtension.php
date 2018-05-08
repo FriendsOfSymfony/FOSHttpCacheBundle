@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\DependencyInjection;
 
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\ProxyClient;
+use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher;
@@ -403,8 +404,10 @@ class FOSHttpCacheExtension extends Extension
     {
         $this->createHttpDispatcherDefinition($container, $config['http'], 'fos_http_cache.proxy_client.varnish.http_dispatcher');
         $options = [
+            'tag_mode' => $config['tag_mode'],
             'tags_header' => $config['tags_header'],
         ];
+
         if (!empty($config['header_length'])) {
             $options['header_length'] = $config['header_length'];
         }
@@ -471,7 +474,9 @@ class FOSHttpCacheExtension extends Extension
 
         $container->setParameter('fos_http_cache.compiler_pass.tag_annotations', true);
         $container->setParameter('fos_http_cache.tag_handler.response_header', $config['response_header']);
+        $container->setParameter('fos_http_cache.tag_handler.separator', $config['separator']);
         $container->setParameter('fos_http_cache.tag_handler.strict', $config['strict']);
+
         $loader->load('cache_tagging.xml');
         if (class_exists(Application::class)) {
             $loader->load('cache_tagging_commands.xml');

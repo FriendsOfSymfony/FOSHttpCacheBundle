@@ -94,6 +94,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ],
             'proxy_client' => [
                 'varnish' => [
+                    'tag_mode' => 'ban',
                     'tags_header' => 'My-Cache-Tags',
                     'header_length' => 1234,
                     'default_ban_headers' => ['Foo' => 'Bar'],
@@ -130,6 +131,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                         'tag_expressions' => ['"a"', '"b"'],
                     ],
                 ],
+                'separator' => ',',
             ],
             'invalidation' => [
                 'enabled' => 'auto',
@@ -385,6 +387,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     'servers' => ['1.1.1.1:80', '2.2.2.2:80'],
                 ],
                 'tags_header' => 'X-Cache-Tags',
+                'tag_mode' => 'ban',
             ],
             'nginx' => [
                 'purge_location' => false,
@@ -685,6 +688,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'response_header' => 'X-Cache-Tags',
                 'expression_language' => null,
                 'rules' => [],
+                'separator' => ',',
             ],
             'invalidation' => [
                 'enabled' => false,

@@ -3,7 +3,7 @@ tags
 
 Create tag rules in your application configuration to set tags on responses
 and invalidate them. See the :doc:`tagging feature chapter </features/tagging>`
-for an introduction.
+for an introduction. Also have a look at :doc:`configuring the proxy client for cache tagging <proxy-client>`.
 
 .. include:: /includes/enabled.rst
 

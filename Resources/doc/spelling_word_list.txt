@@ -2,10 +2,12 @@ admin
 backend
 cacheable
 ETag
+friendsofsymfony
 github
 hostname
 invalidations
 invalidator
+javascript
 login
 logout
 lookup
@@ -16,10 +18,14 @@ multi
 nginx
 noop
 Packagist
+plugin
 preflight
+purgekeys
 redeclaration
+softpurge
 symfony
 subdomains
 templating
 TTL
+xkey
 yaml
