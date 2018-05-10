@@ -30,8 +30,8 @@ incompatible proxies:
         tags:
             enabled: true
 
-``header``
-----------
+``response_header``
+-------------------
 
 **type**: ``string`` **default**: ``X-Cache-Tags``
 
