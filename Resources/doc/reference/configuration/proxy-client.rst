@@ -8,10 +8,11 @@ the usual entry point for application interaction with the caching proxy.
 You need to configure a client or define your own service for the cache manager
 to work.
 
-The proxy client is also directly available as a service
-(``fos_http_cache.proxy_client.default`` and ``fos_http_cache.proxy_client.varnish``
-, ``fos_http_cache.proxy_client.nginx`` or ``fos_http_cache.proxy_client.symfony``)
-that you can use directly.
+The proxy client is also directly available as a service. The default client
+can be autowired with the ``FOS\HttpCache\ProxyClient\ProxyClient`` type
+declaration or the service ``fos_http_cache.default_proxy_client``. Specific
+clients, if configured, are available as ``fos_http_cache.proxy_client.varnish``
+, ``fos_http_cache.proxy_client.nginx`` or ``fos_http_cache.proxy_client.symfony``).
 
 If you need to adjust the proxy client, you can also configure the ``CacheManager``
 with a :ref:`custom proxy client <custom_proxy_client>` that you defined as a

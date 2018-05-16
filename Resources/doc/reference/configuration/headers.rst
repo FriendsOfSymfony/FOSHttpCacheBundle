@@ -134,9 +134,11 @@ directive. This is the default value for the cache control and there is no
 way to determine if it was manually set. If the full header is only
 ``no-cache``, the whole cache control is overwritten.
 
-You can prevent the cache control on specific requests by injecting the
-service ``fos_http_cache.event_listener.cache_control`` and calling
-``setSkip()`` on it. If this method is called, no cache rules are applied.
+You can prevent the cache control on specific controller actions by calling
+``FOS\HttpCacheBundle\EventListener\CacheControlListener::setSkip()``. When
+skip is set to ``true``, no cache rules are applied. This service can be
+autowired - in older versions of the bundle, use the service
+``fos_http_cache.event_listener.cache_control``.
 
 ``cache_control``
 """""""""""""""""

@@ -35,7 +35,9 @@ To invalidate single paths, URLs and routes manually, use the
 ``invalidatePath($path, $headers)`` and ``invalidateRoute($route, $params, $headers)`` methods on
 the cache manager::
 
-    $cacheManager = $container->get('fos_http_cache.cache_manager');
+    use FOS\HttpCacheBundle\CacheManager;
+
+    $cacheManager = $container->get(CacheManager::class);
 
     // Invalidate a path
     $cacheManager->invalidatePath('/users')->flush();

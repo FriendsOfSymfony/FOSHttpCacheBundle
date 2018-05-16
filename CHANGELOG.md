@@ -1,5 +1,20 @@
 Changelog
 =========
+
+2.4.0 (unreleased)
+------------------
+
+### Added
+
+* Autowiring support for the services in this bundle:
+
+  - fos_http_cache.cache_manager => FOS\HttpCacheBundle\CacheManager
+  - fos_http_cache.http.symfony_response_tagger => FOS\HttpCacheBundle\Http\SymfonyResponseTagger
+  - fos_http_cache.event_listener.cache_control => FOS\HttpCacheBundle\EventListener\CacheControlListener
+  - fos_http_cache.proxy_client.default => FOS\HttpCache\ProxyClient\ProxyClient
+
+  The old service names are still available, but using them directly is deprecated.
+
 2.3.1
 -----
 

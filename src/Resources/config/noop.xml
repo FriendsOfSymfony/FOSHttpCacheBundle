@@ -6,7 +6,8 @@
 
     <services>
         <service id="fos_http_cache.proxy_client.noop"
-                 class="FOS\HttpCache\ProxyClient\Noop">
+                 class="FOS\HttpCache\ProxyClient\Noop"
+                 public="true">
         </service>
     </services>
 

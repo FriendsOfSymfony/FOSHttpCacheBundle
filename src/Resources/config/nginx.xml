@@ -6,7 +6,8 @@
 
     <services>
         <service id="fos_http_cache.proxy_client.nginx"
-                 class="FOS\HttpCache\ProxyClient\Nginx">
+                 class="FOS\HttpCache\ProxyClient\Nginx"
+                 public="true">
             <argument type="service" id="fos_http_cache.proxy_client.nginx.http_dispatcher"/>
             <argument>%fos_http_cache.proxy_client.nginx.options%</argument>
         </service>

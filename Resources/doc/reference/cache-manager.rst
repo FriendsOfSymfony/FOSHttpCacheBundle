@@ -15,6 +15,14 @@ By *refreshing* a piece of content, a fresh copy will be fetched right away.
     These terms are explained in more detail in
     :ref:`An Introduction to Cache Invalidation <foshttpcache:invalidation introduction>`.
 
+The cache manager is available in the Symfony DI container using autowiring
+with the ``FOS\HttpCacheBundle\CacheManager`` class.
+
+.. versionadded:: 2.3.2
+    Autowiring support has been added in version 2.3.2. In older versions of
+    the bundle, you need to explicitly use the service name
+    ``fos_http_cache.cache_manager``.
+
 .. _cache manager invalidation:
 
 ``invalidatePath()``
@@ -38,12 +46,10 @@ Invalidate a URL::
 
 Invalidate a route::
 
-    $cacheManager = $container->get('fos_http_cache.cache_manager');
     $cacheManager->invalidateRoute('user_details', array('id' => 123));
 
 Invalidate a :ref:`regular expression <foshttpcache:invalidate regex>`::
 
-    $cacheManager = $container->get('fos_http_cache.cache_manager');
     $cacheManager->invalidateRegex('.*', 'image/png', array('example.com'));
 
 The cache manager offers a fluent interface::
@@ -67,17 +73,14 @@ The cache manager offers a fluent interface::
 
 Refresh a path::
 
-    $cacheManager = $container->get('fos_http_cache.cache_manager');
     $cacheManager->refreshPath('/users');
 
 Refresh a URL::
 
-    $cacheManager = $container->get('fos_http_cache.cache_manager');
     $cacheManager->refreshPath('http://www.example.com/users');
 
 Refresh a Route::
 
-    $cacheManager = $container->get('fos_http_cache.cache_manager');
     $cacheManager->refreshRoute('user_details', array('id' => 123));
 
 .. _cache_manager_tags:
