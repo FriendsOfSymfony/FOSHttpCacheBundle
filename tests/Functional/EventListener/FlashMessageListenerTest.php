@@ -29,15 +29,24 @@ class FlashMessageListenerTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertEquals('flash', $response->getContent());
         $cookies = $response->headers->getCookies();
-        $this->assertCount(2, $cookies, implode(',', $cookies));
+        $this->assertGreaterThanOrEqual(1, $cookies, implode(',', $cookies));
 
-        /** @var Cookie $cookie */
-        $cookie = $cookies[0];
+        $found = false;
+        foreach ($cookies as $cookie) {
+            /** @var Cookie $cookie */
+            if ('flash_cookie_name' !== $cookie->getName()) {
+                continue;
+            }
 
-        $this->assertEquals('/', $cookie->getPath());
-        $this->assertNull($cookie->getDomain());
-        $this->assertTrue($cookie->isSecure());
-        $this->assertEquals('flash_cookie_name', $cookie->getName());
-        $this->assertJsonStringEqualsJsonString(json_encode(['notice' => ['Flash Message!']]), $cookie->getValue());
+            $this->assertEquals('/', $cookie->getPath());
+            $this->assertNull($cookie->getDomain());
+            $this->assertTrue($cookie->isSecure());
+            $this->assertJsonStringEqualsJsonString(json_encode(['notice' => ['Flash Message!']]), $cookie->getValue());
+            $found = true;
+        }
+
+        if (!$found) {
+            $this->fail('Cookie flash_cookie_name not found in the cookie response header: '.implode(',', $cookies));
+        }
     }
 }
