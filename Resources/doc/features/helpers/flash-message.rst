@@ -53,7 +53,7 @@ to only show the flash message once. Something along these lines:
 
     function showFlash()
     {
-        var cookie = getCookie("flashes"); // fos_http_cache.flash_message.name
+        var cookie = getCookie("flashes"); // you can change the cookie name in fos_http_cache.flash_message.name configuration option
 
         if (!cookie) {
             return;
@@ -73,7 +73,7 @@ to only show the flash message once. Something along these lines:
         // YOUR WORK: show flashes in your DOM...
 
         // remove the cookie to not show flashes again
-        // path is the fos_http_cache.flash_message.path value
+        // the cookie path is controlled by the fos_http_cache.flash_message.path configuration option
         document.cookie = "flashes=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/";
     }
 

@@ -18,6 +18,7 @@
                 <argument>%fos_http_cache.cache_manager.generate_url_type%</argument>
             </call>
         </service>
+        <service id="FOS\HttpCacheBundle\CacheManager" alias="fos_http_cache.cache_manager" public="true"/>
 
         <service id="fos_http_cache.event_listener.log"
                  class="FOS\HttpCache\EventListener\LogListener"

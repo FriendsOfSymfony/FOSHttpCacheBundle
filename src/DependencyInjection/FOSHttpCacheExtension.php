@@ -12,6 +12,7 @@
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
+use FOS\HttpCache\ProxyClient\ProxyClient;
 use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher;
@@ -54,7 +55,7 @@ class FOSHttpCacheExtension extends Extension
 
         if ($config['debug']['enabled'] || (!empty($config['cache_control']))) {
             $debugHeader = $config['debug']['enabled'] ? $config['debug']['header'] : false;
-            $container->setParameter($this->getAlias().'.debug_header', $debugHeader);
+            $container->setParameter('fos_http_cache.debug_header', $debugHeader);
             $loader->load('cache_control_listener.xml');
         }
 
@@ -76,7 +77,7 @@ class FOSHttpCacheExtension extends Extension
             if (array_key_exists('custom_proxy_client', $config['cache_manager'])) {
                 // overwrite the previously set alias, if a proxy client was also configured
                 $container->setAlias(
-                    $this->getAlias().'.default_proxy_client',
+                    'fos_http_cache.default_proxy_client',
                     $config['cache_manager']['custom_proxy_client']
                 );
             }
@@ -95,7 +96,7 @@ class FOSHttpCacheExtension extends Extension
             } else {
                 $generateUrlType = $config['cache_manager']['generate_url_type'];
             }
-            $container->setParameter($this->getAlias().'.cache_manager.generate_url_type', $generateUrlType);
+            $container->setParameter('fos_http_cache.cache_manager.generate_url_type', $generateUrlType);
             $loader->load('cache_manager.xml');
             if (class_exists(Application::class)) {
                 $loader->load('cache_manager_commands.xml');
@@ -112,7 +113,7 @@ class FOSHttpCacheExtension extends Extension
                     : 'custom'
             );
         } else {
-            $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', false);
+            $container->setParameter('fos_http_cache.compiler_pass.tag_annotations', false);
         }
 
         if ($config['invalidation']['enabled']) {
@@ -120,7 +121,7 @@ class FOSHttpCacheExtension extends Extension
 
             if (!empty($config['invalidation']['expression_language'])) {
                 $container->setAlias(
-                    $this->getAlias().'.invalidation.expression_language',
+                    'fos_http_cache.invalidation.expression_language',
                     $config['invalidation']['expression_language']
                 );
             }
@@ -136,7 +137,7 @@ class FOSHttpCacheExtension extends Extension
 
         if (!empty($config['flash_message']) && $config['flash_message']['enabled']) {
             unset($config['flash_message']['enabled']);
-            $container->setParameter($this->getAlias().'.event_listener.flash_message.options', $config['flash_message']);
+            $container->setParameter('fos_http_cache.event_listener.flash_message.options', $config['flash_message']);
 
             $loader->load('flash_message.xml');
         }
@@ -144,7 +145,7 @@ class FOSHttpCacheExtension extends Extension
 
     private function loadCacheable(ContainerBuilder $container, array $config)
     {
-        $definition = $container->getDefinition($this->getAlias().'.response_matcher.cacheable');
+        $definition = $container->getDefinition('fos_http_cache.response_matcher.cacheable');
 
         // Change CacheableResponseMatcher to ExpressionResponseMatcher
         if ($config['response']['expression']) {
@@ -152,7 +153,7 @@ class FOSHttpCacheExtension extends Extension
                 ->setArguments([$config['response']['expression']]);
         } else {
             $container->setParameter(
-                $this->getAlias().'.cacheable.response.additional_status',
+                'fos_http_cache.cacheable.response.additional_status',
                 $config['response']['additional_status']
             );
         }
@@ -166,7 +167,7 @@ class FOSHttpCacheExtension extends Extension
      */
     private function loadCacheControl(ContainerBuilder $container, array $config)
     {
-        $controlDefinition = $container->getDefinition($this->getAlias().'.event_listener.cache_control');
+        $controlDefinition = $container->getDefinition('fos_http_cache.event_listener.cache_control');
 
         foreach ($config['rules'] as $rule) {
             $ruleMatcher = $this->parseRuleMatcher($container, $rule['match']);
@@ -193,14 +194,14 @@ class FOSHttpCacheExtension extends Extension
         $responseMatcher = $this->parseResponseMatcher($container, $match);
 
         $signature = serialize([(string) $requestMatcher, (string) $responseMatcher]);
-        $id = $this->getAlias().'.cache_control.rule_matcher.'.md5($signature);
+        $id = 'fos_http_cache.cache_control.rule_matcher.'.md5($signature);
 
         if ($container->hasDefinition($id)) {
             throw new InvalidConfigurationException('Duplicate match criteria. Would be hidden by a previous rule. match: '.json_encode($match));
         }
 
         $container
-            ->setDefinition($id, $this->createChildDefinition($this->getAlias().'.rule_matcher'))
+            ->setDefinition($id, $this->createChildDefinition('fos_http_cache.rule_matcher'))
             ->replaceArgument(0, $requestMatcher)
             ->replaceArgument(1, $responseMatcher)
         ;
@@ -228,11 +229,11 @@ class FOSHttpCacheExtension extends Extension
             $match['attributes'],
         ];
         $serialized = serialize($arguments);
-        $id = $this->getAlias().'.request_matcher.'.md5($serialized).sha1($serialized);
+        $id = 'fos_http_cache.request_matcher.'.md5($serialized).sha1($serialized);
 
         if (!$container->hasDefinition($id)) {
             $container
-                ->setDefinition($id, $this->createChildDefinition($this->getAlias().'.request_matcher'))
+                ->setDefinition($id, $this->createChildDefinition('fos_http_cache.request_matcher'))
                 ->setArguments($arguments)
             ;
 
@@ -255,23 +256,23 @@ class FOSHttpCacheExtension extends Extension
     private function parseResponseMatcher(ContainerBuilder $container, array $config)
     {
         if (!empty($config['additional_response_status'])) {
-            $id = $this->getAlias().'cache_control.expression.'.md5(serialize($config['additional_response_status']));
+            $id = 'fos_http_cache.cache_control.expression.'.md5(serialize($config['additional_response_status']));
             if (!$container->hasDefinition($id)) {
                 $container
-                    ->setDefinition($id, $this->createChildDefinition($this->getAlias().'.response_matcher.cache_control.cacheable_response'))
+                    ->setDefinition($id, $this->createChildDefinition('fos_http_cache.response_matcher.cache_control.cacheable_response'))
                     ->setArguments([$config['additional_response_status']])
                 ;
             }
         } elseif (!empty($config['match_response'])) {
-            $id = $this->getAlias().'cache_control.match_response.'.md5($config['match_response']);
+            $id = 'fos_http_cache.cache_control.match_response.'.md5($config['match_response']);
             if (!$container->hasDefinition($id)) {
                 $container
-                    ->setDefinition($id, $this->createChildDefinition($this->getAlias().'.response_matcher.cache_control.expression'))
+                    ->setDefinition($id, $this->createChildDefinition('fos_http_cache.response_matcher.cache_control.expression'))
                     ->replaceArgument(0, $config['match_response'])
                 ;
             }
         } else {
-            $id = $this->getAlias().'.response_matcher.cacheable';
+            $id = 'fos_http_cache.response_matcher.cacheable';
         }
 
         return new Reference($id);
@@ -287,18 +288,18 @@ class FOSHttpCacheExtension extends Extension
 
         $loader->load('user_context.xml');
 
-        $container->getDefinition($this->getAlias().'.user_context.request_matcher')
+        $container->getDefinition('fos_http_cache.user_context.request_matcher')
             ->replaceArgument(0, $config['match']['accept'])
             ->replaceArgument(1, $config['match']['method']);
 
-        $container->setParameter($this->getAlias().'.event_listener.user_context.options', [
+        $container->setParameter('fos_http_cache.event_listener.user_context.options', [
             'user_identifier_headers' => $completeUserIdentifierHeaders,
             'user_hash_header' => $config['user_hash_header'],
             'ttl' => $config['hash_cache_ttl'],
             'add_vary_on_hash' => $config['always_vary_on_context_hash'],
         ]);
 
-        $container->getDefinition($this->getAlias().'.event_listener.user_context')
+        $container->getDefinition('fos_http_cache.event_listener.user_context')
             ->replaceArgument(0, new Reference($config['match']['matcher_service']))
         ;
 
@@ -306,23 +307,23 @@ class FOSHttpCacheExtension extends Extension
             'user_identifier_headers' => $configuredUserIdentifierHeaders,
             'session_name_prefix' => $config['session_name_prefix'],
         ];
-        $container->getDefinition($this->getAlias().'.user_context.anonymous_request_matcher')
+        $container->getDefinition('fos_http_cache.user_context.anonymous_request_matcher')
             ->replaceArgument(0, $options);
 
         if ($config['logout_handler']['enabled']) {
-            $container->getDefinition($this->getAlias().'.user_context_invalidator')
+            $container->getDefinition('fos_http_cache.user_context_invalidator')
                 ->replaceArgument(1, $completeUserIdentifierHeaders)
                 ->replaceArgument(2, $config['match']['accept']);
 
-            $container->setAlias('security.logout.handler.session', $this->getAlias().'.user_context.session_logout_handler');
+            $container->setAlias('security.logout.handler.session', 'fos_http_cache.user_context.session_logout_handler');
         } else {
-            $container->removeDefinition($this->getAlias().'.user_context.logout_handler');
-            $container->removeDefinition($this->getAlias().'.user_context.session_logout_handler');
-            $container->removeDefinition($this->getAlias().'.user_context_invalidator');
+            $container->removeDefinition('fos_http_cache.user_context.logout_handler');
+            $container->removeDefinition('fos_http_cache.user_context.session_logout_handler');
+            $container->removeDefinition('fos_http_cache.user_context_invalidator');
         }
 
         if ($config['role_provider']) {
-            $container->getDefinition($this->getAlias().'.user_context.role_provider')
+            $container->getDefinition('fos_http_cache.user_context.role_provider')
                 ->addTag(HashGeneratorPass::TAG_NAME)
                 ->setAbstract(false);
         }
@@ -357,8 +358,12 @@ class FOSHttpCacheExtension extends Extension
         }
 
         $container->setAlias(
-            $this->getAlias().'.default_proxy_client',
-            $this->getAlias().'.proxy_client.'.$this->getDefaultProxyClient($config)
+            'fos_http_cache.default_proxy_client',
+            'fos_http_cache.proxy_client.'.$this->getDefaultProxyClient($config)
+        );
+        $container->setAlias(
+            ProxyClient::class,
+            'fos_http_cache.default_proxy_client'
         );
     }
 
@@ -396,7 +401,7 @@ class FOSHttpCacheExtension extends Extension
 
     private function loadVarnish(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
-        $this->createHttpDispatcherDefinition($container, $config['http'], $this->getAlias().'.proxy_client.varnish.http_dispatcher');
+        $this->createHttpDispatcherDefinition($container, $config['http'], 'fos_http_cache.proxy_client.varnish.http_dispatcher');
         $options = [
             'tags_header' => $config['tags_header'],
         ];
@@ -406,15 +411,15 @@ class FOSHttpCacheExtension extends Extension
         if (!empty($config['default_ban_headers'])) {
             $options['default_ban_headers'] = $config['default_ban_headers'];
         }
-        $container->setParameter($this->getAlias().'.proxy_client.varnish.options', $options);
+        $container->setParameter('fos_http_cache.proxy_client.varnish.options', $options);
 
         $loader->load('varnish.xml');
     }
 
     private function loadNginx(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
-        $this->createHttpDispatcherDefinition($container, $config['http'], $this->getAlias().'.proxy_client.nginx.http_dispatcher');
-        $container->setParameter($this->getAlias().'.proxy_client.nginx.options', [
+        $this->createHttpDispatcherDefinition($container, $config['http'], 'fos_http_cache.proxy_client.nginx.http_dispatcher');
+        $container->setParameter('fos_http_cache.proxy_client.nginx.options', [
             'purge_location' => $config['purge_location'],
         ]);
         $loader->load('nginx.xml');
@@ -422,7 +427,7 @@ class FOSHttpCacheExtension extends Extension
 
     private function loadSymfony(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
-        $serviceName = $this->getAlias().'.proxy_client.symfony.http_dispatcher';
+        $serviceName = 'fos_http_cache.proxy_client.symfony.http_dispatcher';
 
         if ($config['use_kernel_dispatcher']) {
             $definition = new Definition(KernelDispatcher::class, [
@@ -441,7 +446,7 @@ class FOSHttpCacheExtension extends Extension
         if (!empty($config['header_length'])) {
             $options['header_length'] = $config['header_length'];
         }
-        $container->setParameter($this->getAlias().'.proxy_client.symfony.options', $options);
+        $container->setParameter('fos_http_cache.proxy_client.symfony.options', $options);
 
         $loader->load('symfony.xml');
     }
@@ -456,7 +461,7 @@ class FOSHttpCacheExtension extends Extension
     private function loadCacheTagging(ContainerBuilder $container, XmlFileLoader $loader, array $config, $client)
     {
         if ('auto' === $config['enabled'] && !in_array($client, ['varnish', 'symfony'])) {
-            $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', false);
+            $container->setParameter('fos_http_cache.compiler_pass.tag_annotations', false);
 
             return;
         }
@@ -464,9 +469,9 @@ class FOSHttpCacheExtension extends Extension
             throw new InvalidConfigurationException(sprintf('You can not enable cache tagging with the %s client', $client));
         }
 
-        $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', true);
-        $container->setParameter($this->getAlias().'.tag_handler.response_header', $config['response_header']);
-        $container->setParameter($this->getAlias().'.tag_handler.strict', $config['strict']);
+        $container->setParameter('fos_http_cache.compiler_pass.tag_annotations', true);
+        $container->setParameter('fos_http_cache.tag_handler.response_header', $config['response_header']);
+        $container->setParameter('fos_http_cache.tag_handler.strict', $config['strict']);
         $loader->load('cache_tagging.xml');
         if (class_exists(Application::class)) {
             $loader->load('cache_tagging_commands.xml');
@@ -474,7 +479,7 @@ class FOSHttpCacheExtension extends Extension
 
         if (!empty($config['expression_language'])) {
             $container->setAlias(
-                $this->getAlias().'.tag_handler.expression_language',
+                'fos_http_cache.tag_handler.expression_language',
                 $config['expression_language']
             );
         }
@@ -486,7 +491,7 @@ class FOSHttpCacheExtension extends Extension
 
     private function loadTest(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
-        $container->setParameter($this->getAlias().'.test.cache_header', $config['cache_header']);
+        $container->setParameter('fos_http_cache.test.cache_header', $config['cache_header']);
 
         if ($config['proxy_server']) {
             $this->loadProxyServer($container, $loader, $config['proxy_server']);
@@ -504,8 +509,8 @@ class FOSHttpCacheExtension extends Extension
         }
 
         $container->setAlias(
-            $this->getAlias().'.test.default_proxy_server',
-            $this->getAlias().'.test.proxy_server.'.$this->getDefaultProxyClient($config)
+            'fos_http_cache.test.default_proxy_server',
+            'fos_http_cache.test.proxy_server.'.$this->getDefaultProxyClient($config)
         );
     }
 
@@ -514,7 +519,7 @@ class FOSHttpCacheExtension extends Extension
         $loader->load('varnish_proxy.xml');
         foreach ($config as $key => $value) {
             $container->setParameter(
-                $this->getAlias().'.test.proxy_server.varnish.'.$key,
+                'fos_http_cache.test.proxy_server.varnish.'.$key,
                 $value
             );
         }
@@ -525,7 +530,7 @@ class FOSHttpCacheExtension extends Extension
         $loader->load('nginx_proxy.xml');
         foreach ($config as $key => $value) {
             $container->setParameter(
-                $this->getAlias().'.test.proxy_server.nginx.'.$key,
+                'fos_http_cache.test.proxy_server.nginx.'.$key,
                 $value
             );
         }
@@ -533,7 +538,7 @@ class FOSHttpCacheExtension extends Extension
 
     private function loadTagRules(ContainerBuilder $container, array $config)
     {
-        $tagDefinition = $container->getDefinition($this->getAlias().'.event_listener.tag');
+        $tagDefinition = $container->getDefinition('fos_http_cache.event_listener.tag');
 
         foreach ($config as $rule) {
             $ruleMatcher = $this->parseRequestMatcher($container, $rule['match']);
@@ -549,7 +554,7 @@ class FOSHttpCacheExtension extends Extension
 
     private function loadInvalidatorRules(ContainerBuilder $container, array $config)
     {
-        $tagDefinition = $container->getDefinition($this->getAlias().'.event_listener.invalidation');
+        $tagDefinition = $container->getDefinition('fos_http_cache.event_listener.invalidation');
 
         foreach ($config as $rule) {
             $ruleMatcher = $this->parseRequestMatcher($container, $rule['match']);

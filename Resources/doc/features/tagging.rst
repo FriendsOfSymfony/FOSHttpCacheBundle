@@ -52,29 +52,26 @@ invalidation requests are flushed to the caching proxy
 Tagging and Invalidating from PHP Code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To add tags to responses, inject the ``ResponseTagger`` (service
-``fos_http_cache.http.symfony_response_tagger``) and use ``addTags($tags)`` to
-add tags that will be set on the response::
+To add tags to responses, use the ``ResponseTagger::addTags`` method::
 
     use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 
     class NewsController
     {
-        /**
-         * @var SymfonyResponseTagger
-         */
-        private $responseTagger;
-
-        public function articleAction($id)
+        public function articleAction(string $id, SymfonyResponseTagger $responseTagger)
         {
-            $this->responseTagger->addTags(array('news', 'news-' . $id));
+            $responseTagger->addTags(array('news', 'news-' . $id));
 
             // ...
         }
     }
 
-To invalidate tags, inject the ``CacheManager`` (service ``fos_http_cache.cache_manager``)
-and call ``invalidateTags($tags)`` on it::
+.. versionadded:: 2.3.2
+    Autowiring support has been added in version 2.3.2. In older versions of
+    the bundle, you need to inject the service
+    ``fos_http_cache.http.symfony_response_tagger`` into your controller.
+
+To invalidate tags, use the ``CacheManager::invalidateTags($tags)`` method::
 
     use FOS\HttpCacheBundle\CacheManager;
 
@@ -85,15 +82,20 @@ and call ``invalidateTags($tags)`` on it::
          */
         private $cacheManager;
 
-        public function editAction($id)
+        public function editAction(string $id, CacheManager $cacheManager)
         {
             // ...
 
-            $this->cacheManager->invalidateTags(array('news-' . $id));
+            $cacheManager->invalidateTags(array('news-' . $id));
 
             // ...
         }
     }
+
+.. versionadded:: 2.3.2
+    Autowiring support has been added in version 2.3.2. In older versions of
+    the bundle, you need to inject the service ``fos_http_cache.cache_manager``
+    in your controller.
 
 Tagging from Twig Templates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

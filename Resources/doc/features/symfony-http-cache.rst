@@ -69,6 +69,7 @@ The :ref:`FOSHttpCache Symfony Proxy Client documentation section <foshttpcache:
 explains how to adjust your bootstrap - you will need to do this in both
 ``public/index.php`` and ``bin/console``.
 
-Once your bootstrapping is adjusted, set ``fos_http_cache.proxy_client.symfony.use_kernel_dispatcher: true``.
+Once your bootstrapping is adjusted, set the configuration option
+``fos_http_cache.proxy_client.symfony.use_kernel_dispatcher: true``.
 
 .. _Symfony HttpCache documentation: http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy

@@ -6,10 +6,12 @@
 
     <services>
         <service id="fos_http_cache.event_listener.cache_control"
-                 class="FOS\HttpCacheBundle\EventListener\CacheControlListener">
+                 class="FOS\HttpCacheBundle\EventListener\CacheControlListener"
+                 public="true">
             <argument>%fos_http_cache.debug_header%</argument>
             <tag name="kernel.event_subscriber" />
         </service>
+        <service id="FOS\HttpCacheBundle\EventListener\CacheControlListener" alias="fos_http_cache.event_listener.cache_control" public="true"/>
 
         <service id="fos_http_cache.response_matcher.cache_control.cacheable_response"
                  class="FOS\HttpCacheBundle\Http\ResponseMatcher\CacheableResponseMatcher"
