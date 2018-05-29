@@ -16,6 +16,7 @@ use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Kernel;
 
 class TagController extends Controller
 {
@@ -62,7 +63,9 @@ class TagController extends Controller
     {
         $this->responseTagger->addTags(['manual-tag']);
 
-        return $this->render('container.html.twig');
+        return $this->render('container.html.twig', [
+            'action' => (Kernel::MAJOR_VERSION >= 4 && Kernel::MINOR_VERSION >= 1) ? 'tag_controller::subrequestAction' : 'tag_controller:subrequestAction',
+        ]);
     }
 
     /**

@@ -1,0 +1,12 @@
+# configuration to make symfony 4.1 work as expected
+
+imports:
+  - { resource: config.yml }
+
+framework:
+  router:
+    resource: "%kernel.root_dir%/config/routing_41.yml"
+
+twig:
+  default_path: "%kernel.root_dir%/Resources/views"
+  strict_variables: "%kernel.debug%"
