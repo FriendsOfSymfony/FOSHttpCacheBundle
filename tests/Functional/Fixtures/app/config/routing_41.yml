@@ -1,56 +1,56 @@
 tag_list:
   path:  /tag/list
-  defaults: { _controller: tag_controller::listAction }
   methods:  [GET]
+  controller: tag_controller::listAction
 
 tag_error:
   path:  /tag/error
-  defaults: { _controller: tag_controller::errorAction }
+  controller: tag_controller::errorAction
 
 tag_one:
   path:  /tag/{id}
-  defaults: { _controller: tag_controller::itemAction }
   methods:  [GET,POST]
+  controller: tag_controller::itemAction
 
 tag_manual:
   path: /tag_manual
-  defaults: { _controller: tag_controller::manualAction }
+  controller: tag_controller::manualAction
 
 tag_twig:
   path: /tag_twig
-  defaults: { _controller: tag_controller::twigAction }
+  controller: tag_controller::twigAction
 
 invalidation_route:
   path: /invalidate/route/{id}
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::itemAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::itemAction
 
 invalidation_path:
   path: /invalidate/path/{statusCode}
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::otherAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::otherAction
 
 invalidation_error:
   path: /invalidate/error
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::errorAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::errorAction
 
 test_cached:
   path:  /cached/{id}
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }
   methods:  [GET,PUT]
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction
 
 test_cached_session:
   path:  /secured_area/cached_session
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::sessionAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::sessionAction
 
 test_noncached:
   path:  /noncached
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction
 
 test_logout:
   path:  /secured_area/logout
 
 test_flash:
   path: /flash
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\FlashMessageController::flashAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\FlashMessageController::flashAction
 
 user_context_hash:
     path: /secured_area/_fos_user_context_hash
