@@ -148,8 +148,8 @@ For the handler to work:
   and out must be enabled (``invalidate_session``).
 
 .. warning::
-    The cache invalidation feature is broken working as expected in
-    FOSHttpCacheBundle prior to version 2.2.
+    The cache invalidation on logout only works correctly with FOSHttpCacheBundle 2.2 and later.
+    It was broken in older versions of the bundle.
 
 .. tip::
     The logout handler is active on all firewalls.  If your application has
