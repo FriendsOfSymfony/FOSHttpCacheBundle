@@ -105,18 +105,34 @@ class Configuration implements ConfigurationInterface
             ->validate()
                 ->ifTrue(
                     function ($v) {
-                        return $v['user_context']['logout_handler']['enabled']
-                            && !isset($v['proxy_client']);
+                        return false !== $v['user_context']['logout_handler']['enabled'];
                     }
                 )
                 ->then(function ($v) {
+                    if (isset($v['cache_manager']['custom_proxy_client'])) {
+                        $v['user_context']['logout_handler']['enabled'] = true;
+
+                        return $v;
+                    }
+
+                    if (isset($v['proxy_client']['default']) && in_array($v['proxy_client']['default'], ['varnish', 'noop'])) {
+                        $v['user_context']['logout_handler']['enabled'] = true;
+
+                        return $v;
+                    }
+                    if (isset($v['proxy_client']['varnish']) || isset($v['proxy_client']['noop'])) {
+                        $v['user_context']['logout_handler']['enabled'] = true;
+
+                        return $v;
+                    }
+
                     if ('auto' === $v['user_context']['logout_handler']['enabled']) {
                         $v['user_context']['logout_handler']['enabled'] = false;
 
                         return $v;
                     }
 
-                    throw new InvalidConfigurationException('You need to configure a proxy_client for the logout_handler.');
+                    throw new InvalidConfigurationException('To enable the user context logout handler, you need to configure a ban capable proxy_client.');
                 })
         ;
 
@@ -414,7 +430,7 @@ class Configuration implements ConfigurationInterface
 
                                 if ('symfony' === $proxyName) {
                                     if (!$serversConfigured && false === $proxyConfig['use_kernel_dispatcher']) {
-                                        throw new \InvalidArgumentException(sprintf('Either configure the "http.servers" section or enable "use_kernel_dispatcher" the proxy "%s"', $proxyName));
+                                        throw new \InvalidArgumentException('Either configure the "http.servers" section or enable "proxy_client.symfony.use_kernel_dispatcher"');
                                     }
                                 }
                             }
