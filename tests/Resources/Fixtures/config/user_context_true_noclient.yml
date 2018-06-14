@@ -1,0 +1,5 @@
+fos_http_cache:
+
+    user_context:
+        logout_handler:
+            enabled: true

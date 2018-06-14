@@ -1,0 +1,7 @@
+fos_http_cache:
+
+    cache_manager:
+        enabled: true
+        custom_proxy_client: acme.proxy_client
+
+    user_context: ~

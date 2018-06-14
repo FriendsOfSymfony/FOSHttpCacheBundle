@@ -168,7 +168,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'user_hash_header' => 'FOS-User-Context-Hash',
                 'role_provider' => true,
                 'logout_handler' => [
-                    'enabled' => 'auto',
+                    'enabled' => true,
                 ],
             ],
             'flash_message' => [
@@ -207,6 +207,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         ];
         $expectedConfiguration['tags']['enabled'] = 'auto';
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
+        $expectedConfiguration['user_context']['logout_handler']['enabled'] = true;
 
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
@@ -238,7 +239,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
         $expectedConfiguration['tags']['enabled'] = 'auto';
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
-        $expectedConfiguration['user_context']['logout_handler']['enabled'] = 'auto';
+        $expectedConfiguration['user_context']['logout_handler']['enabled'] = false;
 
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
@@ -274,7 +275,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
         $expectedConfiguration['tags']['enabled'] = 'auto';
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
-        $expectedConfiguration['user_context']['logout_handler']['enabled'] = 'auto';
+        $expectedConfiguration['user_context']['logout_handler']['enabled'] = false;
 
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
@@ -291,7 +292,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
 
     /**
      * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Either configure the "http.servers" section or enable "use_kernel_dispatcher" the proxy "symfony"
+     * @expectedExceptionMessage Either configure the "http.servers" section or enable "proxy_client.symfony.use_kernel_dispatcher
      */
     public function testEmptyServerConfigurationIsNotAllowed()
     {
@@ -333,7 +334,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
         $expectedConfiguration['tags']['enabled'] = 'auto';
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
-        $expectedConfiguration['user_context']['logout_handler']['enabled'] = 'auto';
+        $expectedConfiguration['user_context']['logout_handler']['enabled'] = true;
 
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
@@ -398,7 +399,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
         $expectedConfiguration['tags']['enabled'] = 'auto';
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
-        $expectedConfiguration['user_context']['logout_handler']['enabled'] = 'auto';
+        $expectedConfiguration['user_context']['logout_handler']['enabled'] = true;
 
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
@@ -592,6 +593,54 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 $this->assertContains('cache_manager needed for invalidation handling', $e->getMessage());
             }
         }
+    }
+
+    public function userContextLogoutHandlerProvider()
+    {
+        return [
+            'auto no client' => ['config/user_context_auto_noclient.yml', false, false, false, false, null],
+            'auto ban client' => ['config/user_context_auto_banclient.yml', true, true, 'custom', 'auto', null],
+            'auto non ban client' => ['config/user_context_auto_notbanclient.yml', false, 'auto', 'nginx', 'auto', null],
+            'true no client' => ['config/user_context_true_noclient.yml', null, false, 'auto', false, 'you need to configure a ban capable proxy_client'],
+            'true ban client' => ['config/user_context_true_banclient.yml', true, true, 'custom', 'auto', null],
+            'true non ban client' => ['config/user_context_true_notbanclient.yml', null, true, 'nginx', 'auto', 'you need to configure a ban capable proxy_client'],
+        ];
+    }
+
+    /**
+     * @dataProvider userContextLogoutHandlerProvider
+     */
+    public function testUserContextLogoutHandler(string $configFile, $expected, $cacheManager, $proxyClient, $tags, $exception)
+    {
+        $configFile = __DIR__.'/../../Resources/Fixtures/'.$configFile;
+        if ($exception) {
+            try {
+                $this->assertProcessedConfigurationEquals([], [$configFile]);
+                $this->fail('No exception thrown on invalid configuration');
+            } catch (InvalidConfigurationException $e) {
+                $this->assertContains($exception, $e->getMessage());
+            }
+
+            return;
+        }
+
+        $expectedConfiguration = $this->getEmptyConfig();
+        $expectedConfiguration['cache_manager']['enabled'] = $cacheManager;
+        if ('custom' === $proxyClient) {
+            $expectedConfiguration['cache_manager']['custom_proxy_client'] = 'acme.proxy_client';
+        } elseif ('nginx' === $proxyClient) {
+            $expectedConfiguration['proxy_client'][$proxyClient]['http'] = [
+                'servers' => ['localhost'],
+                'base_url' => null,
+                'http_client' => null,
+            ];
+            $expectedConfiguration['proxy_client'][$proxyClient]['purge_location'] = false;
+        }
+        $expectedConfiguration['tags']['enabled'] = $tags;
+        $expectedConfiguration['invalidation']['enabled'] = $tags;
+        $expectedConfiguration['user_context']['enabled'] = true;
+        $expectedConfiguration['user_context']['logout_handler']['enabled'] = $expected;
+        $this->assertProcessedConfigurationEquals($expectedConfiguration, [$configFile]);
     }
 
     public function testInvalidDate()
