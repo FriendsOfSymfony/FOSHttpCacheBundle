@@ -477,17 +477,10 @@ class FOSHttpCacheExtension extends Extension
             throw new InvalidConfigurationException(sprintf('You can not enable cache tagging with the %s client', $client));
         }
 
-<<<<<<< HEAD
         $container->setParameter('fos_http_cache.compiler_pass.tag_annotations', true);
         $container->setParameter('fos_http_cache.tag_handler.response_header', $config['response_header']);
         $container->setParameter('fos_http_cache.tag_handler.strict', $config['strict']);
-=======
-        $container->setParameter($this->getAlias().'.compiler_pass.tag_annotations', true);
-        $container->setParameter($this->getAlias().'.tag_handler.strict', $config['strict']);
-        $container->setParameter($this->getAlias().'.tag_handler.response_header', $config['response_header']);
-        $container->setParameter($this->getAlias().'.tag_handler.separator', $config['separator']);
 
->>>>>>> Added configuration setting for enabling xkey tagging
         $loader->load('cache_tagging.xml');
         if (class_exists(Application::class)) {
             $loader->load('cache_tagging_commands.xml');
