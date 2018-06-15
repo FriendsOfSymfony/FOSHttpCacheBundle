@@ -29,6 +29,7 @@ varnish
         proxy_client:
             varnish:
                 tags_header: My-Cache-Tags
+                tag_mode: ban
                 header_length: 1234
                 default_ban_headers:
                     Foo: Bar
@@ -37,13 +38,6 @@ varnish
                         - 123.123.123.1:6060
                         - 123.123.123.2
                     base_url: yourwebsite.com
-
-``tags_header``
-"""""""""""""""
-
-**type**: ``string`` **default**: ``X-Cache-Tags``
-
-Header for sending tag invalidation requests to Varnish.
 
 ``header_length``
 """""""""""""""""
@@ -97,6 +91,26 @@ URL may contain a path. If you access your web application on a port other than
 
     Double-check ``base_url``, for if it is mistyped, no content will be
     invalidated.
+
+``tag_mode``
+"""""""""""""""""
+
+**type**: ``string`` **default**: ``ban``
+
+Select whether to invalidate tags using the xkey module or with ban requests. Supported modes: ``ban`` and ``purgekeys``.
+
+When using ``purgekeys`` the bundle will default to using soft purges.  If you do not want to use soft purge (either because your varnish modules version is too old to support it or because it does not fit your scenario), additionally set the tags_header option to xkey-purge instead of the default xkey-softpurge.
+
+.. note::
+
+    To use the purgekeys method, you need the `xkey vmod <https://github.com/varnish/varnish-modules/blob/master/docs/vmod_xkey.rst>`_ enabled and VCL to handle xkey invalidation requests as explained in the :ref:`FOSHttpCache library docs on xkey support <foshttpcache:varnish_tagging>`.
+
+``tags_header``
+"""""""""""""""
+
+**type**: ``string`` **default**: ``X-Cache-Tags`` if ``tag_mode`` is ``ban``, otherwise ``xkey-softpurge``
+
+Header for sending tag invalidation requests to Varnish.
 
 See the :ref:`FOSHttpCache library docs <foshttpcache:varnish configuration>`
 on how to configure Varnish.

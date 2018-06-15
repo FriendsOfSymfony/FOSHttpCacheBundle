@@ -546,6 +546,55 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertTrue($container->has('fos_http_cache.event_listener.flash_message'));
     }
 
+    public function testVarnishDefaultTagMode()
+    {
+        $container = $this->createContainer();
+
+        $config = $this->getBaseConfig();
+        $this->extension->load([$config], $container);
+
+        $this->assertEquals('X-Cache-Tags', $container->getParameter('fos_http_cache.tag_handler.response_header'));
+        $this->assertEquals(',', $container->getParameter('fos_http_cache.tag_handler.separator'));
+        $this->assertEquals(['tag_mode' => 'ban', 'tags_header' => 'X-Cache-Tags'], $container->getParameter('fos_http_cache.proxy_client.varnish.options'));
+    }
+
+    public function testVarnishBanTagMode()
+    {
+        $container = $this->createContainer();
+
+        $config = $this->getBaseConfig();
+        $config['proxy_client']['varnish']['tag_mode'] = 'ban';
+        $this->extension->load([$config], $container);
+
+        $this->assertEquals('X-Cache-Tags', $container->getParameter('fos_http_cache.tag_handler.response_header'));
+        $this->assertEquals(',', $container->getParameter('fos_http_cache.tag_handler.separator'));
+        $this->assertEquals(['tag_mode' => 'ban', 'tags_header' => 'X-Cache-Tags'], $container->getParameter('fos_http_cache.proxy_client.varnish.options'));
+    }
+
+    public function testVarnishXkeyTagMode()
+    {
+        $container = $this->createContainer();
+
+        $config = $this->getBaseConfig();
+        $config['proxy_client']['varnish']['tag_mode'] = 'purgekeys';
+        $this->extension->load([$config], $container);
+
+        $this->assertEquals('xkey', $container->getParameter('fos_http_cache.tag_handler.response_header'));
+        $this->assertEquals(' ', $container->getParameter('fos_http_cache.tag_handler.separator'));
+        $this->assertEquals(['tag_mode' => 'purgekeys', 'tags_header' => 'xkey-softpurge'], $container->getParameter('fos_http_cache.proxy_client.varnish.options'));
+    }
+
+    public function testVarnishCustomTagsHeader()
+    {
+        $container = $this->createContainer();
+
+        $config = $this->getBaseConfig();
+        $config['proxy_client']['varnish']['tags_header'] = 'myheader';
+        $this->extension->load([$config], $container);
+
+        $this->assertEquals(['tag_mode' => 'ban', 'tags_header' => 'myheader'], $container->getParameter('fos_http_cache.proxy_client.varnish.options'));
+    }
+
     private function createContainer()
     {
         $container = new ContainerBuilder(
