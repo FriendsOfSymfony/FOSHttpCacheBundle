@@ -414,13 +414,8 @@ class FOSHttpCacheExtension extends Extension
         if (!empty($config['default_ban_headers'])) {
             $options['default_ban_headers'] = $config['default_ban_headers'];
         }
-<<<<<<< HEAD
+
         $container->setParameter('fos_http_cache.proxy_client.varnish.options', $options);
-=======
-
-        $container->setParameter($this->getAlias().'.proxy_client.varnish.options', $options);
->>>>>>> Added configuration setting for enabling xkey tagging
-
         $loader->load('varnish.xml');
     }
 
