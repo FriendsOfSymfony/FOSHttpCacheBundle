@@ -6,6 +6,8 @@ Changelog
 
 ### Added
 
+* Autoconfigure support for custom context providers.
+
 * Autowiring support for the services in this bundle:
 
   - fos_http_cache.cache_manager => FOS\HttpCacheBundle\CacheManager
