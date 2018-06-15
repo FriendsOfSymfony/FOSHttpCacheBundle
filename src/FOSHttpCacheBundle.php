@@ -16,7 +16,6 @@ use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\LoggerPass;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\SessionListenerRemovePass;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\TagListenerPass;
-use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\HttpKernel\Kernel;
@@ -43,10 +42,5 @@ class FOSHttpCacheBundle extends Bundle
                 ->registerForAutoconfiguration(ContextProvider::class)
                 ->addTag('fos_http_cache.user_context_provider');
         }
-    }
-
-    public function registerCommands(Application $application)
-    {
-        // do nothing, commands are registered as services
     }
 }
