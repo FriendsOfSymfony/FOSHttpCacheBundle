@@ -474,6 +474,7 @@ class FOSHttpCacheExtension extends Extension
 
         $container->setParameter('fos_http_cache.compiler_pass.tag_annotations', true);
         $container->setParameter('fos_http_cache.tag_handler.response_header', $config['response_header']);
+        $container->setParameter('fos_http_cache.tag_handler.separator', $config['separator']);
         $container->setParameter('fos_http_cache.tag_handler.strict', $config['strict']);
 
         $loader->load('cache_tagging.xml');
