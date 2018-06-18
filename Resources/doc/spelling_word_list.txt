@@ -1,4 +1,8 @@
 admin
+autowired
+autowiring
+autoconfigure
+autoconfigured
 backend
 cacheable
 ETag
