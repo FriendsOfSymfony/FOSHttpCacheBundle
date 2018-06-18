@@ -22,7 +22,8 @@ Basic Configuration
 -------------------
 
 First configure your proxy for tagging (:ref:`Varnish <foshttpcache:varnish_tagging>`,
-:ref:`Symfony <foshttpcache:symfony_httpcache_tagging>`).
+:ref:`Symfony <foshttpcache:symfony_httpcache_tagging>`) and see if you want to
+adjust anything in the :doc:`proxy client configuration </reference/configuration/proxy-client>`.
 Then enable tagging in your application configuration:
 
 .. code-block:: yaml

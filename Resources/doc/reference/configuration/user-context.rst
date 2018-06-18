@@ -232,11 +232,11 @@ Custom providers need to:
 * be tagged with ``fos_http_cache.user_context_provider``.
 
 .. versionadded:: 2.4.0
-    Autoconfigure support has been added in version 2.4.0 and works from
-    Symfony 3.3 and above. If autoconfigure is enabled, your custom provider
-    will be tagged automatically, with a default priority of 0. For older
-    versions, or if autoconfigure is disabled, or you want to override the
-    priority, check out the section below.
+    Since version 2.4.0, context providers are autoconfigured. With
+    autoconfigure enabled in Symfony 3.3 and newer, your custom providers
+    are tagged automatically, with a default priority of 0. For older
+    versions, or if autoconfigure is disabled, or to override the
+    priority, check out the rest of this section.
 
 If you need context providers to run in a specific order, you can specify the
 optional ``priority`` parameter for the tag. The higher the priority, the

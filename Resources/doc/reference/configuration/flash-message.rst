@@ -1,7 +1,7 @@
 Flash Message Configuration
 ===========================
 
-The :doc:`flash message listener <../../features/helpers/flash-message>` is a
+The :doc:`flash message listener </features/helpers/flash-message>` is a
 tool to avoid rendering the flash message into the content of a page. It is
 another building brick for caching pages for logged in users.
 

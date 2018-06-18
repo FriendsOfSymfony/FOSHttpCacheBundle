@@ -6,6 +6,8 @@ Changelog
 
 ### Added
 
+* Support for the Varnish xkey vmod for more efficient cache tagging.
+
 * Autoconfigure support for custom context providers.
 
 * Autowiring support for the services in this bundle:

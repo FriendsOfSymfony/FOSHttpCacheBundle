@@ -7,6 +7,7 @@
     <services>
         <service id="fos_http_cache.tag_handler.header_formatter" class="FOS\HttpCache\TagHeaderFormatter\CommaSeparatedTagHeaderFormatter" public="false">
             <argument>%fos_http_cache.tag_handler.response_header%</argument>
+            <argument>%fos_http_cache.tag_handler.separator%</argument>
         </service>
 
         <service id="fos_http_cache.http.symfony_response_tagger" class="FOS\HttpCacheBundle\Http\SymfonyResponseTagger" public="true">

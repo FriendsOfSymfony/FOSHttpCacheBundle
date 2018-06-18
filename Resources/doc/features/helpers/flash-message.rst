@@ -22,7 +22,7 @@ action was triggered on the server, and such requests must be sent as POST
 (or PUT or other non-cacheable) requests.
 
 The flash message listener is automatically enabled if you configure any of
-the :doc:`options under flash_message <../../reference/configuration/flash-message>`.
+the :doc:`options under flash_message </reference/configuration/flash-message>`.
 
 .. code-block:: yaml
 
