@@ -47,6 +47,28 @@ class SessionListenerTest extends TestCase
         $listener->onKernelRequest($event);
     }
 
+    public function testOnFinishRequestRemainsUntouched()
+    {
+        $event = $this
+            ->getMockBuilder('Symfony\Component\HttpKernel\Event\FinishRequestEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inner = $this
+            ->getMockBuilder('Symfony\Component\HttpKernel\EventListener\SessionListener')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inner
+            ->expects($this->once())
+            ->method('onFinishRequest')
+            ->with($event)
+        ;
+
+        $listener = $this->getListener($inner);
+        $listener->onFinishRequest($event);
+    }
+
     /**
      * @dataProvider onKernelResponseProvider
      */
