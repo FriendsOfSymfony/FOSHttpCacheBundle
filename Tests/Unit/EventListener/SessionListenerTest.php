@@ -49,6 +49,10 @@ class SessionListenerTest extends TestCase
 
     public function testOnFinishRequestRemainsUntouched()
     {
+        if (!method_exists('Symfony\Component\HttpKernel\EventListener\SessionListener', 'onFinishRequest')) {
+            $this->markTestSkipped('Method onFinishRequest does not exist on Symfony\Component\HttpKernel\EventListener\SessionListener');
+        }
+
         $event = $this
             ->getMockBuilder('Symfony\Component\HttpKernel\Event\FinishRequestEvent')
             ->disableOriginalConstructor()
