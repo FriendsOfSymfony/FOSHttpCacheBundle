@@ -23,19 +23,19 @@
     "require": {
         "php": "^5.4 || ^7.0",
         "friendsofsymfony/http-cache": "^1.4.5",
-        "symfony/framework-bundle": "^2.3||^3.0"
+        "symfony/framework-bundle": "^2.8||^3.4"
     },
     "require-dev": {
         "mockery/mockery": "0.9.*",
         "monolog/monolog": "*",
-        "sensio/framework-extra-bundle": "^2.3||^3.0",
-        "symfony/symfony": "^2.8||^3.0",
-        "symfony/phpunit-bridge": "^3.2",
-        "symfony/expression-language": "^2.4||^3.0",
-        "symfony/monolog-bundle": "^2.3||^3.0",
-        "polishsymfonycommunity/symfony-mocker-container": "^1.0",
+        "sensio/framework-extra-bundle": "^2.3.4||^3.0.27",
+        "symfony/symfony": "^2.8||^3.4",
+        "symfony/phpunit-bridge": "^3.4",
+        "symfony/expression-language": "^2.8||^3.4",
+        "symfony/monolog-bundle": "^2.12||^3.3",
+        "polishsymfonycommunity/symfony-mocker-container": "^1.0.2",
         "matthiasnoback/symfony-dependency-injection-test": "^0.7.4",
-        "sebastian/exporter": "^1.2||^2.0||^3.0"
+        "sebastian/exporter": "^1.2.2||^2.0||^3.1"
     },
     "suggest": {
         "sensio/framework-extra-bundle": "For Tagged Cache Invalidation",
