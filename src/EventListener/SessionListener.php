@@ -15,6 +15,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\EventListener\SessionListener as BaseSessionListener;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Decorates the default Symfony session listener.
@@ -83,6 +84,10 @@ final class SessionListener implements EventSubscriberInterface
 
     public static function getSubscribedEvents(): array
     {
-        return BaseSessionListener::getSubscribedEvents();
+        return [
+            KernelEvents::REQUEST => ['onKernelRequest', 128],
+            // low priority to come after regular response listeners, same as SaveSessionListener
+            KernelEvents::RESPONSE => ['onKernelResponse', -1000],
+        ];
     }
 }
