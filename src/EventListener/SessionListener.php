@@ -84,10 +84,10 @@ final class SessionListener implements EventSubscriberInterface
 
     public static function getSubscribedEvents(): array
     {
-        return array(
-            KernelEvents::REQUEST => array('onKernelRequest', 128),
+        return [
+            KernelEvents::REQUEST => ['onKernelRequest', 128],
             // low priority to come after regular response listeners, same as SaveSessionListener
-            KernelEvents::RESPONSE => array('onKernelResponse', -1000),
-        );
+            KernelEvents::RESPONSE => ['onKernelResponse', -1000],
+        ];
     }
 }
