@@ -31,7 +31,7 @@ matrix:
     - php: 5.4
       env:
         - COMPOSER_FLAGS="--prefer-lowest"
-        - SYMFONY_VERSION='2.8.*'
+        - SYMFONY_VERSION='2.8.0'
     - php: 5.6
       env:
         - SYMFONY_VERSION='3.2.*'
@@ -40,7 +40,7 @@ matrix:
         - DOCCHECK=true
     - php: 5.6
       env:
-        - SYMFONY_VERSION='2.8.*'
+        - SYMFONY_VERSION='2.8.42'
         - FRAMEWORK_EXTRA_VERSION='~3.0'
     - php: 5.6
       env:
