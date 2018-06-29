@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\EventListener\SessionListener as BaseSessionListener;
 
@@ -76,6 +77,12 @@ final class SessionListener implements EventSubscriberInterface
         }
 
         // noop, see class description
+    }
+
+    public function onFinishRequest(FinishRequestEvent $event)
+    {
+        // this hook has been added in symfony 3.4.12 - older versions of the listener do not register for it
+        $this->inner->onFinishRequest($event);
     }
 
     public static function getSubscribedEvents()
