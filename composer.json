@@ -27,6 +27,7 @@
         "symfony/http-foundation": "^2.8.18.13||^3.3||^4.0"
     },
     "require-dev": {
+"symfony/routing": "4.1.*@dev",
         "php-http/guzzle6-adapter": "^1.0",
         "php-http/message": "^1.0",
         "mockery/mockery": "^1.0",

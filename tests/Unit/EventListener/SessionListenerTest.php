@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\EventListener\SessionListener as BaseSessionListener;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -36,6 +37,26 @@ class SessionListenerTest extends TestCase
 
         $listener = $this->getListener($inner);
         $listener->onKernelRequest($event);
+    }
+
+    public function testOnFinishRequestRemainsUntouched()
+    {
+        if (!method_exists(BaseSessionListener::class, 'onFinishRequest')) {
+            $this->markTestSkipped('Method onFinishRequest does not exist on '.BaseSessionListener::class);
+        }
+
+        $event = $this->createMock(FinishRequestEvent::class);
+
+        $inner = $this->createMock(BaseSessionListener::class);
+
+        $inner
+            ->expects($this->once())
+            ->method('onFinishRequest')
+            ->with($event)
+        ;
+
+        $listener = $this->getListener($inner);
+        $listener->onFinishRequest($event);
     }
 
     /**
