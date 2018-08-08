@@ -42,6 +42,7 @@
         "symfony/css-selector": "^2.8.18||^3.3||^4.0",
         "symfony/expression-language": "^2.8.18||^3.3||^4.0",
         "symfony/monolog-bundle": "^2.8.18||^3.3||^4.0",
+        "symfony/routing": "^2.8.18||^3.3||^4.0",
         "matthiasnoback/symfony-dependency-injection-test": "^2.3",
         "sebastian/exporter": "^2.0"
     },
