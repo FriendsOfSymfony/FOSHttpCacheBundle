@@ -53,8 +53,13 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('fos_http_cache');
+        if (method_exists(TreeBuilder::class, 'getRootNode')) {
+            $treeBuilder = new TreeBuilder('fos_http_cache');
+            $rootNode = $treeBuilder->getRootNode();
+        } else {
+            $treeBuilder = new TreeBuilder();
+            $rootNode = $treeBuilder->root('fos_http_cache');
+        }
 
         $rootNode
             ->validate()
@@ -507,8 +512,13 @@ class Configuration implements ConfigurationInterface
      */
     private function getHttpDispatcherNode()
     {
-        $treeBuilder = new TreeBuilder();
-        $node = $treeBuilder->root('http');
+        if (method_exists(TreeBuilder::class, 'getRootNode')) {
+            $treeBuilder = new TreeBuilder('http');
+            $node = $treeBuilder->getRootNode();
+        } else {
+            $treeBuilder = new TreeBuilder();
+            $node = $treeBuilder->root('http');
+        }
 
         $node
             ->fixXmlConfig('server')
