@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.4.1
+-----
+
+* Adjust session_listener to work with Symfony 3.4.12 (https://github.com/symfony/symfony/pull/27467).
+
 2.4.0
 -----
 
