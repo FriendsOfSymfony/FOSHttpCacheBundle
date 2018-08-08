@@ -88,7 +88,7 @@ final class SessionListener implements EventSubscriberInterface
         $this->inner->onFinishRequest($event);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return BaseSessionListener::getSubscribedEvents();
     }
