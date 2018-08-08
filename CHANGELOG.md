@@ -189,6 +189,11 @@ access to other services.)
 * Added an option `always_vary_on_context_hash` to make it possible to disable 
   automatically setting the vary headers for the user hash.
 
+1.3.16
+------
+
+* Adjust session_listener to work with Symfony 3.4.12 (https://github.com/symfony/symfony/pull/27467).
+
 1.3.15
 ------
 
