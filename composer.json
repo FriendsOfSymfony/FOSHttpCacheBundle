@@ -52,7 +52,8 @@
         "symfony/console": "To send invalidation requests from the command line"
     },
     "conflict": {
-        "twig/twig": "<1.12.0"
+        "twig/twig": "<1.12.0",
+        "symfony/monolog-bridge": "<3.0"
     },
     "autoload": {
         "psr-4": {
