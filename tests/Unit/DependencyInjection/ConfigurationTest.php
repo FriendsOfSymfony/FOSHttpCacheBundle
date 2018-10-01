@@ -132,6 +132,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     ],
                 ],
                 'separator' => ',',
+                'max_header_value_length' => null,
             ],
             'invalidation' => [
                 'enabled' => 'auto',
@@ -689,6 +690,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'expression_language' => null,
                 'rules' => [],
                 'separator' => ',',
+                'max_header_value_length' => null,
             ],
             'invalidation' => [
                 'enabled' => false,

@@ -15,6 +15,7 @@ use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\ProxyClient;
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\SymfonyCache\KernelDispatcher;
+use FOS\HttpCache\TagHeaderFormatter\MaxHeaderValueLengthFormatter;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -491,6 +492,13 @@ class FOSHttpCacheExtension extends Extension
 
         if (!empty($config['rules'])) {
             $this->loadTagRules($container, $config['rules']);
+        }
+
+        if (null !== $config['max_header_value_length']) {
+            $container->register('fos_http_cache.tag_handler.max_header_value_length_header_formatter', MaxHeaderValueLengthFormatter::class)
+                ->setDecoratedService('fos_http_cache.tag_handler.header_formatter')
+                ->addArgument(new Reference('fos_http_cache.tag_handler.max_header_value_length_header_formatter.inner'))
+                ->addArgument((int) $config['max_header_value_length']);
         }
     }
 
