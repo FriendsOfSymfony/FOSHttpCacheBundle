@@ -18,9 +18,11 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 class UserContextListenerTest extends TestCase
 {
@@ -180,6 +182,107 @@ class UserContextListenerTest extends TestCase
 
         $this->assertTrue($event->getResponse()->headers->has('Vary'), 'Vary header must be set');
         $this->assertContains('X-Hash', $event->getResponse()->headers->get('Vary'));
+    }
+
+    public function testOnKernelResponseSetsNoAutoCacheHeader()
+    {
+        if (4 > Kernel::MAJOR_VERSION || 1 > Kernel::MINOR_VERSION) {
+            $this->markTestSkipped("Test only relevant for Symfony 4.1 and up");
+        }
+
+        $request = new Request();
+        $request->setMethod('HEAD');
+        $request->headers->set('X-User-Context-Hash', 'hash');
+
+        $hashGenerator = \Mockery::mock(HashGenerator::class);
+
+        $userContextListener = new UserContextListener(
+            $this->getRequestMatcher($request, false),
+            $hashGenerator
+        );
+        $event = $this->getKernelResponseEvent($request);
+
+        $userContextListener->onKernelResponse($event);
+
+        $this->assertContains('X-User-Context-Hash', $event->getResponse()->headers->get('Vary'));
+        $this->assertEquals(1, $event->getResponse()->headers->get(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER));
+    }
+
+    public function testOnKernelResponseSetsNoAutoCacheHeaderWhenCustomHeader()
+    {
+        if (4 > Kernel::MAJOR_VERSION || 1 > Kernel::MINOR_VERSION) {
+            $this->markTestSkipped("Test only relevant for Symfony 4.1 and up");
+        }
+
+        $request = new Request();
+        $request->setMethod('HEAD');
+        $request->headers->set('X-User-Context-Hash', 'hash');
+
+        $hashGenerator = \Mockery::mock(HashGenerator::class);
+
+        $userContextListener = new UserContextListener(
+            $this->getRequestMatcher($request, false),
+            $hashGenerator
+        );
+        $event = $this->getKernelResponseEvent($request, new Response('', 200, ['Vary' => 'X-User-Context-Hash']));
+
+        $userContextListener->onKernelResponse($event);
+
+        $this->assertEquals(1, $event->getResponse()->headers->get(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER));
+    }
+
+    public function testOnKernelResponseSetsNoAutoCacheHeaderWhenCustomHeaderAndNoAddVaryOnHash()
+    {
+        if (4 > Kernel::MAJOR_VERSION || 1 > Kernel::MINOR_VERSION) {
+            $this->markTestSkipped("Test only relevant for Symfony 4.1 and up");
+        }
+
+        $request = new Request();
+        $request->setMethod('HEAD');
+        $request->headers->set('X-User-Context-Hash', 'hash');
+
+        $hashGenerator = \Mockery::mock(HashGenerator::class);
+
+        $userContextListener = new UserContextListener(
+            $this->getRequestMatcher($request, false),
+            $hashGenerator,
+            null,
+            [
+                'add_vary_on_hash' => false
+            ]
+        );
+        $event = $this->getKernelResponseEvent($request, new Response('', 200, ['Vary' => 'X-User-Context-Hash']));
+
+        $userContextListener->onKernelResponse($event);
+
+        $this->assertEquals(1, $event->getResponse()->headers->get(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER));
+    }
+
+    public function testOnKernelResponseDoesNotSetNoAutoCacheHeaderWhenNoCustomHeaderAndNoAddVaryOnHash()
+    {
+        if (4 > Kernel::MAJOR_VERSION || 1 > Kernel::MINOR_VERSION) {
+            $this->markTestSkipped("Test only relevant for Symfony 4.1 and up");
+        }
+
+        $request = new Request();
+        $request->setMethod('HEAD');
+        $request->headers->set('X-User-Context-Hash', 'hash');
+
+        $hashGenerator = \Mockery::mock(HashGenerator::class);
+
+        $userContextListener = new UserContextListener(
+            $this->getRequestMatcher($request, false),
+            $hashGenerator,
+            null,
+            [
+                'add_vary_on_hash' => false
+            ]
+        );
+        $event = $this->getKernelResponseEvent($request);
+
+        $userContextListener->onKernelResponse($event);
+
+        $this->assertFalse($event->getResponse()->headers->has(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER));
     }
 
     public function testOnKernelResponseNotMaster()
