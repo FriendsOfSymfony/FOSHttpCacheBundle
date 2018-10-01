@@ -24,7 +24,8 @@
         "php": "^7.1",
         "friendsofsymfony/http-cache": "^2.5",
         "symfony/framework-bundle": "^3.4.4 || ^4.0",
-        "symfony/http-foundation": "^3.4.4 || ^4.0"
+        "symfony/http-foundation": "^3.4.4 || ^4.0",
+        "symfony/http-kernel": "^3.4.4 || ^4.0"
     },
     "require-dev": {
         "php-http/guzzle6-adapter": "^1.0",
