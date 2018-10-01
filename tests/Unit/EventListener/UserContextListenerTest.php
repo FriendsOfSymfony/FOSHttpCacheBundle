@@ -18,9 +18,9 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
@@ -187,7 +187,7 @@ class UserContextListenerTest extends TestCase
     public function testOnKernelResponseSetsNoAutoCacheHeader()
     {
         if (4 > Kernel::MAJOR_VERSION || 1 > Kernel::MINOR_VERSION) {
-            $this->markTestSkipped("Test only relevant for Symfony 4.1 and up");
+            $this->markTestSkipped('Test only relevant for Symfony 4.1 and up');
         }
 
         $request = new Request();
@@ -211,7 +211,7 @@ class UserContextListenerTest extends TestCase
     public function testOnKernelResponseSetsNoAutoCacheHeaderWhenCustomHeader()
     {
         if (4 > Kernel::MAJOR_VERSION || 1 > Kernel::MINOR_VERSION) {
-            $this->markTestSkipped("Test only relevant for Symfony 4.1 and up");
+            $this->markTestSkipped('Test only relevant for Symfony 4.1 and up');
         }
 
         $request = new Request();
@@ -234,7 +234,7 @@ class UserContextListenerTest extends TestCase
     public function testOnKernelResponseSetsNoAutoCacheHeaderWhenCustomHeaderAndNoAddVaryOnHash()
     {
         if (4 > Kernel::MAJOR_VERSION || 1 > Kernel::MINOR_VERSION) {
-            $this->markTestSkipped("Test only relevant for Symfony 4.1 and up");
+            $this->markTestSkipped('Test only relevant for Symfony 4.1 and up');
         }
 
         $request = new Request();
@@ -248,7 +248,7 @@ class UserContextListenerTest extends TestCase
             $hashGenerator,
             null,
             [
-                'add_vary_on_hash' => false
+                'add_vary_on_hash' => false,
             ]
         );
         $event = $this->getKernelResponseEvent($request, new Response('', 200, ['Vary' => 'X-User-Context-Hash']));
@@ -261,7 +261,7 @@ class UserContextListenerTest extends TestCase
     public function testOnKernelResponseDoesNotSetNoAutoCacheHeaderWhenNoCustomHeaderAndNoAddVaryOnHash()
     {
         if (4 > Kernel::MAJOR_VERSION || 1 > Kernel::MINOR_VERSION) {
-            $this->markTestSkipped("Test only relevant for Symfony 4.1 and up");
+            $this->markTestSkipped('Test only relevant for Symfony 4.1 and up');
         }
 
         $request = new Request();
@@ -275,7 +275,7 @@ class UserContextListenerTest extends TestCase
             $hashGenerator,
             null,
             [
-                'add_vary_on_hash' => false
+                'add_vary_on_hash' => false,
             ]
         );
         $event = $this->getKernelResponseEvent($request);
