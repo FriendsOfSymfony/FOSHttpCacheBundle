@@ -1,6 +1,17 @@
 Changelog
 =========
 
+2.5.0
+-----
+
+### Added
+
+* New Feature: Support for the max_header_value_length option to split huge tag lists into multiple headers. #483
+
+### Fixed
+
+* Cache control on Symfony 4.1 now also works when the Vary header for user_context_hash is already present on the response. #485
+
 2.4.1
 -----
 
