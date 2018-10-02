@@ -40,6 +40,7 @@ class SymfonyResponseTagger extends ResponseTagger
         }
 
         $response->headers->set($this->getTagsHeaderName(), $this->getTagsHeaderValue());
+        $this->clear();
 
         return $this;
     }

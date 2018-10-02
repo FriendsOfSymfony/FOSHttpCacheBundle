@@ -22,7 +22,7 @@
     ],
     "require": {
         "php": "^7.1",
-        "friendsofsymfony/http-cache": "^2.5",
+        "friendsofsymfony/http-cache": "^2.5.2",
         "symfony/framework-bundle": "^3.4.4 || ^4.0",
         "symfony/http-foundation": "^3.4.4 || ^4.0",
         "symfony/http-kernel": "^3.4.4 || ^4.0"

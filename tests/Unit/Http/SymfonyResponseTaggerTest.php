@@ -30,6 +30,7 @@ class SymfonyResponseTaggerTest extends TestCase
         $symfonyResponseTagger1->tagSymfonyResponse($response);
         $this->assertTrue($response->headers->has('X-Cache-Tags'));
         $this->assertEquals(implode(',', $tags1), $response->headers->get('X-Cache-Tags'));
+        $this->assertFalse($symfonyResponseTagger1->hasTags());
 
         $symfonyResponseTagger2 = new SymfonyResponseTagger();
         $symfonyResponseTagger2->addTags($tags2);
