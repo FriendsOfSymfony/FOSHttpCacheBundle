@@ -11,36 +11,20 @@
 
 namespace FOS\HttpCacheBundle;
 
-use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 
 class UserContextInvalidator
 {
-    /**
-     * Service used to ban hash request.
-     *
-     * @var BanCapable
-     */
-    private $banner;
+    const USER_CONTEXT_TAG_PREFIX = 'fos_http_cache_hashlookup-';
 
     /**
-     * Accept header.
-     *
-     * @var string
+     * @var TagCapable
      */
-    private $acceptHeader;
+    private $tagger;
 
-    /**
-     * User identifier headers.
-     *
-     * @var string[]
-     */
-    private $userIdentifierHeaders;
-
-    public function __construct(BanCapable $banner, $userIdentifierHeaders, $acceptHeader)
+    public function __construct(TagCapable $tagger)
     {
-        $this->banner = $banner;
-        $this->acceptHeader = $acceptHeader;
-        $this->userIdentifierHeaders = $userIdentifierHeaders;
+        $this->tagger = $tagger;
     }
 
     /**
@@ -50,11 +34,11 @@ class UserContextInvalidator
      */
     public function invalidateContext($sessionId)
     {
-        foreach ($this->userIdentifierHeaders as $header) {
-            $this->banner->ban([
-                'accept' => $this->acceptHeader,
-                $header => sprintf('.*%s.*', $sessionId),
-            ]);
-        }
+        $this->tagger->invalidateTags([static::buildTag($sessionId)]);
+    }
+
+    public static function buildTag($hash)
+    {
+        return static::USER_CONTEXT_TAG_PREFIX.$hash;
     }
 }

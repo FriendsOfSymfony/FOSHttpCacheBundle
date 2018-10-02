@@ -313,10 +313,6 @@ class FOSHttpCacheExtension extends Extension
             ->replaceArgument(0, $options);
 
         if ($config['logout_handler']['enabled']) {
-            $container->getDefinition('fos_http_cache.user_context_invalidator')
-                ->replaceArgument(1, $completeUserIdentifierHeaders)
-                ->replaceArgument(2, $config['match']['accept']);
-
             $container->setAlias('security.logout.handler.session', 'fos_http_cache.user_context.session_logout_handler');
         } else {
             $container->removeDefinition('fos_http_cache.user_context.logout_handler');

@@ -139,11 +139,12 @@ or you will end up with mixed up caches.
 ~~~~~~~~~~~~~~~~~~
 
 The logout handler will invalidate any cached user hashes when the user logs
-out.
+out. This will make sure that the session cookie of the logged out session can
+not be abused to see protected cached content.
 
 For the handler to work:
 
-* your caching proxy should be :ref:`configured for BANs <foshttpcache:proxy-configuration>`
+* your caching proxy must be :ref:`configured for tag invalidation <foshttpcache:proxy-configuration>`
 * Symfony’s default behavior of regenerating the session id when users log in
   and out must be enabled (``invalidate_session``).
 

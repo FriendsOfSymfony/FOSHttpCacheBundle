@@ -120,12 +120,17 @@ class Configuration implements ConfigurationInterface
                         return $v;
                     }
 
-                    if (isset($v['proxy_client']['default']) && in_array($v['proxy_client']['default'], ['varnish', 'noop'])) {
+                    if (isset($v['proxy_client']['default'])
+                        && in_array($v['proxy_client']['default'], ['varnish', 'symfony', 'noop'])
+                    ) {
                         $v['user_context']['logout_handler']['enabled'] = true;
 
                         return $v;
                     }
-                    if (isset($v['proxy_client']['varnish']) || isset($v['proxy_client']['noop'])) {
+                    if (isset($v['proxy_client']['varnish'])
+                        || isset($v['proxy_client']['symfony'])
+                        || isset($v['proxy_client']['noop'])
+                    ) {
                         $v['user_context']['logout_handler']['enabled'] = true;
 
                         return $v;
