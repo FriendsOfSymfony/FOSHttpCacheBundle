@@ -1,6 +1,16 @@
 Changelog
 =========
 
+2.5.1 (unreleased)
+------------------
+
+### Fixed
+
+* Cache Tagging: Clear the SymfonyResponseTagger after we tagged a response.
+  Usually PHP uses a new instance for every request. But for example the hash
+  lookup when using Symfony HttpCache does two requests in the same PHP
+  process.
+
 2.5.0
 -----
 
