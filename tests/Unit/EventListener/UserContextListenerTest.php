@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 
+use FOS\HttpCache\ResponseTagger;
 use FOS\HttpCache\UserContext\HashGenerator;
 use FOS\HttpCacheBundle\EventListener\UserContextListener;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -37,6 +38,7 @@ class UserContextListenerTest extends TestCase
             \Mockery::mock(RequestMatcherInterface::class),
             \Mockery::mock(HashGenerator::class),
             null,
+            null,
             [
                 'user_hash_header' => '',
             ]
@@ -51,11 +53,14 @@ class UserContextListenerTest extends TestCase
         $requestMatcher = $this->getRequestMatcher($request, true);
         $hashGenerator = \Mockery::mock(HashGenerator::class);
         $hashGenerator->shouldReceive('generateHash')->andReturn('hash');
+        $responseTagger = \Mockery::mock(ResponseTagger::class);
+        $responseTagger->shouldReceive('addTags')->with(['fos_http_cache_hashlookup-hash']);
 
         $userContextListener = new UserContextListener(
             $requestMatcher,
             $hashGenerator,
             null,
+            $responseTagger,
             [
                 'user_identifier_headers' => ['X-SessionId'],
                 'user_hash_header' => 'X-Hash',
@@ -82,11 +87,14 @@ class UserContextListenerTest extends TestCase
         $requestMatcher = $this->getRequestMatcher($request, true);
         $hashGenerator = \Mockery::mock(HashGenerator::class);
         $hashGenerator->shouldReceive('generateHash')->never();
+        $responseTagger = \Mockery::mock(ResponseTagger::class);
+        $responseTagger->shouldReceive('addTags')->never();
 
         $userContextListener = new UserContextListener(
             $requestMatcher,
             $hashGenerator,
             null,
+            $responseTagger,
             [
                 'user_identifier_headers' => ['X-SessionId'],
                 'user_hash_header' => 'X-Hash',
@@ -107,11 +115,14 @@ class UserContextListenerTest extends TestCase
         $requestMatcher = $this->getRequestMatcher($request, true);
         $hashGenerator = \Mockery::mock(HashGenerator::class);
         $hashGenerator->shouldReceive('generateHash')->andReturn('hash');
+        $responseTagger = \Mockery::mock(ResponseTagger::class);
+        $responseTagger->shouldReceive('addTags')->with(['fos_http_cache_hashlookup-hash']);
 
         $userContextListener = new UserContextListener(
             $requestMatcher,
             $hashGenerator,
             null,
+            $responseTagger,
             [
                 'user_identifier_headers' => ['X-SessionId'],
                 'user_hash_header' => 'X-Hash',
@@ -139,11 +150,14 @@ class UserContextListenerTest extends TestCase
         $requestMatcher = $this->getRequestMatcher($request, false);
         $hashGenerator = \Mockery::mock(HashGenerator::class);
         $hashGenerator->shouldReceive('generateHash')->andReturn('hash');
+        $responseTagger = \Mockery::mock(ResponseTagger::class);
+        $responseTagger->shouldReceive('addTags')->never();
 
         $userContextListener = new UserContextListener(
             $requestMatcher,
             $hashGenerator,
             null,
+            $responseTagger,
             [
                 'user_identifier_headers' => ['X-SessionId'],
                 'user_hash_header' => 'X-Hash',
@@ -166,11 +180,14 @@ class UserContextListenerTest extends TestCase
 
         $requestMatcher = $this->getRequestMatcher($request, false);
         $hashGenerator = \Mockery::mock(HashGenerator::class);
+        $responseTagger = \Mockery::mock(ResponseTagger::class);
+        $responseTagger->shouldReceive('addTags')->never();
 
         $userContextListener = new UserContextListener(
             $requestMatcher,
             $hashGenerator,
             null,
+            $responseTagger,
             [
                 'user_identifier_headers' => ['X-SessionId'],
                 'user_hash_header' => 'X-Hash',
@@ -247,6 +264,7 @@ class UserContextListenerTest extends TestCase
             $this->getRequestMatcher($request, false),
             $hashGenerator,
             null,
+            null,
             [
                 'add_vary_on_hash' => false,
             ]
@@ -274,6 +292,7 @@ class UserContextListenerTest extends TestCase
             $this->getRequestMatcher($request, false),
             $hashGenerator,
             null,
+            null,
             [
                 'add_vary_on_hash' => false,
             ]
@@ -297,6 +316,7 @@ class UserContextListenerTest extends TestCase
         $userContextListener = new UserContextListener(
             $requestMatcher,
             $hashGenerator,
+            null,
             null,
             [
                 'user_identifier_headers' => ['X-SessionId'],
@@ -325,6 +345,7 @@ class UserContextListenerTest extends TestCase
             $requestMatcher,
             $hashGenerator,
             null,
+            null,
             [
                 'user_identifier_headers' => ['X-SessionId'],
                 'user_hash_header' => 'X-Hash',
@@ -349,12 +370,15 @@ class UserContextListenerTest extends TestCase
         $requestMatcher = $this->getRequestMatcher($request, false);
         $hashGenerator = \Mockery::mock(HashGenerator::class);
         $hashGenerator->shouldReceive('generateHash')->andReturn('hash');
+        $responseTagger = \Mockery::mock(ResponseTagger::class);
+        $responseTagger->shouldReceive('addTags')->with(['fos_http_cache_usercontext-hash']);
 
         // onKernelRequest
         $userContextListener = new UserContextListener(
             $requestMatcher,
             $hashGenerator,
             null,
+            $responseTagger,
             [
                 'user_identifier_headers' => ['X-SessionId'],
                 'user_hash_header' => 'X-Hash',
@@ -387,6 +411,8 @@ class UserContextListenerTest extends TestCase
         $requestMatcher = $this->getRequestMatcher($request, false);
         $hashGenerator = \Mockery::mock(HashGenerator::class);
         $hashGenerator->shouldReceive('generateHash')->never();
+        $responseTagger = \Mockery::mock(ResponseTagger::class);
+        $responseTagger->shouldReceive('addTags')->never();
 
         $anonymousRequestMatcher = \Mockery::mock(RequestMatcherInterface::class);
         $anonymousRequestMatcher->shouldReceive('matches')->andReturn(true);
@@ -396,6 +422,7 @@ class UserContextListenerTest extends TestCase
             $requestMatcher,
             $hashGenerator,
             $anonymousRequestMatcher,
+            $responseTagger,
             [
                 'user_identifier_headers' => ['X-SessionId'],
                 'user_hash_header' => 'X-Hash',
@@ -428,12 +455,15 @@ class UserContextListenerTest extends TestCase
         $requestMatcher = $this->getRequestMatcher($request, false);
         $hashGenerator = \Mockery::mock(HashGenerator::class);
         $hashGenerator->shouldReceive('generateHash')->andReturn('hash-changed');
+        $responseTagger = \Mockery::mock(ResponseTagger::class);
+        $responseTagger->shouldReceive('addTags')->never();
 
         // onKernelRequest
         $userContextListener = new UserContextListener(
             $requestMatcher,
             $hashGenerator,
             null,
+            $responseTagger,
             [
                 'user_identifier_headers' => ['X-SessionId'],
                 'user_hash_header' => 'X-Hash',

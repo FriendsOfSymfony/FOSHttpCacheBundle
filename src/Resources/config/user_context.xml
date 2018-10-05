@@ -17,6 +17,7 @@
             <argument type="service" id="fos_http_cache.user_context.request_matcher" />
             <argument type="service" id="fos_http_cache.user_context.hash_generator" />
             <argument type="service" id="fos_http_cache.user_context.anonymous_request_matcher" />
+            <argument type="service" id="fos_http_cache.http.symfony_response_tagger" on-invalid="ignore" />
             <argument>%fos_http_cache.event_listener.user_context.options%</argument>
             <tag name="kernel.event_subscriber" />
         </service>
@@ -27,8 +28,6 @@
 
         <service id="fos_http_cache.user_context_invalidator" class="FOS\HttpCacheBundle\UserContextInvalidator">
             <argument type="service" id="fos_http_cache.default_proxy_client" />
-            <argument />
-            <argument />
         </service>
 
         <service id="fos_http_cache.user_context.logout_handler" class="FOS\HttpCacheBundle\Security\Http\Logout\ContextInvalidationLogoutHandler" public="false">

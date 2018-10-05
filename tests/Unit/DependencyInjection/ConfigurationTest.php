@@ -278,7 +278,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
         $expectedConfiguration['tags']['enabled'] = 'auto';
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
-        $expectedConfiguration['user_context']['logout_handler']['enabled'] = false;
+        $expectedConfiguration['user_context']['logout_handler']['enabled'] = true;
 
         $formats = array_map(function ($path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;

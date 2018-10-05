@@ -1,6 +1,15 @@
 Changelog
 =========
 
+2.6.0
+-----
+
+### Changed
+
+* User context lookup now tags the hash lookup response. The logout listener can now invalidate that tag instead of
+  doing a BAN request. The previous varnish BAN request has been incorrect and banned all cache entries on Varnish.
+  The logout handler is now also activated by default for the Symfony HttpCache in addition to Varnish and Noop.
+
 2.5.1
 -----
 

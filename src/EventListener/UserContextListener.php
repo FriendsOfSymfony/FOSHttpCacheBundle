@@ -11,7 +11,9 @@
 
 namespace FOS\HttpCacheBundle\EventListener;
 
+use FOS\HttpCache\ResponseTagger;
 use FOS\HttpCache\UserContext\HashGenerator;
+use FOS\HttpCacheBundle\UserContextInvalidator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
@@ -46,6 +48,13 @@ class UserContextListener implements EventSubscriberInterface
     private $hashGenerator;
 
     /**
+     * If the response tagger is set, the hash lookup response is tagged with the session id for later invalidation.
+     *
+     * @var ResponseTagger|null
+     */
+    private $responseTagger;
+
+    /**
      * @var array
      */
     private $options;
@@ -60,26 +69,20 @@ class UserContextListener implements EventSubscriberInterface
      * It prevents issues when the hash generator that is used returns a customized value for anonymous users,
      * that differs from the documented, hardcoded one.
      *
-     * @var RequestMatcherInterface
+     * @var RequestMatcherInterface|null
      */
     private $anonymousRequestMatcher;
 
-    /**
-     * Constructor.
-     *
-     * @param RequestMatcherInterface      $requestMatcher
-     * @param HashGenerator                $hashGenerator
-     * @param RequestMatcherInterface|null $anonymousRequestMatcher
-     * @param array                        $options
-     */
     public function __construct(
         RequestMatcherInterface $requestMatcher,
         HashGenerator $hashGenerator,
         RequestMatcherInterface $anonymousRequestMatcher = null,
+        ResponseTagger $responseTagger = null,
         array $options = []
     ) {
         $this->requestMatcher = $requestMatcher;
         $this->hashGenerator = $hashGenerator;
+        $this->responseTagger = $responseTagger;
         $this->anonymousRequestMatcher = $anonymousRequestMatcher;
 
         $resolver = new OptionsResolver();
@@ -115,7 +118,8 @@ class UserContextListener implements EventSubscriberInterface
             return;
         }
 
-        if (!$this->requestMatcher->matches($event->getRequest())) {
+        $request = $event->getRequest();
+        if (!$this->requestMatcher->matches($request)) {
             if ($event->getRequest()->headers->has($this->options['user_hash_header'])
                 && !$this->isAnonymous($event->getRequest())
             ) {
@@ -126,6 +130,11 @@ class UserContextListener implements EventSubscriberInterface
         }
 
         $hash = $this->hashGenerator->generateHash();
+
+        if ($this->responseTagger && $request->hasSession()) {
+            $tag = UserContextInvalidator::buildTag($request->getSession()->getId());
+            $this->responseTagger->addTags([$tag]);
+        }
 
         // status needs to be 200 as otherwise varnish will not cache the response.
         $response = new Response('', 200, [
