@@ -11,7 +11,7 @@ running an application on shared hosting for instance
 You can use features of this library with the Symfony ``HttpCache``. The basic
 concept is to use event listeners on the HttpCache class.
 
-.. warning::
+.. note::
 
     Symfony HttpCache support is currently limited to following features:
 
@@ -20,7 +20,7 @@ concept is to use event listeners on the HttpCache class.
     * Cache Tags
     * User Context
 
-    Generic ``BAN`` operations are not supported.
+    Ban operations are not supported.
 
 Event Dispatching HttpCache
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,17 +57,67 @@ Each cache feature has its own event listener. The listeners are provided by
 the FOSHttpCache_ library. You can find the documentation for those listeners
 in the :ref:`FOSHttpCache Symfony Cache documentation section <foshttpcache:symfony httpcache configuration>`.
 
+.. _symfony_http_cache_kernel_dispatcher:
+
 Optimization for Single Server Installations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Normally, cache invalidation is done with a HTTP request to each cache server.
 If your application runs on one single server, you can use the kernel
-dispatcher to directly call the ``HttpCache`` rather than sending an actual
-web request. This is more efficient, and you don't need to configure the server
-IP address.
+dispatcher to have PHP code call the ``HttpCache`` in the same PHP process,
+rather than sending an actual web request. This is more efficient, and you
+don't need to configure the server IP address.
 
-The :ref:`FOSHttpCache Symfony Proxy Client documentation section <foshttpcache:proxy client symfony httpcache kernel dispatcher>`
-explains how to adjust your bootstrap - you will need to do this in both
-``public/index.php`` and ``bin/console``.
+For this to work, your kernel needs to implement the ``HttpCacheProvider``
+interface and know about the cache kernel. The cache is implemented with the
+decorator pattern and thus the application kernel does not normally know about
+the cache. FOSHttpCacheBundle provides the ``HttpCacheAware`` trait to simplify
+making your kernel capable of providing the cache.
+
+The recommended way to wire things up is to instantiate the cache kernel in the
+kernel constructor to guarantee consistent setup over all entry points. Adjust
+your kernel like this::
+
+    // src/AppKernel.php
+
+    namespace App;
+
+    use FOS\HttpCache\SymfonyCache\HttpCacheAware;
+    use FOS\HttpCache\SymfonyCache\HttpCacheProvider;
+    use Symfony\Component\HttpKernel\Kernel;
+
+    class AppKernel extends Kernel implements HttpCacheProvider
+    {
+        use HttpCacheAware;
+        // ...
+
+        public function __construct(...)
+        {
+            // ...
+            $this->setHttpCache(new AppCache($this));
+        }
+    }
+
+Now you need to adjust your front controller to use that cache instance rather
+than creating one::
+
+    // public/index.php
+
+    use App\AppKernel;
+
+    // ...
+
+    $kernel = new AppKernel($env, $debug);
+    if ('prod' === $env) {
+        $kernel = $kernel->getHttpCache();
+    }
+
+.. warning::
+
+    If you do not want to instantiate the cache kernel in your kernel
+    constructor, you need to make sure it is always available and consistently
+    configured. Notably, the ``bin/console`` must also have access to the
+    kernel to support invalidation on the command line.
 
 Once your bootstrapping is adjusted, set the configuration option
 ``fos_http_cache.proxy_client.symfony.use_kernel_dispatcher: true``.
