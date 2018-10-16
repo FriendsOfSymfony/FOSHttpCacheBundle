@@ -1,6 +1,15 @@
 Changelog
 =========
 
+2.6.1
+-----
+
+### Fixed
+
+* Cache Tagging: It is now possible to use cache tagging without installing the
+  Sensio ``FrameworkExtraBundle``. There is a new configuration option 
+  ``tags.annotations.enabled`` that can be set to ``false``. 
+
 2.6.0
 -----
 

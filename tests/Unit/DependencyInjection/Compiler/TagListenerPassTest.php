@@ -24,7 +24,7 @@ class TagListenerPassTest extends TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage requires SensioFrameworkExtraBundle
+     * @expectedExceptionMessage require the SensioFrameworkExtraBundle
      */
     public function testNoFrameworkBundle()
     {

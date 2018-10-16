@@ -469,7 +469,7 @@ class FOSHttpCacheExtension extends Extension
             throw new InvalidConfigurationException(sprintf('You can not enable cache tagging with the %s client', $client));
         }
 
-        $container->setParameter('fos_http_cache.compiler_pass.tag_annotations', true);
+        $container->setParameter('fos_http_cache.compiler_pass.tag_annotations', $config['annotations']['enabled']);
         $container->setParameter('fos_http_cache.tag_handler.response_header', $config['response_header']);
         $container->setParameter('fos_http_cache.tag_handler.separator', $config['separator']);
         $container->setParameter('fos_http_cache.tag_handler.strict', $config['strict']);

@@ -112,6 +112,9 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ],
             'tags' => [
                 'enabled' => 'auto',
+                'annotations' => [
+                    'enabled' => true,
+                ],
                 'strict' => false,
                 'response_header' => 'FOS-Tags',
                 'expression_language' => 'acme.expression_language',
@@ -685,6 +688,9 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ],
             'tags' => [
                 'enabled' => false,
+                'annotations' => [
+                    'enabled' => true,
+                ],
                 'strict' => false,
                 'response_header' => 'X-Cache-Tags',
                 'expression_language' => null,
