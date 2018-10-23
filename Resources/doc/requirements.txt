@@ -1,5 +1,5 @@
 git+https://github.com/fabpot/sphinx-php.git
-sphinx-rtd-theme
+sphinx_rtd_theme
 sphinxcontrib-spelling
 sphinxcontrib-phpdomain
 pyenchant
