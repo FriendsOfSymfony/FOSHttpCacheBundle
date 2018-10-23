@@ -169,4 +169,4 @@ See the :ref:`@Tag reference <tag>` for full details.
 
 .. _Tagged Cache Invalidation: http://blog.kevburnsjr.com/tagged-cache-invalidation
 .. _Linked Cache Invalidation: http://tools.ietf.org/html/draft-nottingham-linked-cache-inv-03
-.. _expressions: http://symfony.com/doc/current/components/expression_language/index.html
+.. _expressions: https://symfony.com/doc/current/components/expression_language.html

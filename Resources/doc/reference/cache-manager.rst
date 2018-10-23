@@ -114,5 +114,5 @@ You can also flush the cache manager manually::
 
     $cacheManager->flush();
 
-.. _kernel.terminate event: http://symfony.com/doc/current/components/http_kernel/introduction.html#the-kernel-terminate-event
-.. _console.terminate event: http://symfony.com/doc/current/components/console/events.html#the-consoleevents-terminate-event
+.. _kernel.terminate event: https://symfony.com/doc/current/components/http_kernel.html#the-kernel-terminate-event
+.. _console.terminate event: https://symfony.com/doc/current/components/console/events.html#the-consoleevents-terminate-event

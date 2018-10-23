@@ -149,6 +149,6 @@ regular expressions.
     match:
         attributes: { _controller: ^AcmeBundle:Default:.* }
 
-.. _Trusting Proxies: http://symfony.com/doc/current/components/http_foundation/trusting_proxies.html
-.. _controllers as services: http://symfony.com/doc/current/cookbook/controller/service.html
+.. _Trusting Proxies: https://symfony.com/doc/current/deployment/proxies.html
+.. _controllers as services: https://symfony.com/doc/current/controller/service.html
 .. _RFC 7231: http://tools.ietf.org/html/rfc7231#page-48

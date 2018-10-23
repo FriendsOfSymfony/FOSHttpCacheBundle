@@ -122,4 +122,4 @@ than creating one::
 Once your bootstrapping is adjusted, set the configuration option
 ``fos_http_cache.proxy_client.symfony.use_kernel_dispatcher: true``.
 
-.. _Symfony HttpCache documentation: http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy
+.. _Symfony HttpCache documentation: https://symfony.com/doc/current/http_cache.html#symfony-reverse-proxy

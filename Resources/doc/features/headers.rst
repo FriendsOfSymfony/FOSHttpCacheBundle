@@ -69,5 +69,5 @@ This is an example configuration. For more, see the
                         cache_control: { public: true, max_age: 15, s_maxage: 30 }
                         etag: "strong"
 
-.. _manually setting cache headers: http://symfony.com/doc/current/book/http_cache.html#the-cache-control-header
-.. _setting caching headers through annotations: http://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/cache.html
+.. _manually setting cache headers: https://symfony.com/doc/current/http_cache.html#the-cache-control-header
+.. _setting caching headers through annotations: https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/cache.html
