@@ -1,15 +1,6 @@
 Changelog
 =========
 
-2.6.1
------
-
-### Fixed
-
-* Cache Tagging: It is now possible to use cache tagging without installing the
-  Sensio ``FrameworkExtraBundle``. There is a new configuration option 
-  ``tags.annotations.enabled`` that can be set to ``false``. 
-
 2.6.0
 -----
 
@@ -18,6 +9,12 @@ Changelog
 * User context lookup now tags the hash lookup response. The logout listener can now invalidate that tag instead of
   doing a BAN request. The previous varnish BAN request has been incorrect and banned all cache entries on Varnish.
   The logout handler is now also activated by default for the Symfony HttpCache in addition to Varnish and Noop.
+
+### Fixed
+
+* Cache Tagging: It is now possible to use cache tagging without installing the
+  ``SensioFrameworkExtraBundle``. There is a new configuration option
+  ``tags.annotations.enabled`` that can be set to ``false``.
 
 2.5.1
 -----
