@@ -98,7 +98,7 @@ your kernel like this::
         }
     }
 
-Now you need to adjust your front controller (that you set up according to the `Symfony HttpCache documentation_`) to use that cache instance rather than creating one::
+Now you need to adjust your front controller (that you set up according to the `Symfony HttpCache documentation`_) to use that cache instance rather than creating one::
 
     // public/index.php
 
