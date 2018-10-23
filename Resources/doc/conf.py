@@ -28,6 +28,7 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.todo',
     'sensio.sphinx.configurationblock',
+    'sphinxcontrib.phpdomain',
     'sphinxcontrib.spelling'
 ]
 
