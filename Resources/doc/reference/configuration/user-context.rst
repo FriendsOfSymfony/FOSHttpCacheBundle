@@ -37,7 +37,7 @@ triggered:
 
 .. important::
 
-    If you are using `Symfony security <http://symfony.com/doc/current/book/security.html>`_
+    If you are using `Symfony security`_
     for the hash generation, make sure that this route is inside the firewall
     for which you are doing the cache groups.
 
@@ -266,3 +266,5 @@ is called when the hash is generated.
         ->register('acme.demo_bundle.my_service', '%acme.demo_bundle.my_service.class%')
         ->addTag('fos_http_cache.user_context_provider', array('priority' => 10))
     ;
+
+.. _Symfony security: https://symfony.com/doc/current/security.html

@@ -108,7 +108,7 @@ This bundle is released under the MIT license.
     :language: none
 
 .. _Packagist: https://packagist.org/packages/friendsofsymfony/http-cache-bundle
-.. _SensioFrameworkExtraBundle: http://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/index.html
-.. _ExpressionLanguage: http://symfony.com/doc/current/components/expression_language/introduction.html
-.. _Symfony: http://symfony.com/doc/current/book/http_cache.html#the-cache-control-header
+.. _SensioFrameworkExtraBundle: https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/index.html
+.. _ExpressionLanguage: https://symfony.com/doc/current/components/expression_language.html
+.. _Symfony: https://symfony.com/doc/current/http_cache.html#the-cache-control-header
 .. _client implementations: https://packagist.org/providers/php-http/client-implementation

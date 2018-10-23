@@ -136,4 +136,4 @@ See :doc:`/features/tagging` for an introduction to tagging.
 If you wish to change the HTTP header used for storing tags, see
 :doc:`/reference/configuration/tags`.
 
-.. _param converter: http://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/converters.html
+.. _param converter: https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/converters.html

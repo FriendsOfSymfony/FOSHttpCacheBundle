@@ -63,7 +63,7 @@ controller, as the request listener will abort the request right after the
 firewall has been applied, but the route definition must exist. Use the same
 path as you specified in the caching proxy and make sure that this path is
 allowed for anonymous users and covered by your
-`firewall configuration <http://symfony.com/doc/current/book/security.html>`_:
+`firewall configuration`_:
 
 .. code-block:: yaml
 
@@ -135,3 +135,4 @@ You can do so by configuring :ref:`hash_cache_ttl`.
 .. _CORS requests: https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
 .. _terminal42/header-replay-bundle: https://github.com/terminal42/header-replay-bundle
 .. _HeaderReplayBundle documentation: https://github.com/terminal42/header-replay-bundle#terminal42header-replay-bundle
+.. _firewall configuration: https://symfony.com/doc/current/security.html#a-authentication-firewalls

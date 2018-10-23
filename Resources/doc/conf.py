@@ -249,6 +249,6 @@ texinfo_documents = [
 intersphinx_mapping = {'foshttpcache': ('http://foshttpcache.readthedocs.org/en/latest/', None)}
 
 rst_epilog = """
-.. _expressions: http://symfony.com/doc/current/components/expression_language/index.html
+.. _expressions: https://symfony.com/doc/current/components/expression_language.html
 .. _FOSHttpCache: https://github.com/FriendsOfSymfony/FOSHttpCache
 """
