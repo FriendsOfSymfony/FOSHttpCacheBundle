@@ -2,13 +2,19 @@
 # -*- coding: utf-8 -*-
 #
 
-import sys, os, sphinx_rtd_theme
+import sys, os
 from sphinx.highlighting import lexers
 from pygments.lexers.web import PhpLexer
 
 lexers['php'] = PhpLexer(startinline=True, linenos=1)
-primary_domain = 'php'
 
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if not on_rtd:  # only import and set the theme if we're building docs locally
+    import sphinx_rtd_theme
+    html_theme = 'sphinx_rtd_theme'
+    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
+primary_domain = 'php'
 highlight_language = 'php'
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -25,8 +31,6 @@ highlight_language = 'php'
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
     'sphinx.ext.intersphinx',
-    'sphinx.ext.coverage',
-    'sphinx.ext.todo',
     'sphinxcontrib.phpdomain',
     'sensio.sphinx.configurationblock',
     'sensio.sphinx.phpcode',
@@ -99,24 +103,21 @@ pygments_style = 'sphinx'
 
 # -- Options for HTML output ---------------------------------------------------
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-html_theme = 'sphinx_rtd_theme'
-
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #html_theme_options = {}
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+#html_theme_path = []
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = None
+# Don't show version in title
+html_title = "FOSHttpCacheBundle Documentation"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-#html_short_title = None
+html_short_title = "FOSHttpCacheBundle"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
