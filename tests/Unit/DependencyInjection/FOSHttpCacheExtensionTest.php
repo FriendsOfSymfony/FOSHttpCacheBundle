@@ -246,6 +246,23 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertRequestMatcherCreated($container, ['_controller' => '^AcmeBundle:Default:index$']);
         $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.tag');
         $this->assertFalse($container->hasDefinition('fos_http_cache.tag_handler.max_header_value_length_header_formatter'));
+        $this->assertTrue($container->hasParameter('fos_http_cache.compiler_pass.tag_annotations'));
+        $this->assertTrue($container->getParameter('fos_http_cache.compiler_pass.tag_annotations'));
+    }
+
+    public function testConfigLoadTagDisableAnnotations()
+    {
+        $config = $this->getBaseConfig() + [
+            'tags' => [
+                'annotations' => false,
+            ],
+        ];
+
+        $container = $this->createContainer();
+        $this->extension->load([$config], $container);
+
+        $this->assertTrue($container->hasParameter('fos_http_cache.compiler_pass.tag_annotations'));
+        $this->assertFalse($container->getParameter('fos_http_cache.compiler_pass.tag_annotations'));
     }
 
     public function testConfigWithMaxHeaderLengthValueDecoratesTagService()

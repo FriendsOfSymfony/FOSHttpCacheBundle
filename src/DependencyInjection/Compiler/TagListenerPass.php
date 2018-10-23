@@ -29,8 +29,10 @@ class TagListenerPass implements CompilerPassInterface
             && !$this->hasControllerListener($container)
         ) {
             throw new \RuntimeException(
-                'Tag support requires SensioFrameworkExtraBundle’s ControllerListener for the annotations. '
-                .'Please install sensio/framework-extra-bundle and add it to your AppKernel.'
+                'Tag annotations are enabled by default because otherwise things could silently not work.'
+                .' The annotations require the SensioFrameworkExtraBundle ControllerListener. If you do not use'
+                .' annotations for tags, set "fos_http_cache.tags.annotations.enabled: false". Otherwise install'
+                .' sensio/framework-extra-bundle and enabled it in your kernel.'
             );
         }
     }
