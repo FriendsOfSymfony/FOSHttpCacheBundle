@@ -53,12 +53,13 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        if (method_exists(TreeBuilder::class, 'getRootNode')) {
-            $treeBuilder = new TreeBuilder('fos_http_cache');
-            $rootNode = $treeBuilder->getRootNode();
-        } else {
-            $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('fos_http_cache');
+
+        // Keep compatibility with symfony/config < 4.2
+        if (!method_exists($treeBuilder, 'getRootNode')) {
             $rootNode = $treeBuilder->root('fos_http_cache');
+        } else {
+            $rootNode = $treeBuilder->getRootNode();
         }
 
         $rootNode
@@ -517,12 +518,13 @@ class Configuration implements ConfigurationInterface
      */
     private function getHttpDispatcherNode()
     {
-        if (method_exists(TreeBuilder::class, 'getRootNode')) {
-            $treeBuilder = new TreeBuilder('http');
-            $node = $treeBuilder->getRootNode();
-        } else {
-            $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('http');
+
+        // Keep compatibility with symfony/config < 4.2
+        if (!method_exists($treeBuilder, 'getRootNode')) {
             $node = $treeBuilder->root('http');
+        } else {
+            $node = $treeBuilder->getRootNode();
         }
 
         $node
