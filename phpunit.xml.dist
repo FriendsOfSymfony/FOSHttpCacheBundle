@@ -29,7 +29,8 @@
     </listeners>
 
     <php>
-        <server name="KERNEL_DIR" value="./tests/Functional/Fixtures/app" />
-        <server name="KERNEL_CLASS" value="AppKernel" />
+        <env name="KERNEL_DIR" value="./tests/Functional/Fixtures/app" />
+        <env name="KERNEL_CLASS" value="AppKernel" />
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
     </php>
 </phpunit>
