@@ -30,4 +30,11 @@ class TestController extends Controller
 
         return $response;
     }
+
+    public function switchUserAction()
+    {
+        $user = $this->getUser();
+
+        return new Response($user->getUsername());
+    }
 }
