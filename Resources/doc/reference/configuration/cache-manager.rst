@@ -10,9 +10,7 @@ specify the ``custom_proxy_client`` field.
     # app/config/config.yml
     fos_http_cache:
         cache_manager:
-            enabled: true
-            custom_proxy_client: ~
-            generate_url_type: true
+            enabled: auto
 
 ``enabled``
 -----------
@@ -53,3 +51,10 @@ and ``refreshRoute()`` calls. If you use ``ABSOLUTE_PATH`` to only generate
 paths, you need to configure the ``base_url`` on the proxy client. When set to
 ``auto``, the value is determined based on whether ``base_url`` is set on the
 default proxy client.
+
+.. code-block:: yaml
+
+    # app/config/config.yml
+    fos_http_cache:
+        cache_manager:
+            generate_url_type: !php/const Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_PATH
