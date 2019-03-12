@@ -41,6 +41,10 @@ test_cached_session:
   path:  /secured_area/cached_session
   controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::sessionAction
 
+test_switch_user:
+  path:  /secured_area/switch_user
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::switchUserAction
+
 test_noncached:
   path:  /noncached
   controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction
