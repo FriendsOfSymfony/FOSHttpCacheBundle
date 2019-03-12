@@ -203,7 +203,7 @@ class UserContextListenerTest extends TestCase
 
     public function testOnKernelResponseSetsNoAutoCacheHeader()
     {
-        if (4 > Kernel::MAJOR_VERSION || 1 > Kernel::MINOR_VERSION) {
+        if (\version_compare('4.1', Kernel::VERSION, '>')) {
             $this->markTestSkipped('Test only relevant for Symfony 4.1 and up');
         }
 
@@ -225,9 +225,37 @@ class UserContextListenerTest extends TestCase
         $this->assertEquals(1, $event->getResponse()->headers->get(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER));
     }
 
+    public function testOnKernelResponseDoesNotSetNoAutoCacheHeaderWhenNoSessionListener()
+    {
+        if (\version_compare('4.1', Kernel::VERSION, '>')) {
+            $this->markTestSkipped('Test only relevant for Symfony 4.1 and up');
+        }
+
+        $request = new Request();
+        $request->setMethod('HEAD');
+        $request->headers->set('X-User-Context-Hash', 'hash');
+
+        $hashGenerator = \Mockery::mock(HashGenerator::class);
+
+        $userContextListener = new UserContextListener(
+            $this->getRequestMatcher($request, false),
+            $hashGenerator,
+            null,
+            null,
+            [],
+            false
+        );
+        $event = $this->getKernelResponseEvent($request);
+
+        $userContextListener->onKernelResponse($event);
+
+        $this->assertContains('X-User-Context-Hash', $event->getResponse()->headers->get('Vary'));
+        $this->assertFalse($event->getResponse()->headers->has(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER));
+    }
+
     public function testOnKernelResponseSetsNoAutoCacheHeaderWhenCustomHeader()
     {
-        if (4 > Kernel::MAJOR_VERSION || 1 > Kernel::MINOR_VERSION) {
+        if (\version_compare('4.1', Kernel::VERSION, '>')) {
             $this->markTestSkipped('Test only relevant for Symfony 4.1 and up');
         }
 
@@ -250,7 +278,7 @@ class UserContextListenerTest extends TestCase
 
     public function testOnKernelResponseSetsNoAutoCacheHeaderWhenCustomHeaderAndNoAddVaryOnHash()
     {
-        if (4 > Kernel::MAJOR_VERSION || 1 > Kernel::MINOR_VERSION) {
+        if (\version_compare('4.1', Kernel::VERSION, '>')) {
             $this->markTestSkipped('Test only relevant for Symfony 4.1 and up');
         }
 
@@ -278,7 +306,7 @@ class UserContextListenerTest extends TestCase
 
     public function testOnKernelResponseDoesNotSetNoAutoCacheHeaderWhenNoCustomHeaderAndNoAddVaryOnHash()
     {
-        if (4 > Kernel::MAJOR_VERSION || 1 > Kernel::MINOR_VERSION) {
+        if (\version_compare('4.1', Kernel::VERSION, '>')) {
             $this->markTestSkipped('Test only relevant for Symfony 4.1 and up');
         }
 

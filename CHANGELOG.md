@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.6.1
+-----
+
+### Fixed
+
+* Do not leak the `Symfony-Session-NoAutoCacheControl` header when the Symfony session system is not enabled.
+
 2.6.0
 -----
 
