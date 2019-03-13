@@ -18,6 +18,12 @@ version of `Linked Cache Invalidation`_ (LCI), allows you to:
 * :ref:`invalidate the responses by tag <foshttpcache:tags>` (e.g., invalidate
   all responses that are tagged ``article-42``)
 
+.. hint::
+
+    When working with Varnish, it is recommended to use the xkey vmod for
+    efficient invalidation. See :ref:`Tagging with Varnish <foshttpcache:varnish_tagging>`
+    and :ref:`configure the proxy client for purgekeys <config_varnish_tag_mode>`.
+
 Basic Configuration
 -------------------
 

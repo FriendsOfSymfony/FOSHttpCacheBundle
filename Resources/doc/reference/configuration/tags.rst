@@ -33,9 +33,16 @@ incompatible proxies:
 ``response_header``
 -------------------
 
-**type**: ``string`` **default**: ``X-Cache-Tags``
+**type**: ``string`` **default**: ``X-Cache-Tags`` resp. ``xkey``
 
-Custom HTTP header that tags are stored in.
+HTTP header that tags are stored in.
+
+.. note::
+
+    If you use :ref:`Varnish xkey system <config_varnish_tag_mode>`, (having
+    ``proxy_client.varnish.tag_mode: purgekeys``), the response header defaults
+    to ``xkey`` rather than ``X-Cache-Tags``. Do not change the header in that
+    case, the xkey header name is hardcoded into the xkey vmod.
 
 .. include:: /includes/expression-language.rst
 

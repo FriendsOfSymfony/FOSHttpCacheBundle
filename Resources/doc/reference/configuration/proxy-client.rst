@@ -92,12 +92,15 @@ URL may contain a path. If you access your web application on a port other than
     Double-check ``base_url``, for if it is mistyped, no content will be
     invalidated.
 
+.. _config_varnish_tag_mode:
+
 ``tag_mode``
 """"""""""""
 
 **type**: ``string`` **options**: ``ban``, ``purgekeys`` **default**: ``ban``
 
-Select whether to invalidate tags using the `xkey vmod`_ or with BAN requests.
+Select whether to invalidate tags using the :ref:`xkey vmod <foshttpcache:varnish_tagging>`
+or with BAN requests.
 
 Xkey is an efficient way to invalidate Varnish cache entries based on
 :doc:`tagging </features/tagging>`.
@@ -110,9 +113,12 @@ default ``xkey-softpurge``.
 
 .. note::
 
-    To use the purgekeys method, you need the `xkey vmod`_ enabled and VCL to
+    To use the purgekeys method, you need the xkey vmod enabled and VCL to
     handle xkey invalidation requests as explained in the
     :ref:`FOSHttpCache library docs on xkey support <foshttpcache:varnish_tagging>`.
+
+    ``tags.response_header`` will automatically default to ``xkey`` when you
+    set the mode to purgekeys.
 
 ``tags_header``
 """""""""""""""
