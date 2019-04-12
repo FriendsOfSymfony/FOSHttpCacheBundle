@@ -60,6 +60,14 @@ class UserContextListener implements EventSubscriberInterface
     private $options;
 
     /**
+     * Whether the application has a session listener and therefore could
+     * require the AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER.
+     *
+     * @var bool
+     */
+    private $hasSessionListener;
+
+    /**
      * @var string
      */
     private $hash;
@@ -78,12 +86,14 @@ class UserContextListener implements EventSubscriberInterface
         HashGenerator $hashGenerator,
         RequestMatcherInterface $anonymousRequestMatcher = null,
         ResponseTagger $responseTagger = null,
-        array $options = []
+        array $options = [],
+        bool $hasSessionListener = true
     ) {
         $this->requestMatcher = $requestMatcher;
         $this->hashGenerator = $hashGenerator;
-        $this->responseTagger = $responseTagger;
         $this->anonymousRequestMatcher = $anonymousRequestMatcher;
+        $this->responseTagger = $responseTagger;
+        $this->hasSessionListener = $hasSessionListener;
 
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
@@ -146,7 +156,7 @@ class UserContextListener implements EventSubscriberInterface
             $response->setClientTtl($this->options['ttl']);
             $response->setVary($this->options['user_identifier_headers']);
             $response->setPublic();
-            if (4 <= Kernel::MAJOR_VERSION && 1 <= Kernel::MINOR_VERSION) {
+            if ($this->hasSessionListener && version_compare('4.1', Kernel::VERSION, '<=')) {
                 // header to avoid Symfony SessionListener overwriting the response to private
                 $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 1);
             }
@@ -210,7 +220,7 @@ class UserContextListener implements EventSubscriberInterface
             }
 
             // For Symfony 4.1+ if user hash header was in vary or just added here by "add_vary_on_hash"
-            if (4 <= Kernel::MAJOR_VERSION && 1 <= Kernel::MINOR_VERSION && in_array($this->options['user_hash_header'], $vary)) {
+            if ($this->hasSessionListener && \version_compare('4.1', Kernel::VERSION, '<=') && in_array($this->options['user_hash_header'], $vary)) {
                 // header to avoid Symfony SessionListener overwriting the response to private
                 $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 1);
             }

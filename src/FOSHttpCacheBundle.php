@@ -14,7 +14,7 @@ namespace FOS\HttpCacheBundle;
 use FOS\HttpCache\UserContext\ContextProvider;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\LoggerPass;
-use FOS\HttpCacheBundle\DependencyInjection\Compiler\SessionListenerRemovePass;
+use FOS\HttpCacheBundle\DependencyInjection\Compiler\SessionListenerPass;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\TagListenerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -33,7 +33,7 @@ class FOSHttpCacheBundle extends Bundle
         if (version_compare(Kernel::VERSION, '3.4', '>=')
             && version_compare(Kernel::VERSION, '4.1', '<')
         ) {
-            $container->addCompilerPass(new SessionListenerRemovePass());
+            $container->addCompilerPass(new SessionListenerPass());
         }
 
         // Symfony 3.3 and higher

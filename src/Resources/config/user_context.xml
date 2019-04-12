@@ -19,6 +19,7 @@
             <argument type="service" id="fos_http_cache.user_context.anonymous_request_matcher" />
             <argument type="service" id="fos_http_cache.http.symfony_response_tagger" on-invalid="ignore" />
             <argument>%fos_http_cache.event_listener.user_context.options%</argument>
+            <argument>true</argument>
             <tag name="kernel.event_subscriber" />
         </service>
 
