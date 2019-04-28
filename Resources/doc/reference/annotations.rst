@@ -28,6 +28,10 @@ Invalidate a path::
     {
     }
 
+When `editAction()` returns a successful response to an :term:`unsafe <safe>`
+HTTP request (POST, PUT, PATCH or DELETE), the paths `/articles` and
+`/articles/latest` will be invalidated.
+
 See :doc:`/features/invalidation` for more information.
 
 .. _invalidateroute:
@@ -46,6 +50,9 @@ Invalidate a route with parameters::
     public function editAction()
     {
     }
+
+Similarly to ``@InvalidatePath`` above, any successful response to an
+:term:`unsafe <safe>` request will invalidate the two routes.
 
 You can also use expressions_ in the route parameter values. This obviously
 :ref:`requires the ExpressionLanguage component <requirements>`. To invalidate
