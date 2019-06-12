@@ -1,6 +1,17 @@
 Changelog
 =========
 
+2.7.0
+-----
+
+### Changed
+
+* Allow to use environment variables to configure the caching proxy.
+
+### Fixed
+
+* Invalidate the user context cache also when impersonating a user and when stopping to impersonate.
+
 2.6.1
 -----
 
