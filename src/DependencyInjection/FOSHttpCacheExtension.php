@@ -375,11 +375,20 @@ class FOSHttpCacheExtension extends Extension
     private function createHttpDispatcherDefinition(ContainerBuilder $container, array $config, $serviceName)
     {
         foreach ($config['servers'] as $url) {
-            $this->validateUrl($url, 'Not a valid Varnish server address: "%s"');
+            $usedEnvs = [];
+            $container->resolveEnvPlaceholders($url, null, $usedEnvs);
+            if (0 === \count($usedEnvs)) {
+                $this->validateUrl($url, 'Not a valid Varnish server address: "%s"');
+            }
         }
         if (!empty($config['base_url'])) {
-            $baseUrl = $this->prefixSchema($config['base_url']);
-            $this->validateUrl($baseUrl, 'Not a valid base path: "%s"');
+            $baseUrl = $config['base_url'];
+            $usedEnvs = [];
+            $container->resolveEnvPlaceholders($baseUrl, null, $usedEnvs);
+            if (0 === \count($usedEnvs)) {
+                $baseUrl = $this->prefixSchema($baseUrl);
+                $this->validateUrl($baseUrl, 'Not a valid base path: "%s"');
+            }
         } else {
             $baseUrl = null;
         }
