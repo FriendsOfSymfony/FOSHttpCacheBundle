@@ -39,17 +39,18 @@ matrix:
 
     - php: 7.1
     - php: 7.2
+    - php: 7.3
       env:
         - PHPUNIT_FLAGS="-v --coverage-clover=coverage.clover"
         - COVERAGE=true
         - DOCCHECK=true
 
       # Test LTS versions. Read more at https://github.com/symfony/lts
-    - php: 7.2
+    - php: 7.3
       env: DEPENDENCIES="symfony/lts:^3"
 
       # Latest commit to master
-    - php: 7.2
+    - php: 7.3
       env: STABILITY="dev"
 
   allow_failures:
