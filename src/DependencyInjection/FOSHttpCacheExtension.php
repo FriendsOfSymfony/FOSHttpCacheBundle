@@ -13,7 +13,6 @@ namespace FOS\HttpCacheBundle\DependencyInjection;
 
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\ProxyClient;
-use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use FOS\HttpCache\TagHeaderFormatter\MaxHeaderValueLengthFormatter;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
