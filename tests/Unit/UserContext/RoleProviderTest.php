@@ -15,6 +15,7 @@ use FOS\HttpCache\UserContext\UserContext;
 use FOS\HttpCacheBundle\UserContext\RoleProvider;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Role\Role;
@@ -25,13 +26,18 @@ class RoleProviderTest extends TestCase
 
     public function testProvider()
     {
-        $roles = [new Role('ROLE_USER')];
-
-        $token = \Mockery::mock(TokenInterface::class);
+        if (method_exists(AnonymousToken::class, 'getRoleNames')) {
+            $token = \Mockery::mock(AnonymousToken::class);
+            $token->shouldReceive('getRoleNames')->andReturn(['ROLE_USER']);
+            $token->shouldNotReceive('getRoles');
+        } else {
+            $token = \Mockery::mock(TokenInterface::class);
+            $token->shouldReceive('getRoles')->andReturn([new Role('ROLE_USER')]);
+            $token->shouldNotReceive('getRoleNames');
+        }
 
         $securityContext = $this->getTokenStorageMock();
         $securityContext->shouldReceive('getToken')->andReturn($token);
-        $token->shouldReceive('getRoles')->andReturn($roles);
 
         $userContext = new UserContext();
         $provider = new RoleProvider($securityContext);

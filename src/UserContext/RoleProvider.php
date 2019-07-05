@@ -56,9 +56,13 @@ class RoleProvider implements ContextProvider
             return;
         }
 
-        $roles = array_map(function (Role $role) {
-            return $role->getRole();
-        }, $token->getRoles());
+        if (method_exists($token, 'getRoleNames')) {
+            $roles = $token->getRoleNames();
+        } else {
+            $roles = array_map(function (Role $role) {
+                return $role->getRole();
+            }, $token->getRoles());
+        }
 
         // Order is not important for roles and should not change hash.
         sort($roles);
