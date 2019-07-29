@@ -143,7 +143,7 @@ class Configuration implements ConfigurationInterface
                         return $v;
                     }
 
-                    throw new InvalidConfigurationException('To enable the user context logout handler, you need to configure a ban capable proxy_client.');
+                    throw new InvalidConfigurationException('To enable the user context logout handler, you need to configure a tag capable proxy_client (varnish, symfony or noop).');
                 })
             ->end()
             // Determine the default tags header for the varnish client, depending on whether we use BAN or xkey
