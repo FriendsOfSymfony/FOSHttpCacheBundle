@@ -608,9 +608,9 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             'auto no client' => ['config/user_context_auto_noclient.yml', false, false, false, false, null],
             'auto ban client' => ['config/user_context_auto_banclient.yml', true, true, 'custom', 'auto', null],
             'auto non ban client' => ['config/user_context_auto_notbanclient.yml', false, 'auto', 'nginx', 'auto', null],
-            'true no client' => ['config/user_context_true_noclient.yml', null, false, 'auto', false, 'you need to configure a ban capable proxy_client'],
+            'true no client' => ['config/user_context_true_noclient.yml', null, false, 'auto', false, 'you need to configure a tag capable proxy_client'],
             'true ban client' => ['config/user_context_true_banclient.yml', true, true, 'custom', 'auto', null],
-            'true non ban client' => ['config/user_context_true_notbanclient.yml', null, true, 'nginx', 'auto', 'you need to configure a ban capable proxy_client'],
+            'true non ban client' => ['config/user_context_true_notbanclient.yml', null, true, 'nginx', 'auto', 'you need to configure a tag capable proxy_client'],
         ];
     }
 
