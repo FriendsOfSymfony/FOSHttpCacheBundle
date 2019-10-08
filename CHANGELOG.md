@@ -1,6 +1,14 @@
 Changelog
 =========
 
+2.7.1
+-----
+
+### Fixed
+
+* Avoid deprecation warning about `TokenInterface::getRoles`.
+* Improve exception message if a tag capable client is not found.
+
 2.7.0
 -----
 
