@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.7.2
+-----
+
+### Fixed
+
+* Avoid deprecation warning about `ContainerAwareCommand`.
+
 2.7.1
 -----
 
