@@ -12,15 +12,20 @@
 namespace FOS\HttpCacheBundle\Command;
 
 use FOS\HttpCacheBundle\CacheManager;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use LogicException;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class for commands to trigger cache invalidation from the command line.
  *
  * @author David Buchmann <mail@davidbu.ch>
  */
-abstract class BaseInvalidateCommand extends ContainerAwareCommand
+abstract class BaseInvalidateCommand extends Command
 {
+    use ContainerAwareTrait;
+
     /**
      * @var CacheManager
      */
@@ -54,5 +59,24 @@ abstract class BaseInvalidateCommand extends ContainerAwareCommand
         }
 
         return $this->cacheManager;
+    }
+
+    /**
+     * @return ContainerInterface
+     *
+     * @throws \LogicException
+     */
+    protected function getContainer()
+    {
+        if (null === $this->container) {
+            $application = $this->getApplication();
+            if (null === $application) {
+                throw new LogicException('The container cannot be retrieved as the application instance is not yet set.');
+            }
+
+            $this->container = $application->getKernel()->getContainer();
+        }
+
+        return $this->container;
     }
 }
