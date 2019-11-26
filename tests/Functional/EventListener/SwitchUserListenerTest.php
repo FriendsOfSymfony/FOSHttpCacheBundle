@@ -60,7 +60,7 @@ class SwitchUserListenerTest extends WebTestCase
 
     private function loginAsAdmin(Client $client, Session $session, $firewallName = 'secured_area', $sessionId = 'test')
     {
-        $token = new UsernamePasswordToken(new User('admin', 'admin'), null, $firewallName, ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']);
+        $token = new UsernamePasswordToken(new User('admin', 'admin', ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']), null, $firewallName, ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']);
 
         $session->setId($sessionId);
         $session->set(sprintf('_security_%s', $firewallName), serialize($token));
