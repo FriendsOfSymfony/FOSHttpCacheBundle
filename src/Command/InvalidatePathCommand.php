@@ -69,7 +69,7 @@ EOF
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $paths = $input->getArgument('paths');
 
@@ -80,5 +80,7 @@ EOF
 
             $this->getCacheManager()->invalidatePath($path);
         }
+
+        return 0;
     }
 }

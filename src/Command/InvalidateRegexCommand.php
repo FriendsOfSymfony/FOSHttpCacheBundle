@@ -72,10 +72,12 @@ EOF
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $regex = $input->getArgument('regex');
 
         $this->getCacheManager()->invalidateRegex($regex);
+
+        return 0;
     }
 }
