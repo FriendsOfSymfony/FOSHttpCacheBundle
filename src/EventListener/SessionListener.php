@@ -15,7 +15,18 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\EventListener\SessionListener as BaseSessionListener;
+use Symfony\Component\HttpKernel\Kernel;
+
+if (Kernel::MAJOR_VERSION >= 5) {
+    class_alias(RequestEvent::class, 'FOS\HttpCacheBundle\EventListener\SessionRequestEvent');
+    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\SessionResponseEvent');
+} else {
+    class_alias(GetResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\SessionRequestEvent');
+    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\SessionResponseEvent');
+}
 
 /**
  * Decorates the default Symfony session listener.
@@ -60,12 +71,12 @@ final class SessionListener implements EventSubscriberInterface
         $this->userIdentifierHeaders = $userIdentifierHeaders;
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(SessionRequestEvent $event)
     {
         return $this->inner->onKernelRequest($event);
     }
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(SessionResponseEvent $event)
     {
         if (!$event->isMasterRequest()) {
             return;

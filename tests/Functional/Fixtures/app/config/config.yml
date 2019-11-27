@@ -1,7 +1,7 @@
 framework:
   secret: fos
   router:
-    resource: "%kernel.root_dir%/config/routing.yml"
+    resource: "%kernel.project_dir%/tests/Functional/Fixtures/app/config/routing.yml"
   test: ~
   session:
     storage_id:  session.test_storage
@@ -46,7 +46,7 @@ fos_http_cache:
   test:
     proxy_server:
       varnish:
-        config_file: "%kernel.root_dir%/Resources/varnish/fos.vcl"
+        config_file: "%kernel.project_dir%/tests/Functional/Fixtures/app/Resources/varnish/fos.vcl"
   flash_message:
     enabled: true
     name: flash_cookie_name

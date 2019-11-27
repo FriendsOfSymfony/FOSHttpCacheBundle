@@ -56,12 +56,10 @@ class AppKernel extends Kernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        if (Kernel::MAJOR_VERSION >= 4) {
-            if (Kernel::MINOR_VERSION >= 1) {
-                $loader->load(__DIR__.'/config/config_41.yml');
-            } else {
-                $loader->load(__DIR__.'/config/config_40.yml');
-            }
+        if (\version_compare(Kernel::VERSION, '4.1', '>=')) {
+            $loader->load(__DIR__.'/config/config_41.yml');
+        } elseif (\version_compare(Kernel::VERSION, '4.0', '>=')) {
+            $loader->load(__DIR__.'/config/config_40.yml');
         } else {
             $loader->load(__DIR__.'/config/config3.yml');
         }

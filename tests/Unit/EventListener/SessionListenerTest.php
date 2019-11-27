@@ -16,16 +16,28 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\EventListener\SessionListener as BaseSessionListener;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
+
+if (Kernel::MAJOR_VERSION >= 5) {
+    class_alias(RequestEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\SessionRequestEvent');
+    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\SessionResponseEvent');
+} else {
+    class_alias(GetResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\SessionRequestEvent');
+    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\SessionResponseEvent');
+}
 
 class SessionListenerTest extends TestCase
 {
     public function testOnKernelRequestRemainsUntouched()
     {
-        $event = $this->createMock(GetResponseEvent::class);
+        $event = $this->createMock(SessionRequestEvent::class);
         $inner = $this->createMock(BaseSessionListener::class);
 
         $inner
@@ -40,19 +52,12 @@ class SessionListenerTest extends TestCase
 
     public function testOnFinishRequestRemainsUntouched()
     {
-        if (!method_exists('Symfony\Component\HttpKernel\EventListener\SessionListener', 'onFinishRequest')) {
-            $this->markTestSkipped('Method onFinishRequest does not exist on Symfony\Component\HttpKernel\EventListener\SessionListener');
+        if (!method_exists(BaseSessionListener::class, 'onFinishRequest')) {
+            $this->markTestSkipped('Method onFinishRequest does not exist on '.BaseSessionListener::class);
         }
 
-        $event = $this
-            ->getMockBuilder('Symfony\Component\HttpKernel\Event\FinishRequestEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $inner = $this
-            ->getMockBuilder('Symfony\Component\HttpKernel\EventListener\SessionListener')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = new FinishRequestEvent($this->createMock(KernelInterface::class), $this->createMock(Request::class), HttpKernelInterface::MASTER_REQUEST);
+        $inner = $this->createMock(BaseSessionListener::class);
 
         $inner
             ->expects($this->once())
@@ -73,7 +78,7 @@ class SessionListenerTest extends TestCase
             $this->markTestSkipped('Irrelevant for Symfony < 3.4');
         }
 
-        $event = new FilterResponseEvent(
+        $event = new SessionResponseEvent(
             $this->createMock(HttpKernelInterface::class),
             new Request(),
             HttpKernelInterface::MASTER_REQUEST,

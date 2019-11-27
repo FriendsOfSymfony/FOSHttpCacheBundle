@@ -80,5 +80,7 @@ EOF
 
             $this->getCacheManager()->invalidatePath($path);
         }
+
+        return 0;
     }
 }

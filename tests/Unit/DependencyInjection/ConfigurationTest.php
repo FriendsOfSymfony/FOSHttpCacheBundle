@@ -14,17 +14,19 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection;
 use FOS\HttpCacheBundle\DependencyInjection\Configuration;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionConfigurationTestCase;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
 class ConfigurationTest extends AbstractExtensionConfigurationTestCase
 {
-    protected function getContainerExtension()
+    protected function getContainerExtension(): ExtensionInterface
     {
         return new FOSHttpCacheExtension();
     }
 
-    protected function getConfiguration()
+    protected function getConfiguration(): ConfigurationInterface
     {
         return new Configuration(false);
     }

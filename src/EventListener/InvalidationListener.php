@@ -24,8 +24,16 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
+use Symfony\Component\HttpKernel\Event\TerminateEvent;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+if (Kernel::MAJOR_VERSION >= 5) {
+    class_alias(TerminateEvent::class, 'FOS\HttpCacheBundle\EventListener\InvalidationTerminateEvent');
+} else {
+    class_alias(PostResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\InvalidationTerminateEvent');
+}
 
 /**
  * On kernel.terminate event, this event handler invalidates routes for the
@@ -88,10 +96,8 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
      *   their routes to the cache manager;
      * - flush the cache manager in order to send invalidation requests to the
      *   HTTP cache.
-     *
-     * @param PostResponseEvent $event
      */
-    public function onKernelTerminate(PostResponseEvent $event)
+    public function onKernelTerminate(InvalidationTerminateEvent $event)
     {
         $request = $event->getRequest();
         $response = $event->getResponse();

@@ -21,9 +21,19 @@ use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
+
+if (Kernel::MAJOR_VERSION >= 5) {
+    class_alias(RequestEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\UserContextRequestEvent');
+    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\UserContextResponseEvent');
+} else {
+    class_alias(GetResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\UserContextRequestEvent');
+    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\UserContextResponseEvent');
+}
 
 class UserContextListenerTest extends TestCase
 {
@@ -513,18 +523,18 @@ class UserContextListenerTest extends TestCase
         $this->assertEquals('max-age=0, no-cache, no-store, private, s-maxage=0', $event->getResponse()->headers->get('Cache-Control'));
     }
 
-    protected function getKernelRequestEvent(Request $request, $type = HttpKernelInterface::MASTER_REQUEST)
+    protected function getKernelRequestEvent(Request $request, $type = HttpKernelInterface::MASTER_REQUEST): UserContextRequestEvent
     {
-        return new GetResponseEvent(
+        return new UserContextRequestEvent(
             \Mockery::mock(HttpKernelInterface::class),
             $request,
             $type
         );
     }
 
-    protected function getKernelResponseEvent(Request $request, Response $response = null, $type = HttpKernelInterface::MASTER_REQUEST)
+    protected function getKernelResponseEvent(Request $request, Response $response = null, $type = HttpKernelInterface::MASTER_REQUEST): UserContextResponseEvent
     {
-        return new FilterResponseEvent(
+        return new UserContextResponseEvent(
             \Mockery::mock(HttpKernelInterface::class),
             $request,
             $type,

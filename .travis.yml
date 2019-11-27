@@ -28,16 +28,15 @@ matrix:
   include:
     # Minimum supported dependencies with the latest and oldest PHP version
 
-    - php: 7.1
-      env:
-        - COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
     - php: 7.2
       env:
-        - COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
+        - COMPOSER_FLAGS="--prefer-stable --prefer-lowest" DEPENDENCIES="symfony/validator:^3.4.4 symfony/templating:^3.4.4"
+    - php: 7.3
+      env:
+        - COMPOSER_FLAGS="--prefer-stable --prefer-lowest" DEPENDENCIES="symfony/validator:^3.4.4 symfony/templating:^3.4.4"
 
     # Test the latest stable release
 
-    - php: 7.1
     - php: 7.2
     - php: 7.3
       env:
@@ -48,6 +47,9 @@ matrix:
       # Test LTS versions. Read more at https://github.com/symfony/lts
     - php: 7.3
       env: DEPENDENCIES="symfony/lts:^3"
+
+    - php: 7.3
+      env: DEPENDENCIES="symfony/flex" SYMFONY_VERSION="^4"
 
       # Latest commit to master
     - php: 7.3
@@ -60,7 +62,8 @@ matrix:
 before_install:
   - if [[ $COVERAGE != true ]]; then phpenv config-rm xdebug.ini || true; fi
   - if ! [ -z "$STABILITY" ]; then composer config minimum-stability ${STABILITY}; fi;
-  - if ! [ -v "$DEPENDENCIES" ]; then composer require --no-update ${DEPENDENCIES}; fi;
+  - if ! [ -z "$DEPENDENCIES" ]; then composer require --no-update ${DEPENDENCIES}; fi;
+  - if ! [ -z "$SYMFONY_VERSION" ]; then composer config extra.symfony.require ${SYMFONY_VERSION}; fi;
 
 install:
   # To be removed when this issue will be resolved: https://github.com/composer/composer/issues/5355

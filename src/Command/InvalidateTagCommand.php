@@ -72,5 +72,7 @@ EOF
         $tags = $input->getArgument('tags');
 
         $this->getCacheManager()->invalidateTags($tags);
+
+        return 0;
     }
 }

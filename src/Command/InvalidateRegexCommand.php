@@ -77,5 +77,7 @@ EOF
         $regex = $input->getArgument('regex');
 
         $this->getCacheManager()->invalidateRegex($regex);
+
+        return 0;
     }
 }

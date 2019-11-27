@@ -1,4 +1,11 @@
 services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\:
+        resource: '%kernel.project_dir%/tests/Functional/Fixtures/Controller/*'
+
     tag_controller:
         class: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagController
         public: true

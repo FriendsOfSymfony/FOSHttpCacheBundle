@@ -20,11 +20,21 @@ use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+if (Kernel::MAJOR_VERSION >= 5) {
+    class_alias(RequestEvent::class, 'FOS\HttpCacheBundle\EventListener\UserContextRequestEvent');
+    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\UserContextResponseEvent');
+} else {
+    class_alias(GetResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\UserContextRequestEvent');
+    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\UserContextResponseEvent');
+}
 
 /**
  * Check requests and responses with the matcher.
@@ -119,10 +129,8 @@ class UserContextListener implements EventSubscriberInterface
      * the generated hash.
      *
      * If the ttl is bigger than 0, cache headers will be set for this response.
-     *
-     * @param GetResponseEvent $event
      */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(UserContextRequestEvent $event)
     {
         if (HttpKernelInterface::MASTER_REQUEST != $event->getRequestType()) {
             return;
@@ -185,10 +193,8 @@ class UserContextListener implements EventSubscriberInterface
     /**
      * Add the context hash header to the headers to vary on if the header was
      * present in the request.
-     *
-     * @param FilterResponseEvent $event
      */
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(UserContextResponseEvent $event)
     {
         if (HttpKernelInterface::MASTER_REQUEST != $event->getRequestType()) {
             return;
