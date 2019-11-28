@@ -8,6 +8,7 @@ Changelog
 
 * Adjusted to work with Twig 3
 * Adjusted to work with Symfony 5
+* Allow Httplug 2
 
 2.7.2
 -----
