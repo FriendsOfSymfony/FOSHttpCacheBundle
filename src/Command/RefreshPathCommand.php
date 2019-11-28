@@ -80,5 +80,7 @@ EOF
 
             $this->getCacheManager()->refreshPath($path);
         }
+
+        return 0;
     }
 }

@@ -11,10 +11,15 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
-class TestController extends Controller
+if (!\class_exists(AbstractController::class)) {
+    \class_alias(Controller::class, AbstractController::class);
+}
+
+class TestController extends AbstractController
 {
     public function contentAction($id = null)
     {

@@ -19,7 +19,15 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Kernel;
+
+if (Kernel::MAJOR_VERSION >= 5) {
+    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Functional\EventListener\TagResponseEvent');
+} else {
+    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Functional\EventListener\TagResponseEvent');
+}
 
 class TagListenerTest extends WebTestCase
 {
@@ -145,7 +153,7 @@ class TagListenerTest extends WebTestCase
         $request->attributes->set('_tag', [new Tag(['value' => ['cacheable-is-tagged']])]);
         $client = static::createClient();
 
-        $event = new FilterResponseEvent(
+        $event = new TagResponseEvent(
             $client->getKernel(),
             $request,
             HttpKernelInterface::MASTER_REQUEST,
@@ -176,7 +184,7 @@ class TagListenerTest extends WebTestCase
         $request->attributes->set('_tag', [new Tag(['value' => ['invalidated']])]);
         $client = static::createClient();
 
-        $event = new FilterResponseEvent(
+        $event = new TagResponseEvent(
             $client->getKernel(),
             $request,
             HttpKernelInterface::MASTER_REQUEST,
@@ -211,7 +219,7 @@ class TagListenerTest extends WebTestCase
         $request->attributes->set('_tag', [new Tag(['value' => ['not-invalidated']])]);
         $client = static::createClient();
 
-        $event = new FilterResponseEvent(
+        $event = new TagResponseEvent(
             $client->getKernel(),
             $request,
             HttpKernelInterface::MASTER_REQUEST,

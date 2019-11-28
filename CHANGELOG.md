@@ -1,6 +1,14 @@
 Changelog
 =========
 
+2.8.0
+-----
+
+### Fixed
+
+* Adjusted to work with Twig 3
+* Adjusted to work with Symfony 5
+
 2.7.2
 -----
 

@@ -19,8 +19,16 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
+
+if (Kernel::MAJOR_VERSION >= 5) {
+    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\TagResponseEvent');
+} else {
+    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\TagResponseEvent');
+}
 
 /**
  * Event handler for the cache tagging tags.
@@ -81,10 +89,8 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
      *
      * - For a safe (GET or HEAD) request, the tags are set on the response.
      * - For a non-safe request, the tags will be invalidated.
-     *
-     * @param FilterResponseEvent $event
      */
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(TagResponseEvent $event)
     {
         $request = $event->getRequest();
         $response = $event->getResponse();

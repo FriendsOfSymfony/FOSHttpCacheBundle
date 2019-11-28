@@ -5,8 +5,8 @@ imports:
 
 framework:
   router:
-    resource: "%kernel.root_dir%/config/routing_41.yml"
+    resource: "%kernel.project_dir%/tests/Functional/Fixtures/app/config/routing_41.yml"
 
 twig:
-  default_path: "%kernel.root_dir%/Resources/views"
+  default_path: "%kernel.project_dir%/tests/Functional/Fixtures/app/Resources/views"
   strict_variables: "%kernel.debug%"

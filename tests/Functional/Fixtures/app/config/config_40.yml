@@ -4,4 +4,4 @@ imports:
   - { resource: config3.yml }
 
 twig:
-  default_path: "%kernel.root_dir%/Resources/views"
+  default_path: "%kernel.project_dir%/tests/Functional/Fixtures/app/Resources/views"

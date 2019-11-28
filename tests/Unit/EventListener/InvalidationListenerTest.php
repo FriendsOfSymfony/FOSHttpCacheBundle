@@ -25,10 +25,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
+use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+
+if (Kernel::MAJOR_VERSION >= 5) {
+    class_alias(TerminateEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\InvalidationTerminateEvent');
+} else {
+    class_alias(PostResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\InvalidationTerminateEvent');
+}
 
 class InvalidationListenerTest extends TestCase
 {
@@ -190,9 +198,9 @@ class InvalidationListenerTest extends TestCase
         $this->listener->onConsoleTerminate($event);
     }
 
-    protected function getEvent(Request $request, Response $response = null)
+    protected function getEvent(Request $request, Response $response = null): InvalidationTerminateEvent
     {
-        return new PostResponseEvent(
+        return new InvalidationTerminateEvent(
             \Mockery::mock(HttpKernelInterface::class),
             $request,
             null !== $response ? $response : new Response()

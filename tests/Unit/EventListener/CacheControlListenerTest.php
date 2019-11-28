@@ -18,7 +18,15 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Kernel;
+
+if (Kernel::MAJOR_VERSION >= 5) {
+    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\CacheControlResponseEvent');
+} else {
+    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\CacheControlResponseEvent');
+}
 
 class CacheControlListenerTest extends TestCase
 {
@@ -410,12 +418,8 @@ class CacheControlListenerTest extends TestCase
     /**
      * Build the filter response event with a mock kernel and default request
      * and response objects.
-     *
-     * @param string $method
-     *
-     * @return FilterResponseEvent
      */
-    protected function buildEvent($method = 'GET')
+    protected function buildEvent(string $method = 'GET'): CacheControlResponseEvent
     {
         /** @var HttpKernelInterface $kernel */
         $kernel = \Mockery::mock(HttpKernelInterface::class);
@@ -423,7 +427,7 @@ class CacheControlListenerTest extends TestCase
         $request = new Request();
         $request->setMethod($method);
 
-        return new FilterResponseEvent($kernel, $request, HttpKernelInterface::MASTER_REQUEST, $response);
+        return new CacheControlResponseEvent($kernel, $request, HttpKernelInterface::MASTER_REQUEST, $response);
     }
 
     /**

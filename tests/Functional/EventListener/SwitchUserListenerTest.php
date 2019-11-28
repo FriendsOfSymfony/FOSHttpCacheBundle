@@ -14,11 +14,16 @@ namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 use FOS\HttpCache\ProxyClient\Varnish;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\User\User;
+
+if (!\class_exists(KernelBrowser::class)) {
+    \class_alias(Client::class, KernelBrowser::class);
+}
 
 class SwitchUserListenerTest extends WebTestCase
 {
@@ -58,7 +63,7 @@ class SwitchUserListenerTest extends WebTestCase
         $client->request('GET', '/secured_area/switch_user?_switch_user=user');
     }
 
-    private function loginAsAdmin(Client $client, Session $session, $firewallName = 'secured_area', $sessionId = 'test')
+    private function loginAsAdmin(KernelBrowser $client, Session $session, $firewallName = 'secured_area', $sessionId = 'test')
     {
         $token = new UsernamePasswordToken(new User('admin', 'admin', ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']), null, $firewallName, ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']);
 
