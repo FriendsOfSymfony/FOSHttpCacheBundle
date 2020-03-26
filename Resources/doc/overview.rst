@@ -104,7 +104,7 @@ License
 
 This bundle is released under the MIT license.
 
-.. literalinclude:: ../../src/Resources/meta/LICENSE
+.. literalinclude:: ../../LICENSE
     :language: none
 
 .. _Packagist: https://packagist.org/packages/friendsofsymfony/http-cache-bundle
