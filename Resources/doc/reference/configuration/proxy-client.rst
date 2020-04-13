@@ -129,7 +129,7 @@ Header for sending tag invalidation requests to Varnish.
 
 For use with ``tag_mode: purgekeys``, default VCL supports two options:
 - ``xkey-softpurge``: "Soft purge" by tags, expires relevant cache and allows for grace handling.
-- ``xkey-purge``: Purge by tags, removes relevant cache and allows for grace handling.
+- ``xkey-purge``: Purge by tags, removes relevant cache immediately.
 
 See the :ref:`FOSHttpCache library docs <foshttpcache:varnish configuration>`
 on how to configure Varnish to handle tag invalidation requests.
