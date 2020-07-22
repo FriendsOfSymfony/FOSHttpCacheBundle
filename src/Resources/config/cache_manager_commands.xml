@@ -20,6 +20,11 @@
             <argument type="service" id="fos_http_cache.cache_manager" />
             <tag name="console.command"/>
         </service>
+
+        <service id="fos_http_cache.command.invalidate_domain" class="FOS\HttpCacheBundle\Command\InvalidateDomainCommand">
+            <argument type="service" id="fos_http_cache.cache_manager" />
+            <tag name="console.command"/>
+        </service>
     </services>
 
 </container>
