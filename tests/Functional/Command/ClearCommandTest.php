@@ -24,7 +24,7 @@ class ClearCommandTest extends CommandTestCase
         $mock->shouldReceive('supports')
             ->with(CacheInvalidator::CLEAR)
             ->andReturnTrue();
-        ;
+
         $mock->shouldReceive('clearCache')
             ->once()
         ;
@@ -50,7 +50,7 @@ class ClearCommandTest extends CommandTestCase
         $mock->shouldReceive('supports')
             ->with(CacheInvalidator::INVALIDATE)
             ->andReturnTrue();
-        ;
+
         $mock->shouldReceive('invalidateRegex')
             ->with('.*')
             ->once()
@@ -77,7 +77,7 @@ class ClearCommandTest extends CommandTestCase
         $mock->shouldReceive('supports')
             ->with(CacheInvalidator::INVALIDATE)
             ->andReturnFalse();
-        ;
+
         $mock->shouldReceive('flush')
             ->once()
             ->andReturn(0)
@@ -86,6 +86,6 @@ class ClearCommandTest extends CommandTestCase
 
         $output = $this->runCommand($client, 'fos:httpcache:clear', 1);
 
-        $this->assertStringContainsString("The configured http cache does not support \"clear\" or \"invalidate\".", $output);
+        $this->assertStringContainsString('The configured http cache does not support "clear" or "invalidate".', $output);
     }
 }
