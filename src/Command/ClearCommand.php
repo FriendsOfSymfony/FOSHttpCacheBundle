@@ -17,7 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * A command to trigger cache invalidation by path from the command line.
+ * A command to clear the whole cache from the command line.
  *
  * @author Alexander Schranz <alexander@sulu.io>
  */
@@ -45,10 +45,10 @@ class ClearCommand extends BaseInvalidateCommand
     {
         $this
             ->setName(static::$defaultName) // BC with 2.8
-            ->setDescription('Invalidate the whole http cache.')
+            ->setDescription('Clear the HTTP cache.')
             ->setHelp(
                 <<<'EOF'
-The <info>%command.name%</info> command invalidates the whole cache in the configured caching proxies.
+The <info>%command.name%</info> command clears the whole cache or, if that is not supported, invalidates all cache entries in the configured caching proxies.
 
 Example:
 
@@ -71,7 +71,7 @@ EOF
             $this->getCacheManager()->invalidateRegex('.*');
         } else {
             $output->writeln(
-                '<error>The configured http cache does not support "clear" or "invalidate".</error>'
+                '<error>The configured HTTP cache does not support "clear" or "invalidate".</error>'
             );
 
             return 1;
