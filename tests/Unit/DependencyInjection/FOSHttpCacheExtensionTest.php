@@ -693,9 +693,7 @@ class FOSHttpCacheExtensionTest extends TestCase
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param array            $attributes
-     * @param array            $methods    List of methods for the matcher. Empty array to not check.
+     * @param array $methods List of methods for the matcher. Empty array to not check.
      *
      * @return string Service id of the matcher
      */
@@ -730,8 +728,7 @@ class FOSHttpCacheExtensionTest extends TestCase
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param int[]            $additionalStatus
+     * @param int[] $additionalStatus
      *
      * @return DefinitionDecorator|ChildDefinition
      */
@@ -760,8 +757,7 @@ class FOSHttpCacheExtensionTest extends TestCase
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param string           $expression
+     * @param string $expression
      *
      * @return DefinitionDecorator|ChildDefinition
      */
@@ -792,8 +788,7 @@ class FOSHttpCacheExtensionTest extends TestCase
     /**
      * Assert that the service $id exists and has a method call mapped onto it.
      *
-     * @param ContainerBuilder $container
-     * @param string           $id        The service id to investigate
+     * @param string $id The service id to investigate
      */
     private function assertListenerHasRule(ContainerBuilder $container, $id)
     {

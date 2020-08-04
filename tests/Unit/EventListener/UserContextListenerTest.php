@@ -542,8 +542,7 @@ class UserContextListenerTest extends TestCase
     }
 
     /**
-     * @param Request $request
-     * @param bool    $match
+     * @param bool $match
      *
      * @return \Mockery\MockInterface|RequestMatcherInterface
      */
