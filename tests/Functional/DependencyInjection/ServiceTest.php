@@ -58,7 +58,7 @@ class ServiceTest extends KernelTestCase
             if ('fos_http_cache.user_context.logout_handler' === $id) {
                 continue;
             }
-            $this->assertInternalType('object', $container->get($id));
+            $this->assertIsObject($container->get($id));
         }
     }
 }

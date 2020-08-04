@@ -61,7 +61,7 @@ class TagListenerTest extends TestCase
      */
     private $cacheableRule;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->cacheManager = \Mockery::mock(
             CacheManager::class

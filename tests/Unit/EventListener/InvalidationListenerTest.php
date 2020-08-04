@@ -62,7 +62,7 @@ class InvalidationListenerTest extends TestCase
      */
     private $listener;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->cacheManager = \Mockery::mock(CacheManager::class);
         $this->urlGenerator = \Mockery::mock(UrlGeneratorInterface::class);

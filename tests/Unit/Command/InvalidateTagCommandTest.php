@@ -22,11 +22,10 @@ class InvalidateTagCommandTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testExecuteMissingParameters()
     {
+        $this->expectException(\RuntimeException::class);
+
         $invalidator = \Mockery::mock(CacheManager::class);
 
         $application = new Application();

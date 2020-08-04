@@ -298,12 +298,11 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Either configure the "http.servers" section or enable "proxy_client.symfony.use_kernel_dispatcher
-     */
     public function testEmptyServerConfigurationIsNotAllowed()
     {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Either configure the "http.servers" section or enable "proxy_client.symfony.use_kernel_dispatcher');
+
         $params = $this->getEmptyConfig();
         $params['proxy_client'] = [
             'symfony' => [
@@ -457,7 +456,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 $this->assertProcessedConfigurationEquals([], [$format]);
                 $this->fail('No exception thrown on invalid configuration');
             } catch (InvalidConfigurationException $e) {
-                $this->assertContains('need to configure a proxy_client', $e->getMessage());
+                $this->assertStringContainsString('need to configure a proxy_client', $e->getMessage());
             }
         }
     }
@@ -477,7 +476,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 $this->assertProcessedConfigurationEquals([], [$format]);
                 $this->fail('No exception thrown on invalid configuration');
             } catch (InvalidConfigurationException $e) {
-                $this->assertContains('cache_manager needed for tag handling', $e->getMessage());
+                $this->assertStringContainsString('cache_manager needed for tag handling', $e->getMessage());
             }
         }
     }
@@ -599,7 +598,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 $this->assertProcessedConfigurationEquals([], [$format]);
                 $this->fail('No exception thrown on invalid configuration');
             } catch (InvalidConfigurationException $e) {
-                $this->assertContains('cache_manager needed for invalidation handling', $e->getMessage());
+                $this->assertStringContainsString('cache_manager needed for invalidation handling', $e->getMessage());
             }
         }
     }
@@ -627,7 +626,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 $this->assertProcessedConfigurationEquals([], [$configFile]);
                 $this->fail('No exception thrown on invalid configuration');
             } catch (InvalidConfigurationException $e) {
-                $this->assertContains($exception, $e->getMessage());
+                $this->assertStringContainsString($exception, $e->getMessage());
             }
 
             return;
@@ -667,7 +666,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 $this->assertProcessedConfigurationEquals([], [$format]);
                 $this->fail('No exception thrown on invalid configuration');
             } catch (InvalidConfigurationException $e) {
-                $this->assertContains('Failed to parse time string', $e->getMessage());
+                $this->assertStringContainsString('Failed to parse time string', $e->getMessage());
             }
         }
     }

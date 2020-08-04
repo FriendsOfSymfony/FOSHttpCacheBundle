@@ -15,6 +15,7 @@ use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
@@ -33,7 +34,7 @@ class HashGeneratorPassTest extends TestCase
      */
     private $userContextListenerPass;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extension = new FOSHttpCacheExtension();
         $this->userContextListenerPass = new HashGeneratorPass();
@@ -56,12 +57,11 @@ class HashGeneratorPassTest extends TestCase
         }
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage No user context providers found
-     */
     public function testConfigNoProviders()
     {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('No user context providers found');
+
         $container = $this->createContainer();
         $config = $this->getBaseConfig();
         $config['user_context']['enabled'] = true;
