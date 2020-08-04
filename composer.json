@@ -30,7 +30,7 @@
     "require-dev": {
         "php-http/guzzle6-adapter": "^1.0 || ^2.0",
         "php-http/message": "^1.0 || ^2.0",
-        "mockery/mockery": "^1.0 || ^2.0",
+        "mockery/mockery": "^1.0",
         "monolog/monolog": "*",
         "sensio/framework-extra-bundle": "^3.0 || ^4.0 || ^5.0",
         "symfony/browser-kit": "^3.4.4 || ^4.2.7 || ^5.0",
