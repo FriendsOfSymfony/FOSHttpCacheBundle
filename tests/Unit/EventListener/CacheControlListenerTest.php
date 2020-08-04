@@ -402,14 +402,12 @@ class CacheControlListenerTest extends TestCase
      */
     public function testUnsafeMethod()
     {
-        /** @var CacheControlListener|\PHPUnit_Framework_MockObject_MockObject $listener */
-        $listener = $this->getMockBuilder(CacheControlListener::class)
-            ->setMethods(['matchRule'])
-            ->getMock()
-        ;
-        $listener->expects($this->never())
-            ->method('matchRule')
-        ;
+        $listener = new CacheControlListener();
+        $matcher = \Mockery::mock(RuleMatcherInterface::class)
+            ->shouldReceive('matches')->never()
+            ->getMock();
+        $listener->addRule($matcher);
+
         $event = $this->buildEvent('POST');
 
         $listener->onKernelResponse($event);
