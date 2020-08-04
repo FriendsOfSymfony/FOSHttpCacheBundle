@@ -17,7 +17,6 @@ env:
   global:
         - PHPUNIT_FLAGS="-v"
         - SYMFONY_PHPUNIT_DIR="$HOME/symfony-bridge/.phpunit"
-        - SYMFONY_PHPUNIT_VERSION=6.5
 
 branches:
   only:
