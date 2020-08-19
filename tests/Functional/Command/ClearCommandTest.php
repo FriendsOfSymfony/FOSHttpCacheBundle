@@ -86,6 +86,6 @@ class ClearCommandTest extends CommandTestCase
 
         $output = $this->runCommand($client, 'fos:httpcache:clear', 1);
 
-        $this->assertStringContainsString('The configured http cache does not support "clear" or "invalidate".', $output);
+        $this->assertStringContainsString('The configured HTTP cache does not support "clear" or "invalidate".', $output);
     }
 }

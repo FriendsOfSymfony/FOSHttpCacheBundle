@@ -51,9 +51,9 @@ class HashGeneratorPassTest extends TestCase
         $this->userContextListenerPass->process($container);
         if ($container->hasDefinition('service_container')) {
             // symfony 3.3+
-            $this->assertCount(22, $container->getDefinitions());
+            $this->assertCount(23, $container->getDefinitions());
         } else {
-            $this->assertCount(21, $container->getDefinitions());
+            $this->assertCount(24, $container->getDefinitions());
         }
     }
 

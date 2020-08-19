@@ -23,21 +23,6 @@ class ClearCommandTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @expectedException \RuntimeException
-     */
-    public function testExecuteMissingParameters()
-    {
-        $invalidator = \Mockery::mock(CacheManager::class);
-
-        $application = new Application();
-        $application->add(new ClearCommand($invalidator));
-
-        $command = $application->find('fos:httpcache:clear');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute(['command' => $command->getName()]);
-    }
-
     public function testExecuteClear()
     {
         $invalidator = \Mockery::mock(CacheManager::class)
@@ -99,7 +84,7 @@ class ClearCommandTest extends TestCase
         ]);
 
         $this->assertStringContainsString(
-            'The configured http cache does not support "clear" or "invalidate".',
+            'The configured HTTP cache does not support "clear" or "invalidate".',
             $commandTester->getDisplay()
         );
     }
