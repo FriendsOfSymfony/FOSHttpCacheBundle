@@ -181,8 +181,6 @@ class UserContextListener implements EventSubscriberInterface
      *
      * For backward compatibility reasons, true will be returned if no anonymous request matcher was provided.
      *
-     * @param Request $request
-     *
      * @return bool
      */
     private function isAnonymous(Request $request)
