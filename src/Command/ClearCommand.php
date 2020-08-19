@@ -67,16 +67,20 @@ EOF
 
         if ($cacheManager->supports(CacheInvalidator::CLEAR)) {
             $this->getCacheManager()->clearCache();
-        } elseif ($cacheManager->supports(CacheInvalidator::INVALIDATE)) {
-            $this->getCacheManager()->invalidateRegex('.*');
-        } else {
-            $output->writeln(
-                '<error>The configured HTTP cache does not support "clear" or "invalidate".</error>'
-            );
 
-            return 1;
+            return 0;
         }
 
-        return 0;
+        if ($cacheManager->supports(CacheInvalidator::INVALIDATE)) {
+            $this->getCacheManager()->invalidateRegex('.*');
+
+            return 0;
+        }
+
+        $output->writeln(
+            '<error>The configured HTTP cache does not support "clear" or "invalidate".</error>'
+        );
+
+        return 1;
     }
 }
