@@ -44,7 +44,6 @@ class ClearCommand extends BaseInvalidateCommand
     protected function configure()
     {
         $this
-            ->setName(static::$defaultName) // BC with 2.8
             ->setDescription('Clear the HTTP cache.')
             ->setHelp(
                 <<<'EOF'
