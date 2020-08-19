@@ -41,9 +41,9 @@ final class ContextInvalidationLogoutHandler implements LogoutHandlerInterface
         @trigger_error('Using the ContextInvalidationLogoutHandler is deprecated', E_USER_DEPRECATED);
 
         if (class_exists(LogoutEvent::class)) {
-            // This function should not longer be called in Symfony 5.1
+            // This class no longer works at all with Symfony 5.1, force usage of ContextInvalidationSessionLogoutHandler instead
             // See also: https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/pull/545#discussion_r465089219
-            throw new \LogicException(__CLASS__.'::'.__METHOD__.' is deprecated and should since Symfony 5.1 not longer be called.');
+            throw new \LogicException(__CLASS__.'::'.__METHOD__.' no longer works with Symfony 5.1. Remove fos_http_cache.user_context.logout_handler from your firewall configuration. See the changelog for version 2.2. for more information.');
         }
 
         $this->invalidator->invalidateContext($request->getSession()->getId());
