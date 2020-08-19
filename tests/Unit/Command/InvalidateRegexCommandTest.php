@@ -22,11 +22,10 @@ class InvalidateRegexCommandTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testExecuteNoParameters()
     {
+        $this->expectException(\RuntimeException::class);
+
         $invalidator = \Mockery::mock(CacheManager::class);
 
         $application = new Application();

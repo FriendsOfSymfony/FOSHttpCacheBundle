@@ -12,6 +12,7 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\Configuration;
 
 use FOS\HttpCacheBundle\Configuration\Tag;
+use FOS\HttpCacheBundle\Exception\InvalidTagException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 
@@ -22,12 +23,11 @@ class TagTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @expectedException \FOS\HttpCacheBundle\Exception\InvalidTagException
-     * @expectedExceptionMessage is invalid because it contains ,
-     */
     public function testExecuteInvalidParams()
     {
+        $this->expectException(InvalidTagException::class);
+        $this->expectExceptionMessage('is invalid because it contains ,');
+
         new Tag([
             'tags' => ['foo, bar'],
         ]);

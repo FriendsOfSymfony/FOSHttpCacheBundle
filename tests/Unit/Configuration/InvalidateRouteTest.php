@@ -22,24 +22,22 @@ class InvalidateRouteTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage InvalidateRoute params must be an array
-     */
     public function testExecuteInvalidParams()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('InvalidateRoute params must be an array');
+
         new InvalidateRoute([
             'name' => 'test',
             'params' => 'foo',
         ]);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage InvalidateRoute param id must be string
-     */
     public function testExecuteNoExpression()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('InvalidateRoute param id must be string');
+
         new InvalidateRoute([
             'name' => 'test',
             'params' => [

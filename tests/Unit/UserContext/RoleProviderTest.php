@@ -15,6 +15,7 @@ use FOS\HttpCache\UserContext\UserContext;
 use FOS\HttpCacheBundle\UserContext\RoleProvider;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -62,11 +63,10 @@ class RoleProviderTest extends TestCase
         $this->assertEmpty($userContext->getParameters());
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     */
     public function testNotUnderFirewall()
     {
+        $this->expectException(InvalidConfigurationException::class);
+
         $roleProvider = new RoleProvider();
         $roleProvider->updateUserContext(new UserContext());
     }

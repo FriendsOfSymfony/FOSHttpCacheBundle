@@ -16,6 +16,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 class ContextInvalidationLogoutHandlerTest extends WebTestCase
 {
@@ -23,6 +24,12 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
 
     public function testLogout()
     {
+        if (class_exists(LogoutEvent::class)) {
+            // @see https://github.com/symfony/symfony/pull/36243/files#r465083756
+            // @see https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/pull/545/files#diff-05cbcfd492fd361b33ee70130dc687b2
+            $this->markTestSkipped('This test does not work with Symfony 5.1.');
+        }
+
         $client = static::createClient();
         $session = $client->getContainer()->get('session');
 

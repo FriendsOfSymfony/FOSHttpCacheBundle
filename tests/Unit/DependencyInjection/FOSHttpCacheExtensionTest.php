@@ -34,7 +34,7 @@ class FOSHttpCacheExtensionTest extends TestCase
      */
     protected $extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->extension = new FOSHttpCacheExtension();
     }
@@ -65,11 +65,10 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertEquals('my_guzzle', $def->getArgument(2)->__toString());
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     */
     public function testConfigLoadVarnishInvalidUrl()
     {
+        $this->expectException(InvalidConfigurationException::class);
+
         $container = $this->createContainer();
         $config = $this->getBaseConfig();
         $config['proxy_client']['varnish']['http']['base_url'] = 'ftp:not a valid url';
@@ -193,12 +192,11 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertFalse($container->has('fos_http_cache.user_context.logout_handler'));
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage You can not enable cache tagging with the nginx client
-     */
     public function testConfigTagNotSupported()
     {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('You can not enable cache tagging with the nginx client');
+
         $config = [
                 'proxy_client' => [
                     'nginx' => [
@@ -695,9 +693,7 @@ class FOSHttpCacheExtensionTest extends TestCase
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param array            $attributes
-     * @param array            $methods    List of methods for the matcher. Empty array to not check.
+     * @param array $methods List of methods for the matcher. Empty array to not check.
      *
      * @return string Service id of the matcher
      */
@@ -732,8 +728,7 @@ class FOSHttpCacheExtensionTest extends TestCase
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param int[]            $additionalStatus
+     * @param int[] $additionalStatus
      *
      * @return DefinitionDecorator|ChildDefinition
      */
@@ -762,8 +757,7 @@ class FOSHttpCacheExtensionTest extends TestCase
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param string           $expression
+     * @param string $expression
      *
      * @return DefinitionDecorator|ChildDefinition
      */
@@ -794,8 +788,7 @@ class FOSHttpCacheExtensionTest extends TestCase
     /**
      * Assert that the service $id exists and has a method call mapped onto it.
      *
-     * @param ContainerBuilder $container
-     * @param string           $id        The service id to investigate
+     * @param string $id The service id to investigate
      */
     private function assertListenerHasRule(ContainerBuilder $container, $id)
     {

@@ -270,7 +270,7 @@ class CacheControlListenerTest extends TestCase
         $listener->onKernelResponse($event);
         $newHeaders = $event->getResponse()->headers->all();
 
-        $this->assertContains('no-cache', $newHeaders['cache-control'][0]);
+        $this->assertStringContainsString('no-cache', $newHeaders['cache-control'][0]);
     }
 
     public function testSetOnlyNoStoreHeader()
@@ -287,7 +287,7 @@ class CacheControlListenerTest extends TestCase
         $listener->onKernelResponse($event);
         $newHeaders = $event->getResponse()->headers->all();
 
-        $this->assertContains('no-store', $newHeaders['cache-control'][0]);
+        $this->assertStringContainsString('no-store', $newHeaders['cache-control'][0]);
     }
 
     public function testSkip()
@@ -303,7 +303,7 @@ class CacheControlListenerTest extends TestCase
         $listener->onKernelResponse($event);
         $newHeaders = $event->getResponse()->headers->all();
 
-        $this->assertContains('no-cache', $newHeaders['cache-control'][0]);
+        $this->assertStringContainsString('no-cache', $newHeaders['cache-control'][0]);
     }
 
     public function testVary()
@@ -394,7 +394,7 @@ class CacheControlListenerTest extends TestCase
 
         $listener->onKernelResponse($event2);
         $newHeaders = $response2->headers->all();
-        $this->assertContains('no-cache', $newHeaders['cache-control'][0]);
+        $this->assertStringContainsString('no-cache', $newHeaders['cache-control'][0]);
     }
 
     /**
@@ -402,14 +402,12 @@ class CacheControlListenerTest extends TestCase
      */
     public function testUnsafeMethod()
     {
-        /** @var CacheControlListener|\PHPUnit_Framework_MockObject_MockObject $listener */
-        $listener = $this->getMockBuilder(CacheControlListener::class)
-            ->setMethods(['matchRule'])
-            ->getMock()
-        ;
-        $listener->expects($this->never())
-            ->method('matchRule')
-        ;
+        $listener = new CacheControlListener();
+        $matcher = \Mockery::mock(RuleMatcherInterface::class)
+            ->shouldReceive('matches')->never()
+            ->getMock();
+        $listener->addRule($matcher);
+
         $event = $this->buildEvent('POST');
 
         $listener->onKernelResponse($event);

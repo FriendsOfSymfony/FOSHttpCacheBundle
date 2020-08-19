@@ -25,7 +25,7 @@ class CacheManagerTest extends TestCase
 
     protected $proxyClient;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->proxyClient = \Mockery::mock(ProxyClient::class);
     }

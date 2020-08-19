@@ -39,11 +39,10 @@ class UserContextListenerTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testMisconfiguration()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         new UserContextListener(
             \Mockery::mock(RequestMatcherInterface::class),
             \Mockery::mock(HashGenerator::class),
@@ -208,7 +207,7 @@ class UserContextListenerTest extends TestCase
         $userContextListener->onKernelResponse($event);
 
         $this->assertTrue($event->getResponse()->headers->has('Vary'), 'Vary header must be set');
-        $this->assertContains('X-Hash', $event->getResponse()->headers->get('Vary'));
+        $this->assertStringContainsString('X-Hash', $event->getResponse()->headers->get('Vary'));
     }
 
     public function testOnKernelResponseSetsNoAutoCacheHeader()
@@ -231,7 +230,7 @@ class UserContextListenerTest extends TestCase
 
         $userContextListener->onKernelResponse($event);
 
-        $this->assertContains('X-User-Context-Hash', $event->getResponse()->headers->get('Vary'));
+        $this->assertStringContainsString('X-User-Context-Hash', $event->getResponse()->headers->get('Vary'));
         $this->assertEquals(1, $event->getResponse()->headers->get(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER));
     }
 
@@ -259,7 +258,7 @@ class UserContextListenerTest extends TestCase
 
         $userContextListener->onKernelResponse($event);
 
-        $this->assertContains('X-User-Context-Hash', $event->getResponse()->headers->get('Vary'));
+        $this->assertStringContainsString('X-User-Context-Hash', $event->getResponse()->headers->get('Vary'));
         $this->assertFalse($event->getResponse()->headers->has(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER));
     }
 
@@ -434,7 +433,7 @@ class UserContextListenerTest extends TestCase
         $event = $this->getKernelResponseEvent($request);
         $userContextListener->onKernelResponse($event);
 
-        $this->assertContains('X-Hash', $event->getResponse()->headers->get('Vary'));
+        $this->assertStringContainsString('X-Hash', $event->getResponse()->headers->get('Vary'));
     }
 
     /**
@@ -478,7 +477,7 @@ class UserContextListenerTest extends TestCase
         $event = $this->getKernelResponseEvent($request);
         $userContextListener->onKernelResponse($event);
 
-        $this->assertContains('X-Hash', $event->getResponse()->headers->get('Vary'));
+        $this->assertStringContainsString('X-Hash', $event->getResponse()->headers->get('Vary'));
     }
 
     /**
@@ -543,8 +542,7 @@ class UserContextListenerTest extends TestCase
     }
 
     /**
-     * @param Request $request
-     * @param bool    $match
+     * @param bool $match
      *
      * @return \Mockery\MockInterface|RequestMatcherInterface
      */

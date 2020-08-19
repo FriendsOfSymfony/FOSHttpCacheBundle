@@ -22,12 +22,11 @@ class TagListenerPassTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage require the SensioFrameworkExtraBundle
-     */
     public function testNoFrameworkBundle()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('require the SensioFrameworkExtraBundle');
+
         $extension = new FOSHttpCacheExtension();
         $tagListenerPass = new TagListenerPass();
         $container = $this->createContainer();
