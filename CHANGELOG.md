@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.9.0
+-----
+
+### Added
+
+ * New Feature: Command `fos:httpcache:clear` to clear the whole http cache.
+
 2.8.0
 -----
 
