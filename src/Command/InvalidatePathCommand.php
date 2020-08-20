@@ -48,7 +48,6 @@ class InvalidatePathCommand extends BaseInvalidateCommand
     protected function configure()
     {
         $this
-            ->setName(static::$defaultName) // BC with 2.8
             ->setDescription('Invalidate cached paths on all configured caching proxies')
             ->addArgument(
                 'paths',

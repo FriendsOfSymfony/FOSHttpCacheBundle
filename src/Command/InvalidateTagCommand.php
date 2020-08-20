@@ -46,7 +46,6 @@ class InvalidateTagCommand extends BaseInvalidateCommand
     protected function configure()
     {
         $this
-            ->setName(static::$defaultName) // BC with 2.8
             ->setDescription('Invalidate cached content matching the specified tags on all configured caching proxies')
             ->addArgument(
                 'tags',
