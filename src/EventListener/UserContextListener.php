@@ -78,9 +78,9 @@ class UserContextListener implements EventSubscriberInterface
     private $hasSessionListener;
 
     /**
-     * @var string
+     * @var bool
      */
-    private $hash;
+    private $wasAnonymous;
 
     /**
      * Used to exclude anonymous requests (no authentication nor session) from user hash sanity check.
@@ -138,12 +138,12 @@ class UserContextListener implements EventSubscriberInterface
 
         $request = $event->getRequest();
         if (!$this->requestMatcher->matches($request)) {
-            if ($event->getRequest()->headers->has($this->options['user_hash_header'])
-                && !$this->isAnonymous($event->getRequest())
-            ) {
-                $this->hash = $this->hashGenerator->generateHash();
+            if ($request->headers->has($this->options['user_hash_header'])) {
+                // Keep track of if user is anonymous when we have user hash header in request
+                $this->wasAnonymous = $this->isAnonymous($request);
             }
 
+            // Return early if request is not a hash lookup
             return;
         }
 
@@ -181,8 +181,6 @@ class UserContextListener implements EventSubscriberInterface
      *
      * For backward compatibility reasons, true will be returned if no anonymous request matcher was provided.
      *
-     * @param Request $request
-     *
      * @return bool
      */
     private function isAnonymous(Request $request)
@@ -202,11 +200,18 @@ class UserContextListener implements EventSubscriberInterface
 
         $response = $event->getResponse();
         $request = $event->getRequest();
-
         $vary = $response->getVary();
 
         if ($request->headers->has($this->options['user_hash_header'])) {
-            if (null !== $this->hash && $this->hash !== $request->headers->get($this->options['user_hash_header'])) {
+            $requestHash = $request->headers->get($this->options['user_hash_header']);
+
+            // Generate hash to see if it might have changed during request if user was, or is "logged in" (session)
+            // But only needed if user was, or is, logged in
+            if (!$this->wasAnonymous || !$this->isAnonymous($request)) {
+                $hash = $this->hashGenerator->generateHash();
+            }
+
+            if (isset($hash) && $hash !== $requestHash) {
                 // hash has changed, session has most certainly changed, prevent setting incorrect cache
                 $response->setCache([
                     'max_age' => 0,
