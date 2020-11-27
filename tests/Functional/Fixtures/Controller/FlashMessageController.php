@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 if (!\class_exists(AbstractController::class)) {
@@ -29,5 +30,15 @@ class FlashMessageController extends AbstractController
         );
 
         return new Response('flash');
+    }
+
+    public function flashRedirectAction()
+    {
+        $this->addFlash(
+            'notice',
+            'Flash Message!'
+        );
+
+        return new RedirectResponse('/flash');
     }
 }

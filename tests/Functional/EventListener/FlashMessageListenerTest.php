@@ -49,4 +49,36 @@ class FlashMessageListenerTest extends WebTestCase
             $this->fail('Cookie flash_cookie_name not found in the cookie response header: '.implode(',', $cookies));
         }
     }
+
+    public function testFlashMessageCookieIsSetOnRedirect()
+    {
+        $client = static::createClient();
+        $client->followRedirects(true);
+        $client->setMaxRedirects(2);
+        $session = static::$kernel->getContainer()->get('session');
+
+        $client->request('GET', '/flash-redirect');
+        $this->assertFalse($session->isStarted());
+        $response = $client->getResponse();
+        $cookies = $response->headers->getCookies();
+        $this->assertGreaterThanOrEqual(1, $cookies, implode(',', $cookies));
+
+        $found = false;
+        foreach ($cookies as $cookie) {
+            /** @var Cookie $cookie */
+            if ('flash_cookie_name' !== $cookie->getName()) {
+                continue;
+            }
+
+            $this->assertEquals('/', $cookie->getPath());
+            $this->assertNull($cookie->getDomain());
+            $this->assertTrue($cookie->isSecure());
+            $this->assertJsonStringEqualsJsonString(json_encode(['notice' => ['Flash Message!', 'Flash Message!']]), $cookie->getValue());
+            $found = true;
+        }
+
+        if (!$found) {
+            $this->fail('Cookie flash_cookie_name not found in the cookie response header: '.implode(',', $cookies));
+        }
+    }
 }
