@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.9.1
+-----
+
+### Fixed
+
+* Flash messages won't be lost even when redirecting multiple times.
+
 2.9.0
 -----
 
