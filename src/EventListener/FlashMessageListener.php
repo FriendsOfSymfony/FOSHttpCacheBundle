@@ -47,7 +47,6 @@ final class FlashMessageListener implements EventSubscriberInterface
 
     /**
      * @param Session $session A session instance
-     * @param array   $options
      */
     public function __construct($session, array $options = [])
     {

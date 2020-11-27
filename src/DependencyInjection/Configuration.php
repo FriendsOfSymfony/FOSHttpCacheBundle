@@ -248,8 +248,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Cache header control main section.
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
     private function addCacheControlSection(ArrayNodeDefinition $rootNode)
     {
@@ -337,8 +335,7 @@ class Configuration implements ConfigurationInterface
     /**
      * Shared configuration between cache control, tags and invalidation.
      *
-     * @param NodeBuilder $rules
-     * @param bool        $matchResponse whether to also add fields to match response
+     * @param bool $matchResponse whether to also add fields to match response
      */
     private function addMatch(NodeBuilder $rules, $matchResponse = false)
     {
@@ -593,8 +590,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Cache manager main section.
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
     private function addCacheManagerSection(ArrayNodeDefinition $rootNode)
     {
@@ -736,8 +731,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * User context main section.
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
     private function addUserContextListenerSection(ArrayNodeDefinition $rootNode)
     {

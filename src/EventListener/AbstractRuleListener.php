@@ -38,8 +38,6 @@ abstract class AbstractRuleListener
     /**
      * Return the settings for the current request if any rule matches.
      *
-     * @param Request $request
-     *
      * @return array|false Settings to apply or false if no rule matched
      */
     protected function matchRule(Request $request)

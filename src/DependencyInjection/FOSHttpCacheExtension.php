@@ -161,9 +161,6 @@ class FOSHttpCacheExtension extends Extension
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param array            $config
-     *
      * @throws InvalidConfigurationException
      */
     private function loadCacheControl(ContainerBuilder $container, array $config)
@@ -184,8 +181,7 @@ class FOSHttpCacheExtension extends Extension
     /**
      * Parse one cache control rule match configuration.
      *
-     * @param ContainerBuilder $container
-     * @param array            $match     Request and response match criteria
+     * @param array $match Request and response match criteria
      *
      * @return Reference pointing to a rule matcher service
      */
@@ -212,9 +208,6 @@ class FOSHttpCacheExtension extends Extension
 
     /**
      * Used for cache control, tag and invalidation rules.
-     *
-     * @param ContainerBuilder $container
-     * @param array            $match
      *
      * @return Reference to the request matcher
      */
@@ -248,9 +241,6 @@ class FOSHttpCacheExtension extends Extension
 
     /**
      * Used only for cache control rules.
-     *
-     * @param ContainerBuilder $container
-     * @param array            $config
      *
      * @return Reference to the correct response matcher service
      */
@@ -367,9 +357,7 @@ class FOSHttpCacheExtension extends Extension
     /**
      * Define the http dispatcher service for the proxy client $name.
      *
-     * @param ContainerBuilder $container
-     * @param array            $config
-     * @param string           $serviceName
+     * @param string $serviceName
      */
     private function createHttpDispatcherDefinition(ContainerBuilder $container, array $config, $serviceName)
     {
@@ -460,11 +448,9 @@ class FOSHttpCacheExtension extends Extension
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param XmlFileLoader    $loader
-     * @param array            $config    Configuration section for the tags node
-     * @param string           $client    Name of the client used with the cache manager,
-     *                                    "custom" when a custom client is used
+     * @param array  $config Configuration section for the tags node
+     * @param string $client Name of the client used with the cache manager,
+     *                       "custom" when a custom client is used
      */
     private function loadCacheTagging(ContainerBuilder $container, XmlFileLoader $loader, array $config, $client)
     {

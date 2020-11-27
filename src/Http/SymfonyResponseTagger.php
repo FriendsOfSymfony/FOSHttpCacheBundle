@@ -19,10 +19,9 @@ class SymfonyResponseTagger extends ResponseTagger
     /**
      * Tag a symfony response with the previously added tags.
      *
-     * @param Response $response
-     * @param bool     $replace  Whether to replace the current tags on the
-     *                           response. If false, parses the header to merge
-     *                           tags
+     * @param bool $replace Whether to replace the current tags on the
+     *                      response. If false, parses the header to merge
+     *                      tags
      *
      * @return $this
      */
