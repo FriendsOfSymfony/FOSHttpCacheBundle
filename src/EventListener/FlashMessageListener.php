@@ -87,14 +87,20 @@ final class FlashMessageListener implements EventSubscriberInterface
             return;
         }
 
+        $response = $event->getResponse();
+
+        // If the response is a redirect, we should wait until the final response
+        // is reached
+        if ($response->isRedirect()) {
+            return;
+        }
+
         $flashBag = $this->session->getFlashBag();
         $flashes = $flashBag->all();
 
         if (empty($flashes)) {
             return;
         }
-
-        $response = $event->getResponse();
 
         $cookies = $response->headers->getCookies(ResponseHeaderBag::COOKIES_ARRAY);
         $host = (null === $this->options['host']) ? '' : $this->options['host'];
