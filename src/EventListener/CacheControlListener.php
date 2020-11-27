@@ -175,8 +175,6 @@ class CacheControlListener implements EventSubscriberInterface
     /**
      * Return the settings for the current request if any rule matches.
      *
-     * @param Request $request
-     *
      * @return array|false Settings to apply or false if no rule matched
      */
     private function matchRule(Request $request, Response $response)
@@ -193,9 +191,7 @@ class CacheControlListener implements EventSubscriberInterface
     /**
      * Set cache headers on response.
      *
-     * @param Response $response
-     * @param array    $directives
-     * @param bool     $overwrite  Whether to keep existing cache headers or to overwrite them
+     * @param bool $overwrite Whether to keep existing cache headers or to overwrite them
      */
     private function setCache(Response $response, array $directives, $overwrite)
     {
@@ -230,9 +226,7 @@ class CacheControlListener implements EventSubscriberInterface
     /**
      * Add extra cache control directives on response.
      *
-     * @param Response $response
-     * @param array    $controls
-     * @param bool     $overwrite Whether to keep existing cache headers or to overwrite them
+     * @param bool $overwrite Whether to keep existing cache headers or to overwrite them
      */
     private function setExtraCacheDirectives(Response $response, array $controls, $overwrite)
     {

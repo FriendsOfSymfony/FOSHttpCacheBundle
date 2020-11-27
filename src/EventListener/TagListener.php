@@ -64,10 +64,6 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
 
     /**
      * Constructor.
-     *
-     * @param CacheManager            $cacheManager
-     * @param SymfonyResponseTagger   $tagHandler
-     * @param ExpressionLanguage|null $expressionLanguage
      */
     public function __construct(
         CacheManager $cacheManager,
@@ -138,8 +134,6 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
      * Get the tags from the annotations on the controller that was used in the
      * request.
      *
-     * @param Request $request
-     *
      * @return array List of tags affected by the request
      */
     private function getAnnotationTags(Request $request)
@@ -169,8 +163,7 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
     /**
      * Evaluate a tag that contains expressions.
      *
-     * @param string  $expression
-     * @param Request $request
+     * @param string $expression
      *
      * @return string Evaluated tag
      */

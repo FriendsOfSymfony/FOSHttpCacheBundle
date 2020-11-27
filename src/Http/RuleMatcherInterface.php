@@ -25,9 +25,6 @@ interface RuleMatcherInterface
     /**
      * Check whether the request and response both match.
      *
-     * @param Request  $request
-     * @param Response $response
-     *
      * @return bool True if request and response match, false otherwise
      */
     public function matches(Request $request, Response $response);

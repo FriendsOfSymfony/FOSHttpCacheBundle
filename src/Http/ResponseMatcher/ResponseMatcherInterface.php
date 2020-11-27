@@ -18,8 +18,6 @@ interface ResponseMatcherInterface
     /**
      * Determines whether the response matches the rule.
      *
-     * @param Response $response
-     *
      * @return bool
      */
     public function matches(Response $response);

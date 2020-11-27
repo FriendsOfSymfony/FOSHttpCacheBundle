@@ -71,10 +71,6 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
 
     /**
      * Constructor.
-     *
-     * @param CacheManager            $cacheManager
-     * @param UrlGeneratorInterface   $urlGenerator
-     * @param ExpressionLanguage|null $expressionLanguage
      */
     public function __construct(
         CacheManager $cacheManager,
@@ -156,9 +152,6 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
 
     /**
      * Handle the invalidation annotations and configured invalidators.
-     *
-     * @param Request  $request
-     * @param Response $response
      */
     private function handleInvalidation(Request $request, Response $response)
     {
@@ -210,7 +203,6 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
      * Invalidate routes from annotations.
      *
      * @param array|InvalidateRoute[] $routes
-     * @param Request                 $request
      */
     private function invalidateRoutes(array $routes, Request $request)
     {
