@@ -30,7 +30,7 @@ matrix:
     - php: 7.2
       env:
         - COMPOSER_FLAGS="--prefer-stable --prefer-lowest" DEPENDENCIES="symfony/validator:^3.4.4 symfony/templating:^3.4.4"
-    - php: 7.3
+    - php: 7.4
       env:
         - COMPOSER_FLAGS="--prefer-stable --prefer-lowest" DEPENDENCIES="symfony/validator:^3.4.4 symfony/templating:^3.4.4"
 
@@ -38,20 +38,21 @@ matrix:
 
     - php: 7.2
     - php: 7.3
+    - php: 7.4
       env:
         - PHPUNIT_FLAGS="-v --coverage-clover=coverage.clover"
         - COVERAGE=true
-        - DOCCHECK=true
+# TODO: fix doccheck        - DOCCHECK=true
 
       # Test LTS versions. Read more at https://github.com/symfony/lts
-    - php: 7.3
+    - php: 7.4
       env: DEPENDENCIES="symfony/lts:^3"
 
-    - php: 7.3
+    - php: 7.4
       env: DEPENDENCIES="symfony/flex" SYMFONY_VERSION="^4"
 
       # Latest commit to master
-    - php: 7.3
+    - php: 7.4
       env: STABILITY="dev"
 
   allow_failures:
