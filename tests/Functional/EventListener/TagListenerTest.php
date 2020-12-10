@@ -47,6 +47,23 @@ class TagListenerTest extends WebTestCase
         $this->assertEquals('item-123', $response->headers->get('X-Cache-Tags'));
     }
 
+    /**
+     * @required PHP 8.0
+     */
+    public function testAttributeTagsAreSet()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/php8/tag/list');
+        $response = $client->getResponse();
+        $this->assertEquals('all-items,item-123', $response->headers->get('X-Cache-Tags'));
+
+        $client->request('GET', '/php8/tag/123');
+        $response = $client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode(), $response->getContent());
+        $this->assertEquals('item-123', $response->headers->get('X-Cache-Tags'));
+    }
+
     public function testAnnotationTagsAreInvalidated()
     {
         $client = static::createClient();

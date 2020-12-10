@@ -3,6 +3,11 @@ tag_list:
   methods:  [GET]
   controller: tag_controller::listAction
 
+php8_tag_list:
+  path: /php8/tag/list
+  defaults: { _controller: tag_attribute_controller:listAction }
+  methods: [ GET ]
+
 tag_error:
   path:  /tag/error
   controller: tag_controller::errorAction
@@ -11,6 +16,11 @@ tag_one:
   path:  /tag/{id}
   methods:  [GET,POST]
   controller: tag_controller::itemAction
+
+php8_tag_one:
+  path:  /php8/tag/{id}
+  defaults: { _controller: tag_attribute_controller:itemAction }
+  methods:  [GET,POST]
 
 tag_manual:
   path: /tag_manual

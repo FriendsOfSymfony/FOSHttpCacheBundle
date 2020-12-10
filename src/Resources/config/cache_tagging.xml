@@ -26,11 +26,16 @@
             <tag name="twig.extension"/>
         </service>
 
+        <service id="fos_http_cache.controller_resolver" class="Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver">
+            <argument type="service" id="container_service" />
+        </service>
+
         <service id="fos_http_cache.event_listener.tag" class="FOS\HttpCacheBundle\EventListener\TagListener">
             <argument type="service" id="fos_http_cache.cache_manager" />
             <argument type="service" id="fos_http_cache.http.symfony_response_tagger" />
             <argument type="service" id="fos_http_cache.rule_matcher.cacheable" />
             <argument type="service" id="fos_http_cache.rule_matcher.must_invalidate" />
+            <argument type="service" id="fos_http_cache.controller_resolver" />
             <argument type="service" id="fos_http_cache.tag_handler.expression_language" on-invalid="ignore" />
             <tag name="kernel.event_subscriber" />
         </service>

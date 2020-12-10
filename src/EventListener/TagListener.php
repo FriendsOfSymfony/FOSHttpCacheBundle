@@ -15,14 +15,17 @@ use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
+use Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\VarDumper\Caster\ReflectionCaster;
 
 if (Kernel::MAJOR_VERSION >= 5) {
     class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\TagResponseEvent');
@@ -61,6 +64,10 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
      * @var RuleMatcherInterface
      */
     private $cacheableRule;
+    /**
+     * @var ControllerResolver
+     */
+    private $controllerResolver;
 
     /**
      * Constructor.
@@ -70,6 +77,7 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
         SymfonyResponseTagger $tagHandler,
         RuleMatcherInterface $cacheableRule,
         RuleMatcherInterface $mustInvalidateRule,
+        ControllerResolver $controllerResolver,
         ExpressionLanguage $expressionLanguage = null
     ) {
         $this->cacheManager = $cacheManager;
@@ -77,8 +85,12 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
         $this->cacheableRule = $cacheableRule;
         $this->mustInvalidateRule = $mustInvalidateRule;
         $this->expressionLanguage = $expressionLanguage ?: new ExpressionLanguage();
+        $this->controllerResolver = $controllerResolver;
     }
 
+    public function onKernelRequest(RequestEvent $event) {
+
+    }
     /**
      * Process the _tags request attribute, which is set when using the Tag
      * annotation.
@@ -97,7 +109,27 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
             return;
         }
 
+        if (method_exists(\ReflectionProperty::class, 'getAttributes')) {
+            $controller = $this->controllerResolver->getController($request);
+            $class = new \ReflectionClass($controller[0]);
+            $method = $class->getMethod($controller[1]);
+            $tags = [];
+            foreach ($class->getAttributes() as $classAttribute) {
+                $tags[] = $classAttribute->newInstance();
+            }
+            foreach ($method->getAttributes() as $methodAttribute) {
+                $tags[] = $methodAttribute->newInstance();
+            }
+
+            $request->attributes->set(
+                '_tag',
+                array_merge($tags, $request->attributes->get('_tag', []))
+            );
+        }
+
         $tags = $this->getAnnotationTags($request);
+
+        //if (empty($tags) && )
 
         $configuredTags = $this->matchRule($request);
         if ($configuredTags) {
@@ -126,6 +158,7 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
     public static function getSubscribedEvents()
     {
         return [
+            KernelEvents::REQUEST => 'onKernelRequest',
             KernelEvents::RESPONSE => 'onKernelResponse',
         ];
     }

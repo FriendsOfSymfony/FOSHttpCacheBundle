@@ -19,11 +19,28 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 /**
  * @Annotation
  */
+#[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
 class Tag extends ConfigurationAnnotation
 {
     private $tags;
 
     private $expression;
+
+    public function __construct(
+        $data = [],
+        $expression = null
+    ) {
+        $values = [];
+        if (is_string($data)) {
+            $values['value'] = $data;
+        } else {
+            $values = $data;
+        }
+
+        $values['expression'] = $values['expression'] ?? $expression;
+
+        parent::__construct($values);
+    }
 
     /**
      * Handle tags given without explicit key.

@@ -18,6 +18,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 /**
  * @Annotation
  */
+#[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
 class InvalidateRoute extends ConfigurationAnnotation
 {
     /**

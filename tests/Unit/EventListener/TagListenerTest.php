@@ -16,8 +16,10 @@ use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\EventListener\TagListener;
 use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
+use FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagAttributeController;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +27,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
+use function Clue\StreamFilter\append;
 
 if (Kernel::MAJOR_VERSION >= 5) {
     class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\TagResponseEvent');
@@ -61,6 +64,11 @@ class TagListenerTest extends TestCase
      */
     private $cacheableRule;
 
+    /**
+     * @var ControllerResolver
+     */
+    private $controllerResolver;
+
     public function setUp(): void
     {
         $this->cacheManager = \Mockery::mock(
@@ -73,12 +81,25 @@ class TagListenerTest extends TestCase
 
         $this->cacheableRule = \Mockery::mock(RuleMatcherInterface::class);
         $this->mustInvalidateRule = \Mockery::mock(RuleMatcherInterface::class);
+        $this->controllerResolver = \Mockery::mock(ControllerResolver::class);
+        $this->controllerResolver
+            ->shouldReceive('getController')
+            ->with(\Mockery::on(function(){
+                return true;
+            }))
+            ->once()
+            ->andReturn([
+                new TagAttributeController(new SymfonyResponseTagger()),
+                'listAction'
+            ])
+        ;
 
         $this->listener = new TagListener(
             $this->cacheManager,
             $this->symfonyResponseTagger,
             $this->cacheableRule,
-            $this->mustInvalidateRule
+            $this->mustInvalidateRule,
+            $this->controllerResolver
         );
     }
 
