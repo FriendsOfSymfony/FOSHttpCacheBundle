@@ -73,4 +73,9 @@ class TagAttributeController extends AbstractController
 
         return new Response('subrequest');
     }
+
+    public function emptyAction()
+    {
+        return new Response('');
+    }
 }

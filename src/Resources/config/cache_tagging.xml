@@ -27,7 +27,7 @@
         </service>
 
         <service id="fos_http_cache.controller_resolver" class="Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver">
-            <argument type="service" id="container_service" />
+            <argument type="service" id="service_container" />
         </service>
 
         <service id="fos_http_cache.event_listener.tag" class="FOS\HttpCacheBundle\EventListener\TagListener">

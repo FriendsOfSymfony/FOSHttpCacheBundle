@@ -84,8 +84,8 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
         $this->symfonyResponseTagger = $tagHandler;
         $this->cacheableRule = $cacheableRule;
         $this->mustInvalidateRule = $mustInvalidateRule;
-        $this->expressionLanguage = $expressionLanguage ?: new ExpressionLanguage();
         $this->controllerResolver = $controllerResolver;
+        $this->expressionLanguage = $expressionLanguage ?: new ExpressionLanguage();
     }
 
     public function onKernelRequest(RequestEvent $event) {
@@ -109,8 +109,10 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
             return;
         }
 
-        if (method_exists(\ReflectionProperty::class, 'getAttributes')) {
-            $controller = $this->controllerResolver->getController($request);
+        if (
+            method_exists(\ReflectionProperty::class, 'getAttributes') &&
+            $controller = $this->controllerResolver->getController($request)
+        ) {
             $class = new \ReflectionClass($controller[0]);
             $method = $class->getMethod($controller[1]);
             $tags = [];

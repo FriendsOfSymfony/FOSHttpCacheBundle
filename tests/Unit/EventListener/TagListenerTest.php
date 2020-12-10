@@ -87,10 +87,9 @@ class TagListenerTest extends TestCase
             ->with(\Mockery::on(function(){
                 return true;
             }))
-            ->once()
             ->andReturn([
-                new TagAttributeController(new SymfonyResponseTagger()),
-                'listAction'
+                new TagAttributeController($this->symfonyResponseTagger),
+                'emptyAction'
             ])
         ;
 
