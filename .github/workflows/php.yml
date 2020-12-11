@@ -6,9 +6,9 @@ env:
 
 on:
   push:
-    branches: [ master, hotfix/move-to-github-action ]
+    branches: [ /^\d+\.\d+$/ ]
   pull_request:
-    branches: [ master, hotfix/move-to-github-action ]
+    branches: [ /^\d+\.\d+$/ ]
 
 jobs:
   build:
@@ -33,6 +33,4 @@ jobs:
         run: composer validate --strict --no-check-lock
       - run: php vendor/bin/simple-phpunit install
       - name: Run the tests
-        run: php vendor/bin/simple-phpunit -v --coverage-clover=coverage.clover
-      - run: wget https://scrutinizer-ci.com/ocular.phar
-      - run: php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+        run: php vendor/bin/simple-phpunit -v
