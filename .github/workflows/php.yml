@@ -1,5 +1,9 @@
 name: PHP Composer
 
+env:
+  SYMFONY_PHPUNIT_DIR: "$HOME/symfony-bridge/.phpunit"
+  PHPUNIT_FLAGS: "-v"
+
 on:
   push:
     branches: [ master, hotfix/move-to-github-action ]
@@ -12,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: [ubuntu-latest, windows-latest, macOS-latest]
+        operating-system: [ubuntu-latest]
         php-versions: ['7.2', '7.3']
 
     name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
@@ -27,5 +31,8 @@ jobs:
         run: php -v && ls -ltr
       - name: Composer validate
         run: composer validate --strict --no-check-lock
+      - run: php vendor/bin/simple-phpunit install
       - name: Run the tests
-        run: php vendor/bin/simple-phpunit
+        run: php vendor/bin/simple-phpunit -v --coverage-clover=coverage.clover
+      - run: wget https://scrutinizer-ci.com/ocular.phar
+      - run: php ocular.phar code-coverage:upload --format=php-clover coverage.clover
