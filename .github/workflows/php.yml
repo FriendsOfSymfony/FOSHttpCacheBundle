@@ -1,18 +1,16 @@
-name: PHP Composer
+name: CI FOSHttpCacheBundle
 
 env:
   SYMFONY_PHPUNIT_DIR: "$HOME/symfony-bridge/.phpunit"
-  PHPUNIT_FLAGS: "-v"
 
 on:
   push:
-    branches: [ master, hotfix/move-to-github-action ]
+    branches: [ master, /^\d+\.\d+$/, hotfix/move-to-github-action ]
   pull_request:
-    branches: [ master, hotfix/move-to-github-action ]
+    branches: [ master, /^\d+\.\d+$/, hotfix/move-to-github-action ]
 
 jobs:
   build:
-
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
