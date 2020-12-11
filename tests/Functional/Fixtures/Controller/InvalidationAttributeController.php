@@ -23,7 +23,6 @@ if (!\class_exists(AbstractController::class)) {
 
 class InvalidationAttributeController extends AbstractController
 {
-
     #[InvalidateRoute('test_noncached')]
     #[InvalidateRoute('test_cached', params: ['id' => 'myhardcodedid'])]
     #[InvalidateRoute('tag_one', params: ['id' => ['expression' => 'id']])]

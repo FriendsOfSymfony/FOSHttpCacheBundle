@@ -15,17 +15,14 @@ use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
-use Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\VarDumper\Caster\ReflectionCaster;
 
 if (Kernel::MAJOR_VERSION >= 5) {
     class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\TagResponseEvent');
