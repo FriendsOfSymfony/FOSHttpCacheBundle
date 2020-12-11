@@ -34,3 +34,5 @@ jobs:
       - run: php vendor/bin/simple-phpunit install
       - name: Run the tests
         run: php vendor/bin/simple-phpunit -v --coverage-clover=coverage.clover
+      - run: wget https://scrutinizer-ci.com/ocular.phar
+      - run: php ocular.phar code-coverage:upload --format=php-clover coverage.clover
