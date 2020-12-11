@@ -31,6 +31,22 @@ class InvalidateRoute extends ConfigurationAnnotation
      */
     private $params;
 
+    public function __construct(
+        $data = [],
+        $params = []
+    ) {
+        $values = [];
+        if (is_string($data)) {
+            $values['value'] = $data;
+        } else {
+            $values = $data;
+        }
+
+        $values['params'] = $values['params'] ?? $params;
+
+        parent::__construct($values);
+    }
+
     /**
      * Handle route name given without explicit key.
      *

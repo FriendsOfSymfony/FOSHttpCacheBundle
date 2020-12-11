@@ -42,6 +42,18 @@ invalidation_error:
   path: /invalidate/error
   controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::errorAction
 
+php8_invalidation_route:
+  path: /php8/invalidate/route/{id}
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationAttributeController::itemAction
+
+php8_invalidation_path:
+  path: /php8/invalidate/path/{statusCode}
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationAttributeController::otherAction
+
+php8_invalidation_error:
+  path: /php8/invalidate/error
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationAttributeController::errorAction
+
 test_cached:
   path:  /cached/{id}
   methods:  [GET,PUT]

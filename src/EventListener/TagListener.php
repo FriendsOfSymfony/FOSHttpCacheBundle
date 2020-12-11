@@ -64,10 +64,6 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
      * @var RuleMatcherInterface
      */
     private $cacheableRule;
-    /**
-     * @var ControllerResolver
-     */
-    private $controllerResolver;
 
     /**
      * Constructor.
@@ -77,20 +73,15 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
         SymfonyResponseTagger $tagHandler,
         RuleMatcherInterface $cacheableRule,
         RuleMatcherInterface $mustInvalidateRule,
-        ControllerResolver $controllerResolver,
         ExpressionLanguage $expressionLanguage = null
     ) {
         $this->cacheManager = $cacheManager;
         $this->symfonyResponseTagger = $tagHandler;
         $this->cacheableRule = $cacheableRule;
         $this->mustInvalidateRule = $mustInvalidateRule;
-        $this->controllerResolver = $controllerResolver;
         $this->expressionLanguage = $expressionLanguage ?: new ExpressionLanguage();
     }
 
-    public function onKernelRequest(RequestEvent $event) {
-
-    }
     /**
      * Process the _tags request attribute, which is set when using the Tag
      * annotation.
@@ -109,29 +100,7 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
             return;
         }
 
-        if (
-            method_exists(\ReflectionProperty::class, 'getAttributes') &&
-            $controller = $this->controllerResolver->getController($request)
-        ) {
-            $class = new \ReflectionClass($controller[0]);
-            $method = $class->getMethod($controller[1]);
-            $tags = [];
-            foreach ($class->getAttributes() as $classAttribute) {
-                $tags[] = $classAttribute->newInstance();
-            }
-            foreach ($method->getAttributes() as $methodAttribute) {
-                $tags[] = $methodAttribute->newInstance();
-            }
-
-            $request->attributes->set(
-                '_tag',
-                array_merge($tags, $request->attributes->get('_tag', []))
-            );
-        }
-
         $tags = $this->getAnnotationTags($request);
-
-        //if (empty($tags) && )
 
         $configuredTags = $this->matchRule($request);
         if ($configuredTags) {
@@ -160,7 +129,6 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'onKernelRequest',
             KernelEvents::RESPONSE => 'onKernelResponse',
         ];
     }

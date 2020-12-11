@@ -24,6 +24,18 @@ class InvalidatePath extends ConfigurationAnnotation
      */
     private $paths;
 
+    public function __construct(
+        $data = []
+    ) {
+        $values = [];
+        if (is_string($data)) {
+            $values['value'] = $data;
+        } else {
+            $values = $data;
+        }
+
+        parent::__construct($values);
+    }
     /**
      * Handle path given without explicit key.
      *

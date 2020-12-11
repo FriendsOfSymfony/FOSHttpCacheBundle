@@ -142,6 +142,10 @@ class FOSHttpCacheExtension extends Extension
 
             $loader->load('flash_message.xml');
         }
+
+        if (method_exists(\ReflectionProperty::class, 'getAttributes')) {
+            $loader->load('catch_attributes.xml');
+        }
     }
 
     private function loadCacheable(ContainerBuilder $container, array $config)

@@ -64,11 +64,6 @@ class TagListenerTest extends TestCase
      */
     private $cacheableRule;
 
-    /**
-     * @var ControllerResolver
-     */
-    private $controllerResolver;
-
     public function setUp(): void
     {
         $this->cacheManager = \Mockery::mock(
@@ -81,24 +76,12 @@ class TagListenerTest extends TestCase
 
         $this->cacheableRule = \Mockery::mock(RuleMatcherInterface::class);
         $this->mustInvalidateRule = \Mockery::mock(RuleMatcherInterface::class);
-        $this->controllerResolver = \Mockery::mock(ControllerResolver::class);
-        $this->controllerResolver
-            ->shouldReceive('getController')
-            ->with(\Mockery::on(function(){
-                return true;
-            }))
-            ->andReturn([
-                new TagAttributeController($this->symfonyResponseTagger),
-                'emptyAction'
-            ])
-        ;
 
         $this->listener = new TagListener(
             $this->cacheManager,
             $this->symfonyResponseTagger,
             $this->cacheableRule,
-            $this->mustInvalidateRule,
-            $this->controllerResolver
+            $this->mustInvalidateRule
         );
     }
 

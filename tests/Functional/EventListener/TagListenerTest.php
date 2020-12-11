@@ -48,7 +48,7 @@ class TagListenerTest extends WebTestCase
     }
 
     /**
-     * @required PHP 8.0
+     * @requires PHP 8.0
      */
     public function testAttributeTagsAreSet()
     {
