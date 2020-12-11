@@ -1,6 +1,14 @@
 Changelog
 =========
 
+2.10.0
+------
+
+### Changed
+
+* Adjusted to work with PHP 8
+* Dropped support for PHP 7.2
+
 2.9.1
 -----
 
