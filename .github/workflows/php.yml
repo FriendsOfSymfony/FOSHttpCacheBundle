@@ -27,5 +27,6 @@ jobs:
         run: php -v && ls -ltr
       - name: Composer validate
         run: composer validate --strict --no-check-lock
+      - run: vendor/bin/simple-phpunit install
       - name: Run the tests
         run: php vendor/bin/simple-phpunit -v --coverage-clover=coverage.clover
