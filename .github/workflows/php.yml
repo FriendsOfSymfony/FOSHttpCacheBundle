@@ -10,20 +10,20 @@ jobs:
   build:
 
     runs-on: ${{ matrix.operating-system }}
-      strategy:
-        matrix:
-          operating-system: [ubuntu-latest, windows-latest, macOS-latest]
-          php-versions: ['7.2', '7.3']
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest, windows-latest, macOS-latest]
+        php-versions: ['7.2', '7.3']
 
-      name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
-      steps:
-        - name: Install PHP
-          uses: shivammathur/setup-php@v2
-          with:
-            php-version: ${{ matrix.php-versions }}
-        - name: Check PHP Version
-          run: php -v
-        - name: Composer validate
-          run: composer validate --strict --no-check-lock
-        - name: Run the tests
-          run: php vendor/bin/simple-phpunit
+    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+    steps:
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+      - name: Check PHP Version
+        run: php -v
+      - name: Composer validate
+        run: composer validate --strict --no-check-lock
+      - name: Run the tests
+        run: php vendor/bin/simple-phpunit
