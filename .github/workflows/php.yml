@@ -6,9 +6,9 @@ env:
 
 on:
   push:
-    branches: [ /^\d+\.\d+$/ ]
+    branches: [ master, hotfix/move-to-github-action ]
   pull_request:
-    branches: [ /^\d+\.\d+$/ ]
+    branches: [ master, hotfix/move-to-github-action ]
 
 jobs:
   build:
