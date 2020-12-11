@@ -17,12 +17,14 @@ jobs:
 
     name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
     steps:
+      - uses: actions/checkout@v2
+      - uses: php-actions/composer@v4
       - name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
       - name: Check PHP Version
-        run: php -v
+        run: php -v && ls -ltr
       - name: Composer validate
         run: composer validate --strict --no-check-lock
       - name: Run the tests
