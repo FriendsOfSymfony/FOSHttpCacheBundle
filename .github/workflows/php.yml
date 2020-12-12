@@ -18,7 +18,7 @@ jobs:
         composer-flag: ['', '--prefer-stable --prefer-lowest']
         symfony-version: ['3', '4', 'dev']
 
-    name: PHP ${{ matrix.php-versions }} Test on Symfony ${{ matrix.symfony-versions }}
+    name: PHP ${{ matrix.php-versions }} Test on Symfony ${{ matrix.symfony-version }}
     steps:
       - name: Pull the code
         uses: actions/checkout@v2
