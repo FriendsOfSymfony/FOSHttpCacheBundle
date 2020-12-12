@@ -39,6 +39,8 @@ jobs:
         if: ${{ matrix.symfony-version == 'dev' }}
       - name: Composer install
         uses: php-actions/composer@v4
+        with:
+          php_version: ${{ matrix.php-versions }}
       - name: Composer validate
         run: composer validate --strict --no-check-lock
       - name: Composer update
