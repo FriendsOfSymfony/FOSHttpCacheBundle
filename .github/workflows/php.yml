@@ -41,6 +41,7 @@ jobs:
         run: composer validate --strict --no-check-lock
       - name: Composer update
         run: composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
+      - run: cat vendor/composer/../symfony/security-bundle/Templating/Helper/LogoutUrlHelper.php
       - name: Install PHPUnit
         run: php vendor/bin/simple-phpunit install
       - name: Run the tests
