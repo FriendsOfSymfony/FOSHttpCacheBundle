@@ -18,7 +18,7 @@ jobs:
         composer-flag: ['', '--prefer-stable --prefer-lowest']
         symfony-version: ['3', '4', 'dev']
 
-    name: PHP ${{ matrix.php-versions }} Test on Symfony ${{ matrix.symfony-version }}
+    name: PHP ${{ matrix.php-versions }} Test on Symfony ${{ matrix.symfony-version }} ${{ matrix.composer-flag }}
     steps:
       - name: Pull the code
         uses: actions/checkout@v2
@@ -42,7 +42,7 @@ jobs:
       - name: Composer validate
         run: composer validate --strict --no-check-lock
       - name: Composer update
-        run: composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
+        run: chmod 777 composer.lock && composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
       - name: Install PHPUnit
         run: php vendor/bin/simple-phpunit install
       - name: Run the tests
