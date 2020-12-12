@@ -11,24 +11,39 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.operating-system }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        operating-system: [ubuntu-latest]
-        php-versions: ['7.2', '7.3']
+        php-versions: ['7.2', '7.3', '7.4']
+        composer-flag: ['', '--prefer-stable --prefer-lowest']
+        symfony-version: ['3', '4', 'dev']
 
-    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+    name: PHP ${{ matrix.php-versions }} Test on Symfony ${{ matrix.symfony-versions }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: php-actions/composer@v4
+      - name: Pull the code
+        uses: actions/checkout@v2
       - name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
       - name: Check PHP Version
         run: php -v && ls -ltr
+      - name: Symfony version 3 LTS
+        run: composer require --no-update symfony/lts:^3
+        if: ${{ matrix.symfony-version == '3' }}
+      - name: Symfony version 4 LTS
+        run: composer require --no-update symfony/flex && composer config extra.symfony.require ^4
+        if: ${{ matrix.symfony-version == '4' }}
+      - name: Symfony latest
+        run: composer config minimum-stability dev
+        if: ${{ matrix.symfony-version == 'dev' }}
+      - name: Composer install
+        uses: php-actions/composer@v4
       - name: Composer validate
         run: composer validate --strict --no-check-lock
-      - run: php vendor/bin/simple-phpunit install
+      - name: Composer update
+        run: composer update ${{ composer-flag }} --prefer-dist --no-interaction
+      - name: Install PHPUnit
+        run: php vendor/bin/simple-phpunit install
       - name: Run the tests
         run: php vendor/bin/simple-phpunit -v
