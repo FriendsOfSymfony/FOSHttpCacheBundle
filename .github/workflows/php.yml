@@ -37,14 +37,10 @@ jobs:
       - name: Symfony latest
         run: composer config minimum-stability dev
         if: ${{ matrix.symfony-version == 'dev' }}
-      - name: Composer install
-        uses: php-actions/composer@v4
-        with:
-          php_version: ${{ matrix.php-versions }}
       - name: Composer validate
         run: composer validate --strict --no-check-lock
       - name: Composer update
-        run: sudo rm -f symfony.lock && sudo rm -f composer.lock && sudo rm -rf vendor && composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
+        run: composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
       - name: Install PHPUnit
         run: php vendor/bin/simple-phpunit install
       - name: Run the tests
