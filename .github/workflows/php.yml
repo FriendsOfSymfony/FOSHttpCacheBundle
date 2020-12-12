@@ -42,7 +42,7 @@ jobs:
       - name: Composer validate
         run: composer validate --strict --no-check-lock
       - name: Composer update
-        run: chmod 777 composer.lock && composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
+        run: sudo rm -f composer.lock && composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
       - name: Install PHPUnit
         run: php vendor/bin/simple-phpunit install
       - name: Run the tests
