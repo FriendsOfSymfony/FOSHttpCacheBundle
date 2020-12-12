@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         php-versions: ['7.2', '7.3', '7.4']
-        composer-flag: ['', '--prefer-stable --prefer-lowest']
+        composer-flag: ['']
         symfony-version: ['3', '4', 'dev']
 
     name: PHP ${{ matrix.php-versions }} Test on Symfony ${{ matrix.symfony-version }} ${{ matrix.composer-flag }}
