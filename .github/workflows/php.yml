@@ -16,7 +16,7 @@ jobs:
       matrix:
         php-version: ['7.2', '7.3']
         stability: ['dev']
-        symfony_version: ['^4']
+        symfony-version: ['^4']
         include:
           - php-version: '7.2'
           - php-version: '7.3'
