@@ -19,14 +19,22 @@ jobs:
         symfony-version: ['^4']
         include:
           - php-version: '7.2'
+            symfony-version: ''
+            stability: ''
           - php-version: '7.3'
+            symfony-version: ''
+            stability: ''
           - php-version: '7.2'
             symfony-version: '^4'
+            stability: ''
           - php-version: '7.3'
             symfony-version: '^4'
+            stability: ''
           - php-version: '7.2'
+            symfony-version: ''
             stability: 'dev'
           - php-version: '7.3'
+            symfony-version: ''
             stability: 'dev'
     name: PHP ${{ matrix.php-version }} Test on Symfony ${{ matrix.symfony-version }} ${{ matrix.stability }}
     steps:
