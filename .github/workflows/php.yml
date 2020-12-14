@@ -14,9 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ['7.2', '7.3']
-        stability: ['dev']
-        symfony-version: ['^4']
         include:
           - php-version: '7.2'
             symfony-version: ''
