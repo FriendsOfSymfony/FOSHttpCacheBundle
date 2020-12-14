@@ -14,33 +14,50 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: ['7.2', '7.3', '7.4']
-        composer-flag: ['']
-        symfony-version: ['3', '4', 'dev']
-
-    name: PHP ${{ matrix.php-versions }} Test on Symfony ${{ matrix.symfony-version }} ${{ matrix.composer-flag }}
+        php-version: ['7.2', '7.3']
+        composer-flag: ['--prefer-stable --prefer-lowest']
+        dependency: ['symfony/validator:^3.4.4 symfony/templating:^3.4.4', 'symfony/flex', 'symfony/lts:^3']
+        stability: ['dev']
+        symfony_version: ['^4']
+        include:
+          - php-version: '7.2'
+            composer-flag: '--prefer-stable --prefer-lowest'
+            dependency: 'symfony/validator:^3.4.4 symfony/templating:^3.4.4'
+          - php-version: '7.3'
+            composer-flag: '--prefer-stable --prefer-lowest'
+            symfony-version: 'symfony/validator:^3.4.4 symfony/templating:^3.4.4'
+          - php-version: '7.2'
+          - php-version: '7.3'
+          - php-version: '7.3'
+            dependency: 'symfony/lts:^3'
+          - php-version: '7.3'
+            dependency: 'symfony/flex'
+            symfony-version: '^4'
+          - php-version: '7.3'
+            stability: 'dev'
+    name: PHP ${{ matrix.php-version }} Test on Symfony ${{ matrix.symfony-version }} ${{ matrix.composer-flag }}
     steps:
       - name: Pull the code
         uses: actions/checkout@v2
       - name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-versions }}
+          php-version: ${{ matrix.php-version }}
       - name: Check PHP Version
-        run: php -v && ls -ltr
-      - name: Symfony version 3 LTS
-        run: composer require --no-update symfony/lts:^3
-        if: ${{ matrix.symfony-version == '3' }}
-      - name: Symfony version 4 LTS
-        run: composer require --no-update symfony/flex && composer config extra.symfony.require ^4
-        if: ${{ matrix.symfony-version == '4' }}
-      - name: Symfony latest
-        run: composer config minimum-stability dev
-        if: ${{ matrix.symfony-version == 'dev' }}
-      - name: Composer validate
-        run: composer validate --strict --no-check-lock
+        run: php -v
+      - name: Stability
+        run: composer config minimum-stability ${{ matrix.stability }}
+        if: ${{ matrix.stability }}
+      - name: Dependencies
+        run: composer require --no-update ${{ matrix.dependencies }}
+        if: ${{ matrix.dependencies }}
+      - name: Symfony version
+        run: composer config extra.symfony.require ${{ matrix.symfony-version}}
+        if: ${{ matrix.symfony-version }}
       - name: Composer update
         run: composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
+      - name: Composer validate
+        run: composer validate --strict --no-check-lock
       - name: Install PHPUnit
         run: php vendor/bin/simple-phpunit install
       - name: Run the tests
