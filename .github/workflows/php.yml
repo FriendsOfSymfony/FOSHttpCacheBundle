@@ -59,11 +59,13 @@ jobs:
       - name: Check PHP Version
         run: php -v
       - name: Stability
-        run: composer config minimum-stability ${{ matrix.stability }} && composer update --prefer-stable --prefer-lowest --prefer-dist --no-interaction
+        run: composer config minimum-stability ${{ matrix.stability }}
         if: ${{ matrix.stability }}
       - name: Symfony version
-        run: composer config extra.symfony.require "${{ matrix.symfony-version}}" && composer update --prefer-stable --prefer-lowest --prefer-dist --no-interaction
+        run: composer config extra.symfony.require "${{ matrix.symfony-version}}"
         if: ${{ matrix.symfony-version }}
+      - name: Composer update
+        run: composer update --prefer-stable --prefer-lowest --prefer-dist --no-interaction
       - name: Composer validate
         run: composer validate --strict --no-check-lock
       - name: Install PHPUnit
