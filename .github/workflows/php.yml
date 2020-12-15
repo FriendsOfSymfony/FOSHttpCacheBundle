@@ -52,18 +52,18 @@ jobs:
     steps:
       - name: Pull the code
         uses: actions/checkout@v2
-      - name: Install PHP
+      - name: Install PHP with composer
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
+          tools: composer:v2
       - name: Check PHP Version
         run: php -v
-      - uses: php-actions/composer@v4
       - name: Stability
         run: composer config minimum-stability ${{ matrix.stability }}
         if: ${{ matrix.stability }}
       - name: Symfony version
-        run: composer config extra.symfony.require "${{ matrix.symfony-version}}"
+        run: composer config extra.symfony.require ${{ matrix.symfony-version}}
         if: ${{ matrix.symfony-version }}
       - name: Composer update
         run: composer update --prefer-stable --prefer-lowest --prefer-dist --no-interaction
