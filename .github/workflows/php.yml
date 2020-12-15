@@ -5,9 +5,7 @@ env:
 
 on:
   push:
-    branches: [ master, /^\d+\.\d+$/, hotfix/move-to-github-action ]
   pull_request:
-    branches: [ master, /^\d+\.\d+$/, hotfix/move-to-github-action ]
 
 jobs:
   build:
@@ -48,11 +46,11 @@ jobs:
           - php-version: '8.0'
             symfony-version: '^5'
             stability: ''
-    name: PHP ${{ matrix.php-version }} Test on Symfony ${{ matrix.symfony-version }} stability ${{ matrix.stability }}
+    name: PHP ${{ matrix.php-version }} Test on Symfony ${{ matrix.symfony-version }}
     steps:
       - name: Pull the code
         uses: actions/checkout@v2
-      - name: Install PHP with composer
+      - name: Install PHP and Composer
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
