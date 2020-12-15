@@ -58,6 +58,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
       - name: Check PHP Version
         run: php -v
+      - uses: php-actions/composer@v4
       - name: Stability
         run: composer config minimum-stability ${{ matrix.stability }}
         if: ${{ matrix.stability }}
