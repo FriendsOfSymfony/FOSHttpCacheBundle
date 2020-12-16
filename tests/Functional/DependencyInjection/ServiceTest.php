@@ -42,6 +42,9 @@ class ServiceTest extends KernelTestCase
         return static::$kernel;
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testCanBeLoaded()
     {
         /** @var Container $container */
