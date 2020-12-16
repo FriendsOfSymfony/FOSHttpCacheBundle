@@ -67,7 +67,5 @@ jobs:
         run: composer update --prefer-stable --prefer-lowest --prefer-dist --no-interaction
       - name: Composer validate
         run: composer validate --strict --no-check-lock
-      - name: Install PHPUnit
-        run: php vendor/bin/simple-phpunit install
       - name: Run the tests
         run: php vendor/bin/simple-phpunit -v
