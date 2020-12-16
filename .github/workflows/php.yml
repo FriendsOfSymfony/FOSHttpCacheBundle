@@ -50,5 +50,5 @@ jobs:
         run: composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
       - name: Composer validate
         run: composer validate --strict --no-check-lock
-      - name: Run the tests
+      - name: Run tests
         run: php vendor/bin/simple-phpunit -v
