@@ -13,40 +13,43 @@ jobs:
     strategy:
       matrix:
         include:
-          - php-version: '7.2'
-            symfony-version: ''
-            stability: ''
           - php-version: '7.3'
             symfony-version: ''
             stability: ''
-          - php-version: '7.2'
-            symfony-version: ''
-            stability: 'dev'
-          - php-version: '7.3'
-            symfony-version: ''
-            stability: 'dev'
-          - php-version: '7.2'
-            symfony-version: '^4'
-            stability: ''
-          - php-version: '7.3'
-            symfony-version: '^4'
-            stability: ''
+            composer-flag: ''
           - php-version: '7.4'
-            symfony-version: '^4'
+            symfony-version: ''
             stability: ''
+            composer-flag: ''
           - php-version: '8.0'
+            symfony-version: ''
+            stability: ''
+            composer-flag: ''
+          - php-version: '7.3'
             symfony-version: '^4'
             stability: ''
+            composer-flag: ''
           - php-version: '7.3'
             symfony-version: '^5'
             stability: ''
+            composer-flag: ''
           - php-version: '7.4'
             symfony-version: '^5'
             stability: ''
+            composer-flag: ''
           - php-version: '8.0'
             symfony-version: '^5'
             stability: ''
-    name: PHP ${{ matrix.php-version }} Test on Symfony ${{ matrix.symfony-version }}
+            composer-flag: ''
+          - php-version: '7.3'
+            symfony-version: ''
+            stability: ''
+            composer-flag: '--prefer-stable --prefer-lowest'
+          - php-version: '8.0'
+            symfony-version: '^5'
+            stability: 'dev'
+            composer-flag: ''
+    name: PHP ${{ matrix.php-version }} Test on Symfony ${{ matrix.symfony-version }} ${{ matrix.composer-flag }}
     steps:
       - name: Pull the code
         uses: actions/checkout@v2
@@ -64,7 +67,7 @@ jobs:
         run: composer require --no-update symfony/flex && composer config extra.symfony.require ${{ matrix.symfony-version}}
         if: ${{ matrix.symfony-version }}
       - name: Composer update
-        run: composer update --prefer-stable --prefer-lowest --prefer-dist --no-interaction
+        run: composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
       - name: Composer validate
         run: composer validate --strict --no-check-lock
       - name: Run the tests
