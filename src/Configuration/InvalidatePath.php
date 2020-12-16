@@ -36,6 +36,7 @@ class InvalidatePath extends ConfigurationAnnotation
 
         parent::__construct($values);
     }
+
     /**
      * Handle path given without explicit key.
      *

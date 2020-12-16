@@ -1,17 +1,12 @@
 <?php
 
-
 namespace FOS\HttpCacheBundle\EventListener;
 
-use FOS\HttpCacheBundle\CacheManager;
-use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
-use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -28,7 +23,8 @@ class CatchAttributesListener implements EventSubscriberInterface
      */
     private $controllerResolver;
 
-    public function __construct(ControllerResolver $controllerResolver) {
+    public function __construct(ControllerResolver $controllerResolver)
+    {
         $this->controllerResolver = $controllerResolver;
     }
 
@@ -43,12 +39,12 @@ class CatchAttributesListener implements EventSubscriberInterface
             $class = new \ReflectionClass($controller[0]);
             $method = $class->getMethod($controller[1]);
             $attributes = [];
-            $addAttributes = function($instance) use (&$attributes) {
+            $addAttributes = function ($instance) use (&$attributes) {
                 if (
                     $instance instanceof ConfigurationInterface &&
                     in_array(
                         $instance->getAliasName(), [
-                        'tag', 'invalidate_path', 'invalidate_route'
+                        'tag', 'invalidate_path', 'invalidate_route',
                     ])
                 ) {
                     $attributes['_'.$instance->getAliasName()][] = $instance;
@@ -60,10 +56,9 @@ class CatchAttributesListener implements EventSubscriberInterface
             }
             foreach ($method->getAttributes() as $methodAttribute) {
                 $addAttributes($methodAttribute->newInstance());
-
             }
 
-            foreach($attributes as $key => $attr) {
+            foreach ($attributes as $key => $attr) {
                 $request->attributes->set(
                     $key,
                     array_merge($attr, $request->attributes->get($key, []))

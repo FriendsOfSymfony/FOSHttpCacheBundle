@@ -13,12 +13,12 @@ namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
+use function mysql_xdevapi\expression;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Kernel;
-use function mysql_xdevapi\expression;
 
 if (!\class_exists(AbstractController::class)) {
     \class_alias(Controller::class, AbstractController::class);
