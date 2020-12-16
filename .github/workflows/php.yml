@@ -5,6 +5,8 @@ env:
 
 on:
   push:
+      branches:
+          - master
   pull_request:
 
 jobs:
@@ -13,23 +15,25 @@ jobs:
     strategy:
       matrix:
         include:
+          # Test the latest stable release
           - php-version: '7.3'
           - php-version: '7.4'
           - php-version: '8.0'
-          - php-version: '7.3'
+          # Test Symfony LTS versions. Read more at https://github.com/symfony/lts
+          - php-version: '7.4'
+            dependencies: 'symfony/lts:^3'
+          - php-version: '8.0'
             symfony-version: '^4'
-          - php-version: '7.3'
-            symfony-version: '^5'
-          - php-version: '7.4'
-            symfony-version: '^5'
           - php-version: '8.0'
             symfony-version: '^5'
+          # Minimum supported dependencies with the oldest PHP version
           - php-version: '7.3'
             composer-flag: '--prefer-stable --prefer-lowest'
+          # Test latest unreleased versions
           - php-version: '8.0'
             symfony-version: '^5'
             stability: 'dev'
-    name: PHP ${{ matrix.php-version }} Test on Symfony ${{ matrix.symfony-version }} ${{ matrix.stability }} ${{ matrix.composer-flag }}
+    name: PHP ${{ matrix.php-version }} Test on Symfony ${{ matrix.symfony-version }} ${{ matrix.dependencies}} ${{ matrix.stability }} ${{ matrix.composer-flag }}
     steps:
       - name: Pull the code
         uses: actions/checkout@v2
@@ -43,6 +47,9 @@ jobs:
       - name: Stability
         run: composer config minimum-stability ${{ matrix.stability }}
         if: ${{ matrix.stability }}
+      - name: Additional require
+        run: composer require --no-update ${{ matrix.dependencies }}
+        if: ${{ matrix.dependencies }}
       - name: Symfony version
         run: composer require --no-update symfony/flex && composer config extra.symfony.require ${{ matrix.symfony-version}}
         if: ${{ matrix.symfony-version }}
