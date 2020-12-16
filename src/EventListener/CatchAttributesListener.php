@@ -28,9 +28,7 @@ class CatchAttributesListener implements EventSubscriberInterface
      */
     private $controllerResolver;
 
-    public function __construct(
-        ControllerResolver $controllerResolver
-    ) {
+    public function __construct(ControllerResolver $controllerResolver) {
         $this->controllerResolver = $controllerResolver;
     }
 
