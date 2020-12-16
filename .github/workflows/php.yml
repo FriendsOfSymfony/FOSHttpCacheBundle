@@ -49,7 +49,7 @@ jobs:
             symfony-version: '^5'
             stability: 'dev'
             composer-flag: ''
-    name: PHP ${{ matrix.php-version }} Test on Symfony ${{ matrix.symfony-version }} ${{ matrix.composer-flag }}
+    name: PHP ${{ matrix.php-version }} Test on Symfony ${{ matrix.symfony-version }} ${{ matrix.stability }} ${{ matrix.composer-flag }}
     steps:
       - name: Pull the code
         uses: actions/checkout@v2
