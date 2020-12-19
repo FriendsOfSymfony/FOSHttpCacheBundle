@@ -18,7 +18,7 @@ if (Kernel::MAJOR_VERSION >= 5) {
 
 /**
  * On kernel.request event, this event handler fetch PHP8 attributes.
- * It is available from PHP 8.0.0
+ * It is available from PHP 8.0.0.
  *
  * @author Yoann Chocteau <yoann@kezaweb.fr>
  */
@@ -32,7 +32,7 @@ class Php8AttributesListener implements EventSubscriberInterface
     public function __construct(ControllerResolver $controllerResolver)
     {
         if (\PHP_VERSION_ID < 80000) {
-            throw new \Exception(sprintf("Php8AttributesListener must not be loaded for PHP %s", phpversion()));
+            throw new \Exception(sprintf('Php8AttributesListener must not be loaded for PHP %s', phpversion()));
         }
         $this->controllerResolver = $controllerResolver;
     }
