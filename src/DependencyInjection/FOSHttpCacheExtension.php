@@ -143,8 +143,8 @@ class FOSHttpCacheExtension extends Extension
             $loader->load('flash_message.xml');
         }
 
-        if (method_exists(\ReflectionProperty::class, 'getAttributes')) {
-            $loader->load('catch_attributes.xml');
+        if (\PHP_VERSION_ID >= 80000) {
+            $loader->load('php8_attributes.xml');
         }
     }
 

@@ -8,6 +8,7 @@ Changelog
 
 * Adjusted to work with PHP 8
 * Dropped support for PHP 7.2
+* Added support for PHP 8 Attributes
 
 2.9.1
 -----

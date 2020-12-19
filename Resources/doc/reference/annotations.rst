@@ -28,6 +28,16 @@ Invalidate a path::
     {
     }
 
+From PHP 8, you can replace the doctrine annotations by PHP attributes::
+
+    use FOS\HttpCacheBundle\Configuration\InvalidatePath;
+
+    #[InvalidatePath('/articles')
+    #[InvalidatePath('/articles/latest')
+    public function editAction()
+    {
+    }
+
 When `editAction()` returns a successful response to an :term:`unsafe <safe>`
 HTTP request (POST, PUT, PATCH or DELETE), the paths `/articles` and
 `/articles/latest` will be invalidated.
@@ -39,6 +49,7 @@ See :doc:`/features/invalidation` for more information.
 ``@InvalidateRoute``
 --------------------
 
+Like InvalidatePath annotations, you can use php attributes instead if you are using PHP 8
 Invalidate a route with parameters::
 
     use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
@@ -87,6 +98,8 @@ HTTP header (``X-Cache-Tags``, by default).
 
 Any non-safe request to the ``editAction`` that returns a successful response
 will trigger invalidation of both the ``news`` and the ``news-123`` tags.
+
+Like InvalidatePath annotations, you can use php attributes instead if you are using PHP 8
 
 Set/invalidate a tag::
 

@@ -22,6 +22,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Router;
 
@@ -671,6 +672,12 @@ class FOSHttpCacheExtensionTest extends TestCase
         $container->setDefinition(
             'router',
             new Definition(Router::class)
+        );
+
+        // The php8AttributesListener depends on the controller_resolver
+        $container->setDefinition(
+            'controller_resolver',
+            new Definition(ControllerResolverInterface::class)
         );
 
         return $container;
