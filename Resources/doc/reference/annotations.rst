@@ -32,8 +32,8 @@ From PHP 8, you can replace the doctrine annotations by PHP attributes::
 
     use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 
-    #[InvalidatePath('/articles')
-    #[InvalidatePath('/articles/latest')
+    #[InvalidatePath('/articles')]
+    #[InvalidatePath('/articles/latest')]
     public function editAction()
     {
     }
