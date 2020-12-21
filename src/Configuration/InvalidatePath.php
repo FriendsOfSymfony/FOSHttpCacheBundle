@@ -16,12 +16,26 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
 /**
  * @Annotation
  */
+#[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
 class InvalidatePath extends ConfigurationAnnotation
 {
     /**
      * @var array
      */
     private $paths;
+
+    public function __construct(
+        $data = []
+    ) {
+        $values = [];
+        if (is_string($data)) {
+            $values['value'] = $data;
+        } else {
+            $values = $data;
+        }
+
+        parent::__construct($values);
+    }
 
     /**
      * Handle path given without explicit key.

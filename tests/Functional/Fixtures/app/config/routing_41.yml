@@ -3,6 +3,11 @@ tag_list:
   methods:  [GET]
   controller: tag_controller::listAction
 
+php8_tag_list:
+  path: /php8/tag/list
+  defaults: { _controller: tag_attribute_controller:listAction }
+  methods: [ GET ]
+
 tag_error:
   path:  /tag/error
   controller: tag_controller::errorAction
@@ -11,6 +16,11 @@ tag_one:
   path:  /tag/{id}
   methods:  [GET,POST]
   controller: tag_controller::itemAction
+
+php8_tag_one:
+  path:  /php8/tag/{id}
+  defaults: { _controller: tag_attribute_controller:itemAction }
+  methods:  [GET,POST]
 
 tag_manual:
   path: /tag_manual
@@ -31,6 +41,18 @@ invalidation_path:
 invalidation_error:
   path: /invalidate/error
   controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::errorAction
+
+php8_invalidation_route:
+  path: /php8/invalidate/route/{id}
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationAttributeController::itemAction
+
+php8_invalidation_path:
+  path: /php8/invalidate/path/{statusCode}
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationAttributeController::otherAction
+
+php8_invalidation_error:
+  path: /php8/invalidate/error
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationAttributeController::errorAction
 
 test_cached:
   path:  /cached/{id}

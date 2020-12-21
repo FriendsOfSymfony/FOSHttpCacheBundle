@@ -30,6 +30,11 @@ fos_http_cache:
           path: ^/invalidate/path.*
         routes:
           invalidation_path: ~
+      -
+        match:
+          path: ^/php8/invalidate/path.*
+        routes:
+          php8_invalidation_path: ~
   tags:
     rules:
       -

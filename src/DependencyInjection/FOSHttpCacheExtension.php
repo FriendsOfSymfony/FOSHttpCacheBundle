@@ -142,6 +142,10 @@ class FOSHttpCacheExtension extends Extension
 
             $loader->load('flash_message.xml');
         }
+
+        if (\PHP_VERSION_ID >= 80000) {
+            $loader->load('php8_attributes.xml');
+        }
     }
 
     private function loadCacheable(ContainerBuilder $container, array $config)

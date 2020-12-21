@@ -18,6 +18,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 /**
  * @Annotation
  */
+#[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
 class InvalidateRoute extends ConfigurationAnnotation
 {
     /**
@@ -29,6 +30,22 @@ class InvalidateRoute extends ConfigurationAnnotation
      * @var array
      */
     private $params;
+
+    public function __construct(
+        $data = [],
+        $params = []
+    ) {
+        $values = [];
+        if (is_string($data)) {
+            $values['value'] = $data;
+        } else {
+            $values = $data;
+        }
+
+        $values['params'] = $values['params'] ?? $params;
+
+        parent::__construct($values);
+    }
 
     /**
      * Handle route name given without explicit key.
