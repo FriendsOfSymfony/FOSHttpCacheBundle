@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.10.1
+------
+
+### Fixed
+
+* Fix typehint in PHP 8 attributes handling to use ControllerResolverInterface
+
 2.10.0
 ------
 
