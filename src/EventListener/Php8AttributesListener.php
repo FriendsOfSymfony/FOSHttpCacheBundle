@@ -3,7 +3,7 @@
 namespace FOS\HttpCacheBundle\EventListener;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver;
+use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -25,11 +25,11 @@ if (Kernel::MAJOR_VERSION >= 5) {
 class Php8AttributesListener implements EventSubscriberInterface
 {
     /**
-     * @var ControllerResolver
+     * @var ControllerResolverInterface
      */
     private $controllerResolver;
 
-    public function __construct(ControllerResolver $controllerResolver)
+    public function __construct(ControllerResolverInterface $controllerResolver)
     {
         if (\PHP_VERSION_ID < 80000) {
             throw new \Exception(sprintf('Php8AttributesListener must not be loaded for PHP %s', phpversion()));
