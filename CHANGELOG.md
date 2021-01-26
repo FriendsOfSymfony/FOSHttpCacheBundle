@@ -1,6 +1,17 @@
 Changelog
 =========
 
+2.10.2
+------
+
+### Fixed
+
+* The fix about overwriting flash messages on multiple redirects introduced in
+  version 2.9.1 created the risk of losing flash messages when redirecting to a
+  path that is outside the firewall or destroys the session.
+  This version hopefully fixes both cases. Existing flash messages in a request
+  cookie are merged with new flash messages from the session.
+
 2.10.1
 ------
 
@@ -22,9 +33,9 @@ Changelog
 
 ### Fixed
 
-* 2.9.1 fixed overwriting flash messages on multiple redirects, but introduced
-  a risk to lose flash messages when redirecting to a path that is outside the
-  firewall or destroys the session.
+* The fix about overwriting flash messages on multiple redirects introduced in
+  version 2.9.1 created the risk of losing flash messages when redirecting to a
+  path that is outside the firewall or destroys the session.
   This version hopefully fixes both cases. Existing flash messages in a request
   cookie are merged with new flash messages from the session.
 
