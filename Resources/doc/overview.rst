@@ -9,16 +9,17 @@ that the FOSHttpCache_ library needs a ``psr/http-message-implementation`` and
 ``php-http/client-implementation``. If your project does not contain one,
 composer will complain that it did not find ``psr/http-message-implementation``.
 
-To install the bundle together with Guzzle, run:
+To install the bundle together with Symfony HttpClient, run:
 
 .. code-block:: bash
 
-    $ composer require friendsofsymfony/http-cache-bundle guzzlehttp/psr7 php-http/guzzle6-adapter
+    $ composer require friendsofsymfony/http-cache-bundle symfony/http-client nyholm/psr7 guzzlehttp/promises
 
-If you want to use something else than Guzzle 6, see Packagist for a list of
+If you want to use something else than Symfony HttpClient, see Packagist for a list of
 available `client implementations`_.
 
-Then add the bundle to your application:
+Of you use an old version of Symfony, you
+must add the bundle to your application:
 
 .. code-block:: php
 
@@ -51,7 +52,7 @@ SensioFrameworkExtraBundle_:
 
     $ composer require sensio/framework-extra-bundle
 
-And include it in your project::
+And , if you don't use a recent version of Symfony, include it in your project::
 
      <?php
     // app/AppKernel.php
