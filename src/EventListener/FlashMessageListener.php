@@ -87,14 +87,6 @@ final class FlashMessageListener implements EventSubscriberInterface
             return;
         }
 
-        $response = $event->getResponse();
-
-        // If the response is a redirect, we should wait until the final response
-        // is reached
-        if ($response->isRedirect()) {
-            return;
-        }
-
         $flashBag = $this->session->getFlashBag();
         $flashes = $flashBag->all();
 
@@ -102,11 +94,21 @@ final class FlashMessageListener implements EventSubscriberInterface
             return;
         }
 
+        $response = $event->getResponse();
+
         $cookies = $response->headers->getCookies(ResponseHeaderBag::COOKIES_ARRAY);
         $host = (null === $this->options['host']) ? '' : $this->options['host'];
         if (isset($cookies[$host][$this->options['path']][$this->options['name']])) {
             $rawCookie = $cookies[$host][$this->options['path']][$this->options['name']]->getValue();
-            $flashes = array_merge($flashes, json_decode($rawCookie));
+            $flashes = array_merge_recursive($flashes, json_decode($rawCookie, true));
+        }
+
+        // Preserve existing flash message cookie from previous redirect if there was one.
+        // This covers multiple redirects where each redirect adds flash messages.
+        $request = $event->getRequest();
+        if ($request->cookies->has($this->options['name'])) {
+            $rawCookie = $request->cookies->get($this->options['name']);
+            $flashes = array_merge_recursive($flashes, json_decode($rawCookie, true));
         }
 
         $cookie = new Cookie(
