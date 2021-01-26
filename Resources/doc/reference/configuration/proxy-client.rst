@@ -24,7 +24,7 @@ varnish
 
 .. code-block:: yaml
 
-    # app/config/config.yml
+    # config/packages/fos_http_cache.yaml
     fos_http_cache:
         proxy_client:
             varnish:
@@ -80,7 +80,7 @@ URL may contain a path. If you access your web application on a port other than
 
 .. code-block:: yaml
 
-    # app/config/config.yml
+    # config/packages/fos_http_cache.yaml
     fos_http_cache:
         proxy_client:
             varnish:
@@ -139,7 +139,7 @@ nginx
 
 .. code-block:: yaml
 
-    # app/config/config.yml
+    # config/packages/fos_http_cache.yaml
     fos_http_cache:
         proxy_client:
             nginx:
@@ -170,7 +170,7 @@ refer to the :ref:`FOSHttpCache documentation for Symfony <foshttpcache:symfony 
 
 .. code-block:: yaml
 
-    # app/config/config.yml
+    # config/packages/fos_http_cache.yaml
     fos_http_cache:
         proxy_client:
             symfony:
@@ -221,7 +221,7 @@ noop
 
 .. code-block:: yaml
 
-    # app/config/config_test.yml
+    # config/packages/test/fos_http_cache.yaml
     fos_http_cache:
         proxy_client:
             default: noop
@@ -237,7 +237,7 @@ default
 
 .. code-block:: yaml
 
-    # app/config/config.yml
+    # config/packages/fos_http_cache.yaml
     fos_http_cache:
         proxy_client:
             default: varnish
