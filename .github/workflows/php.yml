@@ -1,0 +1,59 @@
+name: CI
+
+env:
+  SYMFONY_PHPUNIT_DIR: "$HOME/symfony-bridge/.phpunit"
+
+on:
+  push:
+      branches:
+          - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          # Test the latest stable release
+          - php-version: '7.2'
+          - php-version: '7.3'
+          - php-version: '7.4'
+          # Test Symfony LTS versions. Read more at https://github.com/symfony/lts
+          - php-version: '7.4'
+            dependencies: 'symfony/lts:^3'
+          - php-version: '7.4'
+            symfony-version: '^4'
+          - php-version: '7.4'
+            symfony-version: '^5'
+          # Test latest unreleased versions
+          - php-version: '7.4'
+            symfony-version: '^5'
+            stability: 'dev'
+    name: PHP ${{ matrix.php-version }} Test on Symfony ${{ matrix.symfony-version }} ${{ matrix.dependencies}} ${{ matrix.stability }} ${{ matrix.composer-flag }}
+    steps:
+      - name: Pull the code
+        uses: actions/checkout@v2
+      - name: Install PHP and Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+      - name: Check PHP Version
+        run: php -v
+      - name: Stability
+        run: composer config minimum-stability ${{ matrix.stability }}
+        if: ${{ matrix.stability }}
+      - name: Additional require
+        run: composer require --no-update ${{ matrix.dependencies }}
+        if: ${{ matrix.dependencies }}
+      - name: Symfony version
+        run: composer require --no-update symfony/flex && composer config extra.symfony.require ${{ matrix.symfony-version}}
+        if: ${{ matrix.symfony-version }}
+      - name: Composer update
+        run: composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
+      - name: Composer validate
+        run: composer validate --strict --no-check-lock
+      - name: Run tests
+        run: php vendor/bin/simple-phpunit -v
+
