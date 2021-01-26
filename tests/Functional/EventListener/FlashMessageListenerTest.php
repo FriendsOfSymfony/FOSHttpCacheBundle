@@ -13,7 +13,6 @@ namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpFoundation\Cookie;
 
 class FlashMessageListenerTest extends WebTestCase
 {
@@ -33,7 +32,6 @@ class FlashMessageListenerTest extends WebTestCase
 
         $found = false;
         foreach ($cookies as $cookie) {
-            /** @var Cookie $cookie */
             if ('flash_cookie_name' !== $cookie->getName()) {
                 continue;
             }
@@ -45,9 +43,7 @@ class FlashMessageListenerTest extends WebTestCase
             $found = true;
         }
 
-        if (!$found) {
-            $this->fail('Cookie flash_cookie_name not found in the cookie response header: '.implode(',', $cookies));
-        }
+        $this->assertTrue($found, 'Cookie "flash_cookie_name" not found in response cookies');
     }
 
     public function testFlashMessageCookieIsSetOnRedirect()
@@ -65,7 +61,6 @@ class FlashMessageListenerTest extends WebTestCase
 
         $found = false;
         foreach ($cookies as $cookie) {
-            /** @var Cookie $cookie */
             if ('flash_cookie_name' !== $cookie->getName()) {
                 continue;
             }
@@ -77,8 +72,6 @@ class FlashMessageListenerTest extends WebTestCase
             $found = true;
         }
 
-        if (!$found) {
-            $this->fail('Cookie flash_cookie_name not found in the cookie response header: '.implode(',', $cookies));
-        }
+        $this->assertTrue($found, 'Cookie "flash_cookie_name" not found in response cookies');
     }
 }
