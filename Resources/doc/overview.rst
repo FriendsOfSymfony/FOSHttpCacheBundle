@@ -18,8 +18,8 @@ To install the bundle together with Symfony HttpClient, run:
 If you want to use something else than Symfony HttpClient, see Packagist for a list of
 available `client implementations`_.
 
-Of you use an old version of Symfony, you
-must add the bundle to your application:
+If you use an old version of Symfony, you
+must manually register the bundle to your application:
 
 .. code-block:: php
 
