@@ -240,6 +240,10 @@ class Configuration implements ConfigurationInterface
                                 return !empty($v['additional_status']) && !empty($v['expression']);
                             })
                             ->thenInvalid('You may not set both additional_status and expression.')
+                            ->ifTrue(function ($v) {
+                                return !empty($v['expression']) && !class_exists(ExpressionLanguage::class);
+                            })
+                            ->thenInvalid('Configured a response.expression but ExpressionLanguage is not available')
                         ->end()
                     ->end()
                 ->end()
