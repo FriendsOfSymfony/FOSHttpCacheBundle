@@ -80,7 +80,7 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
     ) {
         $this->cacheManager = $cacheManager;
         $this->urlGenerator = $urlGenerator;
-        $this->expressionLanguage = $expressionLanguage ?: new ExpressionLanguage();
+        $this->expressionLanguage = $expressionLanguage;
         $this->mustInvalidateRule = $mustInvalidateRule;
     }
 
@@ -217,7 +217,7 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
                 // Iterate over route params and try to evaluate their values
                 foreach ($route->getParams() as $key => $value) {
                     if (is_array($value)) {
-                        $value = $this->expressionLanguage->evaluate($value['expression'], $values);
+                        $value = $this->getExpressionLanguage()->evaluate($value['expression'], $values);
                     }
 
                     $params[$key] = $value;
@@ -226,5 +226,18 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
 
             $this->cacheManager->invalidateRoute($route->getName(), $params);
         }
+    }
+
+    private function getExpressionLanguage(): ExpressionLanguage
+    {
+        if (!$this->expressionLanguage) {
+            // the expression comes from controller annotations, we can't detect whether they use expressions while building the configuration
+            if (!class_exists(ExpressionLanguage::class)) {
+                throw new \RuntimeException('Invalidation rules with expressions require '.ExpressionLanguage::class.' to be available.');
+            }
+            $this->expressionLanguage = new ExpressionLanguage();
+        }
+
+        return $this->expressionLanguage;
     }
 }

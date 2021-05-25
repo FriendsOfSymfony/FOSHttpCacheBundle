@@ -52,10 +52,11 @@ jobs:
         if: ${{ matrix.dependencies }}
       - name: Symfony version
         run: composer require --no-update symfony/flex && composer config extra.symfony.require ${{ matrix.symfony-version}}
-        if: ${{ matrix.symfony-version }}
+        if: ${{ matrix.symfony-version }}
       - name: Composer update
         run: composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
       - name: Composer validate
         run: composer validate --strict --no-check-lock
+        if: ${{ matrix.stability != 'dev' }}
       - name: Run tests
         run: php vendor/bin/simple-phpunit -v

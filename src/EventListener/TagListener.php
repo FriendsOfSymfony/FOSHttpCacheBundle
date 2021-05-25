@@ -48,7 +48,7 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
     private $symfonyResponseTagger;
 
     /**
-     * @var ExpressionLanguage
+     * @var ExpressionLanguage|null
      */
     private $expressionLanguage;
 
@@ -76,7 +76,7 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
         $this->symfonyResponseTagger = $tagHandler;
         $this->cacheableRule = $cacheableRule;
         $this->mustInvalidateRule = $mustInvalidateRule;
-        $this->expressionLanguage = $expressionLanguage ?: new ExpressionLanguage();
+        $this->expressionLanguage = $expressionLanguage;
     }
 
     /**
@@ -173,6 +173,19 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
         // if there is an attribute called "request", it needs to be accessed through the request.
         $values['request'] = $request;
 
-        return $this->expressionLanguage->evaluate($expression, $values);
+        return $this->getExpressionLanguage()->evaluate($expression, $values);
+    }
+
+    private function getExpressionLanguage(): ExpressionLanguage
+    {
+        if (!$this->expressionLanguage) {
+            // the expression comes from controller annotations, we can't detect whether they use expressions while building the configuration
+            if (!class_exists(ExpressionLanguage::class)) {
+                throw new \RuntimeException('Using the tag annotation requires the '.ExpressionLanguage::class.' to be available.');
+            }
+            $this->expressionLanguage = new ExpressionLanguage();
+        }
+
+        return $this->expressionLanguage;
     }
 }

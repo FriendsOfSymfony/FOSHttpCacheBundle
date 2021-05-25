@@ -1,6 +1,14 @@
 Changelog
 =========
 
+2.10.3
+------
+
+### Fixed
+
+* Do not error in `InvalidationListener` nor `TagListener` when `symfony/expression-language` is missing but no expression is used.
+* Properly report missing `symfony/expression-language` when an expression is used in response configuration.
+
 2.10.2
 ------
 
