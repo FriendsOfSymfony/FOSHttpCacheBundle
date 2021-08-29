@@ -60,3 +60,8 @@ jobs:
         if: ${{ matrix.stability != 'dev' }}
       - name: Run tests
         run: php vendor/bin/simple-phpunit -v
+        if: ${{ matrix.stability != 'dev' }}
+      - name: Run tests allow to fail
+        run: php vendor/bin/simple-phpunit -v || true
+        continue-on-error: true
+        if: ${{ matrix.stability == 'dev' }}
