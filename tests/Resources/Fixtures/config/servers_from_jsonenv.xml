@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services">
+
+    <config xmlns="http://example.org/schema/dic/fos_http_cache">
+        <proxy-client>
+            <varnish>
+                <http base-url="/test" http-client="acme.guzzle.nginx" servers-from-jsonenv="%env(json:VARNISH_SERVERS)%" />
+            </varnish>
+        </proxy-client>
+
+    </config>
+</container>

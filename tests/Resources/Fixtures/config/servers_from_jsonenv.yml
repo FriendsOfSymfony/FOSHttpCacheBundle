@@ -1,0 +1,8 @@
+fos_http_cache:
+
+  proxy_client:
+    varnish:
+      http:
+        servers_from_jsonenv: '%env(json:VARNISH_SERVERS)%'
+        base_url: /test
+        http_client: acme.guzzle.nginx

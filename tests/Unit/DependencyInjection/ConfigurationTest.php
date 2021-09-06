@@ -301,7 +301,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     public function testEmptyServerConfigurationIsNotAllowed()
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Either configure the "http.servers" section or enable "proxy_client.symfony.use_kernel_dispatcher');
+        $this->expectExceptionMessage('Either configure the "http.servers" or "http.servers_from_jsonenv" section or enable "proxy_client.symfony.use_kernel_dispatcher');
 
         $params = $this->getEmptyConfig();
         $params['proxy_client'] = [
@@ -733,5 +733,38 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'header' => 'X-Cache-Debug',
             ],
         ];
+    }
+
+    public function testSupportsServersFromJsonEnv(): void
+    {
+        $expectedConfiguration = $this->getEmptyConfig();
+        $expectedConfiguration['proxy_client'] = [
+            'varnish' => [
+                'http' => [
+                    'servers_from_jsonenv' => '%env(json:VARNISH_SERVERS)%',
+                    'base_url' => '/test',
+                    'http_client' => 'acme.guzzle.nginx',
+                ],
+                'tag_mode' => 'ban',
+                'tags_header' => 'X-Cache-Tags',
+            ],
+        ];
+        $expectedConfiguration['cache_manager']['enabled'] = 'auto';
+        $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
+        $expectedConfiguration['tags']['enabled'] = 'auto';
+        $expectedConfiguration['invalidation']['enabled'] = 'auto';
+        $expectedConfiguration['user_context']['logout_handler']['enabled'] = true;
+
+        $formats = array_map(function ($path) {
+            return __DIR__.'/../../Resources/Fixtures/'.$path;
+        }, [
+            'config/servers_from_jsonenv.yml',
+            'config/servers_from_jsonenv.xml',
+            'config/servers_from_jsonenv.php',
+        ]);
+
+        foreach ($formats as $format) {
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
+        }
     }
 }

@@ -365,12 +365,23 @@ class FOSHttpCacheExtension extends Extension
      */
     private function createHttpDispatcherDefinition(ContainerBuilder $container, array $config, $serviceName)
     {
-        foreach ($config['servers'] as $url) {
-            $usedEnvs = [];
-            $container->resolveEnvPlaceholders($url, null, $usedEnvs);
-            if (0 === \count($usedEnvs)) {
-                $this->validateUrl($url, 'Not a valid Varnish server address: "%s"');
+        if (array_key_exists('servers', $config)) {
+            foreach ($config['servers'] as $url) {
+                $usedEnvs = [];
+                $container->resolveEnvPlaceholders($url, null, $usedEnvs);
+                if (0 === \count($usedEnvs)) {
+                    $this->validateUrl($url, 'Not a valid Varnish server address: "%s"');
+                }
             }
+        }
+        if (array_key_exists('servers_from_jsonenv', $config) && is_string($config['servers_from_jsonenv'])) {
+            // check that the config contains an env var
+            $usedEnvs = [];
+            $container->resolveEnvPlaceholders($config['servers_from_jsonenv'], null, $usedEnvs);
+            if (0 === \count($usedEnvs)) {
+                throw new InvalidConfigurationException('Not a valid Varnish servers_from_jsonenv configuration: '.$config['servers_from_jsonenv']);
+            }
+            $config['servers'] = $config['servers_from_jsonenv'];
         }
         if (!empty($config['base_url'])) {
             $baseUrl = $config['base_url'];

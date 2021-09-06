@@ -488,19 +488,29 @@ class Configuration implements ConfigurationInterface
                         ->always()
                         ->then(function ($config) {
                             foreach ($config as $proxyName => $proxyConfig) {
-                                $serversConfigured = isset($proxyConfig['http']) && isset($proxyConfig['http']['servers']) && \is_array($proxyConfig['http']['servers']);
+                                // we only want either the servers config or the servers_from_jsonenv config
+                                if (isset($proxyConfig['http']['servers']) && !count($proxyConfig['http']['servers'])) {
+                                    unset($proxyConfig['http']['servers'], $config[$proxyName]['http']['servers']);
+                                }
+
+                                $arrayServersConfigured = isset($proxyConfig['http']['servers']) && \is_array($proxyConfig['http']['servers']);
+                                $jsonServersConfigured = isset($proxyConfig['http']['servers_from_jsonenv']) && \is_string($proxyConfig['http']['servers_from_jsonenv']);
+
+                                if ($arrayServersConfigured && $jsonServersConfigured) {
+                                    throw new InvalidConfigurationException(sprintf('You can only set one of "http.servers" or "http.servers_from_jsonenv" but not both to avoid ambiguity for the proxy "%s"', $proxyName));
+                                }
 
                                 if (!\in_array($proxyName, ['noop', 'default', 'symfony'])) {
-                                    if (!$serversConfigured) {
-                                        throw new \InvalidArgumentException(sprintf('The "http.servers" section must be defined for the proxy "%s"', $proxyName));
+                                    if (!$arrayServersConfigured && !$jsonServersConfigured) {
+                                        throw new InvalidConfigurationException(sprintf('The "http.servers" or "http.servers_from_jsonenv" section must be defined for the proxy "%s"', $proxyName));
                                     }
 
                                     return $config;
                                 }
 
                                 if ('symfony' === $proxyName) {
-                                    if (!$serversConfigured && false === $proxyConfig['use_kernel_dispatcher']) {
-                                        throw new \InvalidArgumentException('Either configure the "http.servers" section or enable "proxy_client.symfony.use_kernel_dispatcher"');
+                                    if (!$arrayServersConfigured && !$jsonServersConfigured && false === $proxyConfig['use_kernel_dispatcher']) {
+                                        throw new InvalidConfigurationException('Either configure the "http.servers" or "http.servers_from_jsonenv" section or enable "proxy_client.symfony.use_kernel_dispatcher"');
                                     }
                                 }
                             }
@@ -532,11 +542,13 @@ class Configuration implements ConfigurationInterface
             ->fixXmlConfig('server')
             ->children()
                 ->arrayNode('servers')
-                    ->info('Addresses of the hosts the caching proxy is running on. May be hostname or ip, and with :port if not the default port 80.')
+                    ->info('Addresses of the hosts the caching proxy is running on. The values may be hostnames or ips, and with :port if not the default port 80.')
                     ->useAttributeAsKey('name')
-                    ->isRequired()
                     ->requiresAtLeastOneElement()
                     ->prototype('scalar')->end()
+                ->end()
+                ->scalarNode('servers_from_jsonenv')
+                    ->info('Addresses of the hosts the caching proxy is running on (env var that contains a json array as a string). The values may be hostnames or ips, and with :port if not the default port 80.')
                 ->end()
                 ->scalarNode('base_url')
                     ->defaultNull()
