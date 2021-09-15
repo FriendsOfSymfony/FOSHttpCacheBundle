@@ -17,10 +17,13 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ChildDefinition;
+use Symfony\Component\DependencyInjection\Compiler\ResolveEnvPlaceholdersPass;
+use Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\Kernel;
@@ -662,10 +665,81 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertEquals(['tag_mode' => 'ban', 'tags_header' => 'myheader'], $container->getParameter('fos_http_cache.proxy_client.varnish.options'));
     }
 
+    /**
+     * @param array|null        $serversValue            array that contains servers, `null` if not set
+     * @param string|null       $serversFromJsonEnvValue string that should contain an env var (use `VARNISH_SERVERS` for this test), `null` if not set
+     * @param string|mixed|null $envValue                _ENV['VARNISH_SERVERS'] will be set to this value; only used if `$serversFromJsonEnvValue` is used; should be a string, otherwise an error will show up
+     * @param array|null        $expectedServersValue    expected servers value the http dispatcher receives
+     * @param string|null       $expectExceptionClass    the exception class the configuration might throw, `null` if no exception is thrown
+     * @param string|null       $expectExceptionMessage  the message the exception throws, anything if no exception is thrown
+     *
+     * @dataProvider dataVarnishServersConfig
+     */
+    public function testVarnishServersConfig($serversValue, $serversFromJsonEnvValue, $envValue, $expectedServersValue, $expectExceptionClass, $expectExceptionMessage): void
+    {
+        $_ENV['VARNISH_SERVERS'] = $envValue;
+        $container = $this->createContainer();
+
+        // workaround to get the possible env string into the EnvPlaceholderParameterBag
+        $container->setParameter('triggerServersValue', $serversValue);
+        $container->setParameter('triggerServersFromJsonEnvValue', $serversFromJsonEnvValue);
+        (new ResolveParameterPlaceHoldersPass())->process($container);
+
+        $config = $this->getBaseConfig();
+
+        if (null === $serversValue) {
+            unset($config['proxy_client']['varnish']['http']['servers']);
+        } else {
+            $config['proxy_client']['varnish']['http']['servers'] = $container->getParameter('triggerServersValue');
+        }
+        if (null !== $serversFromJsonEnvValue) {
+            $config['proxy_client']['varnish']['http']['servers_from_jsonenv'] = $container->getParameter('triggerServersFromJsonEnvValue');
+        }
+
+        if ($expectExceptionClass) {
+            $this->expectException($expectExceptionClass);
+            $this->expectExceptionMessage($expectExceptionMessage);
+        }
+
+        $this->extension->load([$config], $container);
+
+        // Note: until here InvalidConfigurationException should be thrown
+        if (InvalidConfigurationException::class === $expectExceptionClass) {
+            return;
+        }
+
+        (new ResolveEnvPlaceholdersPass())->process($container);
+
+        // Note: now all expected exceptions should be thrown
+        if ($expectExceptionClass) {
+            return;
+        }
+
+        $definition = $container->getDefinition('fos_http_cache.proxy_client.varnish.http_dispatcher');
+        static::assertEquals($expectedServersValue, $definition->getArgument(0));
+    }
+
+    public function dataVarnishServersConfig()
+    {
+        return [
+            // working case before implementing the feature 'env vars in servers key'
+            'regular array as servers value allowed' => [['my-server-1', 'my-server-2'], null, null, ['my-server-1', 'my-server-2'], null, null],
+            // testing the feature 'env vars in servers_from_jsonenv key'
+            'env var with json array as servers value allowed' => [null, '%env(json:VARNISH_SERVERS)%', '["my-server-1","my-server-2"]', ['my-server-1', 'my-server-2'], null, null],
+            // not allowed cases (servers_from_jsonenv)
+            'plain string as servers value is forbidden' => [null, 'plain_string_not_allowed_as_servers_from_jsonenv_value', null, null, InvalidConfigurationException::class, 'Not a valid Varnish servers_from_jsonenv configuration: plain_string_not_allowed_as_servers_from_jsonenv_value'],
+            'an int as servers value is forbidden' => [null, 1, 'env_value_not_used', null, InvalidConfigurationException::class, 'The "http.servers" or "http.servers_from_jsonenv" section must be defined for the proxy "varnish"'],
+            'env var with string as servers value is forbidden (at runtime)' => [null, '%env(json:VARNISH_SERVERS)%', 'wrong_usage_of_env_value', 'no_servers_value', RuntimeException::class, 'Invalid JSON in env var "VARNISH_SERVERS": Syntax error'],
+            // more cases
+            'no definition leads to error' => [null, null, 'not_used', 'not_used', InvalidConfigurationException::class, 'The "http.servers" or "http.servers_from_jsonenv" section must be defined for the proxy "varnish"'],
+            'both servers and servers_from_jsonenv defined leads to error' => [['my-server-1', 'my-server-2'], '%env(json:VARNISH_SERVERS)%', 'not_used', 'not_used', InvalidConfigurationException::class, 'You can only set one of "http.servers" or "http.servers_from_jsonenv" but not both to avoid ambiguity for the proxy "varnish"'],
+        ];
+    }
+
     private function createContainer()
     {
         $container = new ContainerBuilder(
-            new ParameterBag(['kernel.debug' => false])
+            new EnvPlaceholderParameterBag(['kernel.debug' => false])
         );
 
         // The cache_manager service depends on the router service

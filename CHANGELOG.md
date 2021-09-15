@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.11.0
+------
+
+### Added
+
+* New configuration option `servers_from_jsonenv` to support a variable amount of proxy servers defined via an environment variable.
+
 2.10.3
 ------
 
