@@ -37,8 +37,9 @@ varnish
                     servers:
                         - 123.123.123.1:6060
                         - 123.123.123.2
+                    # alternatively, if you configure the varnish servers in an environment variable:
+                    # servers_from_jsonenv: '%env(json:VARNISH_SERVERS)%'
                     base_url: yourwebsite.com
-                    servers_from_jsonenv: '%env(json:VARNISH_SERVERS)%'
 
 ``header_length``
 """""""""""""""""
@@ -70,8 +71,10 @@ When using a multi-server setup, make sure to include **all** proxy servers in
 this list. Invalidation must happen on all systems or you will end up with
 inconsistent caches.
 
-Note: when using a variable amount of proxy servers that are defined via environment
-variable, use the ``http.servers_from_jsonenv`` option below.
+.. note::
+
+    When using a variable amount of proxy servers that are defined via environment
+    variable, use the ``http.servers_from_jsonenv`` option below.
 
 ``http.servers_from_jsonenv``
 """""""""""""""""""""""""""""
