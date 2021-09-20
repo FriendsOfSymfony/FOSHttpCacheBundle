@@ -49,7 +49,7 @@ See :doc:`/features/invalidation` for more information.
 ``@InvalidateRoute``
 --------------------
 
-Like InvalidatePath annotations, you can use php attributes instead if you are using PHP 8
+Like InvalidatePath annotations, you can use PHP attributes instead if you are using PHP 8
 Invalidate a route with parameters::
 
     use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
@@ -99,7 +99,7 @@ HTTP header (``X-Cache-Tags``, by default).
 Any non-safe request to the ``editAction`` that returns a successful response
 will trigger invalidation of both the ``news`` and the ``news-123`` tags.
 
-Like InvalidatePath annotations, you can use php attributes instead if you are using PHP 8
+Like InvalidatePath annotations, you can use PHP attributes instead if you are using PHP 8
 
 Set/invalidate a tag::
 
