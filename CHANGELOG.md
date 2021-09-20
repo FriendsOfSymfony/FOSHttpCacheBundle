@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.11.1
+------
+
+### Fixed
+
+* Fixed readthedocs.io configuration. This needs a release to show up as the latest doc (which had no longer been updated in quite a while because of build errors)
+
 2.11.0
 ------
 
