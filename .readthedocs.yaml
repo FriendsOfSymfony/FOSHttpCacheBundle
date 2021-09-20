@@ -1,0 +1,13 @@
+version: 2
+
+sphinx:
+    configuration: Resources/doc/conf.py
+
+# additional formats
+formats:
+    - pdf
+
+python:
+    version: "3.7"
+    install:
+        - requirements: Resources/doc/requirements.txt

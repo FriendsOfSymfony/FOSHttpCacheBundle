@@ -55,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'FOSHttpCacheBundle'
-copyright = '2014-2018, David de Boer, David Buchmann'
+copyright = 'David de Boer, David Buchmann'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
