@@ -64,11 +64,11 @@ section of the tag configuration and ``@tag`` :ref:`annotations<tag>`.
 By default, the generated response header will not be split into multiple headers.
 This means that depending on the amount of tags generated in your application the
 value of that header might become pretty long. This again might cause issues with
-your webserver which usually come with a pre-defined maximum header value length and
-will throw an exception if you exceed this. Using this configuration key you can
+your web server, as it usually has a default maximum header length and will reject
+the request if the header exceeds this value. Using this configuration key, you can
 configure a maximum length **in bytes** which will split your value into multiple
-headers. Note that you might update your proxy configuration because it needs
-to be able to handle multiple headers instead of just one.
+headers. Note that you might have to update your proxy configuration because it
+needs to be able to handle multiple headers instead of just one.
 
 .. code-block:: yaml
 
@@ -79,7 +79,7 @@ to be able to handle multiple headers instead of just one.
 
 .. note::
 
-    4096 bytes is generally a good choice because it seems like most webservers have
+    4096 bytes is generally a good choice because it seems like most web servers have
     a maximum value of 4 KB configured.
 
 ``strict``

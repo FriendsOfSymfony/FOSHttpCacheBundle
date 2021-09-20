@@ -32,8 +32,8 @@ class ServiceTest extends KernelTestCase
     {
         static::ensureKernelShutdown();
 
-        /** @var \AppKernel $kernel */
         static::$kernel = static::createKernel();
+        assert(static::$kernel instanceof \AppKernel);
         static::$kernel->addCompilerPass(new ServicesPublicPass());
         $fs = new Filesystem();
         $fs->remove(static::$kernel->getCacheDir());

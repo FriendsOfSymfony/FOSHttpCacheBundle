@@ -1,0 +1,31 @@
+name: Spellcheck
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade setuptools
+          python -m pip install -r Resources/doc/requirements.txt
+      - name: Run spell check
+        run: |
+          make -C Resources/doc/ spelling
+          if [[ -s "Resources/doc/_build/spelling/output.txt" ]]; then echo "\nSpelling errors found\n" && cat "Resources/doc/_build/spelling/output.txt"; fi
+      - name: Spellcheck
+        run: |
+          if [[ -s "Resources/doc/_build/spelling/output.txt" ]]; then cat "Resources/doc/_build/spelling/output.txt"; fi
+          if [[ -s "Resources/doc/_build/spelling/output.txt" ]]; then false; fi

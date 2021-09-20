@@ -8,15 +8,18 @@ cacheable
 ETag
 friendsofsymfony
 github
+hardcoded
 hostname
 invalidations
 invalidator
 javascript
+JSON
 login
 logout
 lookup
 lookups
 matcher
+md
 mistyped
 multi
 nginx
@@ -31,5 +34,6 @@ symfony
 subdomains
 templating
 TTL
+vmod
 xkey
 yaml

@@ -81,13 +81,13 @@ inconsistent caches.
 
 **type**: ``string``
 
-Json encoded servers array as string. The servers array has the same specs as ``http.servers``.
+JSON encoded servers array as string. The servers array has the same specs as ``http.servers``.
 
 Use this option only when using a variable amount of proxy servers that shall be defined via
 environment variable. Otherwise use the regular ``http.servers`` option.
 
 Usage:
-* fos_http_cache.yaml: ``servers_from_jsonenv: '%env(json:VARNISH_SERVERS)%'``
+* ``fos_http_cache.yaml``: ``servers_from_jsonenv: '%env(json:VARNISH_SERVERS)%'``
 * environment definition: ``VARNISH_SERVERS='["123.123.123.1:6060","123.123.123.2"]'``
 
 
