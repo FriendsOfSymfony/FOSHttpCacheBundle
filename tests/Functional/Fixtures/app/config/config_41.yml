@@ -1,8 +1,5 @@
 # configuration to make symfony 4.1 work as expected
 
-imports:
-  - { resource: config.yml }
-
 framework:
   router:
     resource: "%kernel.project_dir%/tests/Functional/Fixtures/app/config/routing_41.yml"
