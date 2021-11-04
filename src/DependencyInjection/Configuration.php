@@ -547,7 +547,7 @@ class Configuration implements ConfigurationInterface
                     ->requiresAtLeastOneElement()
                     ->prototype('scalar')->end()
                 ->end()
-                ->scalarNode('servers_from_jsonenv')
+                ->variableNode('servers_from_jsonenv')
                     ->info('Addresses of the hosts the caching proxy is running on (env var that contains a json array as a string). The values may be hostnames or ips, and with :port if not the default port 80.')
                 ->end()
                 ->scalarNode('base_url')
