@@ -4,3 +4,4 @@ sphinx-rtd-theme
 sphinxcontrib-spelling
 sphinxcontrib-phpdomain
 pyenchant
+docutils==0.17.1
