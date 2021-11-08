@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.11.2
+------
+
+### Fixed
+
+* Fixed `servers_from_jsonenv` to actually work with an array.
+
 2.11.1
 ------
 
