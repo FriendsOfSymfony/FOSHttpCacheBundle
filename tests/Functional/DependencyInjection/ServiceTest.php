@@ -12,9 +12,7 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\DependencyInjection;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -59,23 +57,6 @@ class ServiceTest extends KernelTestCase
                 continue;
             }
             $this->assertIsObject($container->get($id));
-        }
-    }
-}
-
-class ServicesPublicPass implements CompilerPassInterface
-{
-    public function process(ContainerBuilder $container)
-    {
-        foreach ($container->getServiceIds() as $id) {
-            if (strncmp('fos_http_cache.', $id, 15)) {
-                continue;
-            }
-            if ($container->hasDefinition($id)) {
-                $container->getDefinition($id)->setPublic(true);
-            } elseif ($container->hasAlias($id)) {
-                $container->getAlias($id)->setPublic(true);
-            }
         }
     }
 }

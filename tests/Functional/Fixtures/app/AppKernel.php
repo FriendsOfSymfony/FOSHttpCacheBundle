@@ -56,6 +56,11 @@ class AppKernel extends Kernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
+        if (isset($_ENV['KERNEL_CONFIG']) && $_ENV['KERNEL_CONFIG']) {
+            $loader->load(__DIR__.'/config/'.$_ENV['KERNEL_CONFIG']);
+        } else {
+            $loader->load(__DIR__.'/config/config.yml');
+        }
         if (\version_compare(Kernel::VERSION, '5.0', '>=')) {
             $loader->load(__DIR__.'/config/config_50.yml');
         } elseif (\version_compare(Kernel::VERSION, '4.1', '>=')) {

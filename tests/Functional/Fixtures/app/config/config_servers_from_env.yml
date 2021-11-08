@@ -1,0 +1,8 @@
+framework:
+  secret: fos
+
+fos_http_cache:
+  proxy_client:
+    varnish:
+      http:
+        servers_from_jsonenv: '%env(json:VARNISH_SERVERS)%'
