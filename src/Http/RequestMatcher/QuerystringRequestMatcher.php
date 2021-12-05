@@ -35,7 +35,7 @@ class QuerystringRequestMatcher extends SymfonyRequestMatcher
     /**
      * {@inheritdoc}
      */
-    public function matches(Request $request)
+    public function matches(Request $request): bool
     {
         if (!parent::matches($request)) {
             return false;

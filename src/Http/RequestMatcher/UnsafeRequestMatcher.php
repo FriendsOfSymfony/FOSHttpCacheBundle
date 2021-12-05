@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Kernel;
 
 class UnsafeRequestMatcher implements RequestMatcherInterface
 {
-    public function matches(Request $request)
+    public function matches(Request $request): bool
     {
         // hack needed for compatibility with SF 3.4 => 4.3
         // sf 3.4 => isMethodSafe(false)
