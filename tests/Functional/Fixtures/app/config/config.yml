@@ -3,8 +3,6 @@ framework:
   router:
     resource: "%kernel.project_dir%/tests/Functional/Fixtures/app/config/routing.yml"
   test: ~
-  session:
-    storage_id:  session.test_storage
 
 fos_http_cache:
   cacheable:

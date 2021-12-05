@@ -19,49 +19,57 @@ jobs:
           # Test the latest stable release
           - php-version: '7.3'
           - php-version: '7.4'
-          - php-version: '8.0'
+            symfony-version: '4.*'
+          - php-version: '7.4'
+            symfony-version: '5.*'
           # Test Symfony LTS versions. Read more at https://github.com/symfony/lts
           - php-version: '7.4'
             dependencies: 'symfony/lts:^3'
           - php-version: '8.0'
-            symfony-version: '^4'
-          - php-version: '8.0'
-            symfony-version: '^5'
+            symfony-version: '6.*'
           # Minimum supported dependencies with the oldest PHP version
           - php-version: '7.3'
             composer-flag: '--prefer-stable --prefer-lowest'
+            symfony-version: '4.3'
           # Test latest unreleased versions
           - php-version: '8.0'
-            symfony-version: '^5'
+            symfony-version: '6.*'
             stability: 'dev'
     name: PHP ${{ matrix.php-version }} Test on Symfony ${{ matrix.symfony-version }} ${{ matrix.dependencies}} ${{ matrix.stability }} ${{ matrix.composer-flag }}
     steps:
       - name: Pull the code
         uses: actions/checkout@v2
+
       - name: Install PHP and Composer
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          tools: composer:v2
-      - name: Check PHP Version
-        run: php -v
+          tools: composer:v2, flex
+          coverage: none
+
       - name: Stability
         run: composer config minimum-stability ${{ matrix.stability }}
         if: ${{ matrix.stability }}
+
       - name: Additional require
         run: composer require --no-update ${{ matrix.dependencies }}
         if: ${{ matrix.dependencies }}
-      - name: Symfony version
-        run: composer require --no-update symfony/flex && composer config extra.symfony.require ${{ matrix.symfony-version}}
-        if: ${{ matrix.symfony-version }}
+
       - name: Composer update
-        run: composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction
+        env:
+          SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
+        run: |
+          composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction --no-progress
+          vendor/bin/simple-phpunit install
+
       - name: Composer validate
         run: composer validate --strict --no-check-lock
         if: ${{ matrix.stability != 'dev' }}
+
       - name: Run tests
         run: php vendor/bin/simple-phpunit -v
         if: ${{ matrix.stability != 'dev' }}
+
       - name: Run tests allow to fail
         run: php vendor/bin/simple-phpunit -v || true
         continue-on-error: true

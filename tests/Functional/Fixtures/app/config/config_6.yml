@@ -1,10 +1,11 @@
-# configuration to make symfony 4.1 work as expected
+# configuration to make symfony 6 work as expected
 
 framework:
   router:
     resource: "%kernel.project_dir%/tests/Functional/Fixtures/app/config/routing_41.yml"
+  annotations: ~
   session:
-    storage_id:  session.test_storage
+    storage_factory_id: session.storage.factory.mock_file
 
 twig:
   default_path: "%kernel.project_dir%/tests/Functional/Fixtures/app/Resources/views"

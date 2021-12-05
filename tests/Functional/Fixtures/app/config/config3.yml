@@ -1,3 +1,5 @@
 framework:
   router:
     resource: "%kernel.root_dir%/config/routing.yml"
+  session:
+    storage_id:  session.test_storage
