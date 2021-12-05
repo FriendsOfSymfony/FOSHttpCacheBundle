@@ -22,6 +22,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 if (Kernel::MAJOR_VERSION >= 5) {
     class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Functional\EventListener\TagResponseEvent');
@@ -32,6 +33,7 @@ if (Kernel::MAJOR_VERSION >= 5) {
 class TagListenerTest extends WebTestCase
 {
     use MockeryPHPUnitIntegration;
+    private static $overrideService = false;
 
     public function testAnnotationTagsAreSet()
     {
@@ -66,6 +68,7 @@ class TagListenerTest extends WebTestCase
 
     public function testAnnotationTagsAreInvalidated()
     {
+        self::$overrideService = true;
         $client = static::createClient();
 
         $mock = \Mockery::mock(CacheManager::class);
@@ -94,6 +97,7 @@ class TagListenerTest extends WebTestCase
 
     public function testErrorIsNotInvalidated()
     {
+        self::$overrideService = true;
         $client = static::createClient();
 
         $mock = \Mockery::mock(CacheManager::class);
@@ -122,6 +126,7 @@ class TagListenerTest extends WebTestCase
 
     public function testConfigurationTagsAreInvalidated()
     {
+        self::$overrideService = true;
         $client = static::createClient();
 
         $mock = \Mockery::mock(CacheManager::class);
@@ -167,6 +172,7 @@ class TagListenerTest extends WebTestCase
      */
     public function testTagsAreSetWhenCacheable(Request $request, Response $response)
     {
+        self::$overrideService = true;
         $request->attributes->set('_tag', [new Tag(['value' => ['cacheable-is-tagged']])]);
         $client = static::createClient();
 
@@ -198,6 +204,7 @@ class TagListenerTest extends WebTestCase
      */
     public function testTagsAreInvalidated(Request $request, Response $response)
     {
+        self::$overrideService = true;
         $request->attributes->set('_tag', [new Tag(['value' => ['invalidated']])]);
         $client = static::createClient();
 
@@ -233,6 +240,7 @@ class TagListenerTest extends WebTestCase
      */
     public function testTagsAreNotInvalidated(Request $request, Response $response)
     {
+        self::$overrideService = true;
         $request->attributes->set('_tag', [new Tag(['value' => ['not-invalidated']])]);
         $client = static::createClient();
 
@@ -263,10 +271,10 @@ class TagListenerTest extends WebTestCase
     public function cacheableRequestResponseCombinations()
     {
         return [
-            [Request::create('', 'GET'), Response::create('', 200)],
-            [Request::create('', 'HEAD'), Response::create('', 200)],
+            [Request::create('', 'GET'), new Response('', 200)],
+            [Request::create('', 'HEAD'), new Response('', 200)],
             // https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/issues/286
-            [Request::create('', 'GET'), Response::create('', 301)],
+            [Request::create('', 'GET'), new Response('', 301)],
         ];
     }
 
@@ -274,7 +282,7 @@ class TagListenerTest extends WebTestCase
     {
         return [
             // https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/issues/241
-            [Request::create('', 'POST'), Response::create('', 201)],
+            [Request::create('', 'POST'), new Response('', 201)],
         ];
     }
 
@@ -282,7 +290,18 @@ class TagListenerTest extends WebTestCase
     {
         return [
             // https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/issues/279
-            [Request::create('', 'OPTIONS'), Response::create('', 200)],
+            [Request::create('', 'OPTIONS'), new Response('', 200)],
         ];
+    }
+
+    protected static function createKernel(array $options = []): KernelInterface
+    {
+        $kernel = parent::createKernel($options);
+        \assert($kernel instanceof \AppKernel);
+        if (static::$overrideService) {
+            $kernel->addServiceOverride('override_cache_manager.yml');
+        }
+
+        return $kernel;
     }
 }

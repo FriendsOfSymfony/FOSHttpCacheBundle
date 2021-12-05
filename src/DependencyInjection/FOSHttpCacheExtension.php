@@ -26,6 +26,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -280,6 +281,12 @@ class FOSHttpCacheExtension extends Extension
         }
 
         $loader->load('user_context.xml');
+        // TODO: Remove this service file when going to version 3 of the bundle
+        if (Kernel::MAJOR_VERSION >= 6) {
+            $loader->load('user_context_legacy_sf6.xml');
+        } else {
+            $loader->load('user_context_legacy.xml');
+        }
 
         $container->getDefinition('fos_http_cache.user_context.request_matcher')
             ->replaceArgument(0, $config['match']['accept'])

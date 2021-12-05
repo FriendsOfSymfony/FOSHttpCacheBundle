@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
 class UnsafeRequestMatcher implements RequestMatcherInterface
 {
-    public function matches(Request $request)
+    public function matches(Request $request): bool
     {
         return !$request->isMethodSafe();
     }

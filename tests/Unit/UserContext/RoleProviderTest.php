@@ -16,6 +16,7 @@ use FOS\HttpCacheBundle\UserContext\RoleProvider;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -27,7 +28,11 @@ class RoleProviderTest extends TestCase
 
     public function testProvider()
     {
-        if (method_exists(AnonymousToken::class, 'getRoleNames')) {
+        if (Kernel::MAJOR_VERSION >= 6) {
+            $token = \Mockery::mock(TokenInterface::class);
+            $token->shouldReceive('getRoleNames')->andReturn(['ROLE_USER']);
+            $token->shouldNotReceive('getRoles');
+        } elseif (method_exists(AnonymousToken::class, 'getRoleNames')) {
             $token = \Mockery::mock(AnonymousToken::class);
             $token->shouldReceive('getRoleNames')->andReturn(['ROLE_USER']);
             $token->shouldNotReceive('getRoles');
@@ -52,6 +57,9 @@ class RoleProviderTest extends TestCase
 
     public function testProviderWithoutToken()
     {
+        if (Kernel::MAJOR_VERSION >= 6) {
+            $this->markTestSkipped('No longer applicable with Symfony 6');
+        }
         $securityContext = $this->getTokenStorageMock();
         $securityContext->shouldReceive('getToken')->andReturn(null);
 

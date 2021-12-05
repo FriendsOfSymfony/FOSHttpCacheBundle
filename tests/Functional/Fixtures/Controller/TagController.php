@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 
+use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,10 +26,12 @@ if (!\class_exists(AbstractController::class)) {
 class TagController extends AbstractController
 {
     private $responseTagger;
+    private $cacheManager;
 
-    public function __construct(SymfonyResponseTagger $responseTagger)
+    public function __construct(SymfonyResponseTagger $responseTagger, CacheManager $cacheManager)
     {
         $this->responseTagger = $responseTagger;
+        $this->cacheManager = $cacheManager;
     }
 
     /**
@@ -46,7 +49,7 @@ class TagController extends AbstractController
     public function itemAction(Request $request, $id)
     {
         if (!$request->isMethodCacheable()) {
-            $this->container->get('fos_http_cache.cache_manager')->invalidateTags(['all-items']);
+            $this->cacheManager->invalidateTags(['all-items']);
         }
 
         return new Response('Item '.$id.' invalidated');

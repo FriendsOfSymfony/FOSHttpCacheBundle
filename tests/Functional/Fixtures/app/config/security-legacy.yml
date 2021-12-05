@@ -1,0 +1,17 @@
+security:
+  providers:
+    in_memory:
+      memory:
+        users:
+          user:  { password: user, roles: 'ROLE_USER' }
+          admin:  { password: admin, roles: ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH'] }
+  encoders:
+    Symfony\Component\Security\Core\User\User: plaintext
+  firewalls:
+    secured_area:
+      pattern:    ^/secured_area
+      anonymous:
+      http_basic: true
+      switch_user: true
+      logout:
+        path:     /secured_area/logout
