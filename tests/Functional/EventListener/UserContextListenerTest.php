@@ -25,6 +25,7 @@ class UserContextListenerTest extends WebTestCase
         /** @var SessionInterface $session */
         $session = $client->getContainer()->get('session');
         $session->setId('test');
+        $session->start();
 
         $client->request('GET', '/secured_area/_fos_user_context_hash', [], [], [
             'HTTP_ACCEPT' => 'application/vnd.fos.user-context-hash',
