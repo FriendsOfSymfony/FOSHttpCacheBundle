@@ -282,6 +282,12 @@ class FOSHttpCacheExtension extends Extension
         }
 
         $loader->load('user_context.xml');
+        // TODO: Remove this service file when going to version 3 of the bundle
+        if (Kernel::MAJOR_VERSION >= 6) {
+            $loader->load('user_context_legacy_sf6.xml');
+        } else {
+            $loader->load('user_context_legacy.xml');
+        }
 
         $container->getDefinition('fos_http_cache.user_context.request_matcher')
             ->replaceArgument(0, $config['match']['accept'])

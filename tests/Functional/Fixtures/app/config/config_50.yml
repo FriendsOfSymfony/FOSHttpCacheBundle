@@ -1,9 +1,13 @@
 # configuration to make symfony 5.0 work as expected
+imports:
+  - { resource: security-legacy.yml }
 
 framework:
   router:
     resource: "%kernel.project_dir%/tests/Functional/Fixtures/app/config/routing_41.yml"
   annotations: ~
+  session:
+    storage_id:  session.test_storage
 
 twig:
   default_path: "%kernel.project_dir%/tests/Functional/Fixtures/app/Resources/views"

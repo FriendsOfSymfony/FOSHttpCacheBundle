@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="fos_http_cache.user_context.logout_handler" class="FOS\HttpCacheBundle\Security\Http\Logout\ContextInvalidationLogoutHandler" public="false">
+            <argument type="service" id="fos_http_cache.user_context_invalidator" />
+            <deprecated>The "%service_id%" service is deprecated since 2.2 and will be removed in 3.0.</deprecated>
+        </service>
+    </services>
+</container>

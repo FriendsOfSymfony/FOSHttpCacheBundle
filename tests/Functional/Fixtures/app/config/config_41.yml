@@ -1,4 +1,6 @@
 # configuration to make symfony 4.1 work as expected
+imports:
+  - { resource: security-legacy.yml }
 
 framework:
   router:

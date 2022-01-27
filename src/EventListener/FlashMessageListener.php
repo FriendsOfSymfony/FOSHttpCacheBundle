@@ -41,12 +41,14 @@ final class FlashMessageListener implements EventSubscriberInterface
     private $options;
 
     /**
-     * @var Session
+     * For legacy support. If not set, we take the session from the request on the event.
+     *
+     * @var Session|null
      */
     private $session;
 
     /**
-     * @param Session $session A session instance
+     * @param Session|null $session
      */
     public function __construct($session, array $options = [])
     {
@@ -80,14 +82,19 @@ final class FlashMessageListener implements EventSubscriberInterface
             return;
         }
 
-        // Flash messages are stored in the session. If there is none, there
-        // can't be any flash messages in it. $session->getFlashBag() would
-        // create a session, we need to avoid that.
-        if (!$this->session->isStarted()) {
+        $session = $this->session ?: $event->getRequest()->getSession();
+        if (null === $session) {
             return;
         }
 
-        $flashBag = $this->session->getFlashBag();
+        // Flash messages are stored in the session. If there is none, there
+        // can't be any flash messages in it. $session->getFlashBag() would
+        // create a session, we need to avoid that.
+        if (!$session->isStarted()) {
+            return;
+        }
+
+        $flashBag = $session->getFlashBag();
         $flashes = $flashBag->all();
 
         if (empty($flashes)) {

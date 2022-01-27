@@ -77,7 +77,7 @@ final class SessionListener implements EventSubscriberInterface
 
     public function onKernelResponse(SessionResponseEvent $event)
     {
-        if (!$event->isMasterRequest()) {
+        if (Kernel::MAJOR_VERSION >= 6 ? !$event->isMainRequest() : !$event->isMasterRequest()) {
             return;
         }
 
