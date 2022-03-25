@@ -1,0 +1,5 @@
+services:
+
+    fos_http_cache.cache_manager:
+        public: true
+        synthetic: true

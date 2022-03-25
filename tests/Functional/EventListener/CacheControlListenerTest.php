@@ -24,7 +24,7 @@ class CacheControlListenerTest extends WebTestCase
 
         $client->request('GET', '/cached/42');
         $response = $client->getResponse();
-        $this->assertEquals('public', $response->headers->get('Cache-Control'));
+        $this->assertEquals('public', $response->headers->get('Cache-Control'), $response->getContent());
     }
 
     public function testNotCached()

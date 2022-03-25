@@ -23,6 +23,13 @@ class AppKernel extends Kernel
      */
     private $compilerPasses = [];
 
+    private $serviceOverride = [];
+
+    public function addServiceOverride(string $config): void
+    {
+        $this->serviceOverride[] = $config;
+    }
+
     public function addCompilerPass(CompilerPassInterface $compilerPass): void
     {
         $this->compilerPasses[] = $compilerPass;
@@ -67,6 +74,9 @@ class AppKernel extends Kernel
             $loader->load(__DIR__.'/config/config3.yml');
         }
         $loader->load(__DIR__.'/config/services.yml');
+        foreach ($this->serviceOverride as $file) {
+            $loader->load(__DIR__.'/config/'.$file);
+        }
     }
 
     public function getCacheDir(): string

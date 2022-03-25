@@ -1,0 +1,5 @@
+services:
+
+    fos_http_cache.proxy_client.varnish:
+        public: true
+        synthetic: true

@@ -12,13 +12,17 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
 use FOS\HttpCache\ProxyClient\Varnish;
+use FOS\HttpCacheBundle\Tests\Functional\SessionHelperTrait;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\User;
 
 if (!\class_exists(KernelBrowser::class)) {
@@ -28,12 +32,18 @@ if (!\class_exists(KernelBrowser::class)) {
 class SwitchUserListenerTest extends WebTestCase
 {
     use MockeryPHPUnitIntegration;
+    use SessionHelperTrait;
+
+    private const FIREWALL_NAME = 'secured_area';
+    private const SESSION_ID = 'test';
+    private $sessionName;
+    private static $overrideService = false;
 
     public function testSwitchUserCompatibility()
     {
         $client = static::createClient();
-        $session = $client->getContainer()->get('session');
-        $this->loginAsAdmin($client, $session);
+        $this->callInRequestContext($client, [$this, 'loginAsAdmin']);
+        $client->getCookieJar()->set(new Cookie($this->sessionName, self::SESSION_ID));
 
         $client->request('GET', '/secured_area/switch_user?_switch_user=user');
         $client->request('GET', '/secured_area/switch_user');
@@ -46,9 +56,7 @@ class SwitchUserListenerTest extends WebTestCase
 
     public function testInvalidateContext()
     {
-        $client = static::createClient();
-        $session = $client->getContainer()->get('session');
-        $this->loginAsAdmin($client, $session);
+        self::$overrideService = true;
 
         $mock = \Mockery::mock(Varnish::class);
         $mock->shouldReceive('invalidateTags')
@@ -59,18 +67,41 @@ class SwitchUserListenerTest extends WebTestCase
             ->once()
             ->andReturn(1);
 
-        $client->getContainer()->set('fos_http_cache.proxy_client.varnish', $mock);
+        $kernel = static::createKernel();
+        $kernel->boot();
+        $kernel->getContainer()->set('fos_http_cache.proxy_client.varnish', $mock);
+
+        $client = static::createClient();
+
+        $this->callInRequestContext($client, [$this, 'loginAsAdmin']);
+
         $client->request('GET', '/secured_area/switch_user?_switch_user=user');
     }
 
-    private function loginAsAdmin(KernelBrowser $client, Session $session, $firewallName = 'secured_area', $sessionId = 'test')
+    public function loginAsAdmin(RequestEvent $requestEvent)
     {
-        $token = new UsernamePasswordToken(new User('admin', 'admin', ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']), null, $firewallName, ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']);
+        $session = $requestEvent->getRequest()->getSession();
+        if (Kernel::MAJOR_VERSION >= 6) {
+            $token = new UsernamePasswordToken(new InMemoryUser('admin', 'admin', ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']), self::FIREWALL_NAME, ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']);
+        } else {
+            $token = new UsernamePasswordToken(new User('admin', 'admin', ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']), null, self::FIREWALL_NAME, ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']);
+        }
 
-        $session->setId($sessionId);
-        $session->set(sprintf('_security_%s', $firewallName), serialize($token));
+        $session->setId(self::SESSION_ID);
+        $session->set(sprintf('_security_%s', self::FIREWALL_NAME), serialize($token));
         $session->save();
 
-        $client->getCookieJar()->set(new Cookie($session->getName(), $session->getId()));
+        $this->sessionName = $session->getName();
+    }
+
+    protected static function createKernel(array $options = []): KernelInterface
+    {
+        $kernel = parent::createKernel($options);
+        \assert($kernel instanceof \AppKernel);
+        if (static::$overrideService) {
+            $kernel->addServiceOverride('override_varnish_proxy.yml');
+        }
+
+        return $kernel;
     }
 }

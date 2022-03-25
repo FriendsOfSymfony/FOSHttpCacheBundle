@@ -11,21 +11,22 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
+use FOS\HttpCacheBundle\Tests\Functional\SessionHelperTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 class UserContextListenerTest extends WebTestCase
 {
+    use SessionHelperTrait;
+
     public function testHashLookup()
     {
         $client = static::createClient([], [
             'PHP_AUTH_USER' => 'user',
             'PHP_AUTH_PW' => 'user',
         ]);
-        /** @var SessionInterface $session */
-        $session = $client->getContainer()->get('session');
-        $session->setId('test');
-        $session->start();
+
+        $this->callInRequestContext($client, [$this, 'setSessionId']);
 
         $client->request('GET', '/secured_area/_fos_user_context_hash', [], [], [
             'HTTP_ACCEPT' => 'application/vnd.fos.user-context-hash',
@@ -49,7 +50,14 @@ class UserContextListenerTest extends WebTestCase
         ]);
         $response = $client->getResponse();
 
-        $this->assertTrue($response->isSuccessful());
+        $this->assertTrue($response->isSuccessful(), $response->getContent());
         $this->assertEquals('max-age=60, public', $response->headers->get('Cache-Control'));
+    }
+
+    public function setSessionId(RequestEvent $requestEvent): void
+    {
+        $session = $requestEvent->getRequest()->getSession();
+        $session->setId('test');
+        $session->start();
     }
 }
