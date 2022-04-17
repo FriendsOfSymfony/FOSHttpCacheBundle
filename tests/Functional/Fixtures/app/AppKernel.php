@@ -73,7 +73,12 @@ class AppKernel extends Kernel
         } else {
             $loader->load(__DIR__.'/config/config3.yml');
         }
-        $loader->load(__DIR__.'/config/services.yml');
+
+        if (\version_compare(Kernel::VERSION, '4.2.0', '>=')) {
+            $loader->load(__DIR__.'/config/services.yml');
+        } else {
+            $loader->load(__DIR__.'/config/services_34.yml');
+        }
         foreach ($this->serviceOverride as $file) {
             $loader->load(__DIR__.'/config/'.$file);
         }

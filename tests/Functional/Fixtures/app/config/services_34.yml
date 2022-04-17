@@ -13,9 +13,9 @@ services:
             - "@fos_http_cache.http.symfony_response_tagger"
             - "@fos_http_cache.cache_manager"
         calls:
-            -   setContainer: [ ] # Container service locator will be injected filled by the services from subscribed services
-        tags: [ 'controller.service_arguments', 'container.service_subscriber' ]
-
+            - method: setContainer
+              arguments:
+                  - "@service_container"
 
     tag_attribute_controller:
         class: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TagAttributeController
@@ -23,6 +23,6 @@ services:
         arguments:
             - "@fos_http_cache.http.symfony_response_tagger"
         calls:
-            -   setContainer: [ ] # Container service locator will be injected filled by the services from subscribed services
-        tags: [ 'controller.service_arguments', 'container.service_subscriber' ]
-
+            - method: setContainer
+              arguments:
+                  - "@service_container"

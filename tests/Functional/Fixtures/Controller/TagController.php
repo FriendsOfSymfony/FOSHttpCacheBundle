@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 
+use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,10 +27,13 @@ if (!\class_exists(AbstractController::class)) {
 class TagController extends AbstractController
 {
     private $responseTagger;
+    /** @var CacheManager */
+    private $cacheManager;
 
-    public function __construct(SymfonyResponseTagger $responseTagger)
+    public function __construct(SymfonyResponseTagger $responseTagger, CacheManager $cacheManager)
     {
         $this->responseTagger = $responseTagger;
+        $this->cacheManager = $cacheManager;
     }
 
     /**
@@ -47,7 +51,7 @@ class TagController extends AbstractController
     public function itemAction(Request $request, $id)
     {
         if (!$request->isMethodCacheable()) {
-            $this->container->get('fos_http_cache.cache_manager')->invalidateTags(['all-items']);
+            $this->cacheManager->invalidateTags(['all-items']);
         }
 
         return new Response('Item '.$id.' invalidated');
@@ -69,7 +73,7 @@ class TagController extends AbstractController
         $this->responseTagger->addTags(['manual-tag']);
 
         return $this->render('container.html.twig', [
-            'action' => (Kernel::MAJOR_VERSION >= 4 && Kernel::MINOR_VERSION >= 1) ? 'tag_controller::subrequestAction' : 'tag_controller:subrequestAction',
+            'action' => version_compare(Kernel::VERSION, '4.1.0', '>=') ? 'tag_controller::subrequestAction' : 'tag_controller:subrequestAction',
         ]);
     }
 
