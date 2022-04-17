@@ -5,7 +5,7 @@ tag_list:
 
 php8_tag_list:
   path: /php8/tag/list
-  defaults: { _controller: tag_attribute_controller:listAction }
+  defaults: { _controller: tag_attribute_controller::listAction }
   methods: [ GET ]
 
 tag_error:
@@ -19,7 +19,7 @@ tag_one:
 
 php8_tag_one:
   path:  /php8/tag/{id}
-  defaults: { _controller: tag_attribute_controller:itemAction }
+  defaults: { _controller: tag_attribute_controller::itemAction }
   methods:  [GET,POST]
 
 tag_manual:
