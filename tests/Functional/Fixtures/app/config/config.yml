@@ -77,6 +77,7 @@ security:
     secured_area:
       pattern:    ^/secured_area
       anonymous:
+      http_basic: true
       switch_user: true
       logout:
         path:     /secured_area/logout
