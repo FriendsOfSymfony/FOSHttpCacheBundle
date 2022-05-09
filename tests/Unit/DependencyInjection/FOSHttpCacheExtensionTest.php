@@ -21,12 +21,10 @@ use Symfony\Component\DependencyInjection\Compiler\ResolveEnvPlaceholdersPass;
 use Symfony\Component\DependencyInjection\Compiler\ResolveParameterPlaceHoldersPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Router;
 
 class FOSHttpCacheExtensionTest extends TestCase
@@ -539,38 +537,6 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertFalse($container->has('fos_http_cache.user_context.session_listener'));
     }
 
-    public function testSessionListenerIsDecoratedIfNeeded()
-    {
-        $config = [[
-           'user_context' => [
-               'user_identifier_headers' => ['X-Foo'],
-               'user_hash_header' => 'X-Bar',
-               'hash_cache_ttl' => 30,
-               'always_vary_on_context_hash' => true,
-               'role_provider' => true,
-           ],
-       ]];
-
-        $container = $this->createContainer();
-        $this->extension->load($config, $container);
-
-        // The decorator is only needed for Symfony 3.4 and 4.0
-        // Before 3.4 the cache header is not overwritten.
-        // From 4.1 on, we use the AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER
-        if (version_compare(Kernel::VERSION, '3.4', '>=')
-            && version_compare(Kernel::VERSION, '4.1', '<')
-        ) {
-            $this->assertTrue($container->hasDefinition('fos_http_cache.user_context.session_listener'));
-
-            $definition = $container->getDefinition('fos_http_cache.user_context.session_listener');
-
-            $this->assertSame('x-bar', $definition->getArgument(1));
-            $this->assertSame(['x-foo'], $definition->getArgument(2));
-        } else {
-            $this->assertFalse($container->hasDefinition('fos_http_cache.user_context.session_listener'));
-        }
-    }
-
     public function testConfigLoadFlashMessageListener()
     {
         $config = [
@@ -784,8 +750,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $matcherDefinition = null;
         $matcherId = null;
         foreach ($container->getDefinitions() as $id => $definition) {
-            if (($definition instanceof DefinitionDecorator
-                    || $definition instanceof ChildDefinition)
+            if ($definition instanceof ChildDefinition
                 && 'fos_http_cache.request_matcher' === $definition->getParent()
             ) {
                 if ($matcherDefinition) {
@@ -811,7 +776,7 @@ class FOSHttpCacheExtensionTest extends TestCase
     /**
      * @param int[] $additionalStatus
      *
-     * @return DefinitionDecorator|ChildDefinition
+     * @return string
      */
     private function assertResponseCacheableMatcherCreated(ContainerBuilder $container, array $additionalStatus)
     {
@@ -819,8 +784,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $matcherDefinition = null;
         $matcherId = null;
         foreach ($container->getDefinitions() as $id => $definition) {
-            if (($definition instanceof DefinitionDecorator
-                    || $definition instanceof ChildDefinition)
+            if ($definition instanceof ChildDefinition
                 && 'fos_http_cache.response_matcher.cache_control.cacheable_response' === $definition->getParent()
             ) {
                 if ($matcherDefinition) {
@@ -840,7 +804,7 @@ class FOSHttpCacheExtensionTest extends TestCase
     /**
      * @param string $expression
      *
-     * @return DefinitionDecorator|ChildDefinition
+     * @return string
      */
     private function assertResponseExpressionMatcherCreated(ContainerBuilder $container, $expression)
     {
@@ -848,8 +812,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $matcherDefinition = null;
         $matcherId = null;
         foreach ($container->getDefinitions() as $id => $definition) {
-            if (($definition instanceof DefinitionDecorator
-                    || $definition instanceof ChildDefinition)
+            if ($definition instanceof ChildDefinition
                 && 'fos_http_cache.response_matcher.cache_control.expression' === $definition->getParent()
             ) {
                 if ($matcherDefinition) {

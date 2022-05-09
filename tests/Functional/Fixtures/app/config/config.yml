@@ -2,6 +2,7 @@ framework:
   secret: fos
   router:
     resource: "%kernel.project_dir%/tests/Functional/Fixtures/app/config/routing.yml"
+  annotations: ~
   test: ~
   session:
     storage_id:  session.test_storage
@@ -81,3 +82,7 @@ security:
       switch_user: true
       logout:
         path:     /secured_area/logout
+
+twig:
+  default_path: "%kernel.project_dir%/tests/Functional/Fixtures/app/Resources/views"
+  strict_variables: "%kernel.debug%"

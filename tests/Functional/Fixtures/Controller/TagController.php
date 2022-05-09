@@ -17,7 +17,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Kernel;
 
 if (!\class_exists(AbstractController::class)) {
     \class_alias(Controller::class, AbstractController::class);
@@ -69,7 +68,7 @@ class TagController extends AbstractController
         $this->responseTagger->addTags(['manual-tag']);
 
         return $this->render('container.html.twig', [
-            'action' => (Kernel::MAJOR_VERSION >= 4 && Kernel::MINOR_VERSION >= 1) ? 'tag_controller::subrequestAction' : 'tag_controller:subrequestAction',
+            'action' => 'tag_controller::subrequestAction',
         ]);
     }
 

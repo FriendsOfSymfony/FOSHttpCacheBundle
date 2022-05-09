@@ -1,82 +1,82 @@
 tag_list:
   path:  /tag/list
-  defaults: { _controller: tag_controller:listAction }
   methods:  [GET]
+  controller: tag_controller::listAction
 
 php8_tag_list:
-  path:  /php8/tag/list
-  defaults: { _controller: tag_attribute_controller:listAction }
-  methods:  [GET]
+  path: /php8/tag/list
+  defaults: { _controller: tag_attribute_controller::listAction }
+  methods: [ GET ]
 
 tag_error:
   path:  /tag/error
-  defaults: { _controller: tag_controller:errorAction }
+  controller: tag_controller::errorAction
 
 tag_one:
   path:  /tag/{id}
-  defaults: { _controller: tag_controller:itemAction }
   methods:  [GET,POST]
+  controller: tag_controller::itemAction
 
 php8_tag_one:
   path:  /php8/tag/{id}
-  defaults: { _controller: tag_attribute_controller:itemAction }
+  defaults: { _controller: tag_attribute_controller::itemAction }
   methods:  [GET,POST]
 
 tag_manual:
   path: /tag_manual
-  defaults: { _controller: tag_controller:manualAction }
+  controller: tag_controller::manualAction
 
 tag_twig:
   path: /tag_twig
-  defaults: { _controller: tag_controller:twigAction }
+  controller: tag_controller::twigAction
 
 invalidation_route:
   path: /invalidate/route/{id}
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::itemAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::itemAction
 
 invalidation_path:
   path: /invalidate/path/{statusCode}
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::otherAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::otherAction
 
 invalidation_error:
   path: /invalidate/error
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::errorAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationController::errorAction
 
 php8_invalidation_route:
   path: /php8/invalidate/route/{id}
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationAttributeController::itemAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationAttributeController::itemAction
 
 php8_invalidation_path:
   path: /php8/invalidate/path/{statusCode}
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationAttributeController::otherAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationAttributeController::otherAction
 
 php8_invalidation_error:
   path: /php8/invalidate/error
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationAttributeController::errorAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\InvalidationAttributeController::errorAction
 
 test_cached:
   path:  /cached/{id}
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }
   methods:  [GET,PUT]
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction
 
 test_cached_session:
   path:  /secured_area/cached_session
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::sessionAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::sessionAction
 
 test_switch_user:
   path:  /secured_area/switch_user
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::switchUserAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::switchUserAction
 
 test_noncached:
   path:  /noncached
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\TestController::contentAction
 
 test_logout:
   path:  /secured_area/logout
 
 test_flash:
   path: /flash
-  defaults: { _controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\FlashMessageController::flashAction }
+  controller: FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller\FlashMessageController::flashAction
 
 test_flash_redirect:
   path: /flash-redirect

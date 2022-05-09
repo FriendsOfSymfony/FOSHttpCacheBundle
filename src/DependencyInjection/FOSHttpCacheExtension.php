@@ -23,11 +23,9 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -202,7 +200,7 @@ class FOSHttpCacheExtension extends Extension
         }
 
         $container
-            ->setDefinition($id, $this->createChildDefinition('fos_http_cache.rule_matcher'))
+            ->setDefinition($id, new ChildDefinition('fos_http_cache.rule_matcher'))
             ->replaceArgument(0, $requestMatcher)
             ->replaceArgument(1, $responseMatcher)
         ;
@@ -231,7 +229,7 @@ class FOSHttpCacheExtension extends Extension
 
         if (!$container->hasDefinition($id)) {
             $container
-                ->setDefinition($id, $this->createChildDefinition('fos_http_cache.request_matcher'))
+                ->setDefinition($id, new ChildDefinition('fos_http_cache.request_matcher'))
                 ->setArguments($arguments)
             ;
 
@@ -254,7 +252,7 @@ class FOSHttpCacheExtension extends Extension
             $id = 'fos_http_cache.cache_control.expression.'.md5(serialize($config['additional_response_status']));
             if (!$container->hasDefinition($id)) {
                 $container
-                    ->setDefinition($id, $this->createChildDefinition('fos_http_cache.response_matcher.cache_control.cacheable_response'))
+                    ->setDefinition($id, new ChildDefinition('fos_http_cache.response_matcher.cache_control.cacheable_response'))
                     ->setArguments([$config['additional_response_status']])
                 ;
             }
@@ -262,7 +260,7 @@ class FOSHttpCacheExtension extends Extension
             $id = 'fos_http_cache.cache_control.match_response.'.md5($config['match_response']);
             if (!$container->hasDefinition($id)) {
                 $container
-                    ->setDefinition($id, $this->createChildDefinition('fos_http_cache.response_matcher.cache_control.expression'))
+                    ->setDefinition($id, new ChildDefinition('fos_http_cache.response_matcher.cache_control.expression'))
                     ->replaceArgument(0, $config['match_response'])
                 ;
             }
@@ -317,19 +315,6 @@ class FOSHttpCacheExtension extends Extension
             $container->getDefinition('fos_http_cache.user_context.role_provider')
                 ->addTag(HashGeneratorPass::TAG_NAME)
                 ->setAbstract(false);
-        }
-
-        // Only decorate default SessionListener for Symfony 3.4 - 4.0
-        // For Symfony 4.1+, the UserContextListener sets the header that tells
-        // the SessionListener to leave the cache-control header unchanged.
-        if (version_compare(Kernel::VERSION, '3.4', '>=')
-            && version_compare(Kernel::VERSION, '4.1', '<')
-        ) {
-            $container->getDefinition('fos_http_cache.user_context.session_listener')
-                ->setArgument(1, strtolower($config['user_hash_header']))
-                ->setArgument(2, $completeUserIdentifierHeaders);
-        } else {
-            $container->removeDefinition('fos_http_cache.user_context.session_listener');
         }
     }
 
@@ -621,21 +606,5 @@ class FOSHttpCacheExtension extends Extension
         }
 
         throw new InvalidConfigurationException('No proxy client configured');
-    }
-
-    /**
-     * Build the child definition with fallback for Symfony versions < 3.3.
-     *
-     * @param string $id Id of the service to extend
-     *
-     * @return ChildDefinition|DefinitionDecorator
-     */
-    private function createChildDefinition($id)
-    {
-        if (class_exists(ChildDefinition::class)) {
-            return new ChildDefinition($id);
-        }
-
-        return new DefinitionDecorator($id);
     }
 }

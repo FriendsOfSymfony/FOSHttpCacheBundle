@@ -164,7 +164,7 @@ class UserContextListener implements EventSubscriberInterface
             $response->setClientTtl($this->options['ttl']);
             $response->setVary($this->options['user_identifier_headers']);
             $response->setPublic();
-            if ($this->hasSessionListener && version_compare('4.1', Kernel::VERSION, '<=')) {
+            if ($this->hasSessionListener) {
                 // header to avoid Symfony SessionListener overwriting the response to private
                 $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 1);
             }
@@ -230,8 +230,8 @@ class UserContextListener implements EventSubscriberInterface
                 $vary[] = $this->options['user_hash_header'];
             }
 
-            // For Symfony 4.1+ if user hash header was in vary or just added here by "add_vary_on_hash"
-            if ($this->hasSessionListener && \version_compare('4.1', Kernel::VERSION, '<=') && in_array($this->options['user_hash_header'], $vary)) {
+            // user hash header was in vary or just added here by "add_vary_on_hash"
+            if ($this->hasSessionListener && in_array($this->options['user_hash_header'], $vary)) {
                 // header to avoid Symfony SessionListener overwriting the response to private
                 $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 1);
             }

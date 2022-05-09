@@ -27,7 +27,7 @@ class ContextInvalidationLogoutHandlerTest extends WebTestCase
         if (class_exists(LogoutEvent::class)) {
             // @see https://github.com/symfony/symfony/pull/36243/files#r465083756
             // @see https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/pull/545/files#diff-05cbcfd492fd361b33ee70130dc687b2
-            $this->markTestSkipped('This test does not work with Symfony 5.1.');
+            $this->markTestSkipped('This test does not work with Symfony 5.1. or newer');
         }
 
         $client = static::createClient();
