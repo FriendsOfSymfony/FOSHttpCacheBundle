@@ -1,7 +1,0 @@
-# configuration to make symfony 4 work as expected
-
-imports:
-  - { resource: config3.yml }
-
-twig:
-  default_path: "%kernel.project_dir%/tests/Functional/Fixtures/app/Resources/views"

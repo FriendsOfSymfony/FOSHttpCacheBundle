@@ -61,15 +61,6 @@ class AppKernel extends Kernel
         } else {
             $loader->load(__DIR__.'/config/config.yml');
         }
-        if (\version_compare(Kernel::VERSION, '5.0', '>=')) {
-            $loader->load(__DIR__.'/config/config_50.yml');
-        } elseif (\version_compare(Kernel::VERSION, '4.1', '>=')) {
-            $loader->load(__DIR__.'/config/config_41.yml');
-        } elseif (\version_compare(Kernel::VERSION, '4.0', '>=')) {
-            $loader->load(__DIR__.'/config/config_40.yml');
-        } else {
-            $loader->load(__DIR__.'/config/config3.yml');
-        }
         $loader->load(__DIR__.'/config/services.yml');
     }
 

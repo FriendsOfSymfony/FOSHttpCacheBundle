@@ -1,6 +1,11 @@
 Changelog
 =========
 
+unreleased
+----------
+
+* Drop support for Symfony 3 and 4.3 (keep using 2.11.* for legacy projects).
+
 2.11.2
 ------
 

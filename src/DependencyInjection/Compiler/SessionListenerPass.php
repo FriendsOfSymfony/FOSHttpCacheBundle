@@ -15,13 +15,10 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Undo our workarounds for the Symfony session listener when the session
- * system of Symfony has not been activated.
- *
- * - Set the hasSessionListener option of the UserContextListener to false to
- *   avoid the AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER being
- *   leaked to clients.
- * - Remove the session listener decorator we configured.
+ * If no session_listener is configured, change the hasSessionListener flag of
+ * the UserContextListener to false to avoid the header
+ * AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER from being leaked to
+ * the client.
  */
 class SessionListenerPass implements CompilerPassInterface
 {
@@ -38,6 +35,5 @@ class SessionListenerPass implements CompilerPassInterface
             $contextListener = $container->getDefinition('fos_http_cache.event_listener.user_context');
             $contextListener->setArgument(5, false);
         }
-        $container->removeDefinition('fos_http_cache.user_context.session_listener');
     }
 }

@@ -1,5 +1,11 @@
 framework:
   secret: fos
+  router:
+    resource: "%kernel.project_dir%/tests/Functional/Fixtures/app/config/routing.yml"
+  annotations: ~
+  test: ~
+  session:
+    storage_id:  session.test_storage
 
 fos_http_cache:
   proxy_client:
