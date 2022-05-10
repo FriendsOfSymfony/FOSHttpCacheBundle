@@ -201,7 +201,7 @@ class CacheControlListener implements EventSubscriberInterface
             return;
         }
 
-        if (false !== strpos($response->headers->get('Cache-Control'), 'no-cache')) {
+        if (false !== strpos($response->headers->get('Cache-Control', ''), 'no-cache')) {
             // this single header is set by default. if its the only thing, we override it.
             $response->setCache($directives);
 
