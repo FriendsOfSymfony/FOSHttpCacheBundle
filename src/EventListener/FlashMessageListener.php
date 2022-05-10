@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -41,12 +40,14 @@ final class FlashMessageListener implements EventSubscriberInterface
     private $options;
 
     /**
-     * @var Session
+     * For legacy support. If not set, we take the session from the request on the event.
+     *
+     * @var Session|null
      */
     private $session;
 
     /**
-     * @param Session $session A session instance
+     * @param Session|null $session
      */
     public function __construct($session, array $options = [])
     {
@@ -76,18 +77,24 @@ final class FlashMessageListener implements EventSubscriberInterface
      */
     public function onKernelResponse(FlashMessageResponseEvent $event)
     {
-        if (HttpKernel::MASTER_REQUEST !== $event->getRequestType()) {
+        // BC for symfony < 5.3
+        if (method_exists($event, 'isMainRequest') ? !$event->isMainRequest() : !$event->isMasterRequest()) {
+            return;
+        }
+
+        $session = $this->session ?: $event->getRequest()->getSession();
+        if (null === $session) {
             return;
         }
 
         // Flash messages are stored in the session. If there is none, there
         // can't be any flash messages in it. $session->getFlashBag() would
         // create a session, we need to avoid that.
-        if (!$this->session->isStarted()) {
+        if (!$session->isStarted()) {
             return;
         }
 
-        $flashBag = $this->session->getFlashBag();
+        $flashBag = $session->getFlashBag();
         $flashes = $flashBag->all();
 
         if (empty($flashes)) {

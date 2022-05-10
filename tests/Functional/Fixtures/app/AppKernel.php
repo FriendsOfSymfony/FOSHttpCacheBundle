@@ -23,12 +23,19 @@ class AppKernel extends Kernel
      */
     private $compilerPasses = [];
 
-    public function addCompilerPass(CompilerPassInterface $compilerPass)
+    private $serviceOverride = [];
+
+    public function addServiceOverride(string $config): void
+    {
+        $this->serviceOverride[] = $config;
+    }
+
+    public function addCompilerPass(CompilerPassInterface $compilerPass): void
     {
         $this->compilerPasses[] = $compilerPass;
     }
 
-    protected function build(ContainerBuilder $container)
+    protected function build(ContainerBuilder $container): void
     {
         parent::build($container);
         foreach ($this->compilerPasses as $compilerPass) {
@@ -36,10 +43,7 @@ class AppKernel extends Kernel
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function registerBundles()
+    public function registerBundles(): iterable
     {
         return [
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
@@ -51,39 +55,37 @@ class AppKernel extends Kernel
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function registerContainerConfiguration(LoaderInterface $loader)
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         if (isset($_ENV['KERNEL_CONFIG']) && $_ENV['KERNEL_CONFIG']) {
             $loader->load(__DIR__.'/config/'.$_ENV['KERNEL_CONFIG']);
         } else {
             $loader->load(__DIR__.'/config/config.yml');
         }
+        if (\version_compare(Kernel::VERSION, '6.0', '>=')) {
+            $loader->load(__DIR__.'/config/config_6.yml');
+        } else {
+            $loader->load(__DIR__.'/config/config_4.yml');
+        }
+
         $loader->load(__DIR__.'/config/services.yml');
+
+        foreach ($this->serviceOverride as $file) {
+            $loader->load(__DIR__.'/config/'.$file);
+        }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return sys_get_temp_dir().'/fos-http-cache-bundle/cache';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return sys_get_temp_dir().'/fos-http-cache-bundle/logs';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function prepareContainer(ContainerBuilder $container)
+    protected function prepareContainer(ContainerBuilder $container): void
     {
         parent::prepareContainer($container);
 

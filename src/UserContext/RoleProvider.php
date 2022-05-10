@@ -14,6 +14,8 @@ namespace FOS\HttpCacheBundle\UserContext;
 use FOS\HttpCache\UserContext\ContextProvider;
 use FOS\HttpCache\UserContext\UserContext;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Role\Role;
 
@@ -52,8 +54,14 @@ class RoleProvider implements ContextProvider
             throw new InvalidConfigurationException('The context hash URL must be under a firewall.');
         }
 
-        if (null === $token = $this->tokenStorage->getToken()) {
-            return;
+        $token = $this->tokenStorage->getToken();
+        if (null === $token) {
+            if (Kernel::MAJOR_VERSION < 6) {
+                return;
+            }
+
+            // Symfony 6 no longer provides the AnonymousToken, use the NullToken to generate the same hash for non-logged in users as before
+            $token = new NullToken();
         }
 
         if (method_exists($token, 'getRoleNames')) {

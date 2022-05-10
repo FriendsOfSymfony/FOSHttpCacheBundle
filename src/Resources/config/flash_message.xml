@@ -7,7 +7,7 @@
     <services>
         <service id="fos_http_cache.event_listener.flash_message"
                  class="FOS\HttpCacheBundle\EventListener\FlashMessageListener">
-            <argument type="service" id="session"/>
+            <argument type="service" id="session" on-invalid="null"/><!-- legacy support, we take the session from the request otherwise -->
             <argument>%fos_http_cache.event_listener.flash_message.options%</argument>
             <tag name="kernel.event_subscriber" />
         </service>

@@ -1,9 +1,10 @@
 Changelog
 =========
 
-unreleased
-----------
+(unreleased)
+------------
 
+* Support Symfony 6
 * Drop support for Symfony 3 and 4.3 (keep using 2.11.* for legacy projects).
 
 2.11.2

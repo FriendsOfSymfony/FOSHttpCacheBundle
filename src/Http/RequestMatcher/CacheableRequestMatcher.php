@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\RequestMatcherInterface;
  */
 class CacheableRequestMatcher implements RequestMatcherInterface
 {
-    public function matches(Request $request)
+    public function matches(Request $request): bool
     {
         return $request->isMethodCacheable();
     }

@@ -132,7 +132,8 @@ class UserContextListener implements EventSubscriberInterface
      */
     public function onKernelRequest(UserContextRequestEvent $event)
     {
-        if (HttpKernelInterface::MASTER_REQUEST != $event->getRequestType()) {
+        // BC for symfony < 5.3
+        if (method_exists($event, 'isMainRequest') ? !$event->isMainRequest() : !$event->isMasterRequest()) {
             return;
         }
 

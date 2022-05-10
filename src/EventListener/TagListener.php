@@ -20,7 +20,6 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -110,7 +109,8 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
         if ($this->cacheableRule->matches($request, $response)) {
             // For safe requests (GET and HEAD), set cache tags on response
             $this->symfonyResponseTagger->addTags($tags);
-            if (HttpKernelInterface::MASTER_REQUEST === $event->getRequestType()) {
+            // BC for symfony < 5.3
+            if (method_exists($event, 'isMainRequest') ? $event->isMainRequest() : $event->isMasterRequest()) {
                 $this->symfonyResponseTagger->tagSymfonyResponse($response);
             }
         } elseif (count($tags)

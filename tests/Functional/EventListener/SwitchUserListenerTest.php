@@ -12,14 +12,18 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
 use FOS\HttpCache\ProxyClient\Varnish;
+use FOS\HttpCacheBundle\Tests\Functional\SessionHelperTrait;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\User;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 if (!\class_exists(KernelBrowser::class)) {
     \class_alias(Client::class, KernelBrowser::class);
@@ -28,12 +32,19 @@ if (!\class_exists(KernelBrowser::class)) {
 class SwitchUserListenerTest extends WebTestCase
 {
     use MockeryPHPUnitIntegration;
+    use SessionHelperTrait;
+
+    private const FIREWALL_NAME = 'secured_area';
+    private $sessionName;
+    private static $overrideService = false;
 
     public function testSwitchUserCompatibility()
     {
         $client = static::createClient();
-        $session = $client->getContainer()->get('session');
-        $this->loginAsAdmin($client, $session);
+        $this->loginAsAdmin($client);
+
+        $client->request('GET', '/secured_area/switch_user');
+        $this->assertSame('admin', substr($client->getResponse()->getContent(), 0, 2000));
 
         $client->request('GET', '/secured_area/switch_user?_switch_user=user');
         $client->request('GET', '/secured_area/switch_user');
@@ -46,31 +57,64 @@ class SwitchUserListenerTest extends WebTestCase
 
     public function testInvalidateContext()
     {
-        $client = static::createClient();
-        $session = $client->getContainer()->get('session');
-        $this->loginAsAdmin($client, $session);
+        self::$overrideService = true;
 
         $mock = \Mockery::mock(Varnish::class);
         $mock->shouldReceive('invalidateTags')
             ->once()
-            ->with(['fos_http_cache_hashlookup-test']);
-
+        ;
         $mock->shouldReceive('flush')
             ->once()
-            ->andReturn(1);
+            ->andReturn(1)
+        ;
+        $client = static::createClient();
 
-        $client->getContainer()->set('fos_http_cache.proxy_client.varnish', $mock);
+        $container = method_exists($this, 'getContainer') ? self::getContainer() : (property_exists($this, 'container') ? self::$container : $client->getContainer());
+        $container->set('fos_http_cache.proxy_client.varnish', $mock);
+
+        $this->loginAsAdmin($client);
+
         $client->request('GET', '/secured_area/switch_user?_switch_user=user');
     }
 
-    private function loginAsAdmin(KernelBrowser $client, Session $session, $firewallName = 'secured_area', $sessionId = 'test')
+    public function loginAsAdmin(KernelBrowser $client)
     {
-        $token = new UsernamePasswordToken(new User('admin', 'admin', ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']), null, $firewallName, ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']);
+        if (method_exists($client, 'loginUser')) {
+            $client->loginUser($this->createAdminUser(), self::FIREWALL_NAME);
 
-        $session->setId($sessionId);
-        $session->set(sprintf('_security_%s', $firewallName), serialize($token));
+            return;
+        }
+
+        $container = method_exists($this, 'getContainer') ? self::getContainer() : (property_exists($this, 'container') ? self::$container : $client->getContainer());
+        $session = $container->get('session');
+
+        $user = $this->createAdminUser();
+
+        $token = new UsernamePasswordToken($user, null, self::FIREWALL_NAME, $user->getRoles());
+        $session->set('_security_'.self::FIREWALL_NAME, serialize($token));
         $session->save();
 
-        $client->getCookieJar()->set(new Cookie($session->getName(), $session->getId()));
+        $cookie = new Cookie($session->getName(), $session->getId());
+        $client->getCookieJar()->set($cookie);
+    }
+
+    private function createAdminUser(): UserInterface
+    {
+        if (Kernel::MAJOR_VERSION >= 6) {
+            return new InMemoryUser('admin', 'admin', ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']);
+        }
+
+        return new User('admin', 'admin', ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']);
+    }
+
+    protected static function createKernel(array $options = []): KernelInterface
+    {
+        $kernel = parent::createKernel($options);
+        \assert($kernel instanceof \AppKernel);
+        if (static::$overrideService) {
+            $kernel->addServiceOverride('override_varnish_proxy.yml');
+        }
+
+        return $kernel;
     }
 }
