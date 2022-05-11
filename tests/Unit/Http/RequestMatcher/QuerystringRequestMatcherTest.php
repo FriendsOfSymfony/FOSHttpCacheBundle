@@ -50,4 +50,13 @@ class QuerystringRequestMatcherTest extends TestCase
 
         $this->assertFalse($requestMatcher->matches($request));
     }
+
+    public function testMatchesReturnsFalseIfQueryStringIsEmpty()
+    {
+        $requestMatcher = new QuerystringRequestMatcher();
+        $requestMatcher->setQueryString('(^|&)mytoken=');
+        $request = Request::create('http://localhost/bar');
+
+        $this->assertFalse($requestMatcher->matches($request));
+    }
 }

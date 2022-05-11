@@ -45,6 +45,6 @@ class QuerystringRequestMatcher extends SymfonyRequestMatcher
             return true;
         }
 
-        return (bool) preg_match('{'.$this->queryString.'}', rawurldecode($request->getQueryString()));
+        return (bool) preg_match('{'.$this->queryString.'}', rawurldecode($request->getQueryString() ?: ''));
     }
 }
