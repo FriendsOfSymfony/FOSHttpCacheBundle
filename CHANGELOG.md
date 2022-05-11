@@ -1,11 +1,16 @@
 Changelog
 =========
 
+2.12.1
+------
+
+* Fix some PHP 8.1 deprecation warnings.
+
 2.12.0
 ------
 
 * Support Symfony 6
-* Drop support for Symfony 3 and 4.3 (keep using 2.11.* for legacy projects).
+* Drop support for Symfony 3 and 4.3 (keep using `2.11.*` for legacy projects).
 
 2.11.2
 ------
