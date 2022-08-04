@@ -66,7 +66,7 @@ class InvalidatePath extends ConfigurationAnnotation
     /**
      * {@inheritdoc}
      */
-    public function getAliasName()
+    public function getAliasName(): string
     {
         return 'invalidate_path';
     }
@@ -74,7 +74,7 @@ class InvalidatePath extends ConfigurationAnnotation
     /**
      * {@inheritdoc}
      */
-    public function allowArray()
+    public function allowArray(): bool
     {
         return true;
     }

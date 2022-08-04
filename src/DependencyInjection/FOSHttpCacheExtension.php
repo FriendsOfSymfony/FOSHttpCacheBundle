@@ -17,6 +17,7 @@ use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use FOS\HttpCache\TagHeaderFormatter\MaxHeaderValueLengthFormatter;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Application;
@@ -37,7 +38,7 @@ class FOSHttpCacheExtension extends Extension
     /**
      * {@inheritdoc}
      */
-    public function getConfiguration(array $config, ContainerBuilder $container)
+    public function getConfiguration(array $config, ContainerBuilder $container): ConfigurationInterface
     {
         return new Configuration($container->getParameter('kernel.debug'));
     }

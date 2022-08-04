@@ -141,7 +141,7 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::TERMINATE => 'onKernelTerminate',
