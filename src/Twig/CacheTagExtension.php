@@ -33,7 +33,7 @@ class CacheTagExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('fos_httpcache_tag', [$this, 'addTag']),
@@ -55,10 +55,7 @@ class CacheTagExtension extends AbstractExtension
         $this->responseTagger->addTags((array) $tag);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'fos_httpcache_tag_extension';
     }

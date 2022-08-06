@@ -92,7 +92,7 @@ class Tag extends ConfigurationAnnotation
     /**
      * {@inheritdoc}
      */
-    public function getAliasName()
+    public function getAliasName(): string
     {
         return 'tag';
     }
@@ -100,7 +100,7 @@ class Tag extends ConfigurationAnnotation
     /**
      * {@inheritdoc}
      */
-    public function allowArray()
+    public function allowArray(): bool
     {
         return true;
     }

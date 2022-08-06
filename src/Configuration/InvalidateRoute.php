@@ -115,7 +115,7 @@ class InvalidateRoute extends ConfigurationAnnotation
     /**
      * {@inheritdoc}
      */
-    public function getAliasName()
+    public function getAliasName(): string
     {
         return 'invalidate_route';
     }
@@ -123,7 +123,7 @@ class InvalidateRoute extends ConfigurationAnnotation
     /**
      * {@inheritdoc}
      */
-    public function allowArray()
+    public function allowArray(): bool
     {
         return true;
     }
