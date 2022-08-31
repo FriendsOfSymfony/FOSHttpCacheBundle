@@ -12,6 +12,7 @@
 namespace FOS\HttpCacheBundle\Command;
 
 use FOS\HttpCacheBundle\CacheManager;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,10 +23,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @author Christian Stocker <chregu@liip.ch>
  * @author David Buchmann <mail@davidbu.ch>
  */
+#[AsCommand(name: 'fos:httpcache:invalidate:regex')]
 class InvalidateRegexCommand extends BaseInvalidateCommand
 {
-    protected static $defaultName = 'fos:httpcache:invalidate:regex';
-
     /**
      * If no cache manager is specified explicitly, fos_http_cache.cache_manager
      * is automatically loaded.
@@ -34,11 +34,12 @@ class InvalidateRegexCommand extends BaseInvalidateCommand
      */
     public function __construct(CacheManager $cacheManager = null, $commandName = 'fos:httpcache:invalidate:regex')
     {
+        parent::__construct($cacheManager);
+
         if (2 <= func_num_args()) {
             @trigger_error('Passing a command name in the constructor is deprecated and will be removed in version 3', E_USER_DEPRECATED);
-            static::$defaultName = func_get_arg(1);
+            $this->setName(func_get_arg(1));
         }
-        parent::__construct($cacheManager);
     }
 
     /**
@@ -47,6 +48,7 @@ class InvalidateRegexCommand extends BaseInvalidateCommand
     protected function configure()
     {
         $this
+            ->setName('fos:httpcache:invalidate:regex')
             ->setDescription('Invalidate everything matching a regular expression on all configured caching proxies')
             ->addArgument(
                 'regex',
