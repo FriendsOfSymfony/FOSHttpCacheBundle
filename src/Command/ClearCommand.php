@@ -12,7 +12,7 @@
 namespace FOS\HttpCacheBundle\Command;
 
 use FOS\HttpCache\CacheInvalidator;
-use FOS\HttpCacheBundle\CacheManager;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -21,22 +21,10 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Alexander Schranz <alexander@sulu.io>
  */
+#[AsCommand(name: 'fos:httpcache:clear')]
 class ClearCommand extends BaseInvalidateCommand
 {
     use PathSanityCheck;
-
-    protected static $defaultName = 'fos:httpcache:clear';
-
-    /**
-     * If no cache manager is specified explicitly, fos_http_cache.cache_manager
-     * is automatically loaded.
-     *
-     * @param CacheManager|null $cacheManager The cache manager to talk to
-     */
-    public function __construct(CacheManager $cacheManager = null)
-    {
-        parent::__construct($cacheManager);
-    }
 
     /**
      * {@inheritdoc}
@@ -44,6 +32,7 @@ class ClearCommand extends BaseInvalidateCommand
     protected function configure()
     {
         $this
+            ->setName('fos:httpcache:clear')
             ->setDescription('Clear the HTTP cache.')
             ->setHelp(
                 <<<'EOF'
