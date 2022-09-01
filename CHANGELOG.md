@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.13.0
+------
+
+* Fix Symfony 6 deprecations on the command name configuration.
+
 2.12.1
 ------
 

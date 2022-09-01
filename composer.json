@@ -73,10 +73,5 @@
         "classmap": [
             "tests/Functional/Fixtures/app/AppKernel.php"
         ]
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.x-dev"
-        }
     }
 }
