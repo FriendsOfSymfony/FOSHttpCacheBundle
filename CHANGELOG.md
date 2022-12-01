@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.14.0
+------
+
+* Fix handling of custom glue for response tags. If you use custom glue with the Symfony HttpCache,
+  you can now configure a customized tag header parser on the `PurgeTagsListener`.
+
 2.13.0
 ------
 
