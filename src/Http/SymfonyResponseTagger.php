@@ -34,7 +34,7 @@ class SymfonyResponseTagger extends ResponseTagger
         if (!$replace && $response->headers->has($this->getTagsHeaderName())) {
             $header = $response->headers->get($this->getTagsHeaderName());
             if ('' !== $header) {
-                $this->addTags(explode(',', $response->headers->get($this->getTagsHeaderName())));
+                $this->addTags($this->parseTagsHeaderValue($response->headers->get($this->getTagsHeaderName())));
             }
         }
 
