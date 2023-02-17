@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services">
+
+    <config xmlns="http://example.org/schema/dic/fos_http_cache">
+        <proxy-client>
+            <cloudflare authentication-token="mytoken" zone-identifier="myzone">
+            </cloudflare>
+        </proxy-client>
+
+    </config>
+</container>
