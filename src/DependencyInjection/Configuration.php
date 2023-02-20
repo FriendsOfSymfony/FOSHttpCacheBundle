@@ -590,6 +590,13 @@ class Configuration implements ConfigurationInterface
         $node
             ->addDefaultsIfNotSet()
             ->children()
+                ->arrayNode('servers')
+                    ->info('Addresses of the hosts the caching proxy is running on. The values may be hostnames or ips, and with :port if not the default port 80.')
+                    ->useAttributeAsKey('name')
+                    ->requiresAtLeastOneElement()
+                    ->defaultValue(['https://api.cloudflare.com'])
+                    ->prototype('scalar')->end()
+                ->end()
                 ->scalarNode('http_client')
                     ->defaultNull()
                     ->info('Httplug async client service name to use for sending the requests.')

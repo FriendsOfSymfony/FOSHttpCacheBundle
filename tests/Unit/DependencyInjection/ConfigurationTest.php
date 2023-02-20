@@ -305,7 +305,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             'cloudflare' => [
                 'authentication_token' => 'mytoken',
                 'zone_identifier' => 'myzone',
-                'http' => ['http_client' => null],
+                'http' => ['servers' => ['https://api.cloudflare.com'], 'http_client' => null],
             ],
         ];
         $expectedConfiguration['cache_manager']['enabled'] = 'auto';

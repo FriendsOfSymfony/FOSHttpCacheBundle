@@ -460,11 +460,7 @@ class FOSHttpCacheExtension extends Extension
 
     private function loadCloudflare(ContainerBuilder $container, XmlFileLoader $loader, array $config)
     {
-        $this->createHttpDispatcherDefinition(
-            $container,
-            array_merge(['servers' => ['https://api.cloudflare.com']], $config['http']),
-            'fos_http_cache.proxy_client.cloudflare.http_dispatcher'
-        );
+        $this->createHttpDispatcherDefinition($container, $config['http'], 'fos_http_cache.proxy_client.cloudflare.http_dispatcher');
         $options = [
             'authentication_token' => $config['authentication_token'],
             'zone_identifier' => $config['zone_identifier'],
