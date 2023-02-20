@@ -4,7 +4,7 @@ Changelog
 2.15.0
 ------
 
-* Add support for Cloudflare proxy client.
+* Added Cloudflare proxy client.
 
 2.14.0
 ------
