@@ -254,7 +254,7 @@ cloudflare
 
 **type**: ``string``
 
-User API token for authentication against Cloudflare APIs, requires Zone.Cache Purge permissions.
+User API token for authentication against Cloudflare APIs, requires ``Zone.Cache`` Purge permissions.
 
 ``zone_identifier``
 """""""""""""""""
