@@ -263,6 +263,14 @@ User API token for authentication against Cloudflare APIs, requires ``Zone.Cache
 
 Identifier for the Cloudflare zone you want to purge the cache for.
 
+``http.servers``
+""""""""""""""""
+
+**type**: ``array`` **default**: ``['https://api.cloudflare.com']``
+
+List of Cloudflare API endpoints to use for purging the cache. You can use this to specify a different
+endpoint for testing purposes.
+
 .. _configuration_noop_proxy_client:
 
 noop
