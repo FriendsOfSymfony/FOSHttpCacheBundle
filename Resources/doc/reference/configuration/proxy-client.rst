@@ -248,6 +248,9 @@ cloudflare
             cloudflare:
                 zone_identifier: '<my-zone-identifier>'
                 authentication_token: '<user-authentication-token>'
+                http:
+                    servers:
+                        - 'https://api.cloudflare.com'
 
 ``authentication_token``
 """""""""""""""""""""""
