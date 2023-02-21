@@ -146,6 +146,26 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertSame(KernelDispatcher::class, $container->getDefinition('fos_http_cache.proxy_client.symfony.http_dispatcher')->getClass());
     }
 
+    public function testConfigLoadCloudflare()
+    {
+        $container = $this->createContainer();
+        $this->extension->load([
+            [
+                'proxy_client' => [
+                    'cloudflare' => [
+                        'authentication_token' => 'test',
+                        'zone_identifier' => 'test',
+                    ],
+                ],
+            ],
+        ], $container);
+
+        $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.cloudflare'));
+        $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
+    }
+
     public function testConfigLoadNoop()
     {
         $container = $this->createContainer();

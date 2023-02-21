@@ -298,6 +298,35 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
+    public function testSupportsCloudflare()
+    {
+        $expectedConfiguration = $this->getEmptyConfig();
+        $expectedConfiguration['proxy_client'] = [
+            'cloudflare' => [
+                'authentication_token' => 'mytoken',
+                'zone_identifier' => 'myzone',
+                'http' => ['servers' => ['https://api.cloudflare.com'], 'http_client' => null],
+            ],
+        ];
+        $expectedConfiguration['cache_manager']['enabled'] = 'auto';
+        $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
+        $expectedConfiguration['tags']['enabled'] = 'auto';
+        $expectedConfiguration['invalidation']['enabled'] = 'auto';
+        $expectedConfiguration['user_context']['logout_handler']['enabled'] = false;
+
+        $formats = array_map(function ($path) {
+            return __DIR__.'/../../Resources/Fixtures/'.$path;
+        }, [
+            'config/cloudflare.yml',
+            'config/cloudflare.xml',
+            'config/cloudflare.php',
+        ]);
+
+        foreach ($formats as $format) {
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
+        }
+    }
+
     public function testEmptyServerConfigurationIsNotAllowed()
     {
         $this->expectException(InvalidConfigurationException::class);

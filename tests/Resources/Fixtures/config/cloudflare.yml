@@ -1,0 +1,6 @@
+fos_http_cache:
+
+    proxy_client:
+        cloudflare:
+            authentication_token: mytoken
+            zone_identifier: myzone

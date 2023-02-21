@@ -412,7 +412,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('proxy_client')
                     ->children()
                         ->enumNode('default')
-                            ->values(['varnish', 'nginx', 'symfony', 'noop'])
+                            ->values(['varnish', 'nginx', 'symfony', 'cloudflare', 'noop'])
                             ->info('If you configure more than one proxy client, you need to specify which client is the default.')
                         ->end()
                         ->arrayNode('varnish')
@@ -482,6 +482,18 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
 
+                        ->arrayNode('cloudflare')
+                            ->children()
+                                ->scalarNode('authentication_token')
+                                    ->info('API authorization token, requires Zone.Cache Purge permissions')
+                                ->end()
+                                ->scalarNode('zone_identifier')
+                                    ->info('Identifier for your Cloudflare zone you want to purge the cache for')
+                                ->end()
+                                ->append($this->getCloudflareHttpDispatcherNode())
+                            ->end()
+                        ->end()
+
                         ->booleanNode('noop')->end()
                     ->end()
                     ->validate()
@@ -500,7 +512,7 @@ class Configuration implements ConfigurationInterface
                                     throw new InvalidConfigurationException(sprintf('You can only set one of "http.servers" or "http.servers_from_jsonenv" but not both to avoid ambiguity for the proxy "%s"', $proxyName));
                                 }
 
-                                if (!\in_array($proxyName, ['noop', 'default', 'symfony'])) {
+                                if (!\in_array($proxyName, ['noop', 'default', 'symfony', 'cloudflare'])) {
                                     if (!$arrayServersConfigured && !$jsonServersConfigured) {
                                         throw new InvalidConfigurationException(sprintf('The "http.servers" or "http.servers_from_jsonenv" section must be defined for the proxy "%s"', $proxyName));
                                     }
@@ -560,6 +572,36 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ;
+
+        return $node;
+    }
+
+    private function getCloudflareHttpDispatcherNode()
+    {
+        $treeBuilder = new TreeBuilder('http');
+
+        // Keep compatibility with symfony/config < 4.2
+        if (!method_exists($treeBuilder, 'getRootNode')) {
+            $node = $treeBuilder->root('http');
+        } else {
+            $node = $treeBuilder->getRootNode();
+        }
+
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('servers')
+                    ->info('Addresses of the hosts the caching proxy is running on. The values may be hostnames or ips, and with :port if not the default port 80.')
+                    ->useAttributeAsKey('name')
+                    ->requiresAtLeastOneElement()
+                    ->defaultValue(['https://api.cloudflare.com'])
+                    ->prototype('scalar')->end()
+                ->end()
+                ->scalarNode('http_client')
+                    ->defaultNull()
+                    ->info('Httplug async client service name to use for sending the requests.')
+                ->end()
+            ->end();
 
         return $node;
     }

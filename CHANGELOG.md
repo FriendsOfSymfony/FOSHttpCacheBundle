@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.15.0
+------
+
+* Added Cloudflare proxy client.
+
 2.14.0
 ------
 

@@ -5,6 +5,7 @@ autoconfigure
 autoconfigured
 backend
 cacheable
+cloudflare
 ETag
 friendsofsymfony
 github

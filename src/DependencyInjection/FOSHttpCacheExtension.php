@@ -337,6 +337,9 @@ class FOSHttpCacheExtension extends Extension
         if (isset($config['symfony'])) {
             $this->loadSymfony($container, $loader, $config['symfony']);
         }
+        if (isset($config['cloudflare'])) {
+            $this->loadCloudflare($container, $loader, $config['cloudflare']);
+        }
         if (isset($config['noop'])) {
             $loader->load('noop.xml');
         }
@@ -455,6 +458,19 @@ class FOSHttpCacheExtension extends Extension
         $loader->load('symfony.xml');
     }
 
+    private function loadCloudflare(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        $this->createHttpDispatcherDefinition($container, $config['http'], 'fos_http_cache.proxy_client.cloudflare.http_dispatcher');
+        $options = [
+            'authentication_token' => $config['authentication_token'],
+            'zone_identifier' => $config['zone_identifier'],
+        ];
+
+        $container->setParameter('fos_http_cache.proxy_client.cloudflare.options', $options);
+
+        $loader->load('cloudflare.xml');
+    }
+
     /**
      * @param array  $config Configuration section for the tags node
      * @param string $client Name of the client used with the cache manager,
@@ -462,12 +478,12 @@ class FOSHttpCacheExtension extends Extension
      */
     private function loadCacheTagging(ContainerBuilder $container, XmlFileLoader $loader, array $config, $client)
     {
-        if ('auto' === $config['enabled'] && !in_array($client, ['varnish', 'symfony'])) {
+        if ('auto' === $config['enabled'] && !in_array($client, ['varnish', 'symfony', 'cloudflare'])) {
             $container->setParameter('fos_http_cache.compiler_pass.tag_annotations', false);
 
             return;
         }
-        if (!in_array($client, ['varnish', 'symfony', 'custom', 'noop'])) {
+        if (!in_array($client, ['varnish', 'symfony', 'cloudflare', 'custom', 'noop'])) {
             throw new InvalidConfigurationException(sprintf('You can not enable cache tagging with the %s client', $client));
         }
 
@@ -607,6 +623,10 @@ class FOSHttpCacheExtension extends Extension
 
         if (isset($config['symfony'])) {
             return 'symfony';
+        }
+
+        if (isset($config['cloudflare'])) {
+            return 'cloudflare';
         }
 
         if (isset($config['noop'])) {

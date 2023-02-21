@@ -12,7 +12,8 @@ The proxy client is also directly available as a service. The default client
 can be autowired with the ``FOS\HttpCache\ProxyClient\ProxyClient`` type
 declaration or the service ``fos_http_cache.default_proxy_client``. Specific
 clients, if configured, are available as ``fos_http_cache.proxy_client.varnish``
-, ``fos_http_cache.proxy_client.nginx`` or ``fos_http_cache.proxy_client.symfony``).
+, ``fos_http_cache.proxy_client.nginx``, ``fos_http_cache.proxy_client.symfony``
+or ``fos_http_cache.proxy_client.cloudflare``).
 
 If you need to adjust the proxy client, you can also configure the ``CacheManager``
 with a :ref:`custom proxy client <custom_proxy_client>` that you defined as a
@@ -235,6 +236,43 @@ header if you change this.
 HTTP method for sending purge requests to the Symfony HttpCache. Make sure to
 configure the purge plugin for your HttpCache with the matching header if you
 change this.
+
+cloudflare
+-------
+
+.. code-block:: yaml
+
+    # config/packages/fos_http_cache.yaml
+    fos_http_cache:
+        proxy_client:
+            cloudflare:
+                zone_identifier: '<my-zone-identifier>'
+                authentication_token: '<user-authentication-token>'
+                http:
+                    servers:
+                        - 'https://api.cloudflare.com'
+
+``authentication_token``
+"""""""""""""""""""""""
+
+**type**: ``string``
+
+User API token for authentication against Cloudflare APIs, requires ``Zone.Cache`` Purge permissions.
+
+``zone_identifier``
+"""""""""""""""""
+
+**type**: ``string``
+
+Identifier for the Cloudflare zone you want to purge the cache for.
+
+``http.servers``
+""""""""""""""""
+
+**type**: ``array`` **default**: ``['https://api.cloudflare.com']``
+
+List of Cloudflare API endpoints to use for purging the cache. You can use this to specify a different
+endpoint for testing purposes.
 
 .. _configuration_noop_proxy_client:
 
