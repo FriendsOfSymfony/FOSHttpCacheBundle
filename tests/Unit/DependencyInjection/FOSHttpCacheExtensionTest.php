@@ -166,6 +166,51 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
     }
 
+    public function testConfigLoadCloudfront()
+    {
+        $container = $this->createContainer();
+        $this->extension->load([
+            [
+                'proxy_client' => [
+                    'cloudfront' => [
+                        'distribution_id' => 'my_distribution',
+                    ],
+                ],
+            ],
+        ], $container);
+
+        $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.cloudfront.cloudfront_client'));
+        $this->assertTrue($container->hasParameter('fos_http_cache.proxy_client.cloudfront.options'));
+        $this->assertSame(['distribution_id' => 'my_distribution'], $container->getParameter('fos_http_cache.proxy_client.cloudfront.options'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.cloudfront'));
+        $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
+    }
+
+    public function testConfigLoadCloudfrontWithClient()
+    {
+        $container = $this->createContainer();
+        $this->extension->load([
+            [
+                'proxy_client' => [
+                    'cloudfront' => [
+                        'distribution_id' => 'my_distribution',
+                        'client' => 'my.client',
+                    ],
+                ],
+            ],
+        ], $container);
+
+        $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
+        $this->assertTrue($container->hasAlias('fos_http_cache.proxy_client.cloudfront.cloudfront_client'));
+        $this->assertTrue($container->hasParameter('fos_http_cache.proxy_client.cloudfront.options'));
+        $this->assertSame(['distribution_id' => 'my_distribution'], $container->getParameter('fos_http_cache.proxy_client.cloudfront.options'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.cloudfront'));
+        $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
+    }
+
     public function testConfigLoadNoop()
     {
         $container = $this->createContainer();

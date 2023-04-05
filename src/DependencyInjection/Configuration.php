@@ -15,6 +15,7 @@ use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
 use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
 use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatter;
+use JeanBeru\HttpCacheCloudFront\Proxy\CloudFront;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
@@ -412,7 +413,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('proxy_client')
                     ->children()
                         ->enumNode('default')
-                            ->values(['varnish', 'nginx', 'symfony', 'cloudflare', 'noop'])
+                            ->values(['varnish', 'nginx', 'symfony', 'cloudflare', 'cloudfront', 'noop'])
                             ->info('If you configure more than one proxy client, you need to specify which client is the default.')
                         ->end()
                         ->arrayNode('varnish')
@@ -494,6 +495,28 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
 
+                        ->arrayNode('cloudfront')
+                            ->children()
+                                ->scalarNode('distribution_id')
+                                    ->info('Identifier for your CloudFront distribution you want to purge the cache for')
+                                ->end()
+                                ->scalarNode('client')
+                                    ->info('AsyncAws\CloudFront\CloudFrontClient client to use')
+                                    ->defaultNull()
+                                ->end()
+                                ->variableNode('configuration')
+                                    ->defaultValue([])
+                                    ->info('Client configuration from https://async-aws.com/configuration.html')
+                                ->end()
+                            ->end()
+                            ->validate()
+                                ->ifTrue(function ($v) {
+                                    return !empty($v['client']) && !empty($v['configuration']);
+                                })
+                                ->thenInvalid('You can not set both cloudfront.client and cloudfront.configuration')
+                            ->end()
+                        ->end()
+
                         ->booleanNode('noop')->end()
                     ->end()
                     ->validate()
@@ -512,7 +535,7 @@ class Configuration implements ConfigurationInterface
                                     throw new InvalidConfigurationException(sprintf('You can only set one of "http.servers" or "http.servers_from_jsonenv" but not both to avoid ambiguity for the proxy "%s"', $proxyName));
                                 }
 
-                                if (!\in_array($proxyName, ['noop', 'default', 'symfony', 'cloudflare'])) {
+                                if (!\in_array($proxyName, ['noop', 'default', 'symfony', 'cloudflare', 'cloudfront'])) {
                                     if (!$arrayServersConfigured && !$jsonServersConfigured) {
                                         throw new InvalidConfigurationException(sprintf('The "http.servers" or "http.servers_from_jsonenv" section must be defined for the proxy "%s"', $proxyName));
                                     }
@@ -523,6 +546,12 @@ class Configuration implements ConfigurationInterface
                                 if ('symfony' === $proxyName) {
                                     if (!$arrayServersConfigured && !$jsonServersConfigured && false === $proxyConfig['use_kernel_dispatcher']) {
                                         throw new InvalidConfigurationException('Either configure the "http.servers" or "http.servers_from_jsonenv" section or enable "proxy_client.symfony.use_kernel_dispatcher"');
+                                    }
+                                }
+
+                                if ('cloudfront' === $proxyName) {
+                                    if (!class_exists(CloudFront::class)) {
+                                        throw new InvalidConfigurationException('Did you forget to install jean-beru/fos-http-cache-cloudfront ?');
                                     }
                                 }
                             }

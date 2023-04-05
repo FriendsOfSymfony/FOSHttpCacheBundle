@@ -1,0 +1,8 @@
+fos_http_cache:
+
+    proxy_client:
+        cloudfront:
+            distribution_id: 'my_distribution'
+            configuration:
+                accessKeyId: 'AwsAccessKeyId'
+                accessKeySecret: 'AwsAccessKeySecret'
