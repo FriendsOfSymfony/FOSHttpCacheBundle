@@ -131,6 +131,7 @@ class InvalidationListenerTest extends WebTestCase
 
     /**
      * @dataProvider getStatusCodesThatTriggerInvalidation
+     *
      * @requires PHP 8.0
      */
     public function testInvalidatePathWithPHPAttributes($statusCode)
