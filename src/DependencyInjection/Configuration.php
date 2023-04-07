@@ -734,7 +734,7 @@ class Configuration implements ConfigurationInterface
                                     ->thenInvalid('Configured a tag_expression but ExpressionLanugage is not available')
                                 ->end()
                                 ->children()
-                        ;
+        ;
         $this->addMatch($rules);
 
         $rules
