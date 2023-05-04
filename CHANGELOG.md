@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.16.0
+------
+
+* Added support for AWS cloudfront, using the `jean-beru/fos-http-cache-cloudfront` package.
+
 2.15.0
 ------
 
