@@ -278,6 +278,7 @@ endpoint for testing purposes.
 
 cloudfront
 ----------
+Talking to AWS cloudfront requires the ``jean-beru/fos-http-cache-cloudfront`` library. You need to require this dependency before you can configure the ``cloudfront`` proxy client.
 
 .. code-block:: yaml
 

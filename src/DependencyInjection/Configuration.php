@@ -496,6 +496,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
 
                         ->arrayNode('cloudfront')
+                            ->info('Configure a client to interact with AWS cloudfront. You need to install jean-beru/fos-http-cache-cloudfront to work with cloudfront')
                             ->children()
                                 ->scalarNode('distribution_id')
                                     ->info('Identifier for your CloudFront distribution you want to purge the cache for')
@@ -511,7 +512,7 @@ class Configuration implements ConfigurationInterface
                             ->end()
                             ->validate()
                                 ->ifTrue(function ($v) {
-                                    return !empty($v['client']) && !empty($v['configuration']);
+                                    return null !== $v['client'] && count($v['configuration']) > 0;
                                 })
                                 ->thenInvalid('You can not set both cloudfront.client and cloudfront.configuration')
                             ->end()
@@ -551,7 +552,7 @@ class Configuration implements ConfigurationInterface
 
                                 if ('cloudfront' === $proxyName) {
                                     if (!class_exists(CloudFront::class)) {
-                                        throw new InvalidConfigurationException('Did you forget to install jean-beru/fos-http-cache-cloudfront ?');
+                                        throw new InvalidConfigurationException('For the cloudfront proxy client, you need to install jean-beru/fos-http-cache-cloudfront. Class '.CloudFront::class.' does not exist.');
                                     }
                                 }
                             }
