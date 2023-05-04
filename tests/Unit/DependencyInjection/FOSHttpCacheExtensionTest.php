@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection;
 
 use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
+use JeanBeru\HttpCacheCloudFront\Proxy\CloudFront;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -162,6 +163,59 @@ class FOSHttpCacheExtensionTest extends TestCase
 
         $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.cloudflare'));
+        $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
+    }
+
+    public function testConfigLoadCloudfront()
+    {
+        if (!class_exists(CloudFront::class)) {
+            $this->markTestSkipped('jean-beru/fos-http-cache-cloudfront not available');
+        }
+
+        $container = $this->createContainer();
+        $this->extension->load([
+            [
+                'proxy_client' => [
+                    'cloudfront' => [
+                        'distribution_id' => 'my_distribution',
+                    ],
+                ],
+            ],
+        ], $container);
+
+        $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.cloudfront.cloudfront_client'));
+        $this->assertTrue($container->hasParameter('fos_http_cache.proxy_client.cloudfront.options'));
+        $this->assertSame(['distribution_id' => 'my_distribution'], $container->getParameter('fos_http_cache.proxy_client.cloudfront.options'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.cloudfront'));
+        $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
+    }
+
+    public function testConfigLoadCloudfrontWithClient()
+    {
+        if (!class_exists(CloudFront::class)) {
+            $this->markTestSkipped('jean-beru/fos-http-cache-cloudfront not available');
+        }
+
+        $container = $this->createContainer();
+        $this->extension->load([
+            [
+                'proxy_client' => [
+                    'cloudfront' => [
+                        'distribution_id' => 'my_distribution',
+                        'client' => 'my.client',
+                    ],
+                ],
+            ],
+        ], $container);
+
+        $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
+        $this->assertTrue($container->hasAlias('fos_http_cache.proxy_client.cloudfront.cloudfront_client'));
+        $this->assertTrue($container->hasParameter('fos_http_cache.proxy_client.cloudfront.options'));
+        $this->assertSame(['distribution_id' => 'my_distribution'], $container->getParameter('fos_http_cache.proxy_client.cloudfront.options'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.cloudfront'));
         $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
     }

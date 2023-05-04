@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
+use AsyncAws\CloudFront\CloudFrontClient;
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\ProxyClient;
 use FOS\HttpCache\SymfonyCache\KernelDispatcher;
@@ -89,6 +90,8 @@ class FOSHttpCacheExtension extends Extension
                     $defaultClient = $this->getDefaultProxyClient($config['proxy_client']);
                     if ('noop' !== $defaultClient
                         && array_key_exists('base_url', $config['proxy_client'][$defaultClient])) {
+                        $generateUrlType = UrlGeneratorInterface::ABSOLUTE_PATH;
+                    } elseif ('cloudfront' === $defaultClient) {
                         $generateUrlType = UrlGeneratorInterface::ABSOLUTE_PATH;
                     } else {
                         $generateUrlType = UrlGeneratorInterface::ABSOLUTE_URL;
@@ -340,6 +343,9 @@ class FOSHttpCacheExtension extends Extension
         if (isset($config['cloudflare'])) {
             $this->loadCloudflare($container, $loader, $config['cloudflare']);
         }
+        if (isset($config['cloudfront'])) {
+            $this->loadCloudfront($container, $loader, $config['cloudfront']);
+        }
         if (isset($config['noop'])) {
             $loader->load('noop.xml');
         }
@@ -469,6 +475,27 @@ class FOSHttpCacheExtension extends Extension
         $container->setParameter('fos_http_cache.proxy_client.cloudflare.options', $options);
 
         $loader->load('cloudflare.xml');
+    }
+
+    private function loadCloudfront(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        if (null !== $config['client']) {
+            $container->setAlias(
+                'fos_http_cache.proxy_client.cloudfront.cloudfront_client',
+                $config['client']
+            );
+        } else {
+            $container->setDefinition(
+                'fos_http_cache.proxy_client.cloudfront.cloudfront_client',
+                new Definition(CloudFrontClient::class, [$config['configuration']])
+            );
+        }
+
+        $container->setParameter('fos_http_cache.proxy_client.cloudfront.options', [
+            'distribution_id' => $config['distribution_id'],
+        ]);
+
+        $loader->load('cloudfront.xml');
     }
 
     /**
@@ -627,6 +654,10 @@ class FOSHttpCacheExtension extends Extension
 
         if (isset($config['cloudflare'])) {
             return 'cloudflare';
+        }
+
+        if (isset($config['cloudfront'])) {
+            return 'cloudfront';
         }
 
         if (isset($config['noop'])) {

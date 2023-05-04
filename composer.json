@@ -53,6 +53,7 @@
         "sebastian/exporter": "^2.0"
     },
     "suggest": {
+        "jean-beru/fos-http-cache-cloudfront": "To use CloudFront proxy",
         "sensio/framework-extra-bundle": "For Tagged Cache Invalidation",
         "symfony/expression-language": "For Tagged Cache Invalidation",
         "symfony/console": "To send invalidation requests from the command line"

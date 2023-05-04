@@ -276,6 +276,55 @@ endpoint for testing purposes.
 
 .. _configuration_noop_proxy_client:
 
+cloudfront
+----------
+Talking to AWS cloudfront requires the ``jean-beru/fos-http-cache-cloudfront`` library. You need to require this dependency before you can configure the ``cloudfront`` proxy client.
+
+.. code-block:: yaml
+
+    # config/packages/fos_http_cache.yaml
+    fos_http_cache:
+        proxy_client:
+            cloudfront:
+                distribution_id: '<my-distribution-id>'
+                configuration:
+                    accessKeyId: '<my-access-key-id>'
+                    accessKeySecret: '<my-access-key-secret>'
+
+.. code-block:: yaml
+
+    # config/packages/fos_http_cache.yaml
+    fos_http_cache:
+        proxy_client:
+            cloudfront:
+                distribution_id: '<my-distribution-id>'
+                client: '<my.custom.client>'
+
+``distribution_id``
+"""""""""""""""""""
+
+**type**: ``string``
+
+Identifier for the CloudFront distribution you want to purge the cache for.
+
+``configuration``
+"""""""""""""""""
+
+**type**: ``array`` **default**: ``[]``
+
+Configuration used to instantiate the `AsyncAws\CloudFront\CloudFrontClient` client. More information is available on
+the `AWS Async documentation_`. It can not be used with the ``client`` option.
+
+``client``
+"""""""""""""""""
+
+**type**: ``string`` **default**: ``null``
+
+Service identifier of a `AsyncAws\CloudFront\CloudFrontClient` client. More information is available on the
+`AWS Async documentation_`. It can not be used with the ``configuration`` option.
+
+.. _configuration_noop_proxy_client:
+
 noop
 ----
 
@@ -328,3 +377,4 @@ bundle. Please refer to the :ref:`FOSHttpCache library’s documentation <foshtt
 for more information.
 
 .. _xkey vmod: https://github.com/varnish/varnish-modules/blob/master/docs/vmod_xkey.rst
+.. _AWS Async documentation_: https://async-aws.com/configuration.html

@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection;
 
 use FOS\HttpCacheBundle\DependencyInjection\Configuration;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
+use JeanBeru\HttpCacheCloudFront\Proxy\CloudFront;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionConfigurationTestCase;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -325,6 +326,60 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
         }
+    }
+
+    public function testSupportsCloudfront()
+    {
+        if (!class_exists(CloudFront::class)) {
+            $this->markTestSkipped('jean-beru/fos-http-cache-cloudfront not available');
+        }
+
+        $expectedConfiguration = $this->getEmptyConfig();
+        $expectedConfiguration['proxy_client'] = [
+            'cloudfront' => [
+                'distribution_id' => 'my_distribution',
+                'configuration' => ['accessKeyId' => 'AwsAccessKeyId', 'accessKeySecret' => 'AwsAccessKeySecret'],
+                'client' => null,
+            ],
+        ];
+        $expectedConfiguration['cache_manager']['enabled'] = 'auto';
+        $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
+        $expectedConfiguration['tags']['enabled'] = 'auto';
+        $expectedConfiguration['invalidation']['enabled'] = 'auto';
+
+        $formats = array_map(function ($path) {
+            return __DIR__.'/../../Resources/Fixtures/'.$path;
+        }, [
+            'config/cloudfront.yml',
+            'config/cloudfront.xml',
+            'config/cloudfront.php',
+        ]);
+
+        foreach ($formats as $format) {
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
+        }
+    }
+
+    public function testCloudfrontConfigurationWithClientIsNotAllowed()
+    {
+        if (!class_exists(CloudFront::class)) {
+            $this->markTestSkipped('jean-beru/fos-http-cache-cloudfront not available');
+        }
+
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('You can not set both cloudfront.client and cloudfront.configuration');
+
+        $params = $this->getEmptyConfig();
+        $params['proxy_client'] = [
+            'cloudfront' => [
+                'distribution_id' => 'my_distribution',
+                'configuration' => ['accessKeyId' => 'AwsAccessKeyId', 'accessKeySecret' => 'AwsAccessKeySecret'],
+                'client' => 'my.client',
+            ],
+        ];
+
+        $configuration = new Configuration(false);
+        (new Processor())->processConfiguration($configuration, ['fos_http_cache' => $params]);
     }
 
     public function testEmptyServerConfigurationIsNotAllowed()
