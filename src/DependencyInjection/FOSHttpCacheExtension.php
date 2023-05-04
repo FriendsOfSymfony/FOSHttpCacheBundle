@@ -18,7 +18,6 @@ use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use FOS\HttpCache\TagHeaderFormatter\MaxHeaderValueLengthFormatter;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
 use FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher;
-use JeanBeru\HttpCacheCloudFront\Proxy\CloudFront;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
@@ -92,7 +91,7 @@ class FOSHttpCacheExtension extends Extension
                     if ('noop' !== $defaultClient
                         && array_key_exists('base_url', $config['proxy_client'][$defaultClient])) {
                         $generateUrlType = UrlGeneratorInterface::ABSOLUTE_PATH;
-                    } elseif('cloudfront' === $defaultClient) {
+                    } elseif ('cloudfront' === $defaultClient) {
                         $generateUrlType = UrlGeneratorInterface::ABSOLUTE_PATH;
                     } else {
                         $generateUrlType = UrlGeneratorInterface::ABSOLUTE_URL;
