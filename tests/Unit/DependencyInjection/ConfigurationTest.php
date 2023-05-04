@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection;
 
 use FOS\HttpCacheBundle\DependencyInjection\Configuration;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
+use JeanBeru\HttpCacheCloudFront\Proxy\CloudFront;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionConfigurationTestCase;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -329,6 +330,10 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
 
     public function testSupportsCloudfront()
     {
+        if (!class_exists(CloudFront::class)) {
+            $this->markTestSkipped('jean-beru/fos-http-cache-cloudfront not available');
+        }
+
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['proxy_client'] = [
             'cloudfront' => [
@@ -357,6 +362,10 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
 
     public function testCloudfrontConfigurationWithClientIsNotAllowed()
     {
+        if (!class_exists(CloudFront::class)) {
+            $this->markTestSkipped('jean-beru/fos-http-cache-cloudfront not available');
+        }
+
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('You can not set both cloudfront.client and cloudfront.configuration');
 

@@ -50,8 +50,7 @@
         "symfony/monolog-bundle": "^3.0",
         "symfony/routing": "^4.4 || ^5.0 || ^6.0",
         "matthiasnoback/symfony-dependency-injection-test": "^4.0",
-        "sebastian/exporter": "^2.0",
-        "jean-beru/fos-http-cache-cloudfront": "^1.0"
+        "sebastian/exporter": "^2.0"
     },
     "suggest": {
         "jean-beru/fos-http-cache-cloudfront": "To use CloudFront proxy",

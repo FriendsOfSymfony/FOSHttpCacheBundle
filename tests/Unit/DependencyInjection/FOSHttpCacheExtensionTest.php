@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Unit\DependencyInjection;
 
 use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
+use JeanBeru\HttpCacheCloudFront\Proxy\CloudFront;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -168,6 +169,10 @@ class FOSHttpCacheExtensionTest extends TestCase
 
     public function testConfigLoadCloudfront()
     {
+        if (!class_exists(CloudFront::class)) {
+            $this->markTestSkipped('jean-beru/fos-http-cache-cloudfront not available');
+        }
+
         $container = $this->createContainer();
         $this->extension->load([
             [
@@ -190,6 +195,10 @@ class FOSHttpCacheExtensionTest extends TestCase
 
     public function testConfigLoadCloudfrontWithClient()
     {
+        if (!class_exists(CloudFront::class)) {
+            $this->markTestSkipped('jean-beru/fos-http-cache-cloudfront not available');
+        }
+
         $container = $this->createContainer();
         $this->extension->load([
             [
