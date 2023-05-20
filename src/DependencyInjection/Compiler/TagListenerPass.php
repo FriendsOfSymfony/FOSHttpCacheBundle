@@ -23,7 +23,7 @@ class TagListenerPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (true === $container->getParameter('fos_http_cache.compiler_pass.tag_annotations')
             && !$this->hasControllerListener($container)
@@ -37,7 +37,7 @@ class TagListenerPass implements CompilerPassInterface
         }
     }
 
-    private function hasControllerListener(ContainerBuilder $container)
+    private function hasControllerListener(ContainerBuilder $container): bool
     {
         return $container->has('sensio_framework_extra.controller.listener') ||
             $container->has(ControllerListener::class);
