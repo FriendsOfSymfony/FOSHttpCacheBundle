@@ -24,7 +24,7 @@ class FOSHttpCacheBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new LoggerPass());
         $container->addCompilerPass(new TagListenerPass());

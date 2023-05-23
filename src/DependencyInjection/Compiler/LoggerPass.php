@@ -22,7 +22,7 @@ class LoggerPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->has('logger') || !$container->has('fos_http_cache.event_listener.log')) {
             return;

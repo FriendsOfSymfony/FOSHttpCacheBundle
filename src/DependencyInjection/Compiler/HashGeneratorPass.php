@@ -26,7 +26,7 @@ class HashGeneratorPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->has('fos_http_cache.user_context.hash_generator')) {
             return;
