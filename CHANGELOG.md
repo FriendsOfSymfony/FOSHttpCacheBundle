@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.16.1
+------
+
+* Add `: void` return to compiler passes to avoid warning from Symfony 6.3, and prepare for Symfony 7 support.
+
 2.16.0
 ------
 
