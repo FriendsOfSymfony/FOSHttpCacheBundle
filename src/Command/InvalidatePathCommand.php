@@ -46,7 +46,7 @@ class InvalidatePathCommand extends BaseInvalidateCommand
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fos:httpcache:invalidate:path')
