@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -82,7 +83,12 @@ final class FlashMessageListener implements EventSubscriberInterface
             return;
         }
 
-        $session = $this->session ?: $event->getRequest()->getSession();
+        try {
+            $session = $this->session ?: $event->getRequest()->getSession();
+        } catch (SessionNotFoundException $e) {
+            return;
+        }
+
         if (null === $session) {
             return;
         }
