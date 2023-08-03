@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.16.2
+------
+
+* Catch `SessionNotFoundException` in FlashMessageListener, as Symfony 6 moved from returning `null` to throwing an exception.
+* Add `: void` to commands to avoid warning from Symfony 6.3, prepare for Symfony 7 support.
+
 2.16.1
 ------
 
