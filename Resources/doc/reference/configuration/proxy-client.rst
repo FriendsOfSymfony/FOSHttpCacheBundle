@@ -13,7 +13,7 @@ can be autowired with the ``FOS\HttpCache\ProxyClient\ProxyClient`` type
 declaration or the service ``fos_http_cache.default_proxy_client``. Specific
 clients, if configured, are available as ``fos_http_cache.proxy_client.varnish``
 , ``fos_http_cache.proxy_client.nginx``, ``fos_http_cache.proxy_client.symfony``
-or ``fos_http_cache.proxy_client.cloudflare``).
+, ``fos_http_cache.proxy_client.cloudflare`` or ``fos_http_cache.proxy_client.fastly).
 
 If you need to adjust the proxy client, you can also configure the ``CacheManager``
 with a :ref:`custom proxy client <custom_proxy_client>` that you defined as a
@@ -322,6 +322,41 @@ the `AWS Async documentation_`. It can not be used with the ``client`` option.
 
 Service identifier of a `AsyncAws\CloudFront\CloudFrontClient` client. More information is available on the
 `AWS Async documentation_`. It can not be used with the ``configuration`` option.
+
+.. _configuration_fastly_proxy_client:
+
+Fastly
+----------
+.. code-block:: yaml
+
+    # config/packages/fos_http_cache.yaml
+    fos_http_cache:
+        proxy_client:
+            fastly:
+                service_identifier: '<my-service-identifier>'
+                authentication_token: '<my-authentication-token>'
+                soft_purge: true
+
+``service_identifier``
+"""""""""""""""""""
+
+**type**: ``string``
+
+Identifier for the Fastly Service you want to purge the cache for.
+
+``authentication_token``
+"""""""""""""""""
+
+**type**: ``string``
+
+Authentication token (API Token) which can be created in the profile section of your account
+
+``soft_purge``
+"""""""""""""""""
+
+**type**: ``boolean`` **default**: ``true``
+
+Boolean for doing soft purges or not on tag & URL purging. Soft purges expires the cache unlike hard purge (removal), and allow grace/stale handling within Fastly VCL.
 
 .. _configuration_noop_proxy_client:
 

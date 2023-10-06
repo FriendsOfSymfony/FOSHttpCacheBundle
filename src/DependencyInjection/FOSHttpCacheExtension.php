@@ -346,6 +346,9 @@ class FOSHttpCacheExtension extends Extension
         if (isset($config['cloudfront'])) {
             $this->loadCloudfront($container, $loader, $config['cloudfront']);
         }
+        if (isset($config['fastly'])) {
+            $this->loadFastly($container, $loader, $config['fastly']);
+        }
         if (isset($config['noop'])) {
             $loader->load('noop.xml');
         }
@@ -498,6 +501,21 @@ class FOSHttpCacheExtension extends Extension
         $loader->load('cloudfront.xml');
     }
 
+    private function loadFastly(ContainerBuilder $container, XmlFileLoader $loader, array $config)
+    {
+        $this->createHttpDispatcherDefinition($container, $config['http'], 'fos_http_cache.proxy_client.fastly.http_dispatcher');
+
+        $options = [
+            'service_identifier' => $config['service_identifier'],
+            'authentication_token' => $config['authentication_token'],
+            'soft_purge' => $config['soft_purge'],
+        ];
+
+        $container->setParameter('fos_http_cache.proxy_client.fastly.options', $options);
+
+        $loader->load('fastly.xml');
+    }
+
     /**
      * @param array  $config Configuration section for the tags node
      * @param string $client Name of the client used with the cache manager,
@@ -505,12 +523,12 @@ class FOSHttpCacheExtension extends Extension
      */
     private function loadCacheTagging(ContainerBuilder $container, XmlFileLoader $loader, array $config, $client)
     {
-        if ('auto' === $config['enabled'] && !in_array($client, ['varnish', 'symfony', 'cloudflare'])) {
+        if ('auto' === $config['enabled'] && !in_array($client, ['varnish', 'symfony', 'cloudflare', 'fastly'])) {
             $container->setParameter('fos_http_cache.compiler_pass.tag_annotations', false);
 
             return;
         }
-        if (!in_array($client, ['varnish', 'symfony', 'cloudflare', 'custom', 'noop'])) {
+        if (!in_array($client, ['varnish', 'symfony', 'cloudflare', 'custom', 'fastly', 'noop'])) {
             throw new InvalidConfigurationException(sprintf('You can not enable cache tagging with the %s client', $client));
         }
 
@@ -658,6 +676,10 @@ class FOSHttpCacheExtension extends Extension
 
         if (isset($config['cloudfront'])) {
             return 'cloudfront';
+        }
+
+        if (isset($config['fastly'])) {
+            return 'fastly';
         }
 
         if (isset($config['noop'])) {

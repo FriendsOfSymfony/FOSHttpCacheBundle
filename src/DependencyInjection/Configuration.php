@@ -413,7 +413,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('proxy_client')
                     ->children()
                         ->enumNode('default')
-                            ->values(['varnish', 'nginx', 'symfony', 'cloudflare', 'cloudfront', 'noop'])
+                            ->values(['varnish', 'nginx', 'symfony', 'cloudflare', 'cloudfront', 'fastly', 'noop'])
                             ->info('If you configure more than one proxy client, you need to specify which client is the default.')
                         ->end()
                         ->arrayNode('varnish')
@@ -518,6 +518,23 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
 
+                        ->arrayNode('fastly')
+                            ->info('Configure a client to interact with Fastly.')
+                            ->children()
+                                ->scalarNode('service_identifier')
+                                    ->info('Identifier for your Fastly service account.')
+                                ->end()
+                                ->scalarNode('authentication_token')
+                                    ->info('User token for authentication against Fastly APIs.')
+                                ->end()
+                                ->scalarNode('soft_purge')
+                                    ->info('Boolean for doing soft purges or not on tag & URL purging. Soft purges expires the cache unlike hard purge (removal), and allow grace/stale handling within Fastly VCL.')
+                                    ->defaultValue(true)
+                                ->end()
+                                ->append($this->getFastlyHttpDispatcherNode())
+                            ->end()
+                        ->end()
+
                         ->booleanNode('noop')->end()
                     ->end()
                     ->validate()
@@ -536,7 +553,7 @@ class Configuration implements ConfigurationInterface
                                     throw new InvalidConfigurationException(sprintf('You can only set one of "http.servers" or "http.servers_from_jsonenv" but not both to avoid ambiguity for the proxy "%s"', $proxyName));
                                 }
 
-                                if (!\in_array($proxyName, ['noop', 'default', 'symfony', 'cloudflare', 'cloudfront'])) {
+                                if (!\in_array($proxyName, ['noop', 'default', 'symfony', 'cloudflare', 'cloudfront', 'fastly'])) {
                                     if (!$arrayServersConfigured && !$jsonServersConfigured) {
                                         throw new InvalidConfigurationException(sprintf('The "http.servers" or "http.servers_from_jsonenv" section must be defined for the proxy "%s"', $proxyName));
                                     }
@@ -626,6 +643,40 @@ class Configuration implements ConfigurationInterface
                     ->requiresAtLeastOneElement()
                     ->defaultValue(['https://api.cloudflare.com'])
                     ->prototype('scalar')->end()
+                ->end()
+                ->scalarNode('http_client')
+                    ->defaultNull()
+                    ->info('Httplug async client service name to use for sending the requests.')
+                ->end()
+            ->end();
+
+        return $node;
+    }
+
+    private function getFastlyHttpDispatcherNode()
+    {
+        $treeBuilder = new TreeBuilder('http');
+
+        // Keep compatibility with symfony/config < 4.2
+        if (!method_exists($treeBuilder, 'getRootNode')) {
+            $node = $treeBuilder->root('http');
+        } else {
+            $node = $treeBuilder->getRootNode();
+        }
+
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('servers')
+                    ->info('Addresses of the hosts the caching proxy is running on. The values may be hostnames or ips, and with :port if not the default port 80.')
+                    ->useAttributeAsKey('name')
+                    ->requiresAtLeastOneElement()
+                    ->defaultValue(['https://api.fastly.com'])
+                    ->prototype('scalar')->end()
+                ->end()
+                ->scalarNode('base_url')
+                    ->defaultValue('service')
+                    ->info('Default host name and optional path for path based invalidation.')
                 ->end()
                 ->scalarNode('http_client')
                     ->defaultNull()
