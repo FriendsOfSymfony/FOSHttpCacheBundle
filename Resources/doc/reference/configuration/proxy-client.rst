@@ -13,7 +13,7 @@ can be autowired with the ``FOS\HttpCache\ProxyClient\ProxyClient`` type
 declaration or the service ``fos_http_cache.default_proxy_client``. Specific
 clients, if configured, are available as ``fos_http_cache.proxy_client.varnish``
 , ``fos_http_cache.proxy_client.nginx``, ``fos_http_cache.proxy_client.symfony``
-, ``fos_http_cache.proxy_client.cloudflare`` or ``fos_http_cache.proxy_client.fastly).
+, ``fos_http_cache.proxy_client.cloudflare`` or ``fos_http_cache.proxy_client.fastly``).
 
 If you need to adjust the proxy client, you can also configure the ``CacheManager``
 with a :ref:`custom proxy client <custom_proxy_client>` that you defined as a
