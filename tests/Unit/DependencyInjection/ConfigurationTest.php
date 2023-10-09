@@ -396,6 +396,8 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['cache_manager']['enabled'] = 'auto';
         $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
         $expectedConfiguration['tags']['enabled'] = 'auto';
+        $expectedConfiguration['tags']['response_header'] = 'Surrogate-Key';
+        $expectedConfiguration['tags']['separator'] = ' ';
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
 
         $formats = array_map(function ($path) {

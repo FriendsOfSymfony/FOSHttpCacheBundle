@@ -175,7 +175,17 @@ class Configuration implements ConfigurationInterface
                     }
                 )
                 ->then(function ($v) {
-                    $v['tags']['response_header'] = $this->isVarnishXkey($v) ? 'xkey' : TagHeaderFormatter::DEFAULT_HEADER_NAME;
+                    switch (true) {
+                        case $this->isVarnishXkey($v):
+                            $v['tags']['response_header'] = 'xkey';
+                            break;
+                        case $this->isFastly($v):
+                            $v['tags']['response_header'] = 'Surrogate-Key';
+                            break;
+                        default:
+                            $v['tags']['response_header'] = TagHeaderFormatter::DEFAULT_HEADER_NAME;
+                            break;
+                    }
 
                     return $v;
                 })
@@ -188,7 +198,17 @@ class Configuration implements ConfigurationInterface
                     }
                 )
                 ->then(function ($v) {
-                    $v['tags']['separator'] = $this->isVarnishXkey($v) ? ' ' : ',';
+                    switch (true) {
+                        case $this->isVarnishXkey($v):
+                            $v['tags']['separator'] = ' ';
+                            break;
+                        case $this->isFastly($v):
+                            $v['tags']['separator'] = ' ';
+                            break;
+                        default:
+                            $v['tags']['separator'] = ',';
+                            break;
+                    }
 
                     return $v;
                 })
@@ -214,6 +234,12 @@ class Configuration implements ConfigurationInterface
             && array_key_exists('varnish', $v['proxy_client'])
             && Varnish::TAG_XKEY === $v['proxy_client']['varnish']['tag_mode']
         ;
+    }
+
+    private function isFastly(array $v): bool
+    {
+        return array_key_exists('proxy_client', $v)
+            && array_key_exists('fastly', $v['proxy_client']);
     }
 
     private function addCacheableResponseSection(ArrayNodeDefinition $rootNode)
