@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.17.0
+------
+
+* Support to configure the fastly CDN client.
+
 2.16.2
 ------
 
