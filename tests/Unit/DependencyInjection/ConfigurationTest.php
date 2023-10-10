@@ -382,6 +382,37 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         (new Processor())->processConfiguration($configuration, ['fos_http_cache' => $params]);
     }
 
+    public function testSupportsFastly()
+    {
+        $expectedConfiguration = $this->getEmptyConfig();
+        $expectedConfiguration['proxy_client'] = [
+            'fastly' => [
+                'service_identifier' => 'myServiceIdentifier',
+                'authentication_token' => 'mytoken',
+                'soft_purge' => true,
+                'http' => ['servers' => ['https://api.fastly.com'], 'http_client' => null, 'base_url' => 'service'],
+            ],
+        ];
+        $expectedConfiguration['cache_manager']['enabled'] = 'auto';
+        $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
+        $expectedConfiguration['tags']['enabled'] = 'auto';
+        $expectedConfiguration['tags']['response_header'] = 'Surrogate-Key';
+        $expectedConfiguration['tags']['separator'] = ' ';
+        $expectedConfiguration['invalidation']['enabled'] = 'auto';
+
+        $formats = array_map(function ($path) {
+            return __DIR__.'/../../Resources/Fixtures/'.$path;
+        }, [
+               'config/fastly.yml',
+               'config/fastly.xml',
+               'config/fastly.php',
+           ]);
+
+        foreach ($formats as $format) {
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
+        }
+    }
+
     public function testEmptyServerConfigurationIsNotAllowed()
     {
         $this->expectException(InvalidConfigurationException::class);

@@ -1,0 +1,6 @@
+fos_http_cache:
+
+  proxy_client:
+    fastly:
+      service_identifier: myServiceIdentifier
+      authentication_token: mytoken

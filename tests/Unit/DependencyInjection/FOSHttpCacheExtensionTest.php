@@ -220,6 +220,26 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
     }
 
+    public function testConfigLoadFastly()
+    {
+        $container = $this->createContainer();
+        $this->extension->load([
+                                   [
+                                       'proxy_client' => [
+                                           'fastly' => [
+                                               'service_identifier' => 'test',
+                                               'authentication_token' => 'test',
+                                           ],
+                                       ],
+                                   ],
+                               ], $container);
+
+        $this->assertFalse($container->hasDefinition('fos_http_cache.proxy_client.varnish'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.proxy_client.fastly'));
+        $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
+        $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
+    }
+
     public function testConfigLoadNoop()
     {
         $container = $this->createContainer();
