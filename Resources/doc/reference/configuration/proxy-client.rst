@@ -338,21 +338,21 @@ Fastly
                 soft_purge: true
 
 ``service_identifier``
-"""""""""""""""""""
+"""""""""""""""""""""
 
 **type**: ``string``
 
-Identifier for the Fastly Service you want to purge the cache for.
+Identifier for the Fastly service you want to purge the cache for.
 
 ``authentication_token``
-"""""""""""""""""
+"""""""""""""""""""""
 
 **type**: ``string``
 
 Authentication token (API Token) which can be created in the profile section of your account
 
 ``soft_purge``
-"""""""""""""""""
+"""""""""""""""""""""
 
 **type**: ``boolean`` **default**: ``true``
 

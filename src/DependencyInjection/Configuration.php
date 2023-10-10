@@ -200,8 +200,6 @@ class Configuration implements ConfigurationInterface
                 ->then(function ($v) {
                     switch (true) {
                         case $this->isVarnishXkey($v):
-                            $v['tags']['separator'] = ' ';
-                            break;
                         case $this->isFastly($v):
                             $v['tags']['separator'] = ' ';
                             break;
@@ -683,18 +681,13 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('http');
 
-        // Keep compatibility with symfony/config < 4.2
-        if (!method_exists($treeBuilder, 'getRootNode')) {
-            $node = $treeBuilder->root('http');
-        } else {
-            $node = $treeBuilder->getRootNode();
-        }
+        $node = $treeBuilder->getRootNode();
 
         $node
             ->addDefaultsIfNotSet()
             ->children()
                 ->arrayNode('servers')
-                    ->info('Addresses of the hosts the caching proxy is running on. The values may be hostnames or ips, and with :port if not the default port 80.')
+                    ->info('Addresses of the hosts the caching proxy is running on. The values may be hostnames or ips, and with :port if not the default port. For fastly, you normally do not need to change the default value.')
                     ->useAttributeAsKey('name')
                     ->requiresAtLeastOneElement()
                     ->defaultValue(['https://api.fastly.com'])
