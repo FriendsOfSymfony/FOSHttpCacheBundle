@@ -88,6 +88,7 @@ Use this option only when using a variable amount of proxy servers that shall be
 environment variable. Otherwise use the regular ``http.servers`` option.
 
 Usage:
+
 * ``fos_http_cache.yaml``: ``servers_from_jsonenv: '%env(json:VARNISH_SERVERS)%'``
 * environment definition: ``VARNISH_SERVERS='["123.123.123.1:6060","123.123.123.2"]'``
 
@@ -151,8 +152,9 @@ default ``xkey-softpurge``.
 Header for sending tag invalidation requests to Varnish.
 
 For use with ``tag_mode: purgekeys``, default VCL supports two options:
-- ``xkey-softpurge``: "Soft purge" by tags, expires relevant cache and allows for grace handling.
-- ``xkey-purge``: Purge by tags, removes relevant cache immediately.
+
+* ``xkey-softpurge``: "Soft purge" by tags, expires relevant cache and allows for grace handling.
+* ``xkey-purge``: Purge by tags, removes relevant cache immediately.
 
 See the :ref:`FOSHttpCache library docs <foshttpcache:varnish configuration>`
 on how to configure Varnish to handle tag invalidation requests.
