@@ -5,6 +5,7 @@ Tagging
 
 * :ref:`Varnish <foshttpcache:varnish_tagging>`
 * :ref:`Symfony <foshttpcache:symfony_httpcache_tagging>`
+* Fastly
 
 If your application has many intricate relationships between cached items,
 which makes it complex to invalidate them by route, cache tagging will be
