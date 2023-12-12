@@ -210,7 +210,7 @@ class TagListenerTest extends TestCase
         return new TagResponseEvent(
             \Mockery::mock(HttpKernelInterface::class),
             $request,
-            HttpKernelInterface::MASTER_REQUEST,
+            HttpKernelInterface::MAIN_REQUEST,
             $response ?: new Response()
         );
     }

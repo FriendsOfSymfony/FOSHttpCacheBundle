@@ -5,8 +5,8 @@ env:
 
 on:
   push:
-      branches:
-          - "*.x"
+    branches:
+      - "*.x"
   pull_request:
 
 jobs:
@@ -17,25 +17,18 @@ jobs:
       matrix:
         include:
           # Test the latest stable release
-          - php-version: '7.3'
-          - php-version: '7.4'
-          - php-version: '8.0'
           - php-version: '8.1'
             dependencies: 'jean-beru/fos-http-cache-cloudfront'
-          - php-version: '7.4'
-            symfony-version: '4.*'
-          - php-version: '7.4'
-            symfony-version: '5.*'
-          - php-version: '8.0'
-            symfony-version: '6.*'
+          - php-version: '8.1'
+            symfony-version: '6.4'
+          - php-version: '8.2'
+            symfony-version: '7.*'
+          - php-version: '8.2'
+            symfony-version: '6.4'
           # Minimum supported dependencies with the oldest PHP version
-          - php-version: '7.3'
+          - php-version: '8.1'
             composer-flag: '--prefer-stable --prefer-lowest'
-            symfony-version: '4.4'
-          # Test latest unreleased versions
-          - php-version: '8.0'
-            symfony-version: '6.*'
-            stability: 'dev'
+            symfony-version: '6.4'
     name: PHP ${{ matrix.php-version }} Test on Symfony ${{ matrix.symfony-version }} ${{ matrix.dependencies}} ${{ matrix.stability }} ${{ matrix.composer-flag }}
     steps:
 

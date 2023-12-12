@@ -195,7 +195,7 @@ class UserContextListener implements EventSubscriberInterface
      */
     public function onKernelResponse(UserContextResponseEvent $event)
     {
-        if (HttpKernelInterface::MASTER_REQUEST != $event->getRequestType()) {
+        if (HttpKernelInterface::MAIN_REQUEST != $event->getRequestType()) {
             return;
         }
 

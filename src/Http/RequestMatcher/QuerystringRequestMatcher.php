@@ -12,22 +12,19 @@
 namespace FOS\HttpCacheBundle\Http\RequestMatcher;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher as SymfonyRequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
 /**
  * Extend the Symfony RequestMatcher class to support query string matching.
  */
-class QuerystringRequestMatcher extends SymfonyRequestMatcher
+class QuerystringRequestMatcher extends CacheableRequestMatcher
 {
     /**
      * @var string Regular expression to match the query string part of the request url
      */
-    private $queryString;
+    private ?string $queryString;
 
-    /**
-     * @param string $queryString
-     */
-    public function setQueryString($queryString)
+    public function __construct(?string $queryString = null)
     {
         $this->queryString = $queryString;
     }
@@ -45,6 +42,14 @@ class QuerystringRequestMatcher extends SymfonyRequestMatcher
             return true;
         }
 
-        return (bool) preg_match('{'.$this->queryString.'}', rawurldecode($request->getQueryString() ?: ''));
+        if ($request->getQueryString()) {
+            return (bool) preg_match('{'.$this->queryString.'}', rawurldecode($request->getQueryString() ?: ''));
+        }
+
+        if ($request->getRequestUri()) {
+            return (bool) preg_match('#'.$this->queryString.'#', $request->getRequestUri());
+        }
+
+        return false;
     }
 }

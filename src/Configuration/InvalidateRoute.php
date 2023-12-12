@@ -11,7 +11,6 @@
 
 namespace FOS\HttpCacheBundle\Configuration;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
@@ -19,7 +18,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  * @Annotation
  */
 #[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
-class InvalidateRoute extends ConfigurationAnnotation
+class InvalidateRoute
 {
     /**
      * @var string
@@ -44,7 +43,13 @@ class InvalidateRoute extends ConfigurationAnnotation
 
         $values['params'] = $values['params'] ?? $params;
 
-        parent::__construct($values);
+        foreach ($values as $k => $v) {
+            if (!method_exists($this, $name = 'set'.$k)) {
+                throw new \RuntimeException(sprintf('Unknown key "%s" for annotation "@%s".', $k, static::class));
+            }
+
+            $this->$name($v);
+        }
     }
 
     /**
@@ -110,21 +115,5 @@ class InvalidateRoute extends ConfigurationAnnotation
     public function getParams()
     {
         return $this->params;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAliasName(): string
-    {
-        return 'invalidate_route';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function allowArray(): bool
-    {
-        return true;
     }
 }

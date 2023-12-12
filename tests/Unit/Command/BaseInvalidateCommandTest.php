@@ -17,7 +17,6 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class BaseInvalidateCommandTest extends TestCase
 {
@@ -34,14 +33,9 @@ class BaseInvalidateCommandTest extends TestCase
             ->shouldReceive('invalidatePath')->once()->with('/another')
             ->getMock()
         ;
-        $container = \Mockery::mock(ContainerInterface::class)
-            ->shouldReceive('get')->once()->with('fos_http_cache.cache_manager')->andReturn($invalidator)
-            ->getMock()
-        ;
 
         $application = new Application();
-        $command = new InvalidatePathCommand();
-        $command->setContainer($container);
+        $command = new InvalidatePathCommand($invalidator);
         $application->add($command);
 
         $command = $application->find('fos:httpcache:invalidate:path');

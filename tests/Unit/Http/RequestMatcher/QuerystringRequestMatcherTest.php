@@ -35,8 +35,7 @@ class QuerystringRequestMatcherTest extends TestCase
 
     public function testMatchesReturnsTrueIfQueryStringMatches()
     {
-        $requestMatcher = new QuerystringRequestMatcher();
-        $requestMatcher->setQueryString('(^|&)token=hello!(&|$)');
+        $requestMatcher = new QuerystringRequestMatcher('(^|&)token=hello!(&|$)');
         $request = Request::create('http://localhost/bar?token=hello%21');
 
         $this->assertTrue($requestMatcher->matches($request));
@@ -44,8 +43,7 @@ class QuerystringRequestMatcherTest extends TestCase
 
     public function testMatchesReturnsFalseIfQueryStringDoesntMatch()
     {
-        $requestMatcher = new QuerystringRequestMatcher();
-        $requestMatcher->setQueryString('(^|&)mytoken=');
+        $requestMatcher = new QuerystringRequestMatcher('(^|&)mytoken=');
         $request = Request::create('http://localhost/bar?token=myvalue');
 
         $this->assertFalse($requestMatcher->matches($request));
@@ -53,8 +51,7 @@ class QuerystringRequestMatcherTest extends TestCase
 
     public function testMatchesReturnsFalseIfQueryStringIsEmpty()
     {
-        $requestMatcher = new QuerystringRequestMatcher();
-        $requestMatcher->setQueryString('(^|&)mytoken=');
+        $requestMatcher = new QuerystringRequestMatcher('(^|&)mytoken=');
         $request = Request::create('http://localhost/bar');
 
         $this->assertFalse($requestMatcher->matches($request));
