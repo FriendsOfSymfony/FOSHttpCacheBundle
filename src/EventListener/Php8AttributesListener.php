@@ -2,7 +2,7 @@
 
 namespace FOS\HttpCacheBundle\EventListener;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
+use FOS\HttpCacheBundle\Configuration\ConfigurationInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;

@@ -12,17 +12,22 @@
 namespace FOS\HttpCacheBundle\Http\RequestMatcher;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher as SymfonyRequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
 /**
  * Extend the Symfony RequestMatcher class to support query string matching.
  */
-class QuerystringRequestMatcher extends SymfonyRequestMatcher
+class QuerystringRequestMatcher implements RequestMatcherInterface
 {
     /**
      * @var string Regular expression to match the query string part of the request url
      */
     private $queryString;
+
+    public function __construct($queryString = null)
+    {
+        $this->queryString = $queryString;
+    }
 
     /**
      * @param string $queryString
@@ -37,10 +42,6 @@ class QuerystringRequestMatcher extends SymfonyRequestMatcher
      */
     public function matches(Request $request): bool
     {
-        if (!parent::matches($request)) {
-            return false;
-        }
-
         if (null === $this->queryString) {
             return true;
         }

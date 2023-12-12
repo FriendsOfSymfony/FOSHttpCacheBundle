@@ -54,6 +54,7 @@ class FOSHttpCacheExtension extends Extension
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('matcher.xml');
+        $loader->load('annotation_listener.xml');
 
         if ($config['debug']['enabled'] || (!empty($config['cache_control']))) {
             $debugHeader = $config['debug']['enabled'] ? $config['debug']['header'] : false;

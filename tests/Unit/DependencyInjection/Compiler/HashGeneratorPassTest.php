@@ -50,9 +50,9 @@ class HashGeneratorPassTest extends TestCase
         $this->extension->load([$config], $container);
         $this->userContextListenerPass->process($container);
         if (\PHP_VERSION_ID >= 80000) {
-            $this->assertCount(24, $container->getDefinitions());
+            $this->assertCount(25, $container->getDefinitions());
         } else {
-            $this->assertCount(23, $container->getDefinitions());
+            $this->assertCount(24, $container->getDefinitions());
         }
     }
 
