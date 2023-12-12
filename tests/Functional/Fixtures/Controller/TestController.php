@@ -12,15 +12,10 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\User\UserInterface;
-
-if (!\class_exists(AbstractController::class)) {
-    \class_alias(Controller::class, AbstractController::class);
-}
 
 class TestController extends AbstractController
 {

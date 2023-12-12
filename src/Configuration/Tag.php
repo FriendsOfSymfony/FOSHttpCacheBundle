@@ -12,7 +12,6 @@
 namespace FOS\HttpCacheBundle\Configuration;
 
 use FOS\HttpCacheBundle\Exception\InvalidTagException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
@@ -20,7 +19,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  * @Annotation
  */
 #[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
-class Tag extends ConfigurationAnnotation
+class Tag
 {
     private $tags;
 
@@ -39,7 +38,13 @@ class Tag extends ConfigurationAnnotation
 
         $values['expression'] = $values['expression'] ?? $expression;
 
-        parent::__construct($values);
+        foreach ($values as $k => $v) {
+            if (!method_exists($this, $name = 'set'.$k)) {
+                throw new \RuntimeException(sprintf('Unknown key "%s" for annotation "@%s".', $k, static::class));
+            }
+
+            $this->$name($v);
+        }
     }
 
     /**
@@ -87,21 +92,5 @@ class Tag extends ConfigurationAnnotation
     public function getTags()
     {
         return $this->tags;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAliasName(): string
-    {
-        return 'tag';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function allowArray(): bool
-    {
-        return true;
     }
 }

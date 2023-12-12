@@ -15,16 +15,10 @@ use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-if (Kernel::MAJOR_VERSION >= 5) {
-    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\CacheControlResponseEvent');
-} else {
-    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\CacheControlResponseEvent');
-}
+class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\CacheControlResponseEvent');
 
 /**
  * Set caching settings on matching response according to the configurations.
@@ -38,17 +32,13 @@ class CacheControlListener implements EventSubscriberInterface
 {
     /**
      * Whether to skip this response and not set any cache headers.
-     *
-     * @var bool
      */
-    private $skip = false;
+    private bool $skip = false;
 
     /**
      * Cache control directives directly supported by Response.
-     *
-     * @var array
      */
-    private $supportedDirectives = [
+    private array $supportedDirectives = [
         'max_age' => true,
         's_maxage' => true,
         'private' => true,
@@ -58,7 +48,7 @@ class CacheControlListener implements EventSubscriberInterface
     /**
      * @var array List of arrays with RuleMatcherInterface, settings array
      */
-    private $rulesMap = [];
+    private array $rulesMap = [];
 
     /**
      * If not empty, add a debug header with that name to all responses,

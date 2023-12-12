@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCacheBundle\Http\ResponseMatcher;
 
-use Sensio\Bundle\FrameworkExtraBundle\Security\ExpressionLanguage as SecurityExpressionLanguage;
+use FOS\HttpCacheBundle\Security\ExpressionLanguage as SecurityExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Response;
 

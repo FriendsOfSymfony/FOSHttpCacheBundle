@@ -2,19 +2,15 @@
 
 namespace FOS\HttpCacheBundle\EventListener;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
+use FOS\HttpCacheBundle\Configuration\InvalidatePath;
+use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
+use FOS\HttpCacheBundle\Configuration\Tag;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-if (Kernel::MAJOR_VERSION >= 5) {
-    class_alias(RequestEvent::class, 'FOS\HttpCacheBundle\EventListener\AttributeRequestEvent');
-} else {
-    class_alias(GetResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\AttributeRequestEvent');
-}
+class_alias(RequestEvent::class, 'FOS\HttpCacheBundle\EventListener\AttributeRequestEvent');
 
 /**
  * On kernel.request event, this event handler fetch PHP8 attributes.
@@ -50,14 +46,12 @@ class Php8AttributesListener implements EventSubscriberInterface
         $method = $class->getMethod($controller[1]);
         $attributes = [];
         $addAttributes = function ($instance) use (&$attributes) {
-            if (
-                $instance instanceof ConfigurationInterface &&
-                in_array(
-                    $instance->getAliasName(), [
-                    'tag', 'invalidate_path', 'invalidate_route',
-                ])
-            ) {
-                $attributes['_'.$instance->getAliasName()][] = $instance;
+            if ($key = match (get_class($instance)) {
+                InvalidatePath::class => '_invalidate_path',
+                InvalidateRoute::class => '_invalidate_route',
+                Tag::class => '_tag'
+            }) {
+                $attributes[$key][] = $instance;
             }
         };
 

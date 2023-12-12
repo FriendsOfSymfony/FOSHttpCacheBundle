@@ -1,34 +1,24 @@
-tag_list:
-  path:  /tag/list
-  methods:  [GET]
-  controller: tag_controller::listAction
-
 php8_tag_list:
   path: /php8/tag/list
   defaults: { _controller: tag_attribute_controller::listAction }
   methods: [ GET ]
-
-tag_error:
-  path:  /tag/error
-  controller: tag_controller::errorAction
-
-tag_one:
-  path:  /tag/{id}
-  methods:  [GET,POST]
-  controller: tag_controller::itemAction
 
 php8_tag_one:
   path:  /php8/tag/{id}
   defaults: { _controller: tag_attribute_controller::itemAction }
   methods:  [GET,POST]
 
-tag_manual:
-  path: /tag_manual
-  controller: tag_controller::manualAction
+php8_tag_manual:
+  path: /php8/tag_manual
+  defaults: { _controller: tag_attribute_controller::manualAction }
 
 tag_twig:
+  path: /php8/tag_twig
+  controller: tag_attribute_controller::twigAction
+
+php8_tag_twig:
   path: /tag_twig
-  controller: tag_controller::twigAction
+  defaults: { _controller: tag_attribute_controller::twigAction }
 
 invalidation_route:
   path: /invalidate/route/{id}

@@ -565,7 +565,7 @@ class UserContextListenerTest extends TestCase
         $this->assertEquals('max-age=0, no-cache, no-store, private, s-maxage=0', $event->getResponse()->headers->get('Cache-Control'));
     }
 
-    protected function getKernelRequestEvent(Request $request, $type = HttpKernelInterface::MASTER_REQUEST): UserContextRequestEvent
+    protected function getKernelRequestEvent(Request $request, $type = HttpKernelInterface::MAIN_REQUEST): UserContextRequestEvent
     {
         return new UserContextRequestEvent(
             \Mockery::mock(HttpKernelInterface::class),
@@ -574,7 +574,7 @@ class UserContextListenerTest extends TestCase
         );
     }
 
-    protected function getKernelResponseEvent(Request $request, Response $response = null, $type = HttpKernelInterface::MASTER_REQUEST): UserContextResponseEvent
+    protected function getKernelResponseEvent(Request $request, Response $response = null, $type = HttpKernelInterface::MAIN_REQUEST): UserContextResponseEvent
     {
         return new UserContextResponseEvent(
             \Mockery::mock(HttpKernelInterface::class),

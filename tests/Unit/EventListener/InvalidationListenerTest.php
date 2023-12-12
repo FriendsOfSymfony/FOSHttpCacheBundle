@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Event\ConsoleEvent;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcher\AttributesRequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
@@ -116,11 +116,7 @@ class InvalidationListenerTest extends TestCase
             ->andReturn('/retrieve/something/123/bla')
             ->getMock();
 
-        $requestMatcher = new RequestMatcher(
-            null,
-            null,
-            null,
-            null,
+        $requestMatcher = new AttributesRequestMatcher(
             ['_route' => 'route_invalidator']
         );
 

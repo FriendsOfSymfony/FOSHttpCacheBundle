@@ -14,7 +14,6 @@ namespace FOS\HttpCacheBundle\Command;
 use FOS\HttpCacheBundle\CacheManager;
 use LogicException;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -24,8 +23,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class BaseInvalidateCommand extends Command
 {
-    use ContainerAwareTrait;
-
     /**
      * @var CacheManager
      */

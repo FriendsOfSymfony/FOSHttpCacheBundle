@@ -11,13 +11,11 @@
 
 namespace FOS\HttpCacheBundle\Configuration;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
-
 /**
  * @Annotation
  */
 #[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
-class InvalidatePath extends ConfigurationAnnotation
+class InvalidatePath
 {
     /**
      * @var array
@@ -34,7 +32,13 @@ class InvalidatePath extends ConfigurationAnnotation
             $values = $data;
         }
 
-        parent::__construct($values);
+        foreach ($values as $k => $v) {
+            if (!method_exists($this, $name = 'set'.$k)) {
+                throw new \RuntimeException(sprintf('Unknown key "%s" for annotation "@%s".', $k, static::class));
+            }
+
+            $this->$name($v);
+        }
     }
 
     /**
@@ -61,21 +65,5 @@ class InvalidatePath extends ConfigurationAnnotation
     public function getPaths()
     {
         return $this->paths;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAliasName(): string
-    {
-        return 'invalidate_path';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function allowArray(): bool
-    {
-        return true;
     }
 }

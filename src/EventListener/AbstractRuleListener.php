@@ -19,7 +19,7 @@ abstract class AbstractRuleListener
     /**
      * @var array List of arrays with RequestMatcherInterface, settings array
      */
-    private $rulesMap = [];
+    private array $rulesMap = [];
 
     /**
      * Add a rule matcher with a list of header directives to apply if the

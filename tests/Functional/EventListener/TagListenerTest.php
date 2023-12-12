@@ -14,40 +14,18 @@ namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\EventListener\TagListener;
+use FOS\HttpCacheBundle\EventListener\TagResponseEvent;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
-
-if (Kernel::MAJOR_VERSION >= 5) {
-    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Functional\EventListener\TagResponseEvent');
-} else {
-    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Functional\EventListener\TagResponseEvent');
-}
 
 class TagListenerTest extends WebTestCase
 {
     use MockeryPHPUnitIntegration;
     private static $overrideService = false;
-
-    public function testAnnotationTagsAreSet()
-    {
-        $client = static::createClient();
-
-        $client->request('GET', '/tag/list');
-        $response = $client->getResponse();
-        $this->assertEquals('all-items,item-123', $response->headers->get('X-Cache-Tags'));
-
-        $client->request('GET', '/tag/123');
-        $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode(), $response->getContent());
-        $this->assertEquals('item-123', $response->headers->get('X-Cache-Tags'));
-    }
 
     /**
      * @requires PHP 8.0
@@ -66,35 +44,6 @@ class TagListenerTest extends WebTestCase
         $this->assertEquals('item-123', $response->headers->get('X-Cache-Tags'));
     }
 
-    public function testAnnotationTagsAreInvalidated()
-    {
-        self::$overrideService = true;
-        $client = static::createClient();
-
-        $mock = \Mockery::mock(CacheManager::class);
-        $mock->shouldReceive('supports')
-            ->zeroOrMoreTimes()
-            ->andReturnTrue()
-        ;
-        $mock->shouldReceive('invalidateTags')
-            ->once()
-            ->with(['all-items'])
-        ;
-        $mock->shouldReceive('invalidateTags')
-            ->once()
-            ->with(['item-123'])
-        ;
-        $mock->shouldReceive('flush')
-            ->once()
-            ->andReturn(2)
-        ;
-        $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
-
-        $client->request('POST', '/tag/123');
-        $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode(), $response->getContent());
-    }
-
     public function testErrorIsNotInvalidated()
     {
         self::$overrideService = true;
@@ -106,12 +55,12 @@ class TagListenerTest extends WebTestCase
             ->andReturnTrue()
         ;
         $mock->shouldReceive('flush')
-            ->once()
+            ->twice()
             ->andReturn(0)
         ;
         $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
-        $client->request('POST', '/tag/error');
+        $client->request('POST', '/php8/tag/error');
     }
 
     public function testConfigurationTagsAreSet()
@@ -124,34 +73,11 @@ class TagListenerTest extends WebTestCase
         $this->assertEquals('area,area-51', $response->headers->get('X-Cache-Tags'));
     }
 
-    public function testConfigurationTagsAreInvalidated()
-    {
-        self::$overrideService = true;
-        $client = static::createClient();
-
-        $mock = \Mockery::mock(CacheManager::class);
-        $mock->shouldReceive('supports')
-            ->zeroOrMoreTimes()
-            ->andReturnTrue()
-        ;
-        $mock->shouldReceive('invalidateTags')
-            ->once()
-            ->with(['area', 'area-51'])
-        ;
-        $mock->shouldReceive('flush')
-            ->once()
-            ->andReturn(1)
-        ;
-        $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
-
-        $client->request('PUT', '/cached/51');
-    }
-
     public function testManualTagging()
     {
         $client = static::createClient();
 
-        $client->request('GET', '/tag_manual');
+        $client->request('GET', '/php8/tag_manual');
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode(), $response->getContent());
         $this->assertEquals('manual-tag,sub-tag,sub-items,manual-items', $response->headers->get('X-Cache-Tags'));
@@ -161,7 +87,7 @@ class TagListenerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/tag_twig');
+        $client->request('GET', '/php8/tag_twig');
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode(), $response->getContent());
         $this->assertEquals('tag-from-twig', $response->headers->get('X-Cache-Tags'));
@@ -179,7 +105,7 @@ class TagListenerTest extends WebTestCase
         $event = new TagResponseEvent(
             $client->getKernel(),
             $request,
-            HttpKernelInterface::MASTER_REQUEST,
+            HttpKernelInterface::MAIN_REQUEST,
             $response
         );
 
@@ -211,7 +137,7 @@ class TagListenerTest extends WebTestCase
         $event = new TagResponseEvent(
             $client->getKernel(),
             $request,
-            HttpKernelInterface::MASTER_REQUEST,
+            HttpKernelInterface::MAIN_REQUEST,
             $response
         );
         $mock = \Mockery::mock(CacheManager::class);
@@ -247,7 +173,7 @@ class TagListenerTest extends WebTestCase
         $event = new TagResponseEvent(
             $client->getKernel(),
             $request,
-            HttpKernelInterface::MASTER_REQUEST,
+            HttpKernelInterface::MAIN_REQUEST,
             $response
         );
 

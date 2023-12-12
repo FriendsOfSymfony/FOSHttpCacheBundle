@@ -14,18 +14,12 @@ namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Kernel;
-
-if (!\class_exists(AbstractController::class)) {
-    \class_alias(Controller::class, AbstractController::class);
-}
 
 class TagAttributeController extends AbstractController
 {
-    private $responseTagger;
+    private SymfonyResponseTagger $responseTagger;
 
     public function __construct(SymfonyResponseTagger $responseTagger)
     {
@@ -61,7 +55,7 @@ class TagAttributeController extends AbstractController
         $this->responseTagger->addTags(['manual-tag']);
 
         return $this->render('container.html.twig', [
-            'action' => (Kernel::MAJOR_VERSION >= 4 && Kernel::MINOR_VERSION >= 1) ? 'tag_controller::subrequestAction' : 'tag_controller:subrequestAction',
+            'action' => 'FOS\\HttpCacheBundle\\Tests\\Functional\\Fixtures\\Controller\\TagAttributeController::subrequestAction',
         ]);
     }
 
@@ -76,5 +70,10 @@ class TagAttributeController extends AbstractController
     public function emptyAction()
     {
         return new Response('');
+    }
+
+    public function twigAction()
+    {
+        return $this->render('tag.html.twig');
     }
 }
