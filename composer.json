@@ -25,7 +25,8 @@
         "friendsofsymfony/http-cache": "^2.15",
         "symfony/framework-bundle": "^4.4.0 || ^5.0 || ^6.0",
         "symfony/http-foundation": "^4.4.0 || ^5.0 || ^6.0",
-        "symfony/http-kernel": "^4.4.0 || ^5.0 || ^6.0"
+        "symfony/http-kernel": "^4.4.0 || ^5.0 || ^6.0",
+        "symfony/var-dumper": "^4.4.0 || ^5.0 || ^6.0",
     },
     "require-dev": {
         "php-http/guzzle7-adapter": "^0.1.1",
@@ -74,5 +75,10 @@
         "classmap": [
             "tests/Functional/Fixtures/app/AppKernel.php"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": false
+        }
     }
 }
