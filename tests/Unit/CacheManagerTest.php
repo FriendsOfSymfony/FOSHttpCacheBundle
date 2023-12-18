@@ -87,7 +87,8 @@ class CacheManagerTest extends TestCase
         ;
     }
 
-    public function testSkipFlushOnEmptyInvalidationsAndLazyLoaded() {
+    public function testSkipFlushOnEmptyInvalidationsAndLazyLoaded()
+    {
         $proxyClient = \Mockery::mock(HttpProxyClient::class, LazyObjectInterface::class)
             ->shouldNotReceive('flush')
             ->shouldReceive('isLazyObjectInitialized')->andReturn(false)
@@ -99,7 +100,8 @@ class CacheManagerTest extends TestCase
         $this->assertEquals(0, $cacheInvalidator->flush());
     }
 
-    public function testFlushOnNotLazyLoaded() {
+    public function testFlushOnNotLazyLoaded()
+    {
         $proxyClient = \Mockery::mock(HttpProxyClient::class)
             ->shouldReceive('flush')->andReturn(0)
             ->shouldNotReceive('isLazyObjectInitialized')
@@ -111,7 +113,8 @@ class CacheManagerTest extends TestCase
         $this->assertEquals(0, $cacheInvalidator->flush());
     }
 
-    public function testFlushOnLazyLoaded() {
+    public function testFlushOnLazyLoaded()
+    {
         $proxyClient = \Mockery::mock(HttpProxyClient::class, LazyObjectInterface::class, PurgeCapable::class);
         $proxyClient->shouldReceive('flush')->andReturn(1);
         $proxyClient->shouldReceive('purge');
