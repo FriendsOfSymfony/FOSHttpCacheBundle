@@ -98,8 +98,7 @@ class CacheManager extends CacheInvalidator
 
     public function flush()
     {
-        if(!$this->cache instanceof LazyObjectInterface || $this->cache->isLazyObjectInitialized())
-        {
+        if (!$this->cache instanceof LazyObjectInterface || $this->cache->isLazyObjectInitialized()) {
             return parent::flush();
         }
         return 0;
