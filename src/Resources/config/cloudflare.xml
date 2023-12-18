@@ -7,7 +7,8 @@
     <services>
         <service id="fos_http_cache.proxy_client.cloudflare"
                  class="FOS\HttpCache\ProxyClient\Cloudflare"
-                 public="true">
+                 public="true"
+                 lazy="true">
             <argument type="service" id="fos_http_cache.proxy_client.cloudflare.http_dispatcher"/>
             <argument>%fos_http_cache.proxy_client.cloudflare.options%</argument>
         </service>
