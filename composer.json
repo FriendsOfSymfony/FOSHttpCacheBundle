@@ -75,10 +75,5 @@
         "classmap": [
             "tests/Functional/Fixtures/app/AppKernel.php"
         ]
-    },
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": false
-        }
     }
 }
