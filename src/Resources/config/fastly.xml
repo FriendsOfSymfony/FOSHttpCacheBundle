@@ -7,7 +7,8 @@
     <services>
         <service id="fos_http_cache.proxy_client.fastly"
                  class="FOS\HttpCache\ProxyClient\Fastly"
-                 public="false">
+                 public="false"
+                 lazy="true">
             <argument type="service" id="fos_http_cache.proxy_client.fastly.http_dispatcher"/>
             <argument>%fos_http_cache.proxy_client.fastly.options%</argument>
         </service>
