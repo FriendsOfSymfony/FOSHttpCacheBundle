@@ -93,7 +93,7 @@ class CacheManagerTest extends TestCase
             ->shouldReceive('isLazyObjectInitialized')->andReturn(false)
             ->getMock();
 
-        $router = \Mockery::mock(UrlGeneratorInterface::class)->getMock();
+        $router = \Mockery::mock(UrlGeneratorInterface::class);
 
         $cacheInvalidator = new CacheManager($proxyClient, $router);
         $this->assertEquals(0, $cacheInvalidator->flush());
@@ -105,7 +105,7 @@ class CacheManagerTest extends TestCase
             ->shouldNotReceive('isLazyObjectInitialized')
             ->getMock();
 
-        $router = \Mockery::mock(UrlGeneratorInterface::class)->getMock();
+        $router = \Mockery::mock(UrlGeneratorInterface::class);
 
         $cacheInvalidator = new CacheManager($proxyClient, $router);
         $this->assertEquals(0, $cacheInvalidator->flush());
@@ -117,7 +117,7 @@ class CacheManagerTest extends TestCase
         $proxyClient->shouldReceive('purge');
         $proxyClient->shouldReceive('isLazyObjectInitialized')->andReturn(true);
 
-        $router = \Mockery::mock(UrlGeneratorInterface::class)->getMock();
+        $router = \Mockery::mock(UrlGeneratorInterface::class);
 
         $cacheInvalidator = new CacheManager($proxyClient, $router);
         $cacheInvalidator->invalidatePath('/foo');
