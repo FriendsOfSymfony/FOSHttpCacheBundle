@@ -25,25 +25,11 @@
 
     <listeners>
         <listener class="\Mockery\Adapter\Phpunit\TestListener" />
-        <!--DebugClassLoaded is enable by default from 4.2
-            https://github.com/symfony/symfony/pull/28412
-            It has to be disabled to avoid tests failed
-        -->
-        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener">
-            <arguments>
-                <array>
-                    <element key="debug-class-loader">
-                        <integer>0</integer>
-                    </element>
-                </array>
-            </arguments>
-        </listener>
     </listeners>
 
     <php>
         <env name="KERNEL_DIR" value="./tests/Functional/Fixtures/app" />
         <env name="KERNEL_CLASS" value="AppKernel" />
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
-        <server name="SYMFONY_PHPUNIT_VERSION" value="8.5" />
     </php>
 </phpunit>
