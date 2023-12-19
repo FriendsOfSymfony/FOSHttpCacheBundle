@@ -14,6 +14,7 @@ namespace FOS\HttpCacheBundle;
 use FOS\HttpCache\CacheInvalidator;
 use FOS\HttpCache\ProxyClient\ProxyClient;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\VarExporter\LazyObjectInterface;
 
 /**
  * The CacheManager is a CacheInvalidator but adds symfony Route support and
@@ -23,6 +24,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class CacheManager extends CacheInvalidator
 {
+    /**
+     * @var ProxyClient
+     */
+    private $cache;
+
     /**
      * @var UrlGeneratorInterface
      */
@@ -44,6 +50,7 @@ class CacheManager extends CacheInvalidator
     public function __construct(ProxyClient $cache, UrlGeneratorInterface $urlGenerator)
     {
         parent::__construct($cache);
+        $this->cache = $cache;
         $this->urlGenerator = $urlGenerator;
     }
 
@@ -87,5 +94,21 @@ class CacheManager extends CacheInvalidator
         $this->refreshPath($this->urlGenerator->generate($route, $parameters, $this->generateUrlType), $headers);
 
         return $this;
+    }
+
+    /**
+     * Send all pending invalidation requests.
+     *
+     * @return int the number of cache invalidations performed per caching server
+     *
+     * @throws \FOS\HttpCache\Exception\ExceptionCollection
+     */
+    public function flush()
+    {
+        if (!$this->cache instanceof LazyObjectInterface || $this->cache->isLazyObjectInitialized()) {
+            return parent::flush();
+        }
+
+        return 0;
     }
 }

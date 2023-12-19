@@ -1,6 +1,12 @@
 Changelog
 =========
 
+3.x
+===
+
+* Make `fastly` and `cloudflare` clients lazy loaded to support Symfony secrets that are only available at runtime, but
+  not yet when the container is built.
+
 2.x
 ===
 
