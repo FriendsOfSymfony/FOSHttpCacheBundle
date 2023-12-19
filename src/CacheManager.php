@@ -96,6 +96,13 @@ class CacheManager extends CacheInvalidator
         return $this;
     }
 
+    /**
+     * Send all pending invalidation requests.
+     *
+     * @return int the number of cache invalidations performed per caching server
+     * 
+     * @throws \FOS\HttpCache\Exception\ExceptionCollection
+     */
     public function flush()
     {
         if (!$this->cache instanceof LazyObjectInterface || $this->cache->isLazyObjectInitialized()) {
