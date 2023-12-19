@@ -40,7 +40,7 @@
         "symfony/browser-kit": "^4.4 || ^5.0 || ^6.0",
         "symfony/console": "^4.4 || ^5.0 || ^6.0",
         "symfony/finder": "^4.4 || ^5.0 || ^6.0",
-        "symfony/phpunit-bridge": "v5.3.7",
+        "phpunit/phpunit": "^9.6.15",
         "symfony/security-bundle": "^4.4 || ^5.0 || ^6.0",
         "symfony/twig-bundle": "^4.4 || ^5.0 || ^6.0",
         "twig/twig": "^2.13",
@@ -49,8 +49,8 @@
         "symfony/expression-language": "^4.4 || ^5.0 || ^6.0",
         "symfony/monolog-bundle": "^3.0",
         "symfony/routing": "^4.4 || ^5.0 || ^6.0",
-        "matthiasnoback/symfony-dependency-injection-test": "^4.0",
-        "sebastian/exporter": "^2.0"
+        "matthiasnoback/symfony-config-test": "^4.3.0 || ^5.1",
+        "matthiasnoback/symfony-dependency-injection-test": "^4.3.1 || ^5.0"
     },
     "suggest": {
         "jean-beru/fos-http-cache-cloudfront": "To use CloudFront proxy",
@@ -74,5 +74,10 @@
         "classmap": [
             "tests/Functional/Fixtures/app/AppKernel.php"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }
