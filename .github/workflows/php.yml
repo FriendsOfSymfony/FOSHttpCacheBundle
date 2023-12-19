@@ -17,30 +17,25 @@ jobs:
       matrix:
         include:
           # Test the latest stable release
-          - php-version: '7.3'
-          - php-version: '7.4'
-          - php-version: '8.0'
           - php-version: '8.1'
+          - php-version: '8.2'
+          - php-version: '8.3'
             dependencies: 'jean-beru/fos-http-cache-cloudfront'
-          - php-version: '7.4'
-            symfony-version: '4.*'
-          - php-version: '7.4'
-            symfony-version: '5.*'
-          - php-version: '8.0'
-            symfony-version: '6.*'
+          - php-version: '8.1'
+            symfony-version: '6.4'
           # Minimum supported dependencies with the oldest PHP version
-          - php-version: '7.3'
+          - php-version: '8.1'
             composer-flag: '--prefer-stable --prefer-lowest'
-            symfony-version: '4.4'
+            symfony-version: '6.*'
           # Test latest unreleased versions
-          - php-version: '8.0'
+          - php-version: '8.3'
             symfony-version: '6.*'
             stability: 'dev'
     name: PHP ${{ matrix.php-version }} Test on Symfony ${{ matrix.symfony-version }} ${{ matrix.dependencies}} ${{ matrix.stability }} ${{ matrix.composer-flag }}
     steps:
 
       - name: Pull the code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install PHP and Composer
         uses: shivammathur/setup-php@v2

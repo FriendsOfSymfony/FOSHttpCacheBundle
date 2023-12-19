@@ -1,6 +1,16 @@
 Changelog
 =========
 
+3.x
+===
+
+3.0.0 (unreleased)
+-----
+
+* Test with PHP 8.2 and 8.3
+* Drop support for PHP < 8.1
+* Drop support for Symfony < 6.4
+
 2.x
 ===
 
