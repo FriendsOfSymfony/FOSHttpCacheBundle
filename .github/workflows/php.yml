@@ -62,17 +62,16 @@ jobs:
           SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
         run: |
           composer update ${{ matrix.composer-flag }} --prefer-dist --no-interaction --no-progress
-          vendor/bin/simple-phpunit install
 
       - name: Composer validate
         run: composer validate --strict --no-check-lock
         if: ${{ matrix.stability != 'dev' }}
 
       - name: Run tests
-        run: php vendor/bin/simple-phpunit -v
+        run: php vendor/bin/phpunit -v
         if: ${{ matrix.stability != 'dev' }}
 
       - name: Run tests allow to fail
-        run: php vendor/bin/simple-phpunit -v || true
+        run: php vendor/bin/phpunit -v || true
         continue-on-error: true
         if: ${{ matrix.stability == 'dev' }}
