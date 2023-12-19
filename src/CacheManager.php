@@ -100,7 +100,7 @@ class CacheManager extends CacheInvalidator
      * Send all pending invalidation requests.
      *
      * @return int the number of cache invalidations performed per caching server
-     * 
+     *
      * @throws \FOS\HttpCache\Exception\ExceptionCollection
      */
     public function flush()
