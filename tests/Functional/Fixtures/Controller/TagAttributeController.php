@@ -14,17 +14,12 @@ namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-if (!\class_exists(AbstractController::class)) {
-    \class_alias(Controller::class, AbstractController::class);
-}
-
 class TagAttributeController extends AbstractController
 {
-    private $responseTagger;
+    private SymfonyResponseTagger $responseTagger;
 
     public function __construct(SymfonyResponseTagger $responseTagger)
     {

@@ -16,17 +16,11 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-if (Kernel::MAJOR_VERSION >= 5) {
-    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\FlashMessageResponseEvent');
-} else {
-    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\FlashMessageResponseEvent');
-}
+class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\FlashMessageResponseEvent');
 
 /**
  * This event handler reads all flash messages and moves them into a cookie.
@@ -35,22 +29,11 @@ if (Kernel::MAJOR_VERSION >= 5) {
  */
 final class FlashMessageListener implements EventSubscriberInterface
 {
-    /**
-     * @var array
-     */
-    private $options;
+    private array $options;
+    private ?Session $session;
 
-    /**
-     * For legacy support. If not set, we take the session from the request on the event.
-     *
-     * @var Session|null
-     */
-    private $session;
 
-    /**
-     * @param Session|null $session
-     */
-    public function __construct($session, array $options = [])
+    public function __construct(?Session $session, array $options = [])
     {
         $this->session = $session;
 
@@ -76,13 +59,8 @@ final class FlashMessageListener implements EventSubscriberInterface
     /**
      * Moves flash messages from the session to a cookie inside a Response Kernel listener.
      */
-    public function onKernelResponse(FlashMessageResponseEvent $event)
+    public function onKernelResponse(FlashMessageResponseEvent $event): void
     {
-        // BC for symfony < 5.3
-        if (method_exists($event, 'isMainRequest') ? !$event->isMainRequest() : !$event->isMasterRequest()) {
-            return;
-        }
-
         try {
             $session = $this->session ?: $event->getRequest()->getSession();
         } catch (SessionNotFoundException $e) {

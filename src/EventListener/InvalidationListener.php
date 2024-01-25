@@ -23,17 +23,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-if (Kernel::MAJOR_VERSION >= 5) {
-    class_alias(TerminateEvent::class, 'FOS\HttpCacheBundle\EventListener\InvalidationTerminateEvent');
-} else {
-    class_alias(PostResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\InvalidationTerminateEvent');
-}
+class_alias(TerminateEvent::class, 'FOS\HttpCacheBundle\EventListener\InvalidationTerminateEvent');
 
 /**
  * On kernel.terminate event, this event handler invalidates routes for the
@@ -43,31 +37,10 @@ if (Kernel::MAJOR_VERSION >= 5) {
  */
 class InvalidationListener extends AbstractRuleListener implements EventSubscriberInterface
 {
-    /**
-     * Cache manager.
-     *
-     * @var CacheManager
-     */
-    private $cacheManager;
-
-    /**
-     * Router.
-     *
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
-
-    /**
-     * Router.
-     *
-     * @var ExpressionLanguage|null
-     */
-    private $expressionLanguage;
-
-    /**
-     * @var RuleMatcherInterface
-     */
-    private $mustInvalidateRule;
+    private CacheManager $cacheManager;
+    private UrlGeneratorInterface $urlGenerator;
+    private ?ExpressionLanguage $expressionLanguage = null;
+    private RuleMatcherInterface $mustInvalidateRule;
 
     /**
      * Constructor.

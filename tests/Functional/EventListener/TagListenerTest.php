@@ -14,21 +14,14 @@ namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\EventListener\TagListener;
+use FOS\HttpCacheBundle\EventListener\TagResponseEvent;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-if (Kernel::MAJOR_VERSION >= 5) {
-    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Functional\EventListener\TagResponseEvent');
-} else {
-    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Functional\EventListener\TagResponseEvent');
-}
 
 class TagListenerTest extends WebTestCase
 {
@@ -63,12 +56,12 @@ class TagListenerTest extends WebTestCase
             ->andReturnTrue()
         ;
         $mock->shouldReceive('flush')
-            ->once()
+            ->twice()
             ->andReturn(0)
         ;
         $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
-        $client->request('POST', '/tag/error');
+        $client->request('POST', '/php8/tag/error');
     }
 
     public function testConfigurationTagsAreSet()

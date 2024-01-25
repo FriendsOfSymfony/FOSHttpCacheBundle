@@ -14,12 +14,7 @@ namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-
-if (!\class_exists(AbstractController::class)) {
-    \class_alias(Controller::class, AbstractController::class);
-}
 
 class InvalidationController extends AbstractController
 {

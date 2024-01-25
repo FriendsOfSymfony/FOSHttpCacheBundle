@@ -18,16 +18,10 @@ use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-if (Kernel::MAJOR_VERSION >= 5) {
-    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\TagResponseEvent');
-} else {
-    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\TagResponseEvent');
-}
+class_alias(ResponseEvent::class, TagResponseEvent::class);
 
 /**
  * Event handler for the cache tagging tags.
@@ -36,30 +30,11 @@ if (Kernel::MAJOR_VERSION >= 5) {
  */
 class TagListener extends AbstractRuleListener implements EventSubscriberInterface
 {
-    /**
-     * @var CacheManager
-     */
-    private $cacheManager;
-
-    /**
-     * @var SymfonyResponseTagger
-     */
-    private $symfonyResponseTagger;
-
-    /**
-     * @var ExpressionLanguage|null
-     */
-    private $expressionLanguage;
-
-    /**
-     * @var RuleMatcherInterface
-     */
-    private $mustInvalidateRule;
-
-    /**
-     * @var RuleMatcherInterface
-     */
-    private $cacheableRule;
+    private CacheManager $cacheManager;
+    private SymfonyResponseTagger $symfonyResponseTagger;
+    private ?ExpressionLanguage $expressionLanguage;
+    private RuleMatcherInterface $mustInvalidateRule;
+    private RuleMatcherInterface $cacheableRule;
 
     /**
      * Constructor.
@@ -85,7 +60,7 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
      * - For a safe (GET or HEAD) request, the tags are set on the response.
      * - For a non-safe request, the tags will be invalidated.
      */
-    public function onKernelResponse(TagResponseEvent $event)
+    public function onKernelResponse(TagResponseEvent $event): void
     {
         $request = $event->getRequest();
         $response = $event->getResponse();
@@ -110,7 +85,7 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
             // For safe requests (GET and HEAD), set cache tags on response
             $this->symfonyResponseTagger->addTags($tags);
             // BC for symfony < 5.3
-            if (method_exists($event, 'isMainRequest') ? $event->isMainRequest() : $event->isMasterRequest()) {
+            if ($event->isMainRequest()) {
                 $this->symfonyResponseTagger->tagSymfonyResponse($response);
             }
         } elseif (count($tags)
@@ -136,7 +111,7 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
      *
      * @return array List of tags affected by the request
      */
-    private function getAnnotationTags(Request $request)
+    private function getAnnotationTags(Request $request): array
     {
         // Check for _tag request attribute that is set when using @Tag
         // annotation
@@ -163,11 +138,12 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
     /**
      * Evaluate a tag that contains expressions.
      *
-     * @param string $expression
+     * @param string  $expression
+     * @param Request $request
      *
      * @return string Evaluated tag
      */
-    private function evaluateTag($expression, Request $request)
+    private function evaluateTag(string $expression, Request $request): string
     {
         $values = $request->attributes->all();
         // if there is an attribute called "request", it needs to be accessed through the request.

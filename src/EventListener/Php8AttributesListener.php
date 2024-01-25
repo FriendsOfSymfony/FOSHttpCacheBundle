@@ -2,22 +2,15 @@
 
 namespace FOS\HttpCacheBundle\EventListener;
 
-use FOS\HttpCacheBundle\Configuration\ConfigurationInterface;
 use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-if (Kernel::MAJOR_VERSION >= 5) {
-    class_alias(RequestEvent::class, 'FOS\HttpCacheBundle\EventListener\AttributeRequestEvent');
-} else {
-    class_alias(GetResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\AttributeRequestEvent');
-}
+class_alias(RequestEvent::class, 'FOS\HttpCacheBundle\EventListener\AttributeRequestEvent');
 
 /**
  * On kernel.request event, this event handler fetch PHP8 attributes.

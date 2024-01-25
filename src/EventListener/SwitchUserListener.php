@@ -18,7 +18,7 @@ use Symfony\Component\Security\Http\SecurityEvents;
 
 class SwitchUserListener implements EventSubscriberInterface
 {
-    private $invalidator;
+    private UserContextInvalidator $invalidator;
 
     public function __construct(UserContextInvalidator $invalidator)
     {
@@ -35,7 +35,7 @@ class SwitchUserListener implements EventSubscriberInterface
         ];
     }
 
-    public function onSwitchUser(SwitchUserEvent $event)
+    public function onSwitchUser(SwitchUserEvent $event): void
     {
         $request = $event->getRequest();
         $this->invalidator->invalidateContext($request->getSession()->getId());
