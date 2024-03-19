@@ -51,7 +51,6 @@ class Php8AttributesListener implements EventSubscriberInterface
                 InvalidateRoute::class => '_invalidate_route',
                 Tag::class => '_tag'
             }) {
-
                 $attributes[$key][] = $instance;
             }
         };

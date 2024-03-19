@@ -32,7 +32,6 @@ final class FlashMessageListener implements EventSubscriberInterface
     private array $options;
     private ?Session $session;
 
-
     public function __construct(?Session $session, array $options = [])
     {
         $this->session = $session;

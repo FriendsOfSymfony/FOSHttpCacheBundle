@@ -184,7 +184,6 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
         $values['request'] = $request;
 
         foreach ($routes as $route) {
-
             $params = [];
 
             if (null !== $route->getParams()) {

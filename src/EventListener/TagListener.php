@@ -138,9 +138,6 @@ class TagListener extends AbstractRuleListener implements EventSubscriberInterfa
     /**
      * Evaluate a tag that contains expressions.
      *
-     * @param string  $expression
-     * @param Request $request
-     *
      * @return string Evaluated tag
      */
     private function evaluateTag(string $expression, Request $request): string

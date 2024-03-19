@@ -12,7 +12,6 @@
 namespace FOS\HttpCacheBundle\Http\RequestMatcher;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
 /**
  * Extend the Symfony RequestMatcher class to support query string matching.
