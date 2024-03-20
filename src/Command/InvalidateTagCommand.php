@@ -41,9 +41,6 @@ class InvalidateTagCommand extends BaseInvalidateCommand
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -65,9 +62,6 @@ EOF
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $tags = $input->getArgument('tags');

@@ -18,6 +18,7 @@
                     host="fos"
                     query_string="(^|&amp;)foo="
                     match_response="response.getStatusCode() == 404"
+                    match_response_expression_service = "my.custom.expression-service"
                 >
                     <method>GET</method>
                     <method>POST</method>

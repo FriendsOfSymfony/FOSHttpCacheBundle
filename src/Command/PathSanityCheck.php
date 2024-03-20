@@ -22,23 +22,16 @@ trait PathSanityCheck
      * found in regular expressions: does not start with ^ or end with $ and
      * does not contain the patterns .* or .+ or ().
      *
-     * @param string $path
-     *
      * @return bool Whether the path looks like it could be a regular expression
      */
-    private function looksLikeRegularExpression($path)
+    private function looksLikeRegularExpression(string $path): bool
     {
-        if (strlen($path) < 1) {
+        if ('' === $path) {
             throw new InvalidArgumentException('Path to invalidate can not be empty. To invalidate the root path, use "/"');
         }
 
-        if ('^' === $path[0]
-            || '$' === substr($path, -1)
-            || preg_match('/(\.[\*\+]|\(|\))/', $path)
-        ) {
-            return true;
-        }
-
-        return false;
+        return '^' === $path[0]
+            || str_ends_with($path, '$')
+            || preg_match('/(\.[\*\+]|\(|\))/', $path);
     }
 }

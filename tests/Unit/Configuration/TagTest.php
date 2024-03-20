@@ -13,17 +13,14 @@ namespace FOS\HttpCacheBundle\Tests\Unit\Configuration;
 
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\Exception\InvalidTagException;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Test the @InvalidateRoute annotation.
+ * Test the InvalidateRoute attribute.
  */
 class TagTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
-
-    public function testExecuteInvalidParams()
+    public function testExecuteInvalidParams(): void
     {
         $this->expectException(InvalidTagException::class);
         $this->expectExceptionMessage('is invalid because it contains ,');

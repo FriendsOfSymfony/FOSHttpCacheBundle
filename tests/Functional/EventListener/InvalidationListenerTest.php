@@ -19,10 +19,7 @@ class InvalidationListenerTest extends WebTestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @requires PHP 8.0
-     */
-    public function testInvalidateRouteWithPHPAttributes()
+    public function testInvalidateRoute(): void
     {
         $client = static::createClient();
 
@@ -49,15 +46,13 @@ class InvalidationListenerTest extends WebTestCase
         ;
         $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
-        $client->request('POST', '/php8/invalidate/route/42');
+        $client->request('POST', '/invalidate/route/42');
     }
 
     /**
      * @dataProvider getStatusCodesThatTriggerInvalidation
-     *
-     * @requires PHP 8.0
      */
-    public function testInvalidatePathWithPHPAttributes($statusCode)
+    public function testInvalidatePath($statusCode): void
     {
         $client = static::createClient();
 
@@ -68,7 +63,11 @@ class InvalidationListenerTest extends WebTestCase
         ;
         $mock->shouldReceive('invalidatePath')
             ->once()
-            ->with('/php8/cached')
+            ->with('/cached')
+        ;
+        $mock->shouldReceive('invalidatePath')
+            ->once()
+            ->with(sprintf('/invalidate/path/%s', $statusCode))
         ;
         $mock->shouldReceive('flush')
             ->once()
@@ -76,13 +75,10 @@ class InvalidationListenerTest extends WebTestCase
         ;
         $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
-        $client->request('POST', sprintf('/php8/invalidate/path/%s', $statusCode));
+        $client->request('POST', sprintf('/invalidate/path/%s', $statusCode));
     }
 
-    /**
-     * @requires PHP 8.0
-     */
-    public function testErrorIsNotInvalidatedWithPHPAttributes()
+    public function testErrorIsNotInvalidated(): void
     {
         $client = static::createClient();
 
@@ -97,10 +93,10 @@ class InvalidationListenerTest extends WebTestCase
         ;
         $client->getContainer()->set('fos_http_cache.cache_manager', $mock);
 
-        $client->request('POST', '/php8/invalidate/error');
+        $client->request('POST', '/invalidate/error');
     }
 
-    public function getStatusCodesThatTriggerInvalidation()
+    public function getStatusCodesThatTriggerInvalidation(): array
     {
         return [[200], [204], [302]];
     }

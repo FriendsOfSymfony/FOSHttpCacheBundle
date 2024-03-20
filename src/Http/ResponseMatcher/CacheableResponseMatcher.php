@@ -35,11 +35,8 @@ class CacheableResponseMatcher implements ResponseMatcherInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function matches(Response $response)
+    public function matches(Response $response): bool
     {
-        return in_array($response->getStatusCode(), $this->cacheableStatusCodes);
+        return in_array($response->getStatusCode(), $this->cacheableStatusCodes, true);
     }
 }

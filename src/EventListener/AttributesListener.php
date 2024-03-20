@@ -10,30 +10,19 @@ use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class_alias(RequestEvent::class, 'FOS\HttpCacheBundle\EventListener\AttributeRequestEvent');
-
 /**
- * On kernel.request event, this event handler fetch PHP8 attributes.
- * It is available from PHP 8.0.0.
+ * On kernel.request event, this event handler fetches PHP attributes.
  *
  * @author Yoann Chocteau <yoann@kezaweb.fr>
  */
-class Php8AttributesListener implements EventSubscriberInterface
+class AttributesListener implements EventSubscriberInterface
 {
-    /**
-     * @var ControllerResolverInterface
-     */
-    private $controllerResolver;
-
-    public function __construct(ControllerResolverInterface $controllerResolver)
-    {
-        if (\PHP_VERSION_ID < 80000) {
-            throw new \Exception(sprintf('Php8AttributesListener must not be loaded for PHP %s', phpversion()));
-        }
-        $this->controllerResolver = $controllerResolver;
+    public function __construct(
+        private ControllerResolverInterface $controllerResolver
+    ) {
     }
 
-    public function onKernelRequest(AttributeRequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
         $controller = $this->controllerResolver->getController($request);
@@ -45,7 +34,7 @@ class Php8AttributesListener implements EventSubscriberInterface
         $class = new \ReflectionClass($controller[0]);
         $method = $class->getMethod($controller[1]);
         $attributes = [];
-        $addAttributes = function ($instance) use (&$attributes) {
+        $addAttributes = static function ($instance) use (&$attributes) {
             if ($key = match (get_class($instance)) {
                 InvalidatePath::class => '_invalidate_path',
                 InvalidateRoute::class => '_invalidate_route',

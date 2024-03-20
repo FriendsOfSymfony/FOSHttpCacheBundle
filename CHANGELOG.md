@@ -7,6 +7,7 @@ Changelog
 * Minimum PHP version is no 8.1
 * Support Symfony 6.4 and 7
 * Drop obsolete annotations support, use attributes
+  Remove all configuration you have at `fos_http_cache.tags.annotations`
 * Make `fastly` and `cloudflare` clients lazy loaded to support Symfony secrets that are only available at runtime, but
   not yet when the container is built.
 

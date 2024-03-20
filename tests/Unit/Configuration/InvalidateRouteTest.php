@@ -12,28 +12,14 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\Configuration;
 
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Test the @InvalidateRoute annotation.
+ * Test the InvalidateRoute attribute.
  */
 class InvalidateRouteTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
-
-    public function testExecuteInvalidParams()
-    {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('InvalidateRoute params must be an array');
-
-        new InvalidateRoute([
-            'name' => 'test',
-            'params' => 'foo',
-        ]);
-    }
-
-    public function testExecuteNoExpression()
+    public function testExecuteNoExpression(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('InvalidateRoute param id must be string');

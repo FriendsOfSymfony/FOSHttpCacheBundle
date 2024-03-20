@@ -47,49 +47,30 @@ if (Kernel::MAJOR_VERSION >= 5) {
  */
 class UserContextListener implements EventSubscriberInterface
 {
-    /**
-     * @var RequestMatcherInterface
-     */
-    private $requestMatcher;
-
-    /**
-     * @var HashGenerator
-     */
-    private $hashGenerator;
+    private RequestMatcherInterface $requestMatcher;
+    private HashGenerator $hashGenerator;
 
     /**
      * If the response tagger is set, the hash lookup response is tagged with the session id for later invalidation.
-     *
-     * @var ResponseTagger|null
      */
-    private $responseTagger;
+    private ?ResponseTagger $responseTagger;
 
-    /**
-     * @var array
-     */
-    private $options;
+    private array $options;
 
     /**
      * Whether the application has a session listener and therefore could
      * require the AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER.
-     *
-     * @var bool
      */
-    private $hasSessionListener;
+    private bool $hasSessionListener;
 
-    /**
-     * @var bool
-     */
-    private $wasAnonymous;
+    private bool $wasAnonymous = false;
 
     /**
      * Used to exclude anonymous requests (no authentication nor session) from user hash sanity check.
      * It prevents issues when the hash generator that is used returns a customized value for anonymous users,
      * that differs from the documented, hardcoded one.
-     *
-     * @var RequestMatcherInterface|null
      */
-    private $anonymousRequestMatcher;
+    private ?RequestMatcherInterface $anonymousRequestMatcher;
 
     public function __construct(
         RequestMatcherInterface $requestMatcher,
@@ -117,8 +98,8 @@ class UserContextListener implements EventSubscriberInterface
         $resolver->setAllowedTypes('user_hash_header', 'string');
         $resolver->setAllowedTypes('ttl', 'int');
         $resolver->setAllowedTypes('add_vary_on_hash', 'bool');
-        $resolver->setAllowedValues('user_hash_header', function ($value) {
-            return strlen($value) > 0;
+        $resolver->setAllowedValues('user_hash_header', static function ($value): bool {
+            return '' !== $value;
         });
 
         $this->options = $resolver->resolve($options);
@@ -130,10 +111,9 @@ class UserContextListener implements EventSubscriberInterface
      *
      * If the ttl is bigger than 0, cache headers will be set for this response.
      */
-    public function onKernelRequest(UserContextRequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
-        // BC for symfony < 5.3
-        if (method_exists($event, 'isMainRequest') ? !$event->isMainRequest() : !$event->isMasterRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
@@ -181,21 +161,19 @@ class UserContextListener implements EventSubscriberInterface
      * Tests if $request is an anonymous request or not.
      *
      * For backward compatibility reasons, true will be returned if no anonymous request matcher was provided.
-     *
-     * @return bool
      */
-    private function isAnonymous(Request $request)
+    private function isAnonymous(Request $request): bool
     {
-        return $this->anonymousRequestMatcher ? $this->anonymousRequestMatcher->matches($request) : false;
+        return $this->anonymousRequestMatcher && $this->anonymousRequestMatcher->matches($request);
     }
 
     /**
      * Add the context hash header to the headers to vary on if the header was
      * present in the request.
      */
-    public function onKernelResponse(UserContextResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
-        if (HttpKernelInterface::MAIN_REQUEST != $event->getRequestType()) {
+        if (HttpKernelInterface::MAIN_REQUEST !== $event->getRequestType()) {
             return;
         }
 
@@ -226,13 +204,13 @@ class UserContextListener implements EventSubscriberInterface
             }
 
             if ($this->options['add_vary_on_hash']
-                && !in_array($this->options['user_hash_header'], $vary)
+                && !in_array($this->options['user_hash_header'], $vary, true)
             ) {
                 $vary[] = $this->options['user_hash_header'];
             }
 
             // user hash header was in vary or just added here by "add_vary_on_hash"
-            if ($this->hasSessionListener && in_array($this->options['user_hash_header'], $vary)) {
+            if ($this->hasSessionListener && in_array($this->options['user_hash_header'], $vary, true)) {
                 // header to avoid Symfony SessionListener overwriting the response to private
                 $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 1);
             }
@@ -244,7 +222,7 @@ class UserContextListener implements EventSubscriberInterface
              * onKernelRequest above.
              */
             foreach ($this->options['user_identifier_headers'] as $header) {
-                if (!in_array($header, $vary)) {
+                if (!in_array($header, $vary, true)) {
                     $vary[] = $header;
                 }
             }

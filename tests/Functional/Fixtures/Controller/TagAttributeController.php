@@ -11,9 +11,11 @@
 
 namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 
+use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,29 +30,29 @@ class TagAttributeController extends AbstractController
 
     #[Tag('all-items')]
     #[Tag('item-123')]
-    public function listAction()
+    public function listAction(): Response
     {
         return new Response('All items including 123');
     }
 
-    #[Tag(expression: "'item-'~id")]
-    public function itemAction(Request $request, $id)
+    #[Tag(expression: new Expression("'item-'~id"))]
+    public function itemAction(Request $request, string $id, CacheManager $cacheManager): Response
     {
         if (!$request->isMethodCacheable()) {
-            $this->container->get('fos_http_cache.cache_manager')->invalidateTags(['all-items']);
+            $cacheManager->invalidateTags(['all-items']);
         }
 
         return new Response('Item '.$id.' invalidated');
     }
 
     #[Tag('items')]
-    public function errorAction()
+    public function errorAction(): Response
     {
         return new Response('Forbidden', 403);
     }
 
     #[Tag('manual-items')]
-    public function manualAction()
+    public function manualAction(): Response
     {
         $this->responseTagger->addTags(['manual-tag']);
 
@@ -60,19 +62,19 @@ class TagAttributeController extends AbstractController
     }
 
     #[Tag('sub-items')]
-    public function subrequestAction()
+    public function subrequestAction(): Response
     {
         $this->responseTagger->addTags(['sub-tag']);
 
         return new Response('subrequest');
     }
 
-    public function emptyAction()
+    public function emptyAction(): Response
     {
         return new Response('');
     }
 
-    public function twigAction()
+    public function twigAction(): Response
     {
         return $this->render('tag.html.twig');
     }

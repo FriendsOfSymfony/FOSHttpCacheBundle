@@ -17,14 +17,12 @@
                  class="FOS\HttpCacheBundle\Http\ResponseMatcher\CacheableResponseMatcher"
                  abstract="true"
                  public="false">
-            <argument/>
         </service>
 
         <service id="fos_http_cache.response_matcher.cache_control.expression"
                  class="FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher"
                  abstract="true"
                  public="false">
-            <argument/>
         </service>
 
     </services>

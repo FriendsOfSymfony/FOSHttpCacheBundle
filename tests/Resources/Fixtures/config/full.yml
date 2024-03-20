@@ -24,6 +24,7 @@ fos_http_cache:
                     attributes:
                         _controller: fos.user_bundle.*
                     match_response: "response.getStatusCode() == 404"
+                    match_response_expression_service: my.custom.expression-service
                 headers:
                     overwrite: false
                     cache_control:

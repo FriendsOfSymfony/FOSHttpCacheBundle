@@ -5,7 +5,7 @@ Caching Headers
 
 You can configure HTTP caching headers based on request and response properties.
 This configuration approach is more convenient than `manually setting cache headers`_
-and an alternative to `setting caching headers through annotations`_.
+and an alternative to `setting caching headers through attributes`_.
 
 Set caching headers under the ``cache_control`` configuration section,
 which consists of a set of rules. When the request matches all criteria under
@@ -70,4 +70,4 @@ This is an example configuration. For more, see the
                         etag: "strong"
 
 .. _manually setting cache headers: https://symfony.com/doc/current/http_cache.html#the-cache-control-header
-.. _setting caching headers through annotations: https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/cache.html
+.. _setting caching headers through attributes: https://symfony.com/doc/current/http_cache.html#making-your-responses-http-cacheable
