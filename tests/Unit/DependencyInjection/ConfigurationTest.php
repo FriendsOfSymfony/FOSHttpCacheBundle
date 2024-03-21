@@ -72,6 +72,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                             'ips' => ['1.2.3.4', '1.1.1.1'],
                             'attributes' => ['_controller' => 'fos.user_bundle.*'],
                             'match_response' => 'response.getStatusCode() == 404',
+                            'match_response_expression_service' => 'my.custom.expression-service',
                             'additional_response_status' => [],
                         ],
                         'headers' => [
@@ -115,9 +116,6 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ],
             'tags' => [
                 'enabled' => 'auto',
-                'annotations' => [
-                    'enabled' => true,
-                ],
                 'strict' => false,
                 'response_header' => 'FOS-Tags',
                 'expression_language' => 'acme.expression_language',
@@ -786,6 +784,72 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
+    public function testSupportsServersFromJsonEnv(): void
+    {
+        $expectedConfiguration = $this->getEmptyConfig();
+        $expectedConfiguration['proxy_client'] = [
+            'varnish' => [
+                'http' => [
+                    'servers_from_jsonenv' => '%env(json:VARNISH_SERVERS)%',
+                    'base_url' => '/test',
+                    'http_client' => 'acme.guzzle.nginx',
+                ],
+                'tag_mode' => 'ban',
+                'tags_header' => 'X-Cache-Tags',
+            ],
+        ];
+        $expectedConfiguration['cache_manager']['enabled'] = 'auto';
+        $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
+        $expectedConfiguration['tags']['enabled'] = 'auto';
+        $expectedConfiguration['invalidation']['enabled'] = 'auto';
+        $expectedConfiguration['user_context']['logout_handler']['enabled'] = true;
+
+        $formats = array_map(function ($path) {
+            return __DIR__.'/../../Resources/Fixtures/'.$path;
+        }, [
+            'config/servers_from_jsonenv.yml',
+            'config/servers_from_jsonenv.xml',
+            'config/servers_from_jsonenv.php',
+        ]);
+
+        foreach ($formats as $format) {
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
+        }
+    }
+
+    public function testConfigureExpressionLanguageService(): void
+    {
+        $expectedConfiguration = $this->getEmptyConfig();
+        $expectedConfiguration['proxy_client'] = [
+            'varnish' => [
+                'http' => [
+                    'servers_from_jsonenv' => '%env(json:VARNISH_SERVERS)%',
+                    'base_url' => '/test',
+                    'http_client' => 'acme.guzzle.nginx',
+                ],
+                'tag_mode' => 'ban',
+                'tags_header' => 'X-Cache-Tags',
+            ],
+        ];
+        $expectedConfiguration['cache_manager']['enabled'] = 'auto';
+        $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
+        $expectedConfiguration['tags']['enabled'] = 'auto';
+        $expectedConfiguration['invalidation']['enabled'] = 'auto';
+        $expectedConfiguration['user_context']['logout_handler']['enabled'] = true;
+
+        $formats = array_map(function ($path) {
+            return __DIR__.'/../../Resources/Fixtures/'.$path;
+        }, [
+            'config/servers_from_jsonenv.yml',
+            'config/servers_from_jsonenv.xml',
+            'config/servers_from_jsonenv.php',
+        ]);
+
+        foreach ($formats as $format) {
+            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
+        }
+    }
+
     /**
      * @return array The configuration when nothing is specified
      */
@@ -804,9 +868,6 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ],
             'tags' => [
                 'enabled' => false,
-                'annotations' => [
-                    'enabled' => true,
-                ],
                 'strict' => false,
                 'response_header' => 'X-Cache-Tags',
                 'expression_language' => null,
@@ -848,38 +909,5 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'header' => 'X-Cache-Debug',
             ],
         ];
-    }
-
-    public function testSupportsServersFromJsonEnv(): void
-    {
-        $expectedConfiguration = $this->getEmptyConfig();
-        $expectedConfiguration['proxy_client'] = [
-            'varnish' => [
-                'http' => [
-                    'servers_from_jsonenv' => '%env(json:VARNISH_SERVERS)%',
-                    'base_url' => '/test',
-                    'http_client' => 'acme.guzzle.nginx',
-                ],
-                'tag_mode' => 'ban',
-                'tags_header' => 'X-Cache-Tags',
-            ],
-        ];
-        $expectedConfiguration['cache_manager']['enabled'] = 'auto';
-        $expectedConfiguration['cache_manager']['generate_url_type'] = 'auto';
-        $expectedConfiguration['tags']['enabled'] = 'auto';
-        $expectedConfiguration['invalidation']['enabled'] = 'auto';
-        $expectedConfiguration['user_context']['logout_handler']['enabled'] = true;
-
-        $formats = array_map(function ($path) {
-            return __DIR__.'/../../Resources/Fixtures/'.$path;
-        }, [
-            'config/servers_from_jsonenv.yml',
-            'config/servers_from_jsonenv.xml',
-            'config/servers_from_jsonenv.php',
-        ]);
-
-        foreach ($formats as $format) {
-            $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
-        }
     }
 }

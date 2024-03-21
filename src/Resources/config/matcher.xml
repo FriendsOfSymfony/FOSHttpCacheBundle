@@ -6,7 +6,38 @@
 
     <services>
         <service id="fos_http_cache.request_matcher"
-                 class="FOS\HttpCacheBundle\Http\RequestMatcher\QuerystringRequestMatcher"
+                 class="Symfony\Component\HttpFoundation\ChainRequestMatcher"
+                 public="false"
+                 abstract="true"
+        />
+        <service id="fos_http_cache.request_matcher.path"
+                 class="Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher"
+                 public="false"
+                 abstract="true"
+        />
+        <service id="fos_http_cache.request_matcher.host"
+                 class="Symfony\Component\HttpFoundation\RequestMatcher\HostRequestMatcher"
+                 public="false"
+                 abstract="true"
+        />
+        <service id="fos_http_cache.request_matcher.methods"
+                 class="Symfony\Component\HttpFoundation\RequestMatcher\MethodRequestMatcher"
+                 public="false"
+                 abstract="true"
+        />
+        <service id="fos_http_cache.request_matcher.ips"
+                 class="Symfony\Component\HttpFoundation\RequestMatcher\IpsRequestMatcher"
+                 public="false"
+                 abstract="true"
+        />
+        <service id="fos_http_cache.request_matcher.attributes"
+                 class="Symfony\Component\HttpFoundation\RequestMatcher\AttributesRequestMatcher"
+                 public="false"
+                 abstract="true"
+        />
+
+        <service id="fos_http_cache.request_matcher.query_string"
+                 class="FOS\HttpCacheBundle\Http\RequestMatcher\QueryStringRequestMatcher"
                  public="false"
                  abstract="true"
         />

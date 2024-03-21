@@ -94,25 +94,24 @@ returns a successful response, both routes ``villains_index`` and
 ``villain_details`` will be purged. See the
 :doc:`/reference/configuration/invalidation` configuration reference.
 
-Annotations
------------
+Attributes
+----------
 
-Set the ``@InvalidatePath`` and ``@InvalidateRoute`` annotations to trigger
+Set the ``InvalidatePath`` and ``InvalidateRoute`` attributes to trigger
 invalidation from your controllers::
 
     use FOS\HttpCacheBundle\Configuration\InvalidatePath;
+    use Symfony\Component\ExpressionLanguage\Expression;
 
-    /**
-     * @InvalidatePath("/articles")
-     * @InvalidatePath("/articles/latest")
-     * @InvalidateRoute("overview", params={"type" = "latest"})")
-     * @InvalidateRoute("detail", params={"id" = {"expression"="id"}})")
-     */
+    #[InvalidatePath('/articles')]
+    #[InvalidatePath('/articles/latest')]
+    #[InvalidateRoute('overview', params: ['type' => 'latest'])]
+    #[InvalidateRoute("detail", params: ['id' => new Expression('my-expression="id"')])]
     public function editAction($id)
     {
     }
 
-See the :doc:`/reference/annotations` reference.
+See the :doc:`/reference/attributes` reference.
 
 Console Commands
 ----------------

@@ -23,7 +23,7 @@ Configure invalidation to invalidate routes when some other routes are requested
 
 .. include:: /includes/expression-language.rst
 
-Your custom expression functions can then be used in the ``@InvalidateRoute`` :ref:`annotations<invalidateroute>`.
+Your custom expression functions can then be used in the ``InvalidateRoute`` :ref:`attribute <invalidateroute>`.
 
 .. code-block:: yaml
 

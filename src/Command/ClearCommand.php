@@ -26,9 +26,6 @@ class ClearCommand extends BaseInvalidateCommand
 {
     use PathSanityCheck;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -46,9 +43,6 @@ EOF
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $cacheManager = $this->getCacheManager();

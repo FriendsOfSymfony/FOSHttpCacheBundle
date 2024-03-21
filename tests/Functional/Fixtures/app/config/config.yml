@@ -2,7 +2,6 @@ framework:
   secret: fos
   router:
     resource: "%kernel.project_dir%/tests/Functional/Fixtures/app/config/routing.yml"
-  annotations: ~
   test: ~
 
 fos_http_cache:
@@ -29,11 +28,6 @@ fos_http_cache:
           path: ^/invalidate/path.*
         routes:
           invalidation_path: ~
-      -
-        match:
-          path: ^/php8/invalidate/path.*
-        routes:
-          php8_invalidation_path: ~
   tags:
     rules:
       -

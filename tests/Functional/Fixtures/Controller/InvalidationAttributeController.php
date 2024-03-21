@@ -14,31 +14,27 @@ namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Response;
-
-if (!\class_exists(AbstractController::class)) {
-    \class_alias(Controller::class, AbstractController::class);
-}
 
 class InvalidationAttributeController extends AbstractController
 {
     #[InvalidateRoute('test_noncached')]
     #[InvalidateRoute('test_cached', params: ['id' => 'myhardcodedid'])]
-    #[InvalidateRoute('tag_one', params: ['id' => ['expression' => 'id']])]
-    public function itemAction($id)
+    #[InvalidateRoute('tag_one', params: ['id' => ['expression' => new Expression('id')]])]
+    public function itemAction($id): Response
     {
         return new Response("Done $id");
     }
 
-    #[InvalidatePath('/php8/cached')]
-    public function otherAction($statusCode)
+    #[InvalidatePath('/cached')]
+    public function otherAction($statusCode): Response
     {
         return new Response('Done.', $statusCode);
     }
 
-    #[InvalidatePath('/php8/somepath')]
-    public function errorAction()
+    #[InvalidatePath('/somepath')]
+    public function errorAction(): Response
     {
         return new Response('Forbidden', 403);
     }

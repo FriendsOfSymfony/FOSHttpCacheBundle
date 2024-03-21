@@ -2,12 +2,12 @@ Reference
 =========
 
 This part is a full description of all available configuration options,
-annotations and public methods.
+attributes and public methods.
 
 .. toctree::
     :maxdepth: 2
 
     reference/configuration
-    reference/annotations
+    reference/attributes
     reference/cache-manager
     reference/glossary

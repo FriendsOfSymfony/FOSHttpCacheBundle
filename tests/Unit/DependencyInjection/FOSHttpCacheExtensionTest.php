@@ -340,23 +340,6 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertRequestMatcherCreated($container, ['_controller' => '^AcmeBundle:Default:index$']);
         $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.tag');
         $this->assertFalse($container->hasDefinition('fos_http_cache.tag_handler.max_header_value_length_header_formatter'));
-        $this->assertTrue($container->hasParameter('fos_http_cache.compiler_pass.tag_annotations'));
-        $this->assertTrue($container->getParameter('fos_http_cache.compiler_pass.tag_annotations'));
-    }
-
-    public function testConfigLoadTagDisableAnnotations()
-    {
-        $config = $this->getBaseConfig() + [
-            'tags' => [
-                'annotations' => false,
-            ],
-        ];
-
-        $container = $this->createContainer();
-        $this->extension->load([$config], $container);
-
-        $this->assertTrue($container->hasParameter('fos_http_cache.compiler_pass.tag_annotations'));
-        $this->assertFalse($container->getParameter('fos_http_cache.compiler_pass.tag_annotations'));
     }
 
     public function testConfigWithMaxHeaderLengthValueDecoratesTagService()
@@ -808,7 +791,7 @@ class FOSHttpCacheExtensionTest extends TestCase
             new Definition(Router::class)
         );
 
-        // The php8AttributesListener depends on the controller_resolver
+        // The AttributesListener depends on the controller_resolver
         $container->setDefinition(
             'controller_resolver',
             new Definition(ControllerResolverInterface::class)
@@ -836,33 +819,38 @@ class FOSHttpCacheExtensionTest extends TestCase
     /**
      * @param array $methods List of methods for the matcher. Empty array to not check.
      *
-     * @return string Service id of the matcher
+     * @return string|null Service id of the matcher
      */
-    private function assertRequestMatcherCreated(ContainerBuilder $container, array $attributes, array $methods = [])
+    private function assertRequestMatcherCreated(ContainerBuilder $container, array $attributes, array $methods = []): ?string
     {
         // Extract the corresponding definition
-        $matcherDefinition = null;
+        $chainMatcherDefinition = null;
         $matcherId = null;
         foreach ($container->getDefinitions() as $id => $definition) {
             if ($definition instanceof ChildDefinition
                 && 'fos_http_cache.request_matcher' === $definition->getParent()
             ) {
-                if ($matcherDefinition) {
+                if ($chainMatcherDefinition) {
                     $this->fail('More then one request matcher was created');
                 }
-                $matcherDefinition = $definition;
+                $chainMatcherDefinition = $definition;
                 $matcherId = $id;
             }
         }
 
-        $this->assertNotNull($matcherDefinition, 'No matcher found');
+        $this->assertNotNull($chainMatcherDefinition, 'No matcher found');
 
-        if ($methods) {
-            // 3rd argument should be the request methods
-            $this->assertEquals($methods, $matcherDefinition->getArgument(2));
+        $matchers = $chainMatcherDefinition->getArgument(0);
+        foreach ($matchers as $matcherReference) {
+            $this->assertInstanceOf(Reference::class, $matcherReference);
+            $matcherDefinition = $container->getDefinition((string) $matcherReference);
+            if (str_starts_with((string) $matcherReference, 'fos_http_cache.request_matcher.attributes')) {
+                $this->assertEquals($attributes, $matcherDefinition->getArgument(0));
+            }
+            if ($methods && str_starts_with((string) $matcherReference, 'fos_http_cache.request_matcher.methods')) {
+                $this->assertEquals($methods, $matcherDefinition->getArgument(0));
+            }
         }
-        // 5th argument should contain the request attribute criteria
-        $this->assertEquals($attributes, $matcherDefinition->getArgument(4));
 
         return $matcherId;
     }

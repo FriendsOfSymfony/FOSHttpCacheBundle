@@ -12,24 +12,18 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\Fixtures\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\User\UserInterface;
-
-if (!\class_exists(AbstractController::class)) {
-    \class_alias(Controller::class, AbstractController::class);
-}
 
 class TestController extends AbstractController
 {
-    public function contentAction($id = null)
+    public function contentAction($id = null): Response
     {
         return new Response('content '.$id);
     }
 
-    public function sessionAction(Request $request)
+    public function sessionAction(Request $request): Response
     {
         $request->getSession()->start();
 
@@ -39,13 +33,13 @@ class TestController extends AbstractController
         return $response;
     }
 
-    public function switchUserAction()
+    public function switchUserAction(): Response
     {
         $user = $this->getUser();
         if (!$user instanceof UserInterface) {
             throw new \LogicException('No user in token');
         }
 
-        return new Response(Kernel::MAJOR_VERSION >= 6 ? $user->getUserIdentifier() : $user->getUsername());
+        return new Response($user->getUserIdentifier());
     }
 }

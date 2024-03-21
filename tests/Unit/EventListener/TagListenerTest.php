@@ -17,49 +17,28 @@ use FOS\HttpCacheBundle\EventListener\TagListener;
 use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use FOS\HttpCacheBundle\Http\SymfonyResponseTagger;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\Kernel;
-
-if (Kernel::MAJOR_VERSION >= 5) {
-    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\TagResponseEvent');
-} else {
-    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\TagResponseEvent');
-}
 
 class TagListenerTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var CacheManager|\Mockery\Mock
-     */
-    private $cacheManager;
+    private CacheManager&MockInterface $cacheManager;
 
-    /**
-     * @var SymfonyResponseTagger|\Mockery\Mock
-     */
-    private $symfonyResponseTagger;
+    private SymfonyResponseTagger&MockInterface $symfonyResponseTagger;
 
-    /**
-     * @var TagListener
-     */
-    private $listener;
+    private TagListener $listener;
 
-    /**
-     * @var RuleMatcherInterface|\Mockery\Mock
-     */
-    private $mustInvalidateRule;
+    private RuleMatcherInterface&MockInterface $mustInvalidateRule;
 
-    /**
-     * @var RuleMatcherInterface|\Mockery\Mock
-     */
-    private $cacheableRule;
+    private RuleMatcherInterface&MockInterface $cacheableRule;
 
     public function setUp(): void
     {
@@ -82,7 +61,7 @@ class TagListenerTest extends TestCase
         );
     }
 
-    public function testOnKernelResponseGet()
+    public function testOnKernelResponseGet(): void
     {
         $tag1 = new Tag(['value' => 'item-1']);
         $tag2 = new Tag(['value' => ['item-1', 'item-2']]);
@@ -110,7 +89,7 @@ class TagListenerTest extends TestCase
         $this->listener->onKernelResponse($event);
     }
 
-    public function testOnKernelResponseGetMatcher()
+    public function testOnKernelResponseGetMatcher(): void
     {
         $tag1 = new Tag(['value' => 'item-1']);
 
@@ -144,9 +123,9 @@ class TagListenerTest extends TestCase
         $this->listener->onKernelResponse($event);
     }
 
-    public function testOnKernelResponseGetWithExpression()
+    public function testOnKernelResponseGetWithExpression(): void
     {
-        $tag = new Tag(['expression' => '"item-"~id']);
+        $tag = new Tag(['expression' => new Expression('"item-"~id')]);
 
         $request = new Request();
         $request->setMethod('GET');
@@ -167,9 +146,10 @@ class TagListenerTest extends TestCase
             ->andReturn($this->symfonyResponseTagger);
 
         $this->listener->onKernelResponse($event);
+        $this->addToAssertionCount(1); // we have mockery check if methods are called as expected
     }
 
-    public function testOnKernelResponsePost()
+    public function testOnKernelResponsePost(): void
     {
         $tag = new Tag(['value' => ['item-1', 'item-2']]);
 
@@ -205,12 +185,12 @@ class TagListenerTest extends TestCase
         $this->listener->onKernelResponse($event);
     }
 
-    private function getEvent(Request $request, Response $response = null): TagResponseEvent
+    private function getEvent(Request $request, Response $response = null): ResponseEvent
     {
-        return new TagResponseEvent(
+        return new ResponseEvent(
             \Mockery::mock(HttpKernelInterface::class),
             $request,
-            HttpKernelInterface::MASTER_REQUEST,
+            HttpKernelInterface::MAIN_REQUEST,
             $response ?: new Response()
         );
     }

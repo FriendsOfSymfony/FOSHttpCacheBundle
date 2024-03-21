@@ -49,7 +49,7 @@ You can tag responses in different ways:
 * From PHP code by using the response tagger to set tags and the cache manager
   to invalidate tags;
 * Set tags from twig templates with a function;
-* In project configuration or using annotations on controller actions.
+* In project configuration or using attributes on controller actions.
 
 You can add tags before the response object exists. The tags are automatically
 added to the response by a listener. The listener also detects pending tag
@@ -149,19 +149,18 @@ Now if a :term:`safe` request matches the criteria under ``match``, the response
 will be tagged with ``news``. When an unsafe request matches, the tag ``news``
 will be invalidated.
 
-Tagging and Invalidating with Controller Annotations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Tagging and Invalidating with Controller Attributes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Add the ``@Tag`` annotations to your controllers to set and invalidate tags::
+Add the ``Tag`` attribute to your controllers to set and invalidate tags::
 
     use FOS\HttpCacheBundle\Configuration\Tag;
+    use Symfony\Component\ExpressionLanguage\Expression;
 
     class NewsController
     {
-        /**
-         * @Tag("news", expression="'news-'~id")
-         */
-        public function articleAction($id)
+        #[Tag('news', expression: new Expression('"news-"~id'))]
+        public function articleAction(string $id)
         {
             // Assume $id equals 123
         }
@@ -172,7 +171,7 @@ on the response. If a client tries to update or delete news article 123 with an
 unsafe request to ``articleAction``, such as POST or DELETE, tag ``news-123``
 is invalidated.
 
-See the :ref:`@Tag reference <tag>` for full details.
+See the :ref:`Tag reference <tag>` for full details.
 
 .. _Tagged Cache Invalidation: http://blog.kevburnsjr.com/tagged-cache-invalidation
 .. _Linked Cache Invalidation: http://tools.ietf.org/html/draft-nottingham-linked-cache-inv-03

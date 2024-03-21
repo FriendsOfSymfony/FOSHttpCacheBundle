@@ -15,14 +15,14 @@ use FOS\HttpCacheBundle\Http\ResponseMatcher\CacheableResponseMatcher;
 use FOS\HttpCacheBundle\Http\RuleMatcher;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcher\AttributesRequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 
 class RuleMatcherTest extends TestCase
 {
     public function testRequestMatcherCalled()
     {
-        $requestMatcher = new RequestMatcher(null, null, null, null, ['_controller' => '^AcmeBundle:Default:index$']);
+        $requestMatcher = new AttributesRequestMatcher(['_controller' => '^AcmeBundle:Default:index$']);
         $ruleMatcher = new RuleMatcher($requestMatcher);
 
         $request = new Request();
@@ -33,7 +33,7 @@ class RuleMatcherTest extends TestCase
 
     public function testAdditionalCacheableStatus()
     {
-        $ruleMatcher = new RuleMatcher(new RequestMatcher(), new CacheableResponseMatcher([400, 500]));
+        $ruleMatcher = new RuleMatcher(new AttributesRequestMatcher([]), new CacheableResponseMatcher([400, 500]));
 
         $this->assertFalse($ruleMatcher->matches(new Request(), new Response('', 504)));
         $this->assertTrue($ruleMatcher->matches(new Request(), new Response('', 500)));

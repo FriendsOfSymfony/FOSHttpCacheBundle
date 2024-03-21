@@ -426,11 +426,14 @@ class Configuration implements ConfigurationInterface
                     ->defaultNull()
                     ->info('Expression to decide whether response should be matched. Replaces cacheable configuration.')
                 ->end()
+                ->scalarNode('match_response_expression_service')
+                    ->info('Service name of the expression language service to use for expression evaluation. If not specified, the default expression language is used')
+                ->end()
             ;
         }
     }
 
-    private function addProxyClientSection(ArrayNodeDefinition $rootNode)
+    private function addProxyClientSection(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -801,10 +804,6 @@ class Configuration implements ConfigurationInterface
                             ->values([true, false, 'auto'])
                             ->defaultValue('auto')
                             ->info('Allows to disable tag support. Enabled by default if you configured the cache manager and have a proxy client that supports tagging.')
-                        ->end()
-                        ->arrayNode('annotations')
-                            ->info('Annotations require the FrameworkExtraBundle. Because we can not detect whether annotations are used when the FrameworkExtraBundle is not available, this option must be set to false explicitly if the application does not use annotations.')
-                            ->canBeDisabled()
                         ->end()
                         ->booleanNode('strict')->defaultFalse()->end()
                         ->scalarNode('expression_language')

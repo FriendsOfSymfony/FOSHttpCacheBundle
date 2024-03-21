@@ -11,21 +11,19 @@
 
 namespace FOS\HttpCacheBundle\Configuration;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
-
-/**
- * @Annotation
- */
 #[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
-class InvalidatePath extends ConfigurationAnnotation
+class InvalidatePath
 {
     /**
-     * @var array
+     * @var string[]
      */
-    private $paths;
+    private array $paths;
 
+    /**
+     * @param string|string[] $data
+     */
     public function __construct(
-        $data = []
+        string|array $data = []
     ) {
         $values = [];
         if (is_string($data)) {
@@ -34,48 +32,38 @@ class InvalidatePath extends ConfigurationAnnotation
             $values = $data;
         }
 
-        parent::__construct($values);
+        foreach ($values as $k => $v) {
+            if (!method_exists($this, $name = 'set'.$k)) {
+                throw new \RuntimeException(sprintf('Unknown key "%s" for attribute "%s".', $k, static::class));
+            }
+
+            $this->$name($v);
+        }
     }
 
     /**
      * Handle path given without explicit key.
      *
-     * @param string $data
+     * @param string|string[] $data
      */
-    public function setValue($data)
+    public function setValue(string|array $data): void
     {
         $this->setPaths(is_array($data) ? $data : [$data]);
     }
 
     /**
-     * @param array $paths
+     * @param string[] $paths
      */
-    public function setPaths($paths)
+    public function setPaths(array $paths): void
     {
         $this->paths = $paths;
     }
 
     /**
-     * @return array
+     * @return string[]
      */
-    public function getPaths()
+    public function getPaths(): array
     {
         return $this->paths;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAliasName(): string
-    {
-        return 'invalidate_path';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function allowArray(): bool
-    {
-        return true;
     }
 }

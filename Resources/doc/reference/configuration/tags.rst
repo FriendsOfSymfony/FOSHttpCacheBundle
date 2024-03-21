@@ -19,7 +19,7 @@ for an introduction. Also have a look at :doc:`configuring the proxy client for 
     lead to tagging being disabled. If you want to use tagging in one of those
     cases, you need to explicitly enable tagging.
 
-Enables tag annotations and rules. If you want to use tagging, it is recommended
+Enables tag attributes and rules. If you want to use tagging, it is recommended
 that you set this to ``true`` so you are notified of missing dependencies and
 incompatible proxies:
 
@@ -47,7 +47,7 @@ HTTP header that tags are stored in.
 .. include:: /includes/expression-language.rst
 
 Your custom expression functions can then be used in both the ``tag_expressions``
-section of the tag configuration and ``@tag`` :ref:`annotations<tag>`.
+section of the tag configuration and ``Tag`` :ref:`attributes <tag>`.
 
 .. code-block:: yaml
 

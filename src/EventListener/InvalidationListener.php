@@ -23,17 +23,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
-if (Kernel::MAJOR_VERSION >= 5) {
-    class_alias(TerminateEvent::class, 'FOS\HttpCacheBundle\EventListener\InvalidationTerminateEvent');
-} else {
-    class_alias(PostResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\InvalidationTerminateEvent');
-}
 
 /**
  * On kernel.terminate event, this event handler invalidates routes for the
@@ -43,31 +35,10 @@ if (Kernel::MAJOR_VERSION >= 5) {
  */
 class InvalidationListener extends AbstractRuleListener implements EventSubscriberInterface
 {
-    /**
-     * Cache manager.
-     *
-     * @var CacheManager
-     */
-    private $cacheManager;
-
-    /**
-     * Router.
-     *
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
-
-    /**
-     * Router.
-     *
-     * @var ExpressionLanguage|null
-     */
-    private $expressionLanguage;
-
-    /**
-     * @var RuleMatcherInterface
-     */
-    private $mustInvalidateRule;
+    private CacheManager $cacheManager;
+    private UrlGeneratorInterface $urlGenerator;
+    private ?ExpressionLanguage $expressionLanguage;
+    private RuleMatcherInterface $mustInvalidateRule;
 
     /**
      * Constructor.
@@ -80,8 +51,8 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
     ) {
         $this->cacheManager = $cacheManager;
         $this->urlGenerator = $urlGenerator;
-        $this->expressionLanguage = $expressionLanguage;
         $this->mustInvalidateRule = $mustInvalidateRule;
+        $this->expressionLanguage = $expressionLanguage;
     }
 
     /**
@@ -93,7 +64,7 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
      * - flush the cache manager in order to send invalidation requests to the
      *   HTTP cache.
      */
-    public function onKernelTerminate(InvalidationTerminateEvent $event)
+    public function onKernelTerminate(TerminateEvent $event): void
     {
         $request = $event->getRequest();
         $response = $event->getResponse();
@@ -114,7 +85,7 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
     /**
      * Flush cache manager when kernel exception occurs.
      */
-    public function onKernelException()
+    public function onKernelException(): void
     {
         try {
             $this->cacheManager->flush();
@@ -129,7 +100,7 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
      *
      * @throws ExceptionCollection If an exception occurs during flush
      */
-    public function onConsoleTerminate(ConsoleEvent $event)
+    public function onConsoleTerminate(ConsoleEvent $event): void
     {
         $num = $this->cacheManager->flush();
 
@@ -151,11 +122,11 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
     }
 
     /**
-     * Handle the invalidation annotations and configured invalidators.
+     * Handle the invalidation attributes and configured invalidators.
      */
-    private function handleInvalidation(Request $request, Response $response)
+    private function handleInvalidation(Request $request, Response $response): void
     {
-        // Check controller annotations
+        // Check controller attributes
         if ($paths = $request->attributes->get('_invalidate_path')) {
             $this->invalidatePaths($paths);
         }
@@ -186,11 +157,11 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
     }
 
     /**
-     * Invalidate paths from annotations.
+     * Invalidate paths from attributes.
      *
-     * @param array|InvalidatePath[] $pathConfigurations
+     * @param InvalidatePath[] $pathConfigurations
      */
-    private function invalidatePaths(array $pathConfigurations)
+    private function invalidatePaths(array $pathConfigurations): void
     {
         foreach ($pathConfigurations as $pathConfiguration) {
             foreach ($pathConfiguration->getPaths() as $path) {
@@ -200,11 +171,11 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
     }
 
     /**
-     * Invalidate routes from annotations.
+     * Invalidate routes from attributes.
      *
-     * @param array|InvalidateRoute[] $routes
+     * @param InvalidateRoute[] $routes
      */
-    private function invalidateRoutes(array $routes, Request $request)
+    private function invalidateRoutes(array $routes, Request $request): void
     {
         $values = $request->attributes->all();
         // if there is an attribute called "request", it needs to be accessed through the request.
@@ -223,7 +194,6 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
                     $params[$key] = $value;
                 }
             }
-
             $this->cacheManager->invalidateRoute($route->getName(), $params);
         }
     }
@@ -231,10 +201,6 @@ class InvalidationListener extends AbstractRuleListener implements EventSubscrib
     private function getExpressionLanguage(): ExpressionLanguage
     {
         if (!$this->expressionLanguage) {
-            // the expression comes from controller annotations, we can't detect whether they use expressions while building the configuration
-            if (!class_exists(ExpressionLanguage::class)) {
-                throw new \RuntimeException('Invalidation rules with expressions require '.ExpressionLanguage::class.' to be available.');
-            }
             $this->expressionLanguage = new ExpressionLanguage();
         }
 

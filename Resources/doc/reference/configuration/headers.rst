@@ -122,12 +122,11 @@ the request was matched.
 Headers are **merged**. If the response already has certain cache directives
 set, they are not overwritten. The configuration can thus specify defaults
 that may be changed by controllers or services that handle the response, or
-``@Cache`` annotations.
+``Cache`` attributes.
 
 The listener that applies the rules is triggered at priority 10, which
-makes it handle before the ``@Cache`` annotations from the
-SensioFrameworkExtraBundle are evaluated. Those annotations unconditionally
-overwrite cache directives.
+makes it handle before the ``Cache`` attributes from Symfony are evaluated.
+Those attributes unconditionally overwrite cache directives.
 
 The only exception is responses that *only* have the ``no-cache``
 directive. This is the default value for the cache control and there is no

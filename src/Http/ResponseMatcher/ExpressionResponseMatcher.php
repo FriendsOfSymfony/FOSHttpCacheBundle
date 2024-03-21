@@ -11,23 +11,15 @@
 
 namespace FOS\HttpCacheBundle\Http\ResponseMatcher;
 
-use Sensio\Bundle\FrameworkExtraBundle\Security\ExpressionLanguage as SecurityExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Response;
 
 class ExpressionResponseMatcher implements ResponseMatcherInterface
 {
-    /**
-     * @var ExpressionLanguage
-     */
-    private $expressionLanguage;
+    private ?ExpressionLanguage $expressionLanguage;
+    private string $expression;
 
-    /**
-     * @var string
-     */
-    private $expression;
-
-    public function __construct($expression, ExpressionLanguage $expressionLanguage = null)
+    public function __construct(string $expression, ExpressionLanguage $expressionLanguage = null)
     {
         $this->expression = $expression;
         $this->expressionLanguage = $expressionLanguage;
@@ -41,13 +33,10 @@ class ExpressionResponseMatcher implements ResponseMatcherInterface
         );
     }
 
-    private function getExpressionLanguage()
+    private function getExpressionLanguage(): ExpressionLanguage
     {
         if (!$this->expressionLanguage) {
-            $this->expressionLanguage = class_exists(SecurityExpressionLanguage::class)
-                ? new SecurityExpressionLanguage()
-                : new ExpressionLanguage()
-            ;
+            $this->expressionLanguage = new ExpressionLanguage();
         }
 
         return $this->expressionLanguage;

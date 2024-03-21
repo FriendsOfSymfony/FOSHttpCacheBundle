@@ -24,15 +24,9 @@ class HashGeneratorPassTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var FOSHttpCacheExtension
-     */
-    private $extension;
+    private FOSHttpCacheExtension $extension;
 
-    /**
-     * @var HashGeneratorPass
-     */
-    private $userContextListenerPass;
+    private HashGeneratorPass $userContextListenerPass;
 
     protected function setUp(): void
     {
@@ -43,20 +37,16 @@ class HashGeneratorPassTest extends TestCase
     /**
      * Nothing happens when user_context.hash_generator is not enabled.
      */
-    public function testConfigNoContext()
+    public function testConfigNoContext(): void
     {
         $container = $this->createContainer();
         $config = $this->getBaseConfig();
         $this->extension->load([$config], $container);
         $this->userContextListenerPass->process($container);
-        if (\PHP_VERSION_ID >= 80000) {
-            $this->assertCount(24, $container->getDefinitions());
-        } else {
-            $this->assertCount(23, $container->getDefinitions());
-        }
+        $this->assertCount(30, $container->getDefinitions());
     }
 
-    public function testConfigNoProviders()
+    public function testConfigNoProviders(): void
     {
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('No user context providers found');
@@ -71,7 +61,7 @@ class HashGeneratorPassTest extends TestCase
     /**
      * Test that priorities allow for us to re-arrange services.
      */
-    public function testConfigPrioritisedProviders()
+    public function testConfigPrioritisedProviders(): void
     {
         $container = $this->createContainer();
 
@@ -101,14 +91,14 @@ class HashGeneratorPassTest extends TestCase
         $this->assertEquals($services, ['test.provider', 'bar.provider', 'foo.provider']);
     }
 
-    protected function createContainer()
+    protected function createContainer(): ContainerBuilder
     {
         return new ContainerBuilder(new ParameterBag([
             'kernel.debug' => false,
         ]));
     }
 
-    protected function getBaseConfig()
+    protected function getBaseConfig(): array
     {
         return [
             'proxy_client' => [

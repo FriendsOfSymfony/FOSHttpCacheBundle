@@ -11,50 +11,39 @@
 
 namespace FOS\HttpCacheBundle\Tests\Unit\Http\RequestMatcher;
 
-use FOS\HttpCacheBundle\Http\RequestMatcher\QuerystringRequestMatcher;
+use FOS\HttpCacheBundle\Http\RequestMatcher\QueryStringRequestMatcher;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 class QuerystringRequestMatcherTest extends TestCase
 {
-    public function testMatchesReturnsFalseIfParentCallFails()
+    public function testMatchesReturnsFalseIfParentCallFails(): void
     {
-        $requestMatcher = new QuerystringRequestMatcher('/foo');
+        $requestMatcher = new QueryStringRequestMatcher('/foo');
         $request = Request::create('http://localhost/bar?token=myvalue');
 
         $this->assertFalse($requestMatcher->matches($request));
     }
 
-    public function testMatchesReturnsTrueWhenNoQueryStringIsSet()
+    public function testMatchesReturnsTrueIfQueryStringMatches(): void
     {
-        $requestMatcher = new QuerystringRequestMatcher();
-        $request = Request::create('http://localhost/bar?token=myvalue');
-
-        $this->assertTrue($requestMatcher->matches($request));
-    }
-
-    public function testMatchesReturnsTrueIfQueryStringMatches()
-    {
-        $requestMatcher = new QuerystringRequestMatcher();
-        $requestMatcher->setQueryString('(^|&)token=hello!(&|$)');
+        $requestMatcher = new QueryStringRequestMatcher('(^|&)token=hello!(&|$)');
         $request = Request::create('http://localhost/bar?token=hello%21');
 
         $this->assertTrue($requestMatcher->matches($request));
     }
 
-    public function testMatchesReturnsFalseIfQueryStringDoesntMatch()
+    public function testMatchesReturnsFalseIfQueryStringDoesntMatch(): void
     {
-        $requestMatcher = new QuerystringRequestMatcher();
-        $requestMatcher->setQueryString('(^|&)mytoken=');
+        $requestMatcher = new QueryStringRequestMatcher('(^|&)mytoken=');
         $request = Request::create('http://localhost/bar?token=myvalue');
 
         $this->assertFalse($requestMatcher->matches($request));
     }
 
-    public function testMatchesReturnsFalseIfQueryStringIsEmpty()
+    public function testMatchesReturnsFalseIfQueryStringIsEmpty(): void
     {
-        $requestMatcher = new QuerystringRequestMatcher();
-        $requestMatcher->setQueryString('(^|&)mytoken=');
+        $requestMatcher = new QueryStringRequestMatcher('(^|&)mytoken=');
         $request = Request::create('http://localhost/bar');
 
         $this->assertFalse($requestMatcher->matches($request));

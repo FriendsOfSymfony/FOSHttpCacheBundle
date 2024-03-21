@@ -15,16 +15,8 @@ use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
-
-if (Kernel::MAJOR_VERSION >= 5) {
-    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\CacheControlResponseEvent');
-} else {
-    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\CacheControlResponseEvent');
-}
 
 /**
  * Set caching settings on matching response according to the configurations.
@@ -38,17 +30,13 @@ class CacheControlListener implements EventSubscriberInterface
 {
     /**
      * Whether to skip this response and not set any cache headers.
-     *
-     * @var bool
      */
-    private $skip = false;
+    private bool $skip = false;
 
     /**
      * Cache control directives directly supported by Response.
-     *
-     * @var array
      */
-    private $supportedDirectives = [
+    private array $supportedDirectives = [
         'max_age' => true,
         's_maxage' => true,
         'private' => true,
@@ -58,7 +46,7 @@ class CacheControlListener implements EventSubscriberInterface
     /**
      * @var array List of arrays with RuleMatcherInterface, settings array
      */
-    private $rulesMap = [];
+    private array $rulesMap = [];
 
     /**
      * If not empty, add a debug header with that name to all responses,
@@ -66,12 +54,12 @@ class CacheControlListener implements EventSubscriberInterface
      *
      * @var string|bool Name of the header or false to add no header
      */
-    private $debugHeader;
+    private string|false $debugHeader;
 
     /**
-     * @param string|bool $debugHeader Header to set to trigger debugging, or false to send no header
+     * @param string|false $debugHeader Header to set to trigger debugging, or false to send no header
      */
-    public function __construct($debugHeader = false)
+    public function __construct(string|false $debugHeader = false)
     {
         $this->debugHeader = $debugHeader;
     }
@@ -93,10 +81,8 @@ class CacheControlListener implements EventSubscriberInterface
      * cache headers. No attempt to merge cache headers is made anymore.
      *
      * The debug header is still added if configured.
-     *
-     * @param bool $skip
      */
-    public function setSkip($skip = true)
+    public function setSkip(bool $skip = true): void
     {
         $this->skip = $skip;
     }
@@ -104,7 +90,7 @@ class CacheControlListener implements EventSubscriberInterface
     /**
      * Apply the header rules if the request matches.
      */
-    public function onKernelResponse(CacheControlResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         $request = $event->getRequest();
         $response = $event->getResponse();
@@ -135,7 +121,7 @@ class CacheControlListener implements EventSubscriberInterface
             }
         }
 
-        if (isset($options['reverse_proxy_ttl'])
+        if (array_key_exists('reverse_proxy_ttl', $options)
             && null !== $options['reverse_proxy_ttl']
             && !$response->headers->has('X-Reverse-Proxy-TTL')
         ) {
@@ -168,7 +154,7 @@ class CacheControlListener implements EventSubscriberInterface
     public function addRule(
         RuleMatcherInterface $ruleMatcher,
         array $settings = []
-    ) {
+    ): void {
         $this->rulesMap[] = [$ruleMatcher, $settings];
     }
 
@@ -177,7 +163,7 @@ class CacheControlListener implements EventSubscriberInterface
      *
      * @return array|false Settings to apply or false if no rule matched
      */
-    private function matchRule(Request $request, Response $response)
+    private function matchRule(Request $request, Response $response): false|array
     {
         foreach ($this->rulesMap as $elements) {
             if ($elements[0]->matches($request, $response)) {
@@ -193,7 +179,7 @@ class CacheControlListener implements EventSubscriberInterface
      *
      * @param bool $overwrite Whether to keep existing cache headers or to overwrite them
      */
-    private function setCache(Response $response, array $directives, $overwrite)
+    private function setCache(Response $response, array $directives, bool $overwrite): void
     {
         if ($overwrite) {
             $response->setCache($directives);
@@ -201,7 +187,7 @@ class CacheControlListener implements EventSubscriberInterface
             return;
         }
 
-        if (false !== strpos($response->headers->get('Cache-Control', ''), 'no-cache')) {
+        if (str_contains($response->headers->get('Cache-Control', ''), 'no-cache')) {
             // this single header is set by default. if its the only thing, we override it.
             $response->setCache($directives);
 
@@ -228,7 +214,7 @@ class CacheControlListener implements EventSubscriberInterface
      *
      * @param bool $overwrite Whether to keep existing cache headers or to overwrite them
      */
-    private function setExtraCacheDirectives(Response $response, array $controls, $overwrite)
+    private function setExtraCacheDirectives(Response $response, array $controls, bool $overwrite): void
     {
         $flags = ['must_revalidate', 'proxy_revalidate', 'no_transform', 'no_cache', 'no_store'];
         $options = ['stale_if_error', 'stale_while_revalidate'];

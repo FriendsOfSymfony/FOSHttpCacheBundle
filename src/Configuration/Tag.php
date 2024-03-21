@@ -12,23 +12,21 @@
 namespace FOS\HttpCacheBundle\Configuration;
 
 use FOS\HttpCacheBundle\Exception\InvalidTagException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\ExpressionLanguage\Expression;
 
-/**
- * @Annotation
- */
 #[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
-class Tag extends ConfigurationAnnotation
+class Tag
 {
-    private $tags;
+    /**
+     * @var string[]
+     */
+    private array $tags;
 
-    private $expression;
+    private ?Expression $expression;
 
     public function __construct(
-        $data = [],
-        $expression = null
+        string|array $data = [],
+        ?Expression $expression = null
     ) {
         $values = [];
         if (is_string($data)) {
@@ -39,44 +37,42 @@ class Tag extends ConfigurationAnnotation
 
         $values['expression'] = $values['expression'] ?? $expression;
 
-        parent::__construct($values);
+        foreach ($values as $k => $v) {
+            if (!method_exists($this, $name = 'set'.$k)) {
+                throw new \RuntimeException(sprintf('Unknown key "%s" for attribute "%s".', $k, static::class));
+            }
+
+            $this->$name($v);
+        }
     }
 
     /**
      * Handle tags given without explicit key.
      *
-     * @param string|array $data
+     * @param string|string[] $data
      */
-    public function setValue($data)
+    public function setValue(string|array $data): void
     {
         $this->setTags(is_array($data) ? $data : [$data]);
     }
 
-    /**
-     * @param mixed $expression
-     */
-    public function setExpression($expression)
+    public function setExpression(?Expression $expression): void
     {
-        // @codeCoverageIgnoreStart
-        if (!class_exists(ExpressionLanguage::class)) {
-            throw new InvalidConfigurationException('@Tag param uses an expression but the ExpressionLanguage is not available.');
-        }
-        // @codeCoverageIgnoreEnd
         $this->expression = $expression;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getExpression()
+    public function getExpression(): ?Expression
     {
         return $this->expression;
     }
 
-    public function setTags(array $tags)
+    /**
+     * @param string[] $tags
+     */
+    public function setTags(array $tags): void
     {
         foreach ($tags as $tag) {
-            if (false !== \strpos($tag, ',')) {
+            if (str_contains($tag, ',')) {
                 throw new InvalidTagException($tag, ',');
             }
         }
@@ -84,24 +80,11 @@ class Tag extends ConfigurationAnnotation
         $this->tags = $tags;
     }
 
-    public function getTags()
+    /**
+     * @return string[]
+     */
+    public function getTags(): array
     {
         return $this->tags;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAliasName(): string
-    {
-        return 'tag';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function allowArray(): bool
-    {
-        return true;
     }
 }

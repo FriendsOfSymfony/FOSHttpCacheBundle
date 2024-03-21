@@ -25,22 +25,15 @@ use Symfony\Component\Security\Core\Role\Role;
 class RoleProvider implements ContextProvider
 {
     /**
-     * @var TokenStorageInterface|null
-     */
-    private $tokenStorage;
-
-    /**
      * Create the role provider with a security context.
      *
      * The token storage is optional to not fail on routes that have no
      * firewall. It is however not valid to call updateUserContext when not in
      * a firewall context.
-     *
-     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(TokenStorageInterface $tokenStorage = null)
-    {
-        $this->tokenStorage = $tokenStorage;
+    public function __construct(
+        private ?TokenStorageInterface $tokenStorage = null
+    ) {
     }
 
     /**
@@ -48,7 +41,7 @@ class RoleProvider implements ContextProvider
      *
      * @throws InvalidConfigurationException when called without a security context being set
      */
-    public function updateUserContext(UserContext $context)
+    public function updateUserContext(UserContext $context): void
     {
         if (null === $this->tokenStorage) {
             throw new InvalidConfigurationException('The context hash URL must be under a firewall.');
@@ -67,7 +60,7 @@ class RoleProvider implements ContextProvider
         if (method_exists($token, 'getRoleNames')) {
             $roles = $token->getRoleNames();
         } else {
-            $roles = array_map(function (Role $role) {
+            $roles = array_map(static function (Role $role) {
                 return $role->getRole();
             }, $token->getRoles());
         }

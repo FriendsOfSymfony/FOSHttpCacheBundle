@@ -11,29 +11,16 @@
 
 namespace FOS\HttpCacheBundle\Configuration;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-
-/**
- * @Annotation
- */
 #[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
-class InvalidateRoute extends ConfigurationAnnotation
+class InvalidateRoute
 {
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 
-    /**
-     * @var array
-     */
-    private $params;
+    private array $params;
 
     public function __construct(
-        $data = [],
-        $params = []
+        string|array $data = [],
+        array $params = []
     ) {
         $values = [];
         if (is_string($data)) {
@@ -44,7 +31,13 @@ class InvalidateRoute extends ConfigurationAnnotation
 
         $values['params'] = $values['params'] ?? $params;
 
-        parent::__construct($values);
+        foreach ($values as $k => $v) {
+            if (!method_exists($this, $name = 'set'.$k)) {
+                throw new \RuntimeException(sprintf('Unknown key "%s" for attribute "%s".', $k, static::class));
+            }
+
+            $this->$name($v);
+        }
     }
 
     /**
@@ -52,79 +45,43 @@ class InvalidateRoute extends ConfigurationAnnotation
      *
      * @param string $value The route name
      */
-    public function setValue($value)
+    public function setValue(string $value): void
     {
         $this->setName($value);
     }
 
     /**
-     * @param string $name
+     * Handle route name with explicit key.
      */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param array $params
-     */
-    public function setParams($params)
+    public function setParams(array $params): void
     {
-        if (!is_array($params)) {
-            throw new \RuntimeException('InvalidateRoute params must be an array');
-        }
         foreach ($params as $name => $value) {
             if (is_array($value)) {
-                if (1 !== count($value) || !isset($value['expression'])) {
+                if (1 !== count($value) || !array_key_exists('expression', $value)) {
                     throw new \RuntimeException(sprintf(
-                        '@InvalidateRoute param %s must be string or {"expression"="<expression>"}, %s given',
+                        'InvalidateRoute param %s must be string or \'expression\': new Expression(\'<expression>\'), %s given',
                         $name,
                         print_r($value, true)
                     ));
                 }
-                // @codeCoverageIgnoreStart
-                if (!class_exists(ExpressionLanguage::class)) {
-                    throw new InvalidConfigurationException(sprintf(
-                        '@InvalidateRoute param %s uses an expression but the ExpressionLanguage is not available.',
-                        $name
-                    ));
-                }
-                // @codeCoverageIgnoreEnd
             }
         }
 
         $this->params = $params;
     }
 
-    /**
-     * @return array
-     */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAliasName(): string
-    {
-        return 'invalidate_route';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function allowArray(): bool
-    {
-        return true;
     }
 }

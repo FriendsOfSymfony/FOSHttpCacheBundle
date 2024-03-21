@@ -15,18 +15,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-if (Kernel::MAJOR_VERSION >= 5) {
-    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\FlashMessageResponseEvent');
-} else {
-    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\FlashMessageResponseEvent');
-}
+class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\EventListener\FlashMessageResponseEvent');
 
 /**
  * This event handler reads all flash messages and moves them into a cookie.
@@ -35,25 +28,10 @@ if (Kernel::MAJOR_VERSION >= 5) {
  */
 final class FlashMessageListener implements EventSubscriberInterface
 {
-    /**
-     * @var array
-     */
-    private $options;
+    private array $options;
 
-    /**
-     * For legacy support. If not set, we take the session from the request on the event.
-     *
-     * @var Session|null
-     */
-    private $session;
-
-    /**
-     * @param Session|null $session
-     */
-    public function __construct($session, array $options = [])
+    public function __construct(array $options = [])
     {
-        $this->session = $session;
-
         $resolver = new OptionsResolver();
         $resolver->setRequired(['name', 'path', 'host', 'secure']);
         $resolver->setAllowedTypes('name', 'string');
@@ -76,20 +54,11 @@ final class FlashMessageListener implements EventSubscriberInterface
     /**
      * Moves flash messages from the session to a cookie inside a Response Kernel listener.
      */
-    public function onKernelResponse(FlashMessageResponseEvent $event)
+    public function onKernelResponse(FlashMessageResponseEvent $event): void
     {
-        // BC for symfony < 5.3
-        if (method_exists($event, 'isMainRequest') ? !$event->isMainRequest() : !$event->isMasterRequest()) {
-            return;
-        }
-
         try {
-            $session = $this->session ?: $event->getRequest()->getSession();
-        } catch (SessionNotFoundException $e) {
-            return;
-        }
-
-        if (null === $session) {
+            $session = $event->getRequest()->getSession();
+        } catch (SessionNotFoundException) {
             return;
         }
 
@@ -110,10 +79,10 @@ final class FlashMessageListener implements EventSubscriberInterface
         $response = $event->getResponse();
 
         $cookies = $response->headers->getCookies(ResponseHeaderBag::COOKIES_ARRAY);
-        $host = (null === $this->options['host']) ? '' : $this->options['host'];
+        $host = $this->options['host'] ?? '';
         if (isset($cookies[$host][$this->options['path']][$this->options['name']])) {
             $rawCookie = $cookies[$host][$this->options['path']][$this->options['name']]->getValue();
-            $flashes = array_merge_recursive($flashes, json_decode($rawCookie, true));
+            $flashes = array_merge_recursive($flashes, json_decode($rawCookie, true, 512, JSON_THROW_ON_ERROR));
         }
 
         // Preserve existing flash message cookie from previous redirect if there was one.
@@ -121,12 +90,12 @@ final class FlashMessageListener implements EventSubscriberInterface
         $request = $event->getRequest();
         if ($request->cookies->has($this->options['name'])) {
             $rawCookie = $request->cookies->get($this->options['name']);
-            $flashes = array_merge_recursive($flashes, json_decode($rawCookie, true));
+            $flashes = array_merge_recursive($flashes, json_decode($rawCookie, true, 512, JSON_THROW_ON_ERROR));
         }
 
         $cookie = new Cookie(
             $this->options['name'],
-            json_encode($flashes),
+            json_encode($flashes, JSON_THROW_ON_ERROR),
             0,
             $this->options['path'],
             $this->options['host'],
