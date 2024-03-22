@@ -12,9 +12,10 @@ primary_domain = 'php'
 highlight_language = 'php'
 
 extensions = [
-    'sphinxcontrib.spelling',
-    'sphinx_rtd_theme',
     "sphinx.ext.intersphinx",
+    'sphinx_rtd_theme',
+    'sphinxcontrib.phpdomain',
+    'sphinxcontrib.spelling',
 ]
 
 # Spelling configuration
