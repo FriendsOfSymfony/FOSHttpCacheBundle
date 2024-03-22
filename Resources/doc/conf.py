@@ -14,6 +14,7 @@ highlight_language = 'php'
 extensions = [
     'sphinxcontrib.spelling',
     'sphinx_rtd_theme',
+    "sphinx.ext.intersphinx",
 ]
 
 # Spelling configuration
@@ -197,7 +198,7 @@ latex_documents = [
 
 # --------------
 
-intersphinx_mapping = {'foshttpcache': ('http://foshttpcache.readthedocs.org/en/latest/', None)}
+intersphinx_mapping = {'foshttpcache': ('http://foshttpcache.readthedocs.io/en/latest/', None)}
 
 rst_epilog = """
 .. _expressions: https://symfony.com/doc/current/components/expression_language.html

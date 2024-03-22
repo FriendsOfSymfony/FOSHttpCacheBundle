@@ -45,7 +45,7 @@ Optional Dependencies
 ExpressionLanguage
 ~~~~~~~~~~~~~~~~~~
 
-If you wish to use expressions_ in your :ref:`attributes <reference/attributes.rst>`,
+If you wish to use expressions in your :doc:`attributes <reference/attributes>`,
 you need Symfony’s ExpressionLanguage_ component. Make sure it is part of your application with:
 
 .. code-block:: bash

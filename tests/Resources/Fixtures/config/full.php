@@ -29,7 +29,7 @@ $container->loadFromExtension('fos_http_cache', [
                     'ips' => ['1.2.3.4', '1.1.1.1'],
                     'attributes' => ['_controller' => 'fos.user_bundle.*'],
                     'match_response' => 'response.getStatusCode() == 404',
-                    'match_response_expression_service' => 'my.custom.expression-service',
+                    'expression_language' => 'my.custom.expression-service',
                 ],
                 'headers' => [
                     'overwrite' => false,

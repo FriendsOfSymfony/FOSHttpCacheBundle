@@ -426,8 +426,8 @@ class Configuration implements ConfigurationInterface
                     ->defaultNull()
                     ->info('Expression to decide whether response should be matched. Replaces cacheable configuration.')
                 ->end()
-                ->scalarNode('match_response_expression_service')
-                    ->info('Service name of the expression language service to use for expression evaluation. If not specified, the default expression language is used')
+                ->scalarNode('expression_language')
+                    ->info('Service name of a custom ExpressionLanguage to use.')
                 ->end()
             ;
         }
@@ -808,7 +808,7 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('strict')->defaultFalse()->end()
                         ->scalarNode('expression_language')
                             ->defaultNull()
-                            ->info('Service name of a custom ExpressionLanugage to use.')
+                            ->info('Service name of a custom ExpressionLanguage to use.')
                         ->end()
                         ->scalarNode('response_header')
                             ->defaultNull()
@@ -830,7 +830,7 @@ class Configuration implements ConfigurationInterface
                                     ->ifTrue(function ($v) {
                                         return !empty($v['tag_expressions']) && !class_exists(ExpressionLanguage::class);
                                     })
-                                    ->thenInvalid('Configured a tag_expression but ExpressionLanugage is not available')
+                                    ->thenInvalid('Configured a tag_expression but ExpressionLanguage is not available')
                                 ->end()
                                 ->children()
         ;
@@ -863,7 +863,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('expression_language')
                             ->defaultNull()
-                            ->info('Service name of a custom ExpressionLanugage to use.')
+                            ->info('Service name of a custom ExpressionLanguage to use.')
                         ->end()
                         ->arrayNode('rules')
                             ->info('Set what requests should invalidate which target routes.')
