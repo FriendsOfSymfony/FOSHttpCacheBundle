@@ -240,7 +240,7 @@ configure the purge plugin for your HttpCache with the matching header if you
 change this.
 
 cloudflare
--------
+----------
 
 .. code-block:: yaml
 
@@ -255,14 +255,14 @@ cloudflare
                         - 'https://api.cloudflare.com'
 
 ``authentication_token``
-"""""""""""""""""""""""
+""""""""""""""""""""""""
 
 **type**: ``string``
 
 User API token for authentication against Cloudflare APIs, requires ``Zone.Cache`` Purge permissions.
 
 ``zone_identifier``
-"""""""""""""""""
+"""""""""""""""""""
 
 **type**: ``string``
 
@@ -275,8 +275,6 @@ Identifier for the Cloudflare zone you want to purge the cache for.
 
 List of Cloudflare API endpoints to use for purging the cache. You can use this to specify a different
 endpoint for testing purposes.
-
-.. _configuration_noop_proxy_client:
 
 cloudfront
 ----------
@@ -325,8 +323,6 @@ the `AWS Async documentation_`. It can not be used with the ``client`` option.
 Service identifier of a `AsyncAws\CloudFront\CloudFrontClient` client. More information is available on the
 `AWS Async documentation_`. It can not be used with the ``configuration`` option.
 
-.. _configuration_fastly_proxy_client:
-
 Fastly
 ----------
 .. code-block:: yaml
@@ -340,21 +336,21 @@ Fastly
                 soft_purge: true
 
 ``service_identifier``
-"""""""""""""""""""""
+""""""""""""""""""""""
 
 **type**: ``string``
 
 Identifier for the Fastly service you want to purge the cache for.
 
 ``authentication_token``
-"""""""""""""""""""""
+""""""""""""""""""""""""
 
 **type**: ``string``
 
 Authentication token (API Token) which can be created in the profile section of your account
 
 ``soft_purge``
-"""""""""""""""""""""
+""""""""""""""
 
 **type**: ``boolean`` **default**: ``true``
 

@@ -35,8 +35,6 @@ class RoleProvider implements ContextProvider
      * The token storage is optional to not fail on routes that have no
      * firewall. It is however not valid to call updateUserContext when not in
      * a firewall context.
-     *
-     * @param TokenStorageInterface $tokenStorage
      */
     public function __construct(TokenStorageInterface $tokenStorage = null)
     {
