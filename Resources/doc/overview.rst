@@ -71,7 +71,7 @@ And , if you don't use a recent version of Symfony, include it in your project::
 ExpressionLanguage
 ~~~~~~~~~~~~~~~~~~
 
-If you wish to use expressions_ in your annotations , you also need Symfony’s
+If you wish to use expressions in your annotations , you also need Symfony’s
 ExpressionLanguage_ component. If you’re not using full-stack Symfony 2.4 or
 later, you need to explicitly add the component:
 

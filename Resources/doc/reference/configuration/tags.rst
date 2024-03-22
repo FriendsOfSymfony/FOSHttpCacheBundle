@@ -137,7 +137,7 @@ unsafe requests.
 **type**: ``array``
 
 You can dynamically refer to request attributes using
-:ref:`expressions <expression language requirement>`. Assume a route
+:ref:`expressions <requirements>`. Assume a route
 ``/articles/{id}``. A request to path ``/articles/123`` will set/invalidate
 tag ``articles-123`` with the following configuration:
 
