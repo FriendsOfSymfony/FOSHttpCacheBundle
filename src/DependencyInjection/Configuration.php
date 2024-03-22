@@ -426,8 +426,8 @@ class Configuration implements ConfigurationInterface
                     ->defaultNull()
                     ->info('Expression to decide whether response should be matched. Replaces cacheable configuration.')
                 ->end()
-                ->scalarNode('match_response_expression_service')
-                    ->info('Service name of the expression language service to use for expression evaluation. If not specified, the default expression language is used')
+                ->scalarNode('expression_language')
+                    ->info('Service name of a custom ExpressionLanguage to use.')
                 ->end()
             ;
         }
