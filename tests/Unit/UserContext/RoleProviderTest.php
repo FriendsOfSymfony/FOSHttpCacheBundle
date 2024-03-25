@@ -16,11 +16,8 @@ use FOS\HttpCacheBundle\UserContext\RoleProvider;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Role\Role;
 
 class RoleProviderTest extends TestCase
 {
@@ -28,19 +25,9 @@ class RoleProviderTest extends TestCase
 
     public function testProvider()
     {
-        if (Kernel::MAJOR_VERSION >= 6) {
-            $token = \Mockery::mock(TokenInterface::class);
-            $token->shouldReceive('getRoleNames')->andReturn(['ROLE_USER']);
-            $token->shouldNotReceive('getRoles');
-        } elseif (method_exists(AnonymousToken::class, 'getRoleNames')) {
-            $token = \Mockery::mock(AnonymousToken::class);
-            $token->shouldReceive('getRoleNames')->andReturn(['ROLE_USER']);
-            $token->shouldNotReceive('getRoles');
-        } else {
-            $token = \Mockery::mock(TokenInterface::class);
-            $token->shouldReceive('getRoles')->andReturn([new Role('ROLE_USER')]);
-            $token->shouldNotReceive('getRoleNames');
-        }
+        $token = \Mockery::mock(TokenInterface::class);
+        $token->shouldReceive('getRoleNames')->andReturn(['ROLE_USER']);
+        $token->shouldNotReceive('getRoles');
 
         $securityContext = $this->getTokenStorageMock();
         $securityContext->shouldReceive('getToken')->andReturn($token);
@@ -53,22 +40,6 @@ class RoleProviderTest extends TestCase
         $this->assertEquals([
             'roles' => ['ROLE_USER'],
         ], $userContext->getParameters());
-    }
-
-    public function testProviderWithoutToken()
-    {
-        if (Kernel::MAJOR_VERSION >= 6) {
-            $this->markTestSkipped('No longer applicable with Symfony 6');
-        }
-        $securityContext = $this->getTokenStorageMock();
-        $securityContext->shouldReceive('getToken')->andReturn(null);
-
-        $userContext = new UserContext();
-        $provider = new RoleProvider($securityContext);
-
-        $provider->updateUserContext($userContext);
-
-        $this->assertEmpty($userContext->getParameters());
     }
 
     public function testNotUnderFirewall()

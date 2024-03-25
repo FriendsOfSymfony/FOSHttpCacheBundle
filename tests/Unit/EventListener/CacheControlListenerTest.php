@@ -14,19 +14,12 @@ namespace FOS\HttpCacheBundle\Tests\Unit\EventListener;
 use FOS\HttpCacheBundle\EventListener\CacheControlListener;
 use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\Kernel;
-
-if (Kernel::MAJOR_VERSION >= 5) {
-    class_alias(ResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\CacheControlResponseEvent');
-} else {
-    class_alias(FilterResponseEvent::class, 'FOS\HttpCacheBundle\Tests\Unit\EventListener\CacheControlResponseEvent');
-}
 
 class CacheControlListenerTest extends TestCase
 {
@@ -417,7 +410,7 @@ class CacheControlListenerTest extends TestCase
      * Build the filter response event with a mock kernel and default request
      * and response objects.
      */
-    protected function buildEvent(string $method = 'GET'): CacheControlResponseEvent
+    protected function buildEvent(string $method = 'GET'): ResponseEvent
     {
         /** @var HttpKernelInterface $kernel */
         $kernel = \Mockery::mock(HttpKernelInterface::class);
@@ -425,17 +418,15 @@ class CacheControlListenerTest extends TestCase
         $request = new Request();
         $request->setMethod($method);
 
-        return new CacheControlResponseEvent($kernel, $request, HttpKernelInterface::MAIN_REQUEST, $response);
+        return new ResponseEvent($kernel, $request, HttpKernelInterface::MAIN_REQUEST, $response);
     }
 
     /**
      * We mock a rule matcher for tests about applying the rules.
      *
      * @param array $headers The headers to return from the matcher
-     *
-     * @return \PHPUnit_Framework_MockObject_MockObject|CacheControlListener
      */
-    protected function getCacheControl(array $headers)
+    protected function getCacheControl(array $headers): CacheControlListener|MockObject
     {
         $listener = new CacheControlListener();
 
