@@ -12,17 +12,12 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\Command;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
-
-if (!\class_exists(KernelBrowser::class)) {
-    \class_alias(Client::class, KernelBrowser::class);
-}
 
 abstract class CommandTestCase extends WebTestCase
 {

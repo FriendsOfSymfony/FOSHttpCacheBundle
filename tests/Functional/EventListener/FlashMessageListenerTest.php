@@ -24,10 +24,6 @@ class FlashMessageListenerTest extends WebTestCase
         $client = static::createClient();
 
         $client->request('GET', '/flash');
-        if (Kernel::MAJOR_VERSION < 6) {
-            $session = static::$kernel->getContainer()->get('session');
-            $this->assertFalse($session->isStarted());
-        }
         $response = $client->getResponse();
         $this->assertEquals('flash', $response->getContent());
         $cookies = $response->headers->getCookies();
@@ -56,10 +52,6 @@ class FlashMessageListenerTest extends WebTestCase
         $client->setMaxRedirects(2);
 
         $client->request('GET', '/flash-redirect');
-        if (Kernel::MAJOR_VERSION < 6) {
-            $session = static::$kernel->getContainer()->get('session');
-            $this->assertFalse($session->isStarted());
-        }
         $response = $client->getResponse();
         $cookies = $response->headers->getCookies();
         $this->assertGreaterThanOrEqual(1, $cookies, implode(',', $cookies));

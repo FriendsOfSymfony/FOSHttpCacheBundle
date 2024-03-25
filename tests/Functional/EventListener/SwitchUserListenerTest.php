@@ -14,20 +14,13 @@ namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCacheBundle\Tests\Functional\SessionHelperTrait;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\User\InMemoryUser;
-use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Core\User\UserInterface;
-
-if (!\class_exists(KernelBrowser::class)) {
-    \class_alias(Client::class, KernelBrowser::class);
-}
 
 class SwitchUserListenerTest extends WebTestCase
 {
@@ -69,7 +62,7 @@ class SwitchUserListenerTest extends WebTestCase
         ;
         $client = static::createClient();
 
-        $container = method_exists($this, 'getContainer') ? self::getContainer() : (property_exists($this, 'container') ? self::$container : $client->getContainer());
+        $container = $client->getContainer();
         $container->set('fos_http_cache.proxy_client.varnish', $mock);
 
         $this->loginAsAdmin($client);
@@ -85,12 +78,11 @@ class SwitchUserListenerTest extends WebTestCase
             return;
         }
 
-        $container = method_exists($this, 'getContainer') ? self::getContainer() : (property_exists($this, 'container') ? self::$container : $client->getContainer());
-        $session = $container->get('session');
+        $session = $client->getContainer()->get('session');
 
         $user = $this->createAdminUser();
 
-        $token = new UsernamePasswordToken($user, null, self::FIREWALL_NAME, $user->getRoles());
+        $token = new UsernamePasswordToken($user,  self::FIREWALL_NAME, $user->getRoles());
         $session->set('_security_'.self::FIREWALL_NAME, serialize($token));
         $session->save();
 
@@ -100,11 +92,7 @@ class SwitchUserListenerTest extends WebTestCase
 
     private function createAdminUser(): UserInterface
     {
-        if (Kernel::MAJOR_VERSION >= 6) {
-            return new InMemoryUser('admin', 'admin', ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']);
-        }
-
-        return new User('admin', 'admin', ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']);
+        return new InMemoryUser('admin', 'admin', ['ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH']);
     }
 
     protected static function createKernel(array $options = []): KernelInterface
