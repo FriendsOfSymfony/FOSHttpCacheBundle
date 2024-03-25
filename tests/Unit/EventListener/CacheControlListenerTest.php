@@ -425,8 +425,6 @@ class CacheControlListenerTest extends TestCase
      * We mock a rule matcher for tests about applying the rules.
      *
      * @param array $headers The headers to return from the matcher
-     *
-     * @return MockObject|CacheControlListener
      */
     protected function getCacheControl(array $headers): CacheControlListener|MockObject
     {

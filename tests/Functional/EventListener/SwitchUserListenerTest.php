@@ -82,7 +82,7 @@ class SwitchUserListenerTest extends WebTestCase
 
         $user = $this->createAdminUser();
 
-        $token = new UsernamePasswordToken($user,  self::FIREWALL_NAME, $user->getRoles());
+        $token = new UsernamePasswordToken($user, self::FIREWALL_NAME, $user->getRoles());
         $session->set('_security_'.self::FIREWALL_NAME, serialize($token));
         $session->save();
 

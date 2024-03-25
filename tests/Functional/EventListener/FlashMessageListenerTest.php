@@ -13,7 +13,6 @@ namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpKernel\Kernel;
 
 class FlashMessageListenerTest extends WebTestCase
 {

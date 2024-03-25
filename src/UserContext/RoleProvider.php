@@ -14,10 +14,8 @@ namespace FOS\HttpCacheBundle\UserContext;
 use FOS\HttpCache\UserContext\ContextProvider;
 use FOS\HttpCache\UserContext\UserContext;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Role\Role;
 
 /**
  * The RoleProvider adds roles to the UserContext for the hash generation.
