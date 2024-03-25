@@ -47,7 +47,6 @@ class RoleProvider implements ContextProvider
 
         $token = $this->tokenStorage->getToken();
         if (null === $token) {
-            // Symfony 6 no longer provides the AnonymousToken, use the NullToken to generate the same hash for non-logged in users as before
             $token = new NullToken();
         }
 
