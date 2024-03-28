@@ -285,7 +285,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $container = $this->createContainer();
         $this->extension->load([$config], $container);
 
-        $this->assertFalse($container->has('fos_http_cache.user_context.logout_handler'));
+        $this->assertFalse($container->has('fos_http_cache.user_context.session_logout_handler'));
     }
 
     public function testConfigTagNotSupported()
@@ -580,7 +580,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertTrue($container->has('fos_http_cache.user_context.hash_generator'));
         $this->assertTrue($container->has('fos_http_cache.user_context.request_matcher'));
         $this->assertTrue($container->has('fos_http_cache.user_context.role_provider'));
-        $this->assertTrue($container->has('fos_http_cache.user_context.logout_handler'));
+        $this->assertTrue($container->has('fos_http_cache.user_context.session_logout_handler'));
 
         $this->assertEquals(['fos_http_cache.user_context.role_provider' => [[]]], $container->findTaggedServiceIds('fos_http_cache.user_context_provider'));
     }
@@ -610,7 +610,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertFalse($container->has('fos_http_cache.user_context.hash_generator'));
         $this->assertFalse($container->has('fos_http_cache.user_context.request_matcher'));
         $this->assertFalse($container->has('fos_http_cache.user_context.role_provider'));
-        $this->assertFalse($container->has('fos_http_cache.user_context.logout_handler'));
+        $this->assertFalse($container->has('fos_http_cache.user_context.session_logout_handler'));
         $this->assertFalse($container->has('fos_http_cache.user_context.session_listener'));
     }
 
