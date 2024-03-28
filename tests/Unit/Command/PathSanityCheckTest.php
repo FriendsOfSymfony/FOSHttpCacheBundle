@@ -13,13 +13,14 @@ namespace FOS\HttpCacheBundle\Tests\Unit\Command;
 
 use FOS\HttpCacheBundle\Command\PathSanityCheck;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes as PHPUnit;
 use PHPUnit\Framework\TestCase;
 
 class PathSanityCheckTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function pathProvider()
+    public static function pathProvider(): array
     {
         return [
             [false, '/foo'],
@@ -32,10 +33,8 @@ class PathSanityCheckTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider pathProvider
-     */
-    public function testLooksLikeRegularExpression($expected, $path)
+    #[PHPUnit\DataProvider('pathProvider')]
+    public function testLooksLikeRegularExpression(bool $expected, string $path): void
     {
         $sanityChecking = new SanityChecking();
         $this->assertEquals($expected, $sanityChecking->looksLikeRegularExpression($path));
@@ -48,7 +47,7 @@ class SanityChecking
         looksLikeRegularExpression as traitFunction;
     }
 
-    public function looksLikeRegularExpression($path)
+    public function looksLikeRegularExpression(string $path): bool
     {
         return $this->traitFunction($path);
     }

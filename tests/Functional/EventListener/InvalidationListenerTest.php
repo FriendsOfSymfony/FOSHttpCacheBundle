@@ -13,6 +13,7 @@ namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
 use FOS\HttpCacheBundle\CacheManager;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes as PHPUnit;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class InvalidationListenerTest extends WebTestCase
@@ -49,9 +50,7 @@ class InvalidationListenerTest extends WebTestCase
         $client->request('POST', '/invalidate/route/42');
     }
 
-    /**
-     * @dataProvider getStatusCodesThatTriggerInvalidation
-     */
+    #[PHPUnit\DataProvider('getStatusCodesThatTriggerInvalidation')]
     public function testInvalidatePath($statusCode): void
     {
         $client = static::createClient();
@@ -96,7 +95,7 @@ class InvalidationListenerTest extends WebTestCase
         $client->request('POST', '/invalidate/error');
     }
 
-    public function getStatusCodesThatTriggerInvalidation(): array
+    public static function getStatusCodesThatTriggerInvalidation(): array
     {
         return [[200], [204], [302]];
     }
