@@ -12,6 +12,7 @@
 namespace FOS\HttpCacheBundle\Tests\Functional\EventListener;
 
 use FOS\HttpCacheBundle\Tests\Functional\SessionHelperTrait;
+use PHPUnit\Framework\Attributes as PHPUnit;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 
@@ -19,9 +20,7 @@ class UserContextListenerTest extends WebTestCase
 {
     use SessionHelperTrait;
 
-    /**
-     * @dataProvider userHashDataProvider
-     */
+    #[PHPUnit\DataProvider('userHashDataProvider')]
     public function testHashLookup(string $username, string $hash)
     {
         // as we tamper with the session id, make sure no previous session is around
@@ -48,10 +47,8 @@ class UserContextListenerTest extends WebTestCase
         $this->assertSame('max-age=60, public', $response->headers->get('Cache-Control'));
     }
 
-    /**
-     * @dataProvider userHashDataProvider
-     */
-    public function testSessionCanBeCached(string $username, string $hash)
+    #[PHPUnit\DataProvider('userHashDataProvider')]
+    public function testSessionCanBeCached(string $username, string $hash): void
     {
         $client = static::createClient([], $username ? [
             'PHP_AUTH_USER' => $username,
@@ -66,7 +63,7 @@ class UserContextListenerTest extends WebTestCase
         $this->assertEquals('max-age=60, public', $response->headers->get('Cache-Control'));
     }
 
-    public function userHashDataProvider()
+    public static function userHashDataProvider(): \Generator
     {
         yield 'anonymous' => ['', '5224d8f5b85429624e2160e538a3376a479ec87b89251b295c44ecbf7498ea3c'];
         yield 'user' => ['user', '14cea38921d7f2284a52ac67eafb9ed5d30bed84684711591747d9110cae8be9'];

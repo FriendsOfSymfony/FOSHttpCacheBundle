@@ -24,22 +24,14 @@ use Symfony\Component\VarExporter\LazyObjectInterface;
  */
 class CacheManager extends CacheInvalidator
 {
-    /**
-     * @var ProxyClient
-     */
-    private $cache;
+    private ProxyClient $cache;
 
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
+    private UrlGeneratorInterface $urlGenerator;
 
     /**
      * What type of urls to generate.
-     *
-     * @var bool|string
      */
-    private $generateUrlType = UrlGeneratorInterface::ABSOLUTE_PATH;
+    private int $generateUrlType = UrlGeneratorInterface::ABSOLUTE_PATH;
 
     /**
      * Constructor.
@@ -57,9 +49,9 @@ class CacheManager extends CacheInvalidator
     /**
      * Set what type of URLs to generate.
      *
-     * @param bool|string $generateUrlType One of the constants in UrlGeneratorInterface
+     * @param int $generateUrlType One of the constants in UrlGeneratorInterface
      */
-    public function setGenerateUrlType($generateUrlType)
+    public function setGenerateUrlType(int $generateUrlType): void
     {
         $this->generateUrlType = $generateUrlType;
     }
@@ -73,7 +65,7 @@ class CacheManager extends CacheInvalidator
      *
      * @return $this
      */
-    public function invalidateRoute($name, array $parameters = [], array $headers = [])
+    public function invalidateRoute(string $name, array $parameters = [], array $headers = []): static
     {
         $this->invalidatePath($this->urlGenerator->generate($name, $parameters, $this->generateUrlType), $headers);
 
@@ -89,21 +81,14 @@ class CacheManager extends CacheInvalidator
      *
      * @return $this
      */
-    public function refreshRoute($route, array $parameters = [], array $headers = [])
+    public function refreshRoute(string $route, array $parameters = [], array $headers = []): static
     {
         $this->refreshPath($this->urlGenerator->generate($route, $parameters, $this->generateUrlType), $headers);
 
         return $this;
     }
 
-    /**
-     * Send all pending invalidation requests.
-     *
-     * @return int the number of cache invalidations performed per caching server
-     *
-     * @throws \FOS\HttpCache\Exception\ExceptionCollection
-     */
-    public function flush()
+    public function flush(): int
     {
         if (!$this->cache instanceof LazyObjectInterface || $this->cache->isLazyObjectInitialized()) {
             return parent::flush();

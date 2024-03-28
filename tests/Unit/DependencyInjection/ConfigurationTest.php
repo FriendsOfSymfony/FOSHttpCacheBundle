@@ -15,6 +15,7 @@ use FOS\HttpCacheBundle\DependencyInjection\Configuration;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use JeanBeru\HttpCacheCloudFront\Proxy\CloudFront;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionConfigurationTestCase;
+use PHPUnit\Framework\Attributes as PHPUnit;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
@@ -32,11 +33,11 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         return new Configuration(false);
     }
 
-    public function testEmptyConfiguration()
+    public function testEmptyConfiguration(): void
     {
         $expectedConfiguration = $this->getEmptyConfig();
 
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/empty.yml',
@@ -49,7 +50,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testSupportsAllConfigFormats()
+    public function testSupportsAllConfigFormats(): void
     {
         $expectedConfiguration = [
             'cacheable' => [
@@ -191,7 +192,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ],
         ];
 
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/full.yml',
@@ -204,7 +205,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testCustomProxyClient()
+    public function testCustomProxyClient(): void
     {
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['cache_manager'] = [
@@ -229,7 +230,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testSupportsNginx()
+    public function testSupportsNginx(): void
     {
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['proxy_client'] = [
@@ -248,7 +249,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
         $expectedConfiguration['user_context']['logout_handler']['enabled'] = false;
 
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/nginx.yml',
@@ -261,7 +262,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testSupportsSymfony()
+    public function testSupportsSymfony(): void
     {
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['proxy_client'] = [
@@ -297,7 +298,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testSupportsCloudflare()
+    public function testSupportsCloudflare(): void
     {
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['proxy_client'] = [
@@ -313,7 +314,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
         $expectedConfiguration['user_context']['logout_handler']['enabled'] = false;
 
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/cloudflare.yml',
@@ -326,7 +327,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testSupportsCloudfront()
+    public function testSupportsCloudfront(): void
     {
         if (!class_exists(CloudFront::class)) {
             $this->markTestSkipped('jean-beru/fos-http-cache-cloudfront not available');
@@ -345,7 +346,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['tags']['enabled'] = 'auto';
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
 
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/cloudfront.yml',
@@ -358,7 +359,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testCloudfrontConfigurationWithClientIsNotAllowed()
+    public function testCloudfrontConfigurationWithClientIsNotAllowed(): void
     {
         if (!class_exists(CloudFront::class)) {
             $this->markTestSkipped('jean-beru/fos-http-cache-cloudfront not available');
@@ -380,7 +381,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         (new Processor())->processConfiguration($configuration, ['fos_http_cache' => $params]);
     }
 
-    public function testSupportsFastly()
+    public function testSupportsFastly(): void
     {
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['proxy_client'] = [
@@ -398,7 +399,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['tags']['separator'] = ' ';
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
 
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
                'config/fastly.yml',
@@ -411,7 +412,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testEmptyServerConfigurationIsNotAllowed()
+    public function testEmptyServerConfigurationIsNotAllowed(): void
     {
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('Either configure the "http.servers" or "http.servers_from_jsonenv" section or enable "proxy_client.symfony.use_kernel_dispatcher');
@@ -430,7 +431,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         (new Processor())->processConfiguration($configuration, ['fos_http_cache' => $params]);
     }
 
-    public function testDefaultIsNotConsideredAsServerConfig()
+    public function testDefaultIsNotConsideredAsServerConfig(): void
     {
         $params = $this->getEmptyConfig();
         $params['proxy_client'] = [
@@ -444,7 +445,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $this->addToAssertionCount(1);
     }
 
-    public function testSupportsNoop()
+    public function testSupportsNoop(): void
     {
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['proxy_client'] = [
@@ -456,7 +457,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
         $expectedConfiguration['user_context']['logout_handler']['enabled'] = true;
 
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/noop.yml',
@@ -469,7 +470,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testSplitOptions()
+    public function testSplitOptions(): void
     {
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['cache_control'] = [
@@ -522,7 +523,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
         $expectedConfiguration['user_context']['logout_handler']['enabled'] = true;
 
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/split.yml',
@@ -535,13 +536,13 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testSupportsCacheableResponseExpression()
+    public function testSupportsCacheableResponseExpression(): void
     {
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['cacheable']['response']['expression']
             = 'response.getStatusCode() >= 300';
 
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/cacheable_response_expression.yml',
@@ -554,9 +555,9 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testCacheManagerNoClient()
+    public function testCacheManagerNoClient(): void
     {
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/cachemanager_noclient.yml',
@@ -574,9 +575,9 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testTagsNoCacheManager()
+    public function testTagsNoCacheManager(): void
     {
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/tags_nocachemanager.yml',
@@ -594,12 +595,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testTagsStrict()
+    public function testTagsStrict(): void
     {
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['tags']['strict'] = true;
 
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/tags_strict.yml',
@@ -612,7 +613,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testWeakETags()
+    public function testWeakETags(): void
     {
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['cache_control'] = [
@@ -641,7 +642,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ],
         ];
 
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/etag_weak.yml',
@@ -654,7 +655,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testStrongETags()
+    public function testStrongETags(): void
     {
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['cache_control'] = [
@@ -683,7 +684,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             ],
         ];
 
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/etag_true.yml',
@@ -696,9 +697,9 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function testInvalidationNoCacheManager()
+    public function testInvalidationNoCacheManager(): void
     {
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/invalidation_nocachemanager.yml',
@@ -716,7 +717,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         }
     }
 
-    public function userContextLogoutHandlerProvider()
+    public static function userContextLogoutHandlerProvider(): array
     {
         return [
             'auto no client' => ['config/user_context_auto_noclient.yml', false, false, false, false, null],
@@ -728,10 +729,8 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         ];
     }
 
-    /**
-     * @dataProvider userContextLogoutHandlerProvider
-     */
-    public function testUserContextLogoutHandler(string $configFile, $expected, $cacheManager, $proxyClient, $tags, $exception)
+    #[PHPUnit\DataProvider('userContextLogoutHandlerProvider')]
+    public function testUserContextLogoutHandler(string $configFile, $expected, $cacheManager, $proxyClient, $tags, $exception): void
     {
         $configFile = __DIR__.'/../../Resources/Fixtures/'.$configFile;
         if ($exception) {
@@ -764,9 +763,9 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $this->assertProcessedConfigurationEquals($expectedConfiguration, [$configFile]);
     }
 
-    public function testInvalidDate()
+    public function testInvalidDate(): void
     {
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/invalid_date.yml',
@@ -804,7 +803,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
         $expectedConfiguration['user_context']['logout_handler']['enabled'] = true;
 
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/servers_from_jsonenv.yml',
@@ -837,7 +836,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
         $expectedConfiguration['invalidation']['enabled'] = 'auto';
         $expectedConfiguration['user_context']['logout_handler']['enabled'] = true;
 
-        $formats = array_map(function ($path) {
+        $formats = array_map(static function (string $path) {
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/servers_from_jsonenv.yml',
@@ -853,7 +852,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     /**
      * @return array The configuration when nothing is specified
      */
-    private function getEmptyConfig()
+    private function getEmptyConfig(): array
     {
         return [
             'cacheable' => [

@@ -12,12 +12,13 @@
 namespace FOS\HttpCacheBundle\Tests\Unit\Http\ResponseMatcher;
 
 use FOS\HttpCacheBundle\Http\ResponseMatcher\CacheableResponseMatcher;
+use PHPUnit\Framework\Attributes as PHPUnit;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class CacheableResponseMatcherTest extends TestCase
 {
-    public function cacheableStatusCodeProvider()
+    public static function cacheableStatusCodeProvider(): array
     {
         return [
             [200], [203], [204], [206],
@@ -27,10 +28,8 @@ class CacheableResponseMatcherTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider cacheableStatusCodeProvider
-     */
-    public function testCacheableStatus(int $status)
+    #[PHPUnit\DataProvider('cacheableStatusCodeProvider')]
+    public function testCacheableStatus(int $status): void
     {
         $matcher = new CacheableResponseMatcher();
         $response = new Response('', $status);
@@ -38,7 +37,7 @@ class CacheableResponseMatcherTest extends TestCase
         $this->assertTrue($matcher->matches($response));
     }
 
-    public function testNonCacheableStatus()
+    public function testNonCacheableStatus(): void
     {
         $matcher = new CacheableResponseMatcher();
         $response = new Response('', 500);
@@ -46,7 +45,7 @@ class CacheableResponseMatcherTest extends TestCase
         $this->assertFalse($matcher->matches($response));
     }
 
-    public function testCustomCacheableStatus()
+    public function testCustomCacheableStatus(): void
     {
         $matcher = new CacheableResponseMatcher([400]);
 

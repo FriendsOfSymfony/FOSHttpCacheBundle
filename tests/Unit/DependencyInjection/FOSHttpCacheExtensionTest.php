@@ -15,6 +15,7 @@ use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use FOS\HttpCacheBundle\DependencyInjection\FOSHttpCacheExtension;
 use JeanBeru\HttpCacheCloudFront\Proxy\CloudFront;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes as PHPUnit;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ChildDefinition;
@@ -32,17 +33,14 @@ class FOSHttpCacheExtensionTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var FOSHttpCacheExtension
-     */
-    protected $extension;
+    protected FOSHttpCacheExtension $extension;
 
     protected function setUp(): void
     {
         $this->extension = new FOSHttpCacheExtension();
     }
 
-    public function testConfigLoadVarnish()
+    public function testConfigLoadVarnish(): void
     {
         $container = $this->createContainer();
         $this->extension->load([$this->getBaseConfig()], $container);
@@ -54,7 +52,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.tag'));
     }
 
-    public function testConfigLoadVarnishCustomClient()
+    public function testConfigLoadVarnishCustomClient(): void
     {
         $container = $this->createContainer();
 
@@ -68,7 +66,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertEquals('my_guzzle', $def->getArgument(2)->__toString());
     }
 
-    public function testConfigLoadVarnishInvalidUrl()
+    public function testConfigLoadVarnishInvalidUrl(): void
     {
         $this->expectException(InvalidConfigurationException::class);
 
@@ -79,7 +77,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->extension->load([$config], $container);
     }
 
-    public function testConfigLoadNginx()
+    public function testConfigLoadNginx(): void
     {
         $container = $this->createContainer();
         $this->extension->load([
@@ -104,7 +102,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertFalse($container->hasDefinition('fos_http_cache.http.symfony_response_tagger'));
     }
 
-    public function testConfigLoadSymfony()
+    public function testConfigLoadSymfony(): void
     {
         $container = $this->createContainer();
         $this->extension->load([
@@ -130,7 +128,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertTrue($container->hasDefinition('fos_http_cache.http.symfony_response_tagger'));
     }
 
-    public function testConfigLoadSymfonyWithKernelDispatcher()
+    public function testConfigLoadSymfonyWithKernelDispatcher(): void
     {
         $container = $this->createContainer();
         $this->extension->load([
@@ -147,7 +145,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertSame(KernelDispatcher::class, $container->getDefinition('fos_http_cache.proxy_client.symfony.http_dispatcher')->getClass());
     }
 
-    public function testConfigLoadCloudflare()
+    public function testConfigLoadCloudflare(): void
     {
         $container = $this->createContainer();
         $this->extension->load([
@@ -167,7 +165,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
     }
 
-    public function testConfigLoadCloudfront()
+    public function testConfigLoadCloudfront(): void
     {
         if (!class_exists(CloudFront::class)) {
             $this->markTestSkipped('jean-beru/fos-http-cache-cloudfront not available');
@@ -193,7 +191,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
     }
 
-    public function testConfigLoadCloudfrontWithClient()
+    public function testConfigLoadCloudfrontWithClient(): void
     {
         if (!class_exists(CloudFront::class)) {
             $this->markTestSkipped('jean-beru/fos-http-cache-cloudfront not available');
@@ -220,7 +218,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
     }
 
-    public function testConfigLoadFastly()
+    public function testConfigLoadFastly(): void
     {
         $container = $this->createContainer();
         $this->extension->load([
@@ -240,7 +238,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
     }
 
-    public function testConfigLoadNoop()
+    public function testConfigLoadNoop(): void
     {
         $container = $this->createContainer();
         $this->extension->load([
@@ -259,7 +257,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertFalse($container->hasDefinition('fos_http_cache.http.symfony_response_tagger'));
     }
 
-    public function testConfigCustomClient()
+    public function testConfigCustomClient(): void
     {
         $container = $this->createContainer();
         $this->extension->load([
@@ -278,7 +276,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertFalse($container->hasDefinition('fos_http_cache.http.symfony_response_tagger'));
     }
 
-    public function testEmptyConfig()
+    public function testEmptyConfig(): void
     {
         $config = [];
 
@@ -288,7 +286,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertFalse($container->has('fos_http_cache.user_context.logout_handler'));
     }
 
-    public function testConfigTagNotSupported()
+    public function testConfigTagNotSupported(): void
     {
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('You can not enable cache tagging with the nginx client');
@@ -313,7 +311,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->extension->load([$config], $container);
     }
 
-    public function testConfigLoadTagRules()
+    public function testConfigLoadTagRules(): void
     {
         $config = $this->getBaseConfig() + [
             'tags' => [
@@ -342,7 +340,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertFalse($container->hasDefinition('fos_http_cache.tag_handler.max_header_value_length_header_formatter'));
     }
 
-    public function testConfigWithMaxHeaderLengthValueDecoratesTagService()
+    public function testConfigWithMaxHeaderLengthValueDecoratesTagService(): void
     {
         $config = $this->getBaseConfig() + [
             'tags' => [
@@ -361,7 +359,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertSame(2048, $definition->getArgument(1));
     }
 
-    public function testConfigLoadInvalidatorRules()
+    public function testConfigLoadInvalidatorRules(): void
     {
         $config = $this->getBaseConfig() + [
             'invalidation' => [
@@ -391,7 +389,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $container->compile();
     }
 
-    public function testConfigLoadCacheControl()
+    public function testConfigLoadCacheControl(): void
     {
         $config = [
             'cache_control' => [
@@ -427,7 +425,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.cache_control');
     }
 
-    public function testConfigLoadCacheControlResponseStatus()
+    public function testConfigLoadCacheControlResponseStatus(): void
     {
         $config = [
             'cache_control' => [
@@ -459,7 +457,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.cache_control');
     }
 
-    public function testConfigLoadCacheControlExpression()
+    public function testConfigLoadCacheControlExpression(): void
     {
         $config = [
             'cache_control' => [
@@ -494,7 +492,7 @@ class FOSHttpCacheExtensionTest extends TestCase
     /**
      * Check if comma separated strings are parsed as expected.
      */
-    public function testConfigLoadCacheControlSplit()
+    public function testConfigLoadCacheControlSplit(): void
     {
         $config = [
             'cache_control' => [
@@ -521,7 +519,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertRequestMatcherCreated($container, ['_controller' => '^AcmeBundle:Default:index$'], ['GET', 'HEAD']);
     }
 
-    public function testConfigLoadCacheControlDuplicateRule()
+    public function testConfigLoadCacheControlDuplicateRule(): void
     {
         $config = [
             'cache_control' => [
@@ -556,7 +554,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->extension->load([$config], $container);
     }
 
-    public function testConfigUserContext()
+    public function testConfigUserContext(): void
     {
         $config = $this->getBaseConfig() + [
             'user_context' => [
@@ -585,7 +583,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertEquals(['fos_http_cache.user_context.role_provider' => [[]]], $container->findTaggedServiceIds('fos_http_cache.user_context_provider'));
     }
 
-    public function testConfigWithoutUserContext()
+    public function testConfigWithoutUserContext(): void
     {
         $config = [[
             'user_context' => [
@@ -614,7 +612,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertFalse($container->has('fos_http_cache.user_context.session_listener'));
     }
 
-    public function testConfigLoadFlashMessageListener()
+    public function testConfigLoadFlashMessageListener(): void
     {
         $config = [
             [
@@ -628,7 +626,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertTrue($container->has('fos_http_cache.event_listener.flash_message'));
     }
 
-    public function testVarnishDefaultTagMode()
+    public function testVarnishDefaultTagMode(): void
     {
         $container = $this->createContainer();
 
@@ -640,7 +638,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertEquals(['tag_mode' => 'ban', 'tags_header' => 'X-Cache-Tags'], $container->getParameter('fos_http_cache.proxy_client.varnish.options'));
     }
 
-    public function testVarnishBanTagMode()
+    public function testVarnishBanTagMode(): void
     {
         $container = $this->createContainer();
 
@@ -653,7 +651,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertEquals(['tag_mode' => 'ban', 'tags_header' => 'X-Cache-Tags'], $container->getParameter('fos_http_cache.proxy_client.varnish.options'));
     }
 
-    public function testVarnishBanTagModeOverrides()
+    public function testVarnishBanTagModeOverrides(): void
     {
         $container = $this->createContainer();
 
@@ -668,7 +666,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertEquals(['tag_mode' => 'ban', 'tags_header' => 'my-tags'], $container->getParameter('fos_http_cache.proxy_client.varnish.options'));
     }
 
-    public function testVarnishXkeyTagMode()
+    public function testVarnishXkeyTagMode(): void
     {
         $container = $this->createContainer();
 
@@ -681,7 +679,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertEquals(['tag_mode' => 'purgekeys', 'tags_header' => 'xkey-softpurge'], $container->getParameter('fos_http_cache.proxy_client.varnish.options'));
     }
 
-    public function testVarnishXkeyTagModeOverrides()
+    public function testVarnishXkeyTagModeOverrides(): void
     {
         $container = $this->createContainer();
 
@@ -697,7 +695,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertEquals(['tag_mode' => 'purgekeys', 'tags_header' => 'my-tags'], $container->getParameter('fos_http_cache.proxy_client.varnish.options'));
     }
 
-    public function testVarnishCustomTagsHeader()
+    public function testVarnishCustomTagsHeader(): void
     {
         $container = $this->createContainer();
 
@@ -709,16 +707,15 @@ class FOSHttpCacheExtensionTest extends TestCase
     }
 
     /**
-     * @param array|null        $serversValue            array that contains servers, `null` if not set
-     * @param string|null       $serversFromJsonEnvValue string that should contain an env var (use `VARNISH_SERVERS` for this test), `null` if not set
-     * @param string|mixed|null $envValue                _ENV['VARNISH_SERVERS'] will be set to this value; only used if `$serversFromJsonEnvValue` is used; should be a string, otherwise an error will show up
-     * @param array|null        $expectedServersValue    expected servers value the http dispatcher receives
-     * @param string|null       $expectExceptionClass    the exception class the configuration might throw, `null` if no exception is thrown
-     * @param string|null       $expectExceptionMessage  the message the exception throws, anything if no exception is thrown
-     *
-     * @dataProvider dataVarnishServersConfig
+     * @param array|null  $serversValue            array that contains servers, `null` if not set
+     * @param string|null $serversFromJsonEnvValue string that should contain an env var (use `VARNISH_SERVERS` for this test), `null` if not set
+     * @param mixed       $envValue                _ENV['VARNISH_SERVERS'] will be set to this value; only used if `$serversFromJsonEnvValue` is used; should be a string, otherwise an error will show up
+     * @param array|null  $expectedServersValue    expected servers value the http dispatcher receives
+     * @param string|null $expectExceptionClass    the exception class the configuration might throw, `null` if no exception is thrown
+     * @param string|null $expectExceptionMessage  the message the exception throws, anything if no exception is thrown
      */
-    public function testVarnishServersConfig($serversValue, $serversFromJsonEnvValue, $envValue, $expectedServersValue, $expectExceptionClass, $expectExceptionMessage): void
+    #[PHPUnit\DataProvider('dataVarnishServersConfig')]
+    public function testVarnishServersConfig(?array $serversValue, ?string $serversFromJsonEnvValue, mixed $envValue, ?array $expectedServersValue, ?string $expectExceptionClass, ?string $expectExceptionMessage): void
     {
         $_ENV['VARNISH_SERVERS'] = $envValue;
         $container = $this->createContainer();
@@ -762,7 +759,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         static::assertEquals($expectedServersValue, $definition->getArgument(0));
     }
 
-    public function dataVarnishServersConfig()
+    public static function dataVarnishServersConfig(): array
     {
         return [
             // working case before implementing the feature 'env vars in servers key'
@@ -779,7 +776,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         ];
     }
 
-    private function createContainer()
+    private function createContainer(): ContainerBuilder
     {
         $container = new ContainerBuilder(
             new EnvPlaceholderParameterBag(['kernel.debug' => false])
@@ -800,7 +797,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         return $container;
     }
 
-    private function getBaseConfig()
+    private function getBaseConfig(): array
     {
         return [
             'proxy_client' => [
@@ -857,10 +854,8 @@ class FOSHttpCacheExtensionTest extends TestCase
 
     /**
      * @param int[] $additionalStatus
-     *
-     * @return string
      */
-    private function assertResponseCacheableMatcherCreated(ContainerBuilder $container, array $additionalStatus)
+    private function assertResponseCacheableMatcherCreated(ContainerBuilder $container, array $additionalStatus): string
     {
         // Extract the corresponding definition
         $matcherDefinition = null;
@@ -878,17 +873,13 @@ class FOSHttpCacheExtensionTest extends TestCase
         }
 
         $this->assertNotNull($matcherDefinition, 'No matcher found');
+        $this->assertNotNull($matcherId, 'Matcher id not determined');
         $this->assertEquals($additionalStatus, $matcherDefinition->getArgument(0));
 
         return $matcherId;
     }
 
-    /**
-     * @param string $expression
-     *
-     * @return string
-     */
-    private function assertResponseExpressionMatcherCreated(ContainerBuilder $container, $expression)
+    private function assertResponseExpressionMatcherCreated(ContainerBuilder $container, string $expression): string
     {
         // Extract the corresponding definition
         $matcherDefinition = null;
@@ -906,6 +897,7 @@ class FOSHttpCacheExtensionTest extends TestCase
         }
 
         $this->assertNotNull($matcherDefinition, 'No matcher found');
+        $this->assertNotNull($matcherId, 'Matcher id not determined');
         $this->assertEquals($expression, $matcherDefinition->getArgument(0));
 
         return $matcherId;
@@ -913,10 +905,8 @@ class FOSHttpCacheExtensionTest extends TestCase
 
     /**
      * Assert that the service $id exists and has a method call mapped onto it.
-     *
-     * @param string $id The service id to investigate
      */
-    private function assertListenerHasRule(ContainerBuilder $container, $id)
+    private function assertListenerHasRule(ContainerBuilder $container, string $id): void
     {
         $this->assertTrue($container->hasDefinition($id));
         $listener = $container->getDefinition($id);

@@ -15,6 +15,7 @@ use FOS\HttpCacheBundle\CacheManager;
 use FOS\HttpCacheBundle\Configuration\Tag;
 use FOS\HttpCacheBundle\EventListener\TagListener;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes as PHPUnit;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -143,9 +144,7 @@ class TagListenerTest extends WebTestCase
         $this->assertEquals('tag-from-twig', $response->headers->get('X-Cache-Tags'));
     }
 
-    /**
-     * @dataProvider cacheableRequestResponseCombinations
-     */
+    #[PHPUnit\DataProvider('cacheableRequestResponseCombinations')]
     public function testTagsAreSetWhenCacheable(Request $request, Response $response): void
     {
         self::$overrideService = true;
@@ -175,9 +174,7 @@ class TagListenerTest extends WebTestCase
         $this->assertEquals('cacheable-is-tagged', $headers->get('X-Cache-Tags'));
     }
 
-    /**
-     * @dataProvider mustInvalidateRequestResponseCombinations
-     */
+    #[PHPUnit\DataProvider('mustInvalidateRequestResponseCombinations')]
     public function testTagsAreInvalidated(Request $request, Response $response): void
     {
         self::$overrideService = true;
@@ -211,9 +208,7 @@ class TagListenerTest extends WebTestCase
         $this->assertFalse($headers->has('X-Cache-Tags'));
     }
 
-    /**
-     * @dataProvider mustNotInvalidateRequestResponseCombinations
-     */
+    #[PHPUnit\DataProvider('mustNotInvalidateRequestResponseCombinations')]
     public function testTagsAreNotInvalidated(Request $request, Response $response): void
     {
         self::$overrideService = true;
@@ -244,7 +239,7 @@ class TagListenerTest extends WebTestCase
         $this->assertFalse($headers->has('X-Cache-Tags'));
     }
 
-    public function cacheableRequestResponseCombinations(): array
+    public static function cacheableRequestResponseCombinations(): array
     {
         return [
             [Request::create('', 'GET'), new Response('', 200)],
@@ -254,7 +249,7 @@ class TagListenerTest extends WebTestCase
         ];
     }
 
-    public function mustInvalidateRequestResponseCombinations(): array
+    public static function mustInvalidateRequestResponseCombinations(): array
     {
         return [
             // https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/issues/241
@@ -262,7 +257,7 @@ class TagListenerTest extends WebTestCase
         ];
     }
 
-    public function mustNotInvalidateRequestResponseCombinations(): array
+    public static function mustNotInvalidateRequestResponseCombinations(): array
     {
         return [
             // https://github.com/FriendsOfSymfony/FOSHttpCacheBundle/issues/279
