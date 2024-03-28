@@ -22,11 +22,11 @@ jobs:
           - php-version: '8.1'
             symfony-version: '6.4'
           - php-version: '8.2'
+            symfony-version: '6.4'
+          - php-version: '8.2'
             symfony-version: '7.*'
           - php-version: '8.3'
             symfony-version: '7.*'
-          - php-version: '8.2'
-            symfony-version: '6.4'
           # Minimum supported dependencies with the oldest PHP version
           - php-version: '8.1'
             composer-flag: '--prefer-stable --prefer-lowest'
