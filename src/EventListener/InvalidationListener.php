@@ -169,15 +169,13 @@ final class InvalidationListener extends AbstractRuleListener implements EventSu
         foreach ($routes as $route) {
             $params = [];
 
-            if (null !== $route->getParams()) {
-                // Iterate over route params and try to evaluate their values
-                foreach ($route->getParams() as $key => $value) {
-                    if (is_array($value)) {
-                        $value = $this->getExpressionLanguage()->evaluate($value['expression'], $values);
-                    }
-
-                    $params[$key] = $value;
+            // Iterate over route params and try to evaluate their values
+            foreach ($route->getParams() as $key => $value) {
+                if (is_array($value)) {
+                    $value = $this->getExpressionLanguage()->evaluate($value['expression'], $values);
                 }
+
+                $params[$key] = $value;
             }
             $this->cacheManager->invalidateRoute($route->getName(), $params);
         }
