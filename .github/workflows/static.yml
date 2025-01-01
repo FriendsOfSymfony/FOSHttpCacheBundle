@@ -16,8 +16,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Pull in optional dependencies
-        run: composer require --no-update jean-beru/fos-http-cache-cloudfront twig/twig symfony/console
-
+        run: composer require --no-update jean-beru/fos-http-cache-cloudfront twig/twig symfony/console phpstan/phpstan-symfony
+  
       - name: PHPStan
         uses: docker://oskarstark/phpstan-ga
         with:
