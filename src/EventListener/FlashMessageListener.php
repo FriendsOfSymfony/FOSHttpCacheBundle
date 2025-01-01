@@ -15,6 +15,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -54,6 +55,9 @@ final class FlashMessageListener implements EventSubscriberInterface
         try {
             $session = $event->getRequest()->getSession();
         } catch (SessionNotFoundException) {
+            return;
+        }
+        if (!($session instanceof FlashBagAwareSessionInterface)) {
             return;
         }
 
