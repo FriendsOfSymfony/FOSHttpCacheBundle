@@ -154,5 +154,5 @@ doctest:
 	      "results in $(BUILDDIR)/doctest/output.txt."
 
 spelling:
-	$(SPHINXBUILD) -b spelling $(ALLSPHINXOPTS) $(BUILDDIR)/spelling
+	$(SPHINXBUILD) -b spelling $(ALLSPHINXOPTS) -w $(BUILDDIR)/spelling/output.txt $(BUILDDIR)/spelling
 	@echo "Spelling report generated in $(BUILDDIR)/spelling/output.txt"
