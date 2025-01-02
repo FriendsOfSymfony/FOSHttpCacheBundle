@@ -96,8 +96,9 @@ final class TagListener extends AbstractRuleListener implements EventSubscriberI
     private function getAttributeTags(Request $request): array
     {
         // Check for _tag request attribute that is set when using Tag attribute
-        /** @var $tagConfigurations Tag[] */
-        if (!$tagConfigurations = $request->attributes->get('_tag')) {
+        /** @var Tag[] $tagConfigurations */
+        $tagConfigurations = $request->attributes->get('_tag');
+        if (!$tagConfigurations) {
             return [];
         }
 
