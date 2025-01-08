@@ -317,9 +317,10 @@ keeping previously set Vary options:
 
 **type**: ``integer``
 
-Set a X-Reverse-Proxy-TTL header for reverse proxy time-outs not driven by
+Set a custom TTL header for reverse proxy time-outs not driven by
 ``s-maxage``. This keeps your ``s-maxage`` free for use with reverse proxies
-not under your control.
+not under your control. The default header name is ``X-Reverse-Proxy-TTL`` but
+you can customize the header name as explained in the next section.
 
 .. warning::
 
@@ -351,7 +352,7 @@ This example adds the header ``X-Reverse-Proxy-TTL: 3600`` to your responses.
 
 **type**: ``string`` default `X-Reverse-Proxy-TTL`
 
-Change the name for the header for reverse proxy.
+You can change the header name used for the ``reverse_proxy_ttl`` option:
 
 .. code-block:: yaml
 
