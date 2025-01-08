@@ -43,6 +43,7 @@
                     <vary>Authorization</vary>
                 </headers>
             </rule>
+            <ttl-header>X-Reverse-Proxy-TTL</ttl-header>
         </cache-control>
         <proxy-client>
             <varnish tags-header="My-Cache-Tags" header-length="1234">

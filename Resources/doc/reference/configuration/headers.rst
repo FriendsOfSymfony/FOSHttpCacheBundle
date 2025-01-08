@@ -345,3 +345,26 @@ section:
                             s_maxage: 60
 
 This example adds the header ``X-Reverse-Proxy-TTL: 3600`` to your responses.
+
+``ttl_header``
+--------------
+
+**type**: ``string`` default `X-Reverse-Proxy-TTL`
+
+Change the name for the header for reverse proxy.
+
+.. code-block:: yaml
+
+    # app/config/config.yml
+    fos_http_cache:
+        cache_control:
+            ttl_header: X-My-Cache-Control
+            rules:
+                -
+                    headers:
+                        reverse_proxy_ttl: 3600
+                        cache_control:
+                            public: true
+                            s_maxage: 60
+
+This example adds the header ``X-My-Cache-Control: 3600`` to your responses.

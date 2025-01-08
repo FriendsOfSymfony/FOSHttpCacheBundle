@@ -56,6 +56,7 @@ final class CacheControlListener implements EventSubscriberInterface
          * @var string|false Name of the header or false to add no header
          */
         private readonly string|false $debugHeader = false,
+        private readonly string $ttlHeader = 'X-Reverse-Proxy-TTL',
     ) {
     }
 
@@ -115,9 +116,9 @@ final class CacheControlListener implements EventSubscriberInterface
 
         if (array_key_exists('reverse_proxy_ttl', $options)
             && null !== $options['reverse_proxy_ttl']
-            && !$response->headers->has('X-Reverse-Proxy-TTL')
+            && !$response->headers->has($this->ttlHeader)
         ) {
-            $response->headers->set('X-Reverse-Proxy-TTL', $options['reverse_proxy_ttl'], false);
+            $response->headers->set($this->ttlHeader, $options['reverse_proxy_ttl'], false);
         }
 
         if (!empty($options['vary'])) {

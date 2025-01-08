@@ -21,6 +21,7 @@ $container->loadFromExtension(
                     ],
                 ],
             ],
+            'ttl_header' => 'X-Reverse-Proxy-TTL',
         ],
     ]
 );

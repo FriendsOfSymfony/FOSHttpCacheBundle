@@ -51,6 +51,7 @@ $container->loadFromExtension('fos_http_cache', [
                 ],
             ],
         ],
+        'ttl_header' => 'X-Reverse-Proxy-TTL',
     ],
     'proxy_client' => [
         'varnish' => [

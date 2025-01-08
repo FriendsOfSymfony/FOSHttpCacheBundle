@@ -277,6 +277,10 @@ final class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
+                        ->scalarNode('ttl_header')
+                            ->defaultValue('X-Reverse-Proxy-TTL')
+                            ->info('Specify the header name to use with the cache_control.reverse_proxy_ttl setting')
+                        ->end()
                         ->arrayNode('rules')
                             ->prototype('array')
                                 ->children();
@@ -330,7 +334,7 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                     ->scalarNode('reverse_proxy_ttl')
                         ->defaultNull()
-                        ->info('Specify an X-Reverse-Proxy-TTL header with a time in seconds for a caching proxy under your control.')
+                        ->info('Specify a custom time to live in seconds for your caching proxy. This value is sent in the custom header configured in cache_control.ttl_header.')
                     ->end()
                     ->arrayNode('vary')
                         ->beforeNormalization()->ifString()->then(function ($v) {

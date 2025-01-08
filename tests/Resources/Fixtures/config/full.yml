@@ -43,6 +43,7 @@ fos_http_cache:
                     vary:
                         - Cookie
                         - Authorization
+        ttl_header: X-Reverse-Proxy-TTL
     proxy_client:
         varnish:
             tags_header: My-Cache-Tags

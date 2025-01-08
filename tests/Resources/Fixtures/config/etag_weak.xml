@@ -9,6 +9,7 @@
                 <headers etag="weak">
                 </headers>
             </rule>
+            <ttl-header>X-Reverse-Proxy-TTL</ttl-header>
         </cache-control>
     </config>
 

@@ -96,6 +96,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                         ],
                     ],
                 ],
+                'ttl_header' => 'X-Reverse-Proxy-TTL',
             ],
             'proxy_client' => [
                 'varnish' => [
@@ -474,6 +475,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     {
         $expectedConfiguration = $this->getEmptyConfig();
         $expectedConfiguration['cache_control'] = [
+            'ttl_header' => 'X-My-Header',
             'rules' => [
                 [
                     'match' => [
@@ -637,6 +639,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     ],
                 ],
             ],
+            'ttl_header' => 'X-Reverse-Proxy-TTL',
             'defaults' => [
                 'overwrite' => false,
             ],
@@ -679,6 +682,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     ],
                 ],
             ],
+            'ttl_header' => 'X-Reverse-Proxy-TTL',
             'defaults' => [
                 'overwrite' => false,
             ],

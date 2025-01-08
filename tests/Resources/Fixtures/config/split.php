@@ -11,6 +11,7 @@
 
 $container->loadFromExtension('fos_http_cache', [
     'cache_control' => [
+        'ttl_header' => 'X-My-Header',
         'rules' => [
             [
                 'match' => [

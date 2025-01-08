@@ -6,3 +6,4 @@ fos_http_cache:
                     path: null
                 headers:
                     etag: "weak"
+        ttl_header: X-Reverse-Proxy-TTL
