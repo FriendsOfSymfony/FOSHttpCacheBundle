@@ -9,6 +9,7 @@
                  class="FOS\HttpCacheBundle\EventListener\CacheControlListener"
                  public="true">
             <argument>%fos_http_cache.debug_header%</argument>
+            <argument>%fos_http_cache.ttl_header%</argument>
             <tag name="kernel.event_subscriber" />
         </service>
         <service id="FOS\HttpCacheBundle\EventListener\CacheControlListener" alias="fos_http_cache.event_listener.cache_control" public="true"/>

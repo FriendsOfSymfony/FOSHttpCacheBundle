@@ -4,6 +4,13 @@ Changelog
 3.x
 ===
 
+3.1.0
+-----
+
+### Added
+
+* New Feature: allow configuring the TTL header name for the special `reverse_proxy_ttl` config value. #638
+
 3.0.2
 -----
 

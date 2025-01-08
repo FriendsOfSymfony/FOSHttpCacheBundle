@@ -334,6 +334,21 @@ class CacheControlListenerTest extends TestCase
         $this->assertEquals(600, $newHeaders['x-reverse-proxy-ttl'][0]);
     }
 
+    public function testReverseProxyTtlHeader(): void
+    {
+        $event = $this->buildEvent();
+        $headers = [
+            'reverse_proxy_ttl' => 700,
+        ];
+        $listener = $this->getCacheControl($headers, 'X-My-Header');
+
+        $listener->onKernelResponse($event);
+        $newHeaders = $event->getResponse()->headers->all();
+
+        $this->assertTrue(isset($newHeaders['x-my-header']), implode(',', array_keys($newHeaders)));
+        $this->assertEquals(700, $newHeaders['x-my-header'][0]);
+    }
+
     public function testDebugHeader(): void
     {
         $listener = new CacheControlListener('X-Cache-Debug');
@@ -426,9 +441,9 @@ class CacheControlListenerTest extends TestCase
      *
      * @param array $headers The headers to return from the matcher
      */
-    protected function getCacheControl(array $headers): CacheControlListener|MockObject
+    protected function getCacheControl(array $headers, string $ttlHeader = 'X-Reverse-Proxy-TTL'): CacheControlListener|MockObject
     {
-        $listener = new CacheControlListener();
+        $listener = new CacheControlListener(false, $ttlHeader);
 
         $matcher = \Mockery::mock(RuleMatcherInterface::class)
             ->shouldReceive(['matches' => true])

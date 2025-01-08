@@ -3,6 +3,7 @@
 
     <config xmlns="http://example.org/schema/dic/fos_http_cache">
         <cache-control>
+            <ttl-header>X-My-Header</ttl-header>
             <rule>
                 <match>
                     <methods>GET,POST</methods>
