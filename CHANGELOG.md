@@ -4,8 +4,8 @@ Changelog
 3.x
 ===
 
-3.1.1 (unreleased)
-------------------
+3.1.1
+-----
 
 * Fixed regression with the extension class when `ttl_header` is not set.
 
