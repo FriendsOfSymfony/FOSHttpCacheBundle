@@ -28,6 +28,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 final class CacheControlListener implements EventSubscriberInterface
 {
+    public const DEFAULT_TTL_HEADER_NAME = 'X-Reverse-Proxy-TTL';
+
     /**
      * Whether to skip this response and not set any cache headers.
      */
@@ -56,7 +58,7 @@ final class CacheControlListener implements EventSubscriberInterface
          * @var string|false Name of the header or false to add no header
          */
         private readonly string|false $debugHeader = false,
-        private readonly string $ttlHeader = 'X-Reverse-Proxy-TTL',
+        private readonly string $ttlHeader = self::DEFAULT_TTL_HEADER_NAME,
     ) {
     }
 

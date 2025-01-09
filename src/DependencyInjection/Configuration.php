@@ -16,6 +16,7 @@ use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
 use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
 use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatter;
+use FOS\HttpCacheBundle\EventListener\CacheControlListener;
 use JeanBeru\HttpCacheCloudFront\Proxy\CloudFront;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
@@ -278,7 +279,7 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                         ->scalarNode('ttl_header')
-                            ->defaultValue('X-Reverse-Proxy-TTL')
+                            ->defaultValue(CacheControlListener::DEFAULT_TTL_HEADER_NAME)
                             ->info('Specify the header name to use with the cache_control.reverse_proxy_ttl setting')
                         ->end()
                         ->arrayNode('rules')
