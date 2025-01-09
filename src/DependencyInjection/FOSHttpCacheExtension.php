@@ -17,6 +17,7 @@ use FOS\HttpCache\ProxyClient\ProxyClient;
 use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use FOS\HttpCache\TagHeaderFormatter\MaxHeaderValueLengthFormatter;
 use FOS\HttpCacheBundle\DependencyInjection\Compiler\HashGeneratorPass;
+use FOS\HttpCacheBundle\EventListener\CacheControlListener;
 use FOS\HttpCacheBundle\Http\ResponseMatcher\ExpressionResponseMatcher;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -48,7 +49,7 @@ final class FOSHttpCacheExtension extends Extension
 
         if ($config['debug']['enabled'] || (!empty($config['cache_control']))) {
             $debugHeader = $config['debug']['enabled'] ? $config['debug']['header'] : false;
-            $ttlHeader = $config['cache_control']['ttl_header'] ?? null;
+            $ttlHeader = $config['cache_control']['ttl_header'] ?? CacheControlListener::DEFAULT_TTL_HEADER_NAME;
             $container->setParameter('fos_http_cache.debug_header', $debugHeader);
             $container->setParameter('fos_http_cache.ttl_header', $ttlHeader);
             $loader->load('cache_control_listener.xml');
