@@ -4,12 +4,15 @@ Changelog
 3.x
 ===
 
+3.1.1 (unreleased)
+------------------
+
+* Fixed regression with the extension class when `ttl_header` is not set.
+
 3.1.0
 -----
 
-### Added
-
-* New Feature: allow configuring the TTL header name for the special `reverse_proxy_ttl` config value. #638
+* Added: `cache_control.ttl_header` to configure the TTL header name for the `reverse_proxy_ttl` cache control rule configuration. #638
 
 3.0.2
 -----
