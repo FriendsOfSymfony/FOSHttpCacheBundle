@@ -48,7 +48,7 @@ final class FOSHttpCacheExtension extends Extension
 
         if ($config['debug']['enabled'] || (!empty($config['cache_control']))) {
             $debugHeader = $config['debug']['enabled'] ? $config['debug']['header'] : false;
-            $ttlHeader = $config['cache_control']['ttl_header'];
+            $ttlHeader = $config['cache_control']['ttl_header'] ?? null;
             $container->setParameter('fos_http_cache.debug_header', $debugHeader);
             $container->setParameter('fos_http_cache.ttl_header', $ttlHeader);
             $loader->load('cache_control_listener.xml');
