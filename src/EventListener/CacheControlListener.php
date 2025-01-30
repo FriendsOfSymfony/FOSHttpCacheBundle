@@ -116,11 +116,30 @@ final class CacheControlListener implements EventSubscriberInterface
             }
         }
 
-        if (array_key_exists('reverse_proxy_ttl', $options)
-            && null !== $options['reverse_proxy_ttl']
-            && !$response->headers->has($this->ttlHeader)
-        ) {
-            $response->headers->set($this->ttlHeader, $options['reverse_proxy_ttl'], false);
+        if (!$response->headers->has($this->ttlHeader)) {
+            if (!empty($options['reverse_proxy_cache_control'])) {
+                $directives = array_intersect_key($options['reverse_proxy_cache_control'], $this->supportedDirectives);
+
+                if (!empty($directives)) {
+                    $headerValues = [];
+
+                    foreach ($directives as $k => $v) {
+                        $k = str_replace('_', '-', $k);
+
+                        if (in_array($k, ['public', 'private'])) {
+                            if ($v) {
+                                $headerValues[] = $k;
+                            }
+                        } else {
+                            $headerValues[] = $k . '=' . $v;
+                        }
+                    }
+
+                    $response->headers->set($this->ttlHeader, \implode(', ', $headerValues), false);
+                }
+            } elseif (array_key_exists('reverse_proxy_ttl', $options) && null !== $options['reverse_proxy_ttl']) {
+                $response->headers->set($this->ttlHeader, $options['reverse_proxy_ttl'], false);
+            }
         }
 
         if (!empty($options['vary'])) {

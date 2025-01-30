@@ -337,6 +337,15 @@ final class Configuration implements ConfigurationInterface
                         ->defaultNull()
                         ->info('Specify a custom time to live in seconds for your caching proxy. This value is sent in the custom header configured in cache_control.ttl_header.')
                     ->end()
+                    ->arrayNode('reverse_proxy_cache_control')
+                        ->info('Add the specified cache control directives for reverse proxy.')
+                        ->children()
+                            ->scalarNode('max_age')->end()
+                            ->scalarNode('s_maxage')->end()
+                            ->booleanNode('private')->end()
+                            ->booleanNode('public')->end()
+                        ->end()
+                    ->end()
                     ->arrayNode('vary')
                         ->beforeNormalization()->ifString()->then(function ($v) {
                             return preg_split('/\s*,\s*/', $v);

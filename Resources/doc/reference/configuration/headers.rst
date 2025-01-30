@@ -347,6 +347,39 @@ section:
 
 This example adds the header ``X-Reverse-Proxy-TTL: 3600`` to your responses.
 
+``reverse_proxy_cache_control``
+"""""""""""""""""""""
+
+**type**: ``array``
+
+The map under ``reverse_proxy_cache_control`` goes with ``ttl_header``.
+The names are specified with underscores in yaml, but translated to ``-`` for
+the ``X-Reverse-Proxy-TTL`` header.
+
+You can use the standard cache control directives:
+
+* ``max_age`` time in seconds;
+* ``s_maxage`` time in seconds for proxy caches (also public caches);
+* ``private`` true or false;
+* ``public`` true or false;
+
+.. code-block:: yaml
+
+    # app/config/config.yml
+    fos_http_cache:
+        cache_control:
+            rules:
+                -
+                    headers:
+                        reverse_proxy_cache_control:
+                            max_age: 36000
+                            public: true
+                        cache_control:
+                            no_store: true
+                            private: true
+
+This example adds the header ``X-Reverse-Proxy-TTL: max-age=36000, public`` to your responses.
+
 ``ttl_header``
 --------------
 
