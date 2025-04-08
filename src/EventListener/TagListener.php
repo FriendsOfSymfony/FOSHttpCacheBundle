@@ -69,7 +69,6 @@ final class TagListener extends AbstractRuleListener implements EventSubscriberI
         if ($this->cacheableRule->matches($request, $response)) {
             // For safe requests (GET and HEAD), set cache tags on response
             $this->symfonyResponseTagger->addTags($tags);
-            // BC for symfony < 5.3
             if ($event->isMainRequest()) {
                 $this->symfonyResponseTagger->tagSymfonyResponse($response);
             }
