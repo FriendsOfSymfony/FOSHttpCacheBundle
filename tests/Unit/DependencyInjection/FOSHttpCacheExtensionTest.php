@@ -489,6 +489,24 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertListenerHasRule($container, 'fos_http_cache.event_listener.cache_control');
     }
 
+    public function testConfigLoadCacheControlExpressionWithOverriddenExpressionLanguage(): void
+    {
+        $config = $this->getCacheControlExpressionFullConfig();
+
+        $container = $this->createContainer();
+        $this->extension->load([$config], $container);
+
+        $id = 'fos_http_cache.cache_control.expression.'.md5('foobar');
+        $this->assertTrue($container->hasDefinition($id), 'expression child definition not created as expected');
+        $this->assertEquals(
+            [
+                'foobar',
+                new Reference('app.expression_language'),
+            ],
+            $container->getDefinition($id)->getArguments()
+        );
+    }
+
     /**
      * Check if comma separated strings are parsed as expected.
      */
@@ -806,6 +824,28 @@ class FOSHttpCacheExtensionTest extends TestCase
                         'base_url' => 'my_hostname',
                         'servers' => [
                             '127.0.0.1',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getCacheControlExpressionFullConfig(): array
+    {
+        return [
+            'cache_control' => [
+                'rules' => [
+                    [
+                        'match' => [
+                            'match_response' => 'foobar',
+                            'expression_language' => 'app.expression_language',
+                        ],
+                        'headers' => [
+                            'cache_control' => ['public' => true],
                         ],
                     ],
                 ],
