@@ -259,10 +259,10 @@ final class FOSHttpCacheExtension extends Extension
             $id = 'fos_http_cache.cache_control.expression.'.md5($config['match_response']);
             if (!$container->hasDefinition($id)) {
                 $childDefinition = (new ChildDefinition('fos_http_cache.response_matcher.cache_control.expression'))
-                    ->replaceArgument(0, $config['match_response'])
+                    ->setArgument(0, $config['match_response'])
                 ;
-                if (!empty($config['match_response_expression_service'])) {
-                    $childDefinition->replaceArgument(1, new Reference($config['match_response_expression_service']));
+                if (!empty($config['expression_language'])) {
+                    $childDefinition->setArgument(1, new Reference($config['expression_language']));
                 }
                 $container
                     ->setDefinition($id, $childDefinition)
