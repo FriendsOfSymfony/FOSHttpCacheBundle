@@ -26,6 +26,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\Routing\Router;
 
@@ -505,6 +506,20 @@ class FOSHttpCacheExtensionTest extends TestCase
             ],
             $container->getDefinition($id)->getArguments()
         );
+    }
+
+    public function testContainerCompilesWithCacheControlExpressionConfig(): void
+    {
+        $config = $this->getCacheControlExpressionFullConfig();
+
+        $container = $this->createContainer();
+        $this->extension->load([$config], $container);
+
+        $container->addDefinitions(['app.expression_language' => new Definition(ExpressionLanguage::class)]);
+
+        $container->compile();
+
+        $this->expectNotToPerformAssertions();
     }
 
     /**
