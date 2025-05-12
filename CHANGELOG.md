@@ -4,6 +4,12 @@ Changelog
 3.x
 ===
 
+3.1.2
+-----
+
+* Fixed `match_response` configuration to work with Symfony 6+. #644
+* Fixed overwriting `expression_language` for the response matcher, due to a name mismatch the configuration was ignored. #644
+
 3.1.1
 -----
 
