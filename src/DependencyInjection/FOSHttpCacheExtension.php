@@ -82,6 +82,10 @@ class FOSHttpCacheExtension extends Extension
                     'fos_http_cache.default_proxy_client',
                     $config['cache_manager']['custom_proxy_client']
                 );
+                $container->setAlias(
+                    ProxyClient::class,
+                    'fos_http_cache.default_proxy_client'
+                );
             }
             if ('auto' === $config['cache_manager']['generate_url_type']) {
                 if (array_key_exists('custom_proxy_client', $config['cache_manager'])) {
