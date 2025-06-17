@@ -400,6 +400,15 @@ example to send a basic authentication header with each request, you can
 configure a service for the ``HttpClient`` and specify that in the
 ``http_client`` option of any of the cache proxy clients.
 
+.. _custom HTTP request factory:
+
+Custom HTTP Request Factory
+---------------------------
+
+The proxy client uses an implementation of ``Http\Message\RequestFactory`` to create HTTP requests.
+If you need to customize the request creation, you can configure your custom service and
+specify that in the ``request_factory`` option of any of the cache proxy clients.
+
 Caching Proxy Configuration
 ---------------------------
 
