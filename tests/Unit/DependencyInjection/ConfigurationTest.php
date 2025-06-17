@@ -109,6 +109,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                         'base_url' => '/test',
                         'http_client' => 'acme.guzzle.varnish',
                         'request_factory' => null,
+                        'stream_factory' => null,
                     ],
                 ],
             ],
@@ -243,6 +244,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     'base_url' => '/test',
                     'http_client' => 'acme.guzzle.nginx',
                     'request_factory' => null,
+                    'stream_factory' => null,
                 ],
             ],
         ];
@@ -279,6 +281,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     'base_url' => '/test',
                     'http_client' => 'acme.guzzle.symfony',
                     'request_factory' => null,
+                    'stream_factory' => null,
                 ],
                 'use_kernel_dispatcher' => false,
             ],
@@ -510,6 +513,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     'http_client' => null,
                     'servers' => ['1.1.1.1:80', '2.2.2.2:80'],
                     'request_factory' => null,
+                    'stream_factory' => null,
                 ],
                 'tags_header' => 'X-Cache-Tags',
                 'tag_mode' => 'ban',
@@ -521,6 +525,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     'http_client' => null,
                     'servers' => ['1.1.1.1:81', '2.2.2.2:81'],
                     'request_factory' => null,
+                    'stream_factory' => null,
                 ],
             ],
         ];
@@ -763,6 +768,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'base_url' => null,
                 'http_client' => null,
                 'request_factory' => null,
+                'stream_factory' => null,
             ];
             $expectedConfiguration['proxy_client'][$proxyClient]['purge_location'] = false;
         }
@@ -803,6 +809,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     'base_url' => '/test',
                     'http_client' => 'acme.guzzle.nginx',
                     'request_factory' => null,
+                    'stream_factory' => null,
                 ],
                 'tag_mode' => 'ban',
                 'tags_header' => 'X-Cache-Tags',
@@ -837,6 +844,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                     'base_url' => '/test',
                     'http_client' => 'acme.guzzle.nginx',
                     'request_factory' => null,
+                    'stream_factory' => null,
                 ],
                 'tag_mode' => 'ban',
                 'tags_header' => 'X-Cache-Tags',

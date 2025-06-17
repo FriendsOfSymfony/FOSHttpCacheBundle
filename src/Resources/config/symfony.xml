@@ -11,6 +11,7 @@
             <argument type="service" id="fos_http_cache.proxy_client.symfony.http_dispatcher"/>
             <argument>%fos_http_cache.proxy_client.symfony.options%</argument>
             <argument /> <!-- request factory -->
+            <argument /> <!-- stream factory -->
         </service>
     </services>
 

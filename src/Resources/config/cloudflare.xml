@@ -12,6 +12,7 @@
             <argument type="service" id="fos_http_cache.proxy_client.cloudflare.http_dispatcher"/>
             <argument>%fos_http_cache.proxy_client.cloudflare.options%</argument>
             <argument /> <!-- request factory -->
+            <argument /> <!-- stream factory -->
         </service>
     </services>
 

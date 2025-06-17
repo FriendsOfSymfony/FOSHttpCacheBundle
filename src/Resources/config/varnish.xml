@@ -11,6 +11,7 @@
             <argument type="service" id="fos_http_cache.proxy_client.varnish.http_dispatcher"/>
             <argument>%fos_http_cache.proxy_client.varnish.options%</argument>
             <argument /> <!-- request factory -->
+            <argument /> <!-- stream factory -->
         </service>
     </services>
 
