@@ -4,6 +4,11 @@ Changelog
 2.x
 ===
 
+2.18.0
+------
+
+* New configuration option `proxy_client.*.http.request_factory` to support custom HTTP request factories for proxy clients.
+
 2.17.1
 ------
 
