@@ -4,8 +4,8 @@ Changelog
 3.x
 ===
 
-3.2.0 (unreleased)
-------------------
+3.2.0
+-----
 
 * If a custom proxy client is configured on the cache manager, the `ProxyClient` class is an alias to that client, to support autowiring.
 * Attribute configuration now also works on single action controllers with the `__invoke` method.
