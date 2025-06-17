@@ -4,6 +4,11 @@ Changelog
 3.x
 ===
 
+3.2.0 (unreleased)
+------------------
+
+* Attribute configuration now also works on single action controllers with the `__invoke` method.
+
 3.1.2
 -----
 
