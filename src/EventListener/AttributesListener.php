@@ -27,12 +27,16 @@ final class AttributesListener implements EventSubscriberInterface
         $request = $event->getRequest();
         $controller = $this->controllerResolver->getController($request);
 
-        if (!is_array($controller) || 2 !== count($controller)) {
+        if (true === \is_object($controller)) {
+            $class = new \ReflectionClass($controller);
+            $method = $class->getMethod('__invoke');
+        } elseif (true === \is_array($controller) && 2 === \count($controller)) {
+            $class = new \ReflectionClass($controller[0]);
+            $method = $class->getMethod($controller[1]);
+        } else {
             return;
         }
 
-        $class = new \ReflectionClass($controller[0]);
-        $method = $class->getMethod($controller[1]);
         $attributes = [];
         $addAttributes = static function ($instance) use (&$attributes) {
             if ($key = match (get_class($instance)) {
