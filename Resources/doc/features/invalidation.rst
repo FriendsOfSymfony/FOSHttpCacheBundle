@@ -66,7 +66,8 @@ To refresh paths and routes, you can use ``refreshPath($path, $headers)`` and
 
     If you want to add a header (such as ``Authorization``) to *all*
     invalidation requests, you can use a
-    :ref:`custom HTTP client <custom HTTP client>` instead.
+    :ref:`custom HTTP client <custom HTTP client>` or
+    :ref:`custom HTTP request factory <custom HTTP request factory>` instead.
 
 .. _invalidation configuration:
 
