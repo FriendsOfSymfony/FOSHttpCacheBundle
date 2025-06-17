@@ -626,7 +626,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('request_factory')
                     ->defaultNull()
-                    ->info('Service name of factory for PSR-7 messages.')
+                    ->info('Service name of PSR-17 factory for HTTP messages.')
                 ->end()
             ->end()
         ;
