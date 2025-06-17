@@ -15,13 +15,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Pull in optional dependencies
-        run: composer require --no-update jean-beru/fos-http-cache-cloudfront twig/twig symfony/console phpstan/phpstan-symfony
+      - name: Pull in optional dependencies and install vendors
+        run: composer require jean-beru/fos-http-cache-cloudfront twig/twig symfony/console
 
       - name: PHPStan
-        uses: docker://oskarstark/phpstan-ga
-        with:
-          args: analyze --no-progress
+        run: vendor/bin/phpstan analyze --no-progress
 
   phpstan-tests:
     name: PHPStan tests
@@ -33,10 +31,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install vendors
+        run: composer install
+
       - name: PHPStan
-        uses: docker://oskarstark/phpstan-ga
-        with:
-          args: analyze --no-progress -c phpstan.tests.neon.dist
+        run: vendor/bin/phpstan analyze --no-progress -c phpstan.tests.neon.dist
 
   php-cs-fixer:
     name: PHP-CS-Fixer
