@@ -9,6 +9,7 @@ Changelog
 
 * If a custom proxy client is configured on the cache manager, the `ProxyClient` class is an alias to that client, to support autowiring.
 * Attribute configuration now also works on single action controllers with the `__invoke` method.
+* New configuration option `proxy_client.*.http.request_factory` and `stream_factory` to support custom PSR-17 HTTP request and stream factories for proxy clients.
 
 3.1.2
 -----
@@ -52,6 +53,11 @@ Changelog
 
 2.x
 ===
+
+2.18.0
+------
+
+* New configuration option `proxy_client.*.http.request_factory` to support custom HTTP request factories for proxy clients.
 
 2.17.1
 ------

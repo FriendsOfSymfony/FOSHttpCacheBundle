@@ -624,6 +624,14 @@ final class Configuration implements ConfigurationInterface
                     ->defaultNull()
                     ->info('Httplug async client service name to use for sending the requests.')
                 ->end()
+                ->scalarNode('request_factory')
+                    ->defaultNull()
+                    ->info('Service name of PSR-17 message factory.')
+                ->end()
+                ->scalarNode('stream_factory')
+                    ->defaultNull()
+                    ->info('Service name of PSR-17 stream factory.')
+                ->end()
             ->end()
         ;
 

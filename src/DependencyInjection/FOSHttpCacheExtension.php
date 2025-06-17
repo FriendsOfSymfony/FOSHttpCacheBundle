@@ -427,6 +427,18 @@ final class FOSHttpCacheExtension extends Extension
         $container->setParameter('fos_http_cache.proxy_client.varnish.options', $options);
 
         $loader->load('varnish.xml');
+
+        $requestFactory = isset($config['http']['request_factory'])
+            ? new Reference($config['http']['request_factory'])
+            : null;
+        $container->getDefinition('fos_http_cache.proxy_client.varnish')
+            ->replaceArgument(2, $requestFactory);
+
+        $streamFactory = isset($config['http']['stream_factory'])
+            ? new Reference($config['http']['stream_factory'])
+            : null;
+        $container->getDefinition('fos_http_cache.proxy_client.varnish')
+            ->replaceArgument(3, $streamFactory);
     }
 
     private function loadNginx(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
@@ -436,6 +448,18 @@ final class FOSHttpCacheExtension extends Extension
             'purge_location' => $config['purge_location'],
         ]);
         $loader->load('nginx.xml');
+
+        $requestFactory = isset($config['http']['request_factory'])
+            ? new Reference($config['http']['request_factory'])
+            : null;
+        $container->getDefinition('fos_http_cache.proxy_client.nginx')
+            ->replaceArgument(2, $requestFactory);
+
+        $streamFactory = isset($config['http']['stream_factory'])
+            ? new Reference($config['http']['stream_factory'])
+            : null;
+        $container->getDefinition('fos_http_cache.proxy_client.nginx')
+            ->replaceArgument(3, $streamFactory);
     }
 
     private function loadSymfony(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
@@ -462,6 +486,18 @@ final class FOSHttpCacheExtension extends Extension
         $container->setParameter('fos_http_cache.proxy_client.symfony.options', $options);
 
         $loader->load('symfony.xml');
+
+        $requestFactory = isset($config['http']['request_factory'])
+            ? new Reference($config['http']['request_factory'])
+            : null;
+        $container->getDefinition('fos_http_cache.proxy_client.symfony')
+            ->replaceArgument(2, $requestFactory);
+
+        $streamFactory = isset($config['http']['stream_factory'])
+            ? new Reference($config['http']['stream_factory'])
+            : null;
+        $container->getDefinition('fos_http_cache.proxy_client.symfony')
+            ->replaceArgument(3, $streamFactory);
     }
 
     private function loadCloudflare(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
@@ -475,6 +511,18 @@ final class FOSHttpCacheExtension extends Extension
         $container->setParameter('fos_http_cache.proxy_client.cloudflare.options', $options);
 
         $loader->load('cloudflare.xml');
+
+        $requestFactory = isset($config['http']['request_factory'])
+            ? new Reference($config['http']['request_factory'])
+            : null;
+        $container->getDefinition('fos_http_cache.proxy_client.cloudflare')
+            ->replaceArgument(2, $requestFactory);
+
+        $streamFactory = isset($config['http']['stream_factory'])
+            ? new Reference($config['http']['stream_factory'])
+            : null;
+        $container->getDefinition('fos_http_cache.proxy_client.cloudflare')
+            ->replaceArgument(3, $streamFactory);
     }
 
     private function loadCloudfront(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
@@ -511,6 +559,18 @@ final class FOSHttpCacheExtension extends Extension
         $container->setParameter('fos_http_cache.proxy_client.fastly.options', $options);
 
         $loader->load('fastly.xml');
+
+        $requestFactory = isset($config['http']['request_factory'])
+            ? new Reference($config['http']['request_factory'])
+            : null;
+        $container->getDefinition('fos_http_cache.proxy_client.fastly')
+            ->replaceArgument(2, $requestFactory);
+
+        $streamFactory = isset($config['http']['stream_factory'])
+            ? new Reference($config['http']['stream_factory'])
+            : null;
+        $container->getDefinition('fos_http_cache.proxy_client.fastly')
+            ->replaceArgument(3, $streamFactory);
     }
 
     /**

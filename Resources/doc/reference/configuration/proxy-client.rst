@@ -400,6 +400,23 @@ example to send a basic authentication header with each request, you can
 configure a service for the ``HttpClient`` and specify that in the
 ``http_client`` option of any of the cache proxy clients.
 
+.. _custom HTTP request factory:
+
+Custom HTTP Request Factory and Stream Factory
+----------------------------------------------
+
+The proxy client uses an implementation of PSR-17 ``Psr\Http\Message\RequestFactoryInterface``
+to create HTTP requests and ``Psr\Http\Message\StreamFactoryInterface`` to
+create streams.
+
+If you need to customize request creation, you can configure your custom
+service and specify that in the ``request_factory`` option of any of the cache
+proxy clients.
+
+If you need to customize stream creation, you can configure your custom service
+and specify that in the ``stream_factory`` option of any of the cache proxy
+clients.
+
 Caching Proxy Configuration
 ---------------------------
 
