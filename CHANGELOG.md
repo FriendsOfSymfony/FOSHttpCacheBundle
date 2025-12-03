@@ -4,6 +4,12 @@ Changelog
 3.x
 ===
 
+3.2.1
+-----
+
+* Compatibility with Symfony 8.
+* Tested with php 8.5.
+
 3.2.0
 -----
 
