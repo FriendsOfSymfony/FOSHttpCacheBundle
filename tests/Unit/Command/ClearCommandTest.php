@@ -32,7 +32,8 @@ class ClearCommandTest extends TestCase
         ;
 
         $application = new Application();
-        $application->add(new ClearCommand($invalidator));
+        $addMethod = method_exists($application, 'addCommand') ? 'addCommand' : 'add';
+        $application->$addMethod(new ClearCommand($invalidator));
 
         $command = $application->find('fos:httpcache:clear');
         $commandTester = new CommandTester($command);
@@ -54,7 +55,8 @@ class ClearCommandTest extends TestCase
         ;
 
         $application = new Application();
-        $application->add(new ClearCommand($invalidator));
+        $addMethod = method_exists($application, 'addCommand') ? 'addCommand' : 'add';
+        $application->$addMethod(new ClearCommand($invalidator));
 
         $command = $application->find('fos:httpcache:clear');
         $commandTester = new CommandTester($command);
@@ -75,7 +77,8 @@ class ClearCommandTest extends TestCase
         ;
 
         $application = new Application();
-        $application->add(new ClearCommand($invalidator));
+        $addMethod = method_exists($application, 'addCommand') ? 'addCommand' : 'add';
+        $application->$addMethod(new ClearCommand($invalidator));
 
         $command = $application->find('fos:httpcache:clear');
         $commandTester = new CommandTester($command);

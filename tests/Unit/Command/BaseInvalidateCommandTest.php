@@ -35,8 +35,9 @@ class BaseInvalidateCommandTest extends TestCase
         ;
 
         $application = new Application();
+        $addMethod = method_exists($application, 'addCommand') ? 'addCommand' : 'add';
         $command = new InvalidatePathCommand($invalidator);
-        $application->add($command);
+        $application->$addMethod($command);
 
         $command = $application->find('fos:httpcache:invalidate:path');
         $commandTester = new CommandTester($command);
