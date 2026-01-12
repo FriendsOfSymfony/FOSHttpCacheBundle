@@ -90,6 +90,9 @@
         "allow-plugins": {
             "php-http/discovery": true,
             "phpstan/extension-installer": true
+        },
+        "audit": {
+            "block-insecure": false
         }
     }
 }

@@ -29,7 +29,8 @@ class InvalidateRegexCommandTest extends TestCase
         $invalidator = \Mockery::mock(CacheManager::class);
 
         $application = new Application();
-        $application->add(new InvalidateRegexCommand($invalidator));
+        $addMethod = method_exists($application, 'addCommand') ? 'addCommand' : 'add';
+        $application->$addMethod(new InvalidateRegexCommand($invalidator));
 
         $command = $application->find('fos:httpcache:invalidate:regex');
         $commandTester = new CommandTester($command);
@@ -44,7 +45,8 @@ class InvalidateRegexCommandTest extends TestCase
         ;
 
         $application = new Application();
-        $application->add(new InvalidateRegexCommand($invalidator));
+        $addMethod = method_exists($application, 'addCommand') ? 'addCommand' : 'add';
+        $application->$addMethod(new InvalidateRegexCommand($invalidator));
 
         $command = $application->find('fos:httpcache:invalidate:regex');
         $commandTester = new CommandTester($command);

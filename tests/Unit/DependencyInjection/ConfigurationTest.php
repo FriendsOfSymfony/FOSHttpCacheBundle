@@ -20,6 +20,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 class ConfigurationTest extends AbstractExtensionConfigurationTestCase
 {
@@ -41,9 +42,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/empty.yml',
-            'config/empty.xml',
             'config/empty.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/empty.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -199,9 +203,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/full.yml',
-            'config/full.xml',
             'config/full.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/full.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -224,9 +231,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/custom-client.yml',
-            'config/custom-client.xml',
             'config/custom-client.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/custom-client.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -258,9 +268,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/nginx.yml',
-            'config/nginx.xml',
             'config/nginx.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/nginx.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -296,9 +309,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/symfony.yml',
-            'config/symfony.xml',
             'config/symfony.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/symfony.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -325,9 +341,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/cloudflare.yml',
-            'config/cloudflare.xml',
             'config/cloudflare.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/cloudflare.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -357,9 +376,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/cloudfront.yml',
-            'config/cloudfront.xml',
             'config/cloudfront.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/cloudfront.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -410,9 +432,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/fastly.yml',
-            'config/fastly.xml',
             'config/fastly.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/fastly.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -468,9 +493,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/noop.yml',
-            'config/noop.xml',
             'config/noop.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/noop.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -539,9 +567,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/split.yml',
-            'config/split.xml',
             'config/split.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/split.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -558,9 +589,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/cacheable_response_expression.yml',
-            'config/cacheable_response_expression.xml',
             'config/cacheable_response_expression.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/cacheable_response_expression.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -573,9 +607,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/cachemanager_noclient.yml',
-            'config/cachemanager_noclient.xml',
             'config/cachemanager_noclient.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/cachemanager_noclient.xml';
+        }
 
         foreach ($formats as $format) {
             try {
@@ -593,9 +630,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/tags_nocachemanager.yml',
-            'config/tags_nocachemanager.xml',
             'config/tags_nocachemanager.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/tags_nocachemanager.xml';
+        }
 
         foreach ($formats as $format) {
             try {
@@ -616,9 +656,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/tags_strict.yml',
-            'config/tags_strict.xml',
             'config/tags_strict.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/tags_strict.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -659,9 +702,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/etag_weak.yml',
-            'config/etag_weak.xml',
             'config/etag_weak.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/etag_weak.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -702,9 +748,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/etag_true.yml',
-            'config/etag_true.xml',
             'config/etag_true.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/etag_true.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -717,9 +766,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/invalidation_nocachemanager.yml',
-            'config/invalidation_nocachemanager.xml',
             'config/invalidation_nocachemanager.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/invalidation_nocachemanager.xml';
+        }
 
         foreach ($formats as $format) {
             try {
@@ -785,9 +837,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/invalid_date.yml',
-            'config/invalid_date.xml',
             'config/invalid_date.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/invalid_date.xml';
+        }
 
         foreach ($formats as $format) {
             try {
@@ -825,9 +880,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/servers_from_jsonenv.yml',
-            'config/servers_from_jsonenv.xml',
             'config/servers_from_jsonenv.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/servers_from_jsonenv.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);
@@ -860,9 +918,12 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             return __DIR__.'/../../Resources/Fixtures/'.$path;
         }, [
             'config/servers_from_jsonenv.yml',
-            'config/servers_from_jsonenv.xml',
             'config/servers_from_jsonenv.php',
         ]);
+
+        if (version_compare(Kernel::VERSION, '8.0.0', '<')) {
+            $formats[] = __DIR__.'/../../Resources/Fixtures/config/servers_from_jsonenv.xml';
+        }
 
         foreach ($formats as $format) {
             $this->assertProcessedConfigurationEquals($expectedConfiguration, [$format]);

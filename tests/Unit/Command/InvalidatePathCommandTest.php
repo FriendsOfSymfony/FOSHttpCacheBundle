@@ -29,7 +29,8 @@ class InvalidatePathCommandTest extends TestCase
         $invalidator = \Mockery::mock(CacheManager::class);
 
         $application = new Application();
-        $application->add(new InvalidatePathCommand($invalidator));
+        $addMethod = method_exists($application, 'addCommand') ? 'addCommand' : 'add';
+        $application->$addMethod(new InvalidatePathCommand($invalidator));
 
         $command = $application->find('fos:httpcache:invalidate:path');
         $commandTester = new CommandTester($command);
@@ -45,7 +46,8 @@ class InvalidatePathCommandTest extends TestCase
         ;
 
         $application = new Application();
-        $application->add(new InvalidatePathCommand($invalidator));
+        $addMethod = method_exists($application, 'addCommand') ? 'addCommand' : 'add';
+        $application->$addMethod(new InvalidatePathCommand($invalidator));
 
         $command = $application->find('fos:httpcache:invalidate:path');
         $commandTester = new CommandTester($command);
