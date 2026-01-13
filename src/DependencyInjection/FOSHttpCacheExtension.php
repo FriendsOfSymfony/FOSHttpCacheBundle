@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\TwigFunction;
@@ -44,15 +44,15 @@ final class FOSHttpCacheExtension extends Extension
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('matcher.xml');
+        $loader = new PhpFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('matcher.php');
 
         if ($config['debug']['enabled'] || (!empty($config['cache_control']))) {
             $debugHeader = $config['debug']['enabled'] ? $config['debug']['header'] : false;
             $ttlHeader = $config['cache_control']['ttl_header'] ?? CacheControlListener::DEFAULT_TTL_HEADER_NAME;
             $container->setParameter('fos_http_cache.debug_header', $debugHeader);
             $container->setParameter('fos_http_cache.ttl_header', $ttlHeader);
-            $loader->load('cache_control_listener.xml');
+            $loader->load('cache_control_listener.php');
         }
 
         $this->loadCacheable($container, $config['cacheable']);
@@ -99,9 +99,9 @@ final class FOSHttpCacheExtension extends Extension
                 $generateUrlType = $config['cache_manager']['generate_url_type'];
             }
             $container->setParameter('fos_http_cache.cache_manager.generate_url_type', $generateUrlType);
-            $loader->load('cache_manager.xml');
+            $loader->load('cache_manager.php');
             if (class_exists(Application::class)) {
-                $loader->load('cache_manager_commands.xml');
+                $loader->load('cache_manager_commands.php');
             }
         }
 
@@ -117,7 +117,7 @@ final class FOSHttpCacheExtension extends Extension
         }
 
         if ($config['invalidation']['enabled']) {
-            $loader->load('invalidation_listener.xml');
+            $loader->load('invalidation_listener.php');
 
             if (!empty($config['invalidation']['expression_language'])) {
                 $container->setAlias(
@@ -139,10 +139,10 @@ final class FOSHttpCacheExtension extends Extension
             unset($config['flash_message']['enabled']);
             $container->setParameter('fos_http_cache.event_listener.flash_message.options', $config['flash_message']);
 
-            $loader->load('flash_message.xml');
+            $loader->load('flash_message.php');
         }
 
-        $loader->load('attributes.xml');
+        $loader->load('attributes.php');
     }
 
     private function loadCacheable(ContainerBuilder $container, array $config): void
@@ -279,7 +279,7 @@ final class FOSHttpCacheExtension extends Extension
         return new Reference('fos_http_cache.response_matcher.cacheable');
     }
 
-    private function loadUserContext(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
+    private function loadUserContext(ContainerBuilder $container, PhpFileLoader $loader, array $config): void
     {
         $configuredUserIdentifierHeaders = array_map('strtolower', $config['user_identifier_headers']);
         $completeUserIdentifierHeaders = $configuredUserIdentifierHeaders;
@@ -287,7 +287,7 @@ final class FOSHttpCacheExtension extends Extension
             $completeUserIdentifierHeaders[] = 'cookie';
         }
 
-        $loader->load('user_context.xml');
+        $loader->load('user_context.php');
 
         $container->getDefinition('fos_http_cache.user_context.request_matcher')
             ->replaceArgument(0, $config['match']['accept'])
@@ -326,7 +326,7 @@ final class FOSHttpCacheExtension extends Extension
         }
     }
 
-    private function loadProxyClient(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
+    private function loadProxyClient(ContainerBuilder $container, PhpFileLoader $loader, array $config): void
     {
         if (isset($config['varnish'])) {
             $this->loadVarnish($container, $loader, $config['varnish']);
@@ -347,7 +347,7 @@ final class FOSHttpCacheExtension extends Extension
             $this->loadFastly($container, $loader, $config['fastly']);
         }
         if (isset($config['noop'])) {
-            $loader->load('noop.xml');
+            $loader->load('noop.php');
         }
 
         $container->setAlias(
@@ -410,7 +410,7 @@ final class FOSHttpCacheExtension extends Extension
         $container->setDefinition($serviceName, $definition);
     }
 
-    private function loadVarnish(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
+    private function loadVarnish(ContainerBuilder $container, PhpFileLoader $loader, array $config): void
     {
         $this->createHttpDispatcherDefinition($container, $config['http'], 'fos_http_cache.proxy_client.varnish.http_dispatcher');
         $options = [
@@ -426,7 +426,7 @@ final class FOSHttpCacheExtension extends Extension
         }
         $container->setParameter('fos_http_cache.proxy_client.varnish.options', $options);
 
-        $loader->load('varnish.xml');
+        $loader->load('varnish.php');
 
         $requestFactory = isset($config['http']['request_factory'])
             ? new Reference($config['http']['request_factory'])
@@ -441,13 +441,13 @@ final class FOSHttpCacheExtension extends Extension
             ->replaceArgument(3, $streamFactory);
     }
 
-    private function loadNginx(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
+    private function loadNginx(ContainerBuilder $container, PhpFileLoader $loader, array $config): void
     {
         $this->createHttpDispatcherDefinition($container, $config['http'], 'fos_http_cache.proxy_client.nginx.http_dispatcher');
         $container->setParameter('fos_http_cache.proxy_client.nginx.options', [
             'purge_location' => $config['purge_location'],
         ]);
-        $loader->load('nginx.xml');
+        $loader->load('nginx.php');
 
         $requestFactory = isset($config['http']['request_factory'])
             ? new Reference($config['http']['request_factory'])
@@ -462,7 +462,7 @@ final class FOSHttpCacheExtension extends Extension
             ->replaceArgument(3, $streamFactory);
     }
 
-    private function loadSymfony(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
+    private function loadSymfony(ContainerBuilder $container, PhpFileLoader $loader, array $config): void
     {
         $serviceName = 'fos_http_cache.proxy_client.symfony.http_dispatcher';
 
@@ -485,7 +485,7 @@ final class FOSHttpCacheExtension extends Extension
         }
         $container->setParameter('fos_http_cache.proxy_client.symfony.options', $options);
 
-        $loader->load('symfony.xml');
+        $loader->load('symfony.php');
 
         $requestFactory = isset($config['http']['request_factory'])
             ? new Reference($config['http']['request_factory'])
@@ -500,7 +500,7 @@ final class FOSHttpCacheExtension extends Extension
             ->replaceArgument(3, $streamFactory);
     }
 
-    private function loadCloudflare(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
+    private function loadCloudflare(ContainerBuilder $container, PhpFileLoader $loader, array $config): void
     {
         $this->createHttpDispatcherDefinition($container, $config['http'], 'fos_http_cache.proxy_client.cloudflare.http_dispatcher');
         $options = [
@@ -510,7 +510,7 @@ final class FOSHttpCacheExtension extends Extension
 
         $container->setParameter('fos_http_cache.proxy_client.cloudflare.options', $options);
 
-        $loader->load('cloudflare.xml');
+        $loader->load('cloudflare.php');
 
         $requestFactory = isset($config['http']['request_factory'])
             ? new Reference($config['http']['request_factory'])
@@ -525,7 +525,7 @@ final class FOSHttpCacheExtension extends Extension
             ->replaceArgument(3, $streamFactory);
     }
 
-    private function loadCloudfront(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
+    private function loadCloudfront(ContainerBuilder $container, PhpFileLoader $loader, array $config): void
     {
         if (null !== $config['client']) {
             $container->setAlias(
@@ -543,10 +543,10 @@ final class FOSHttpCacheExtension extends Extension
             'distribution_id' => $config['distribution_id'],
         ]);
 
-        $loader->load('cloudfront.xml');
+        $loader->load('cloudfront.php');
     }
 
-    private function loadFastly(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
+    private function loadFastly(ContainerBuilder $container, PhpFileLoader $loader, array $config): void
     {
         $this->createHttpDispatcherDefinition($container, $config['http'], 'fos_http_cache.proxy_client.fastly.http_dispatcher');
 
@@ -558,7 +558,7 @@ final class FOSHttpCacheExtension extends Extension
 
         $container->setParameter('fos_http_cache.proxy_client.fastly.options', $options);
 
-        $loader->load('fastly.xml');
+        $loader->load('fastly.php');
 
         $requestFactory = isset($config['http']['request_factory'])
             ? new Reference($config['http']['request_factory'])
@@ -578,7 +578,7 @@ final class FOSHttpCacheExtension extends Extension
      * @param string $client Name of the client used with the cache manager,
      *                       "custom" when a custom client is used
      */
-    private function loadCacheTagging(ContainerBuilder $container, XmlFileLoader $loader, array $config, string $client): void
+    private function loadCacheTagging(ContainerBuilder $container, PhpFileLoader $loader, array $config, string $client): void
     {
         if ('auto' === $config['enabled'] && !in_array($client, ['varnish', 'symfony', 'cloudflare', 'fastly'])) {
             return;
@@ -591,12 +591,12 @@ final class FOSHttpCacheExtension extends Extension
         $container->setParameter('fos_http_cache.tag_handler.separator', $config['separator']);
         $container->setParameter('fos_http_cache.tag_handler.strict', $config['strict']);
 
-        $loader->load('cache_tagging.xml');
+        $loader->load('cache_tagging.php');
         if (class_exists(TwigFunction::class)) {
-            $loader->load('cache_tagging_twig.xml');
+            $loader->load('cache_tagging_twig.php');
         }
         if (class_exists(Application::class)) {
-            $loader->load('cache_tagging_commands.xml');
+            $loader->load('cache_tagging_commands.php');
         }
 
         if (!empty($config['expression_language'])) {
@@ -618,7 +618,7 @@ final class FOSHttpCacheExtension extends Extension
         }
     }
 
-    private function loadTest(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
+    private function loadTest(ContainerBuilder $container, PhpFileLoader $loader, array $config): void
     {
         $container->setParameter('fos_http_cache.test.cache_header', $config['cache_header']);
 
@@ -627,7 +627,7 @@ final class FOSHttpCacheExtension extends Extension
         }
     }
 
-    private function loadProxyServer(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
+    private function loadProxyServer(ContainerBuilder $container, PhpFileLoader $loader, array $config): void
     {
         if (isset($config['varnish'])) {
             $this->loadVarnishProxyServer($container, $loader, $config['varnish']);
@@ -643,9 +643,9 @@ final class FOSHttpCacheExtension extends Extension
         );
     }
 
-    private function loadVarnishProxyServer(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
+    private function loadVarnishProxyServer(ContainerBuilder $container, PhpFileLoader $loader, array $config): void
     {
-        $loader->load('varnish_proxy.xml');
+        $loader->load('varnish_proxy.php');
         foreach ($config as $key => $value) {
             $container->setParameter(
                 'fos_http_cache.test.proxy_server.varnish.'.$key,
@@ -654,9 +654,9 @@ final class FOSHttpCacheExtension extends Extension
         }
     }
 
-    private function loadNginxProxyServer(ContainerBuilder $container, XmlFileLoader $loader, array $config): void
+    private function loadNginxProxyServer(ContainerBuilder $container, PhpFileLoader $loader, array $config): void
     {
-        $loader->load('nginx_proxy.xml');
+        $loader->load('nginx_proxy.php');
         foreach ($config as $key => $value) {
             $container->setParameter(
                 'fos_http_cache.test.proxy_server.nginx.'.$key,

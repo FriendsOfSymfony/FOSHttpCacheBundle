@@ -29,7 +29,8 @@ class RefreshPathCommandTest extends TestCase
         $invalidator = \Mockery::mock(CacheManager::class);
 
         $application = new Application();
-        $application->add(new RefreshPathCommand($invalidator));
+        $addMethod = method_exists($application, 'addCommand') ? 'addCommand' : 'add';
+        $application->$addMethod(new RefreshPathCommand($invalidator));
 
         $command = $application->find('fos:httpcache:refresh:path');
         $commandTester = new CommandTester($command);
@@ -45,7 +46,8 @@ class RefreshPathCommandTest extends TestCase
         ;
 
         $application = new Application();
-        $application->add(new RefreshPathCommand($invalidator));
+        $addMethod = method_exists($application, 'addCommand') ? 'addCommand' : 'add';
+        $application->$addMethod(new RefreshPathCommand($invalidator));
 
         $command = $application->find('fos:httpcache:refresh:path');
         $commandTester = new CommandTester($command);

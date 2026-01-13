@@ -29,7 +29,8 @@ class InvalidateTagCommandTest extends TestCase
         $invalidator = \Mockery::mock(CacheManager::class);
 
         $application = new Application();
-        $application->add(new InvalidateTagCommand($invalidator));
+        $addMethod = method_exists($application, 'addCommand') ? 'addCommand' : 'add';
+        $application->$addMethod(new InvalidateTagCommand($invalidator));
 
         $command = $application->find('fos:httpcache:invalidate:tag');
         $commandTester = new CommandTester($command);
@@ -44,7 +45,8 @@ class InvalidateTagCommandTest extends TestCase
         ;
 
         $application = new Application();
-        $application->add(new InvalidateTagCommand($invalidator));
+        $addMethod = method_exists($application, 'addCommand') ? 'addCommand' : 'add';
+        $application->$addMethod(new InvalidateTagCommand($invalidator));
 
         $command = $application->find('fos:httpcache:invalidate:tag');
         $commandTester = new CommandTester($command);
