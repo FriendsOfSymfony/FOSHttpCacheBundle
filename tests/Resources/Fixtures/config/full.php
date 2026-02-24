@@ -9,7 +9,10 @@
  * file that was distributed with this source code.
  */
 
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 $container->loadFromExtension('fos_http_cache', [
+    'generate_url_type' => UrlGeneratorInterface::ABSOLUTE_URL,
     'cacheable' => [
         'response' => [
             'additional_status' => [100, 500],

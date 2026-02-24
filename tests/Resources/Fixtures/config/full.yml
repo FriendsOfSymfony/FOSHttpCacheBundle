@@ -1,4 +1,5 @@
 fos_http_cache:
+    generate_url_type: 0
 
     cacheable:
         response:

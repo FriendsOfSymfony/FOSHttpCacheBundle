@@ -7,6 +7,7 @@ for the bundle.
 .. toctree::
     :maxdepth: 2
 
+    configuration/general
     configuration/proxy-client
     configuration/cache-manager
     configuration/headers

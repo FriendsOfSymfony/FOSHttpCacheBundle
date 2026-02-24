@@ -11,7 +11,6 @@
 
 namespace FOS\HttpCacheBundle\DependencyInjection;
 
-use DateTime;
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
 use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
@@ -194,8 +193,35 @@ final class Configuration implements ConfigurationInterface
 
                     return $v;
                 })
+            ->end()
+            ->validate()
+                ->ifTrue(
+                    function (array $v): bool {
+                        return !empty($v['cache_manager']['generate_url_type']) && 'auto' !== $v['cache_manager']['generate_url_type'] && array_key_exists('generate_url_type', $v);
+                    }
+                )
+                ->then(function (array $v) {
+                    throw new InvalidConfigurationException('Only configure "generate_url_type" and do not set the deprecated "cache_manager.generate_url_type" option');
+                })
+            ->end()
         ;
 
+        $rootNode
+            ->children()
+                ->enumNode('generate_url_type')
+                    ->values([
+                        'auto',
+                        UrlGeneratorInterface::ABSOLUTE_PATH,
+                        UrlGeneratorInterface::ABSOLUTE_URL,
+                        UrlGeneratorInterface::NETWORK_PATH,
+                        UrlGeneratorInterface::RELATIVE_PATH,
+                    ])
+                    // TODO NEXT MAJOR: remove the cache_manager.generate_url_type and enable this as default
+                    // ->defaultValue('auto')
+                    ->info('Set what URLs to generate on CacheManager::invalidate/refresh and InvalidationListener. Auto tries to guess the right mode based on your proxy client.')
+                ->end()
+            ->end()
+        ;
         $this->addCacheableResponseSection($rootNode);
         $this->addCacheControlSection($rootNode);
         $this->addProxyClientSection($rootNode);
@@ -759,6 +785,7 @@ final class Configuration implements ConfigurationInterface
                             ->cannotBeEmpty()
                         ->end()
                         ->enumNode('generate_url_type')
+                            ->setDeprecated('friends-of-symfony/http-cache-bundle', '3.4', 'Configure the url type on top level to also have it apply to the InvalidationListener in addition to the CacheManager')
                             ->values([
                                 'auto',
                                 UrlGeneratorInterface::ABSOLUTE_PATH,
@@ -767,7 +794,7 @@ final class Configuration implements ConfigurationInterface
                                 UrlGeneratorInterface::RELATIVE_PATH,
                             ])
                             ->defaultValue('auto')
-                            ->info('Set what URLs to generate on invalidate/refresh Route. Auto means path if base_url is set on the default proxy client, full URL otherwise.')
+                            ->info('Set what URLs to generate on invalidate/refresh Route. Auto tries to guess the right mode based on your proxy client.')
                         ->end()
                     ->end()
         ;
