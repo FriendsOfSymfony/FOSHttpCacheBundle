@@ -57,7 +57,7 @@ final class FlashMessageListener implements EventSubscriberInterface
         } catch (SessionNotFoundException) {
             return;
         }
-        if (!($session instanceof FlashBagAwareSessionInterface)) {
+        if (!$session instanceof FlashBagAwareSessionInterface) {
             return;
         }
 
