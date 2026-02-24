@@ -6,7 +6,9 @@ Invalidation
 * :ref:`Varnish <foshttpcache:varnish configuration>`
 * :ref:`Nginx <foshttpcache:nginx configuration>` (except regular expressions)
 * :doc:`symfony-http-cache` (except regular expressions)
-* Fastly (except regular expressions)
+* :ref:`Fastly <foshttpcache:fastly configuration>` (except regular expressions)
+* :ref:`configuration_cloudflare`
+* :ref:`configuration_cloudfront`
 
 **Preparation**:
 
