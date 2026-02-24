@@ -237,6 +237,8 @@ HTTP method for sending purge requests to the Symfony HttpCache. Make sure to
 configure the purge plugin for your HttpCache with the matching header if you
 change this.
 
+.. _configuration_cloudflare:
+
 cloudflare
 ----------
 
@@ -273,6 +275,8 @@ Identifier for the Cloudflare zone you want to purge the cache for.
 
 List of Cloudflare API endpoints to use for purging the cache. You can use this to specify a different
 endpoint for testing purposes.
+
+.. _configuration_cloudfront:
 
 cloudfront
 ----------
@@ -322,7 +326,7 @@ Service identifier of a `AsyncAws\CloudFront\CloudFrontClient` client. More info
 `AWS Async documentation_`. It can not be used with the ``configuration`` option.
 
 Fastly
-----------
+------
 .. code-block:: yaml
 
     # config/packages/fos_http_cache.yaml
