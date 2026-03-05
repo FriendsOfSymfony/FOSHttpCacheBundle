@@ -4,14 +4,14 @@ Changelog
 3.x
 ===
 
-3.4
----
+3.4.0
+-----
 
 * Configuration for `generate_url_type` is now on top level instead of on the `cache_manager`, and applies to the InvalidationListener too.
   Configuring `cache_manager.generate_url_type` is deprecated and will be removed in version 4.
 
-3.3
----
+3.3.0
+-----
 
 * Compatibility with Symfony 8 (changed configuration from XML to PHP).
 * Tested with php 8.5.
