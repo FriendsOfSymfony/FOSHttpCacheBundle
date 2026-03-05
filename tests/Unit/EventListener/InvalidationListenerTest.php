@@ -16,8 +16,7 @@ use FOS\HttpCacheBundle\Configuration\InvalidatePath;
 use FOS\HttpCacheBundle\Configuration\InvalidateRoute;
 use FOS\HttpCacheBundle\EventListener\InvalidationListener;
 use FOS\HttpCacheBundle\Http\RuleMatcherInterface;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Mockery\MockInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Event\ConsoleEvent;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,21 +31,17 @@ use Symfony\Component\Routing\RouteCollection;
 
 class InvalidationListenerTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
-
-    private CacheManager&MockInterface $cacheManager;
-    private UrlGeneratorInterface&MockInterface $urlGenerator;
-    private RuleMatcherInterface&MockInterface $mustInvalidateRule;
+    private CacheManager&MockObject $cacheManager;
+    private UrlGeneratorInterface&MockObject $urlGenerator;
+    private RuleMatcherInterface&MockObject $mustInvalidateRule;
     private InvalidationListener $listener;
 
     public function setUp(): void
     {
-        $this->cacheManager = \Mockery::mock(CacheManager::class);
-        $this->urlGenerator = \Mockery::mock(UrlGeneratorInterface::class);
-        $this->mustInvalidateRule = \Mockery::mock(RuleMatcherInterface::class)
-            ->shouldReceive('matches')
-            ->andReturn(true)
-            ->getMock();
+        $this->cacheManager = $this->createMock(CacheManager::class);
+        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $this->mustInvalidateRule = $this->createMock(RuleMatcherInterface::class);
+        $this->mustInvalidateRule->method('matches')->willReturn(true);
 
         $this->listener = new InvalidationListener(
             $this->cacheManager,
@@ -58,8 +53,11 @@ class InvalidationListenerTest extends TestCase
     public function testNoRoutesInvalidatedWhenResponseIsUnsuccessful(): void
     {
         $this->cacheManager
-            ->shouldReceive('invalidateRoute')->never()
-            ->shouldReceive('flush')->once();
+            ->expects($this->never())
+            ->method('invalidateRoute');
+        $this->cacheManager
+            ->expects($this->once())
+            ->method('flush');
 
         $request = new Request();
         $request->attributes->set('_route', 'my_route');
@@ -70,11 +68,21 @@ class InvalidationListenerTest extends TestCase
 
     public function testOnKernelTerminate(): void
     {
+        $invalidatePathIndex = 0;
         $this->cacheManager
-            ->shouldReceive('invalidatePath')->with('/retrieve/something/123')
-            ->shouldReceive('invalidatePath')->with('/retrieve/something/123/bla')
-            ->shouldReceive('flush')->once()
-            ->getMock();
+            ->expects($this->exactly(2))
+            ->method('invalidatePath')
+            ->willReturnCallback(function (string $path) use (&$invalidatePathIndex): CacheManager {
+                self::assertSame([
+                    '/retrieve/something/123',
+                    '/retrieve/something/123/bla',
+                ][$invalidatePathIndex++], $path);
+
+                return $this->cacheManager;
+            });
+        $this->cacheManager
+            ->expects($this->once())
+            ->method('flush');
 
         $routes = new RouteCollection();
         $routes->add('route_invalidator', new Route('/edit/something/{id}/{special}'));
@@ -82,16 +90,21 @@ class InvalidationListenerTest extends TestCase
         $routes->add('route_invalidated_special', new Route('/retrieve/something/{id}/{special}'));
 
         $requestParams = ['id' => 123, 'special' => 'bla'];
+        $generateIndex = 0;
         $this->urlGenerator
-            ->shouldDeferMissing()
-            ->shouldReceive('generate')
-            ->with('route_invalidated', $requestParams)
-            ->andReturn('/retrieve/something/123?special=bla')
+            ->expects($this->exactly(2))
+            ->method('generate')
+            ->willReturnCallback(function (string $name, array $params, int $referenceType) use ($requestParams, &$generateIndex): string {
+                [$expectedName, $expectedParams, $expectedReferenceType, $returnValue] = [
+                    ['route_invalidated', $requestParams, UrlGeneratorInterface::ABSOLUTE_PATH, '/retrieve/something/123?special=bla'],
+                    ['route_invalidated_special', $requestParams, UrlGeneratorInterface::ABSOLUTE_PATH, '/retrieve/something/123/bla'],
+                ][$generateIndex++];
+                self::assertSame($expectedName, $name);
+                self::assertSame($expectedParams, $params);
+                self::assertSame($expectedReferenceType, $referenceType);
 
-            ->shouldReceive('generate')
-            ->with('route_invalidated_special', $requestParams)
-            ->andReturn('/retrieve/something/123/bla')
-            ->getMock();
+                return $returnValue;
+            });
 
         $requestMatcher = new AttributesRequestMatcher(
             ['_route' => 'route_invalidator']
@@ -110,9 +123,55 @@ class InvalidationListenerTest extends TestCase
         $this->listener->onKernelTerminate($event);
     }
 
+    public function testAbsoluteUrl(): void
+    {
+        $this->cacheManager
+            ->expects($this->once())
+            ->method('invalidatePath')
+            ->with('http://localhost/retrieve/something/123')
+            ->willReturnSelf();
+        $this->cacheManager
+            ->expects($this->once())
+            ->method('flush');
+
+        $routes = new RouteCollection();
+        $routes->add('route_invalidated', new Route('/retrieve/something/{id}'));
+
+        $requestParams = ['id' => 123, 'special' => 'bla'];
+        $this->urlGenerator
+            ->expects($this->once())
+            ->method('generate')
+            ->with('route_invalidated', $requestParams, UrlGeneratorInterface::ABSOLUTE_URL)
+            ->willReturn('http://localhost/retrieve/something/123?special=bla');
+
+        $requestMatcher = new AttributesRequestMatcher(
+            ['_route' => 'route_invalidator']
+        );
+
+        $request = new Request();
+        $request->attributes->set('_route', 'route_invalidator');
+        $request->attributes->set('_route_params', $requestParams);
+
+        $event = $this->getEvent($request);
+
+        $listener = new InvalidationListener(
+            $this->cacheManager,
+            $this->urlGenerator,
+            $this->mustInvalidateRule,
+            null,
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+        $listener->addRule($requestMatcher, [
+            'route_invalidated' => ['ignore_extra_params' => true],
+        ]);
+        $listener->onKernelTerminate($event);
+    }
+
     public function testOnKernelException(): void
     {
-        $this->cacheManager->shouldReceive('flush')->once();
+        $this->cacheManager
+            ->expects($this->once())
+            ->method('flush');
         $event = $this->getEvent(new Request());
         $this->listener->onKernelException($event);
     }
@@ -127,11 +186,22 @@ class InvalidationListenerTest extends TestCase
 
         $event = $this->getEvent($request);
 
+        $invalidatePathIndex = 0;
         $this->cacheManager
-            ->shouldReceive('invalidatePath')->with('/some/path')->once()
-            ->shouldReceive('invalidatePath')->with('/other/path')->once()
-            ->shouldReceive('invalidatePath')->with('http://absolute.com/path')->once()
-            ->shouldReceive('flush')->once();
+            ->expects($this->exactly(3))
+            ->method('invalidatePath')
+            ->willReturnCallback(function (string $path) use (&$invalidatePathIndex): CacheManager {
+                self::assertSame([
+                    '/some/path',
+                    '/other/path',
+                    'http://absolute.com/path',
+                ][$invalidatePathIndex++], $path);
+
+                return $this->cacheManager;
+            });
+        $this->cacheManager
+            ->expects($this->once())
+            ->method('flush');
 
         $this->listener->onKernelTerminate($event);
     }
@@ -147,26 +217,49 @@ class InvalidationListenerTest extends TestCase
 
         $event = $this->getEvent($request);
 
+        $invalidateRouteIndex = 0;
         $this->cacheManager
-            ->shouldReceive('invalidateRoute')->with('some_route', [])->once()
-            ->shouldReceive('invalidateRoute')->with('other_route', ['id' => 123])->once()
-            ->shouldReceive('flush')->once();
+            ->expects($this->exactly(2))
+            ->method('invalidateRoute')
+            ->willReturnCallback(function (string $name, array $params) use (&$invalidateRouteIndex): CacheManager {
+                [$expectedName, $expectedParams] = [
+                    ['some_route', []],
+                    ['other_route', ['id' => 123]],
+                ][$invalidateRouteIndex++];
+                self::assertSame($expectedName, $name);
+                self::assertSame($expectedParams, $params);
+
+                return $this->cacheManager;
+            });
+        $this->cacheManager
+            ->expects($this->once())
+            ->method('flush');
 
         $this->listener->onKernelTerminate($event);
     }
 
     public function testOnConsoleTerminate(): void
     {
-        $this->cacheManager->shouldReceive('flush')->once()->andReturn(2);
+        $this->cacheManager
+            ->expects($this->once())
+            ->method('flush')
+            ->willReturn(2);
 
-        $output = \Mockery::mock(OutputInterface::class)
-            ->shouldReceive('getVerbosity')->once()->andReturn(OutputInterface::VERBOSITY_VERBOSE)
-            ->shouldReceive('writeln')->with('Sent 2 invalidation request(s)')->once()
-            ->getMock();
+        $output = $this->createMock(OutputInterface::class);
+        $output
+            ->expects($this->once())
+            ->method('getVerbosity')
+            ->willReturn(OutputInterface::VERBOSITY_VERBOSE);
+        $output
+            ->expects($this->once())
+            ->method('writeln')
+            ->with('Sent 2 invalidation request(s)');
 
-        $event = \Mockery::mock(ConsoleEvent::class)
-            ->shouldReceive('getOutput')->andReturn($output)
-            ->getMock();
+        $event = $this->createMock(ConsoleEvent::class);
+        $event
+            ->expects($this->exactly(2))
+            ->method('getOutput')
+            ->willReturn($output);
 
         $this->listener->onConsoleTerminate($event);
     }
@@ -174,7 +267,7 @@ class InvalidationListenerTest extends TestCase
     protected function getEvent(Request $request, ?Response $response = null): TerminateEvent
     {
         return new TerminateEvent(
-            \Mockery::mock(HttpKernelInterface::class),
+            $this->createMock(HttpKernelInterface::class),
             $request,
             $response ?? new Response()
         );

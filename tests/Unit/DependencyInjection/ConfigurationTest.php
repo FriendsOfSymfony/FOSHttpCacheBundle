@@ -21,6 +21,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ConfigurationTest extends AbstractExtensionConfigurationTestCase
 {
@@ -57,6 +58,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
     public function testSupportsAllConfigFormats(): void
     {
         $expectedConfiguration = [
+            'generate_url_type' => UrlGeneratorInterface::ABSOLUTE_URL,
             'cacheable' => [
                 'response' => [
                     'additional_status' => [100, 500],
@@ -120,7 +122,7 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
             'cache_manager' => [
                 'enabled' => true,
                 'custom_proxy_client' => 'acme.proxy_client',
-                'generate_url_type' => 'auto',
+                'generate_url_type' => 'auto', // this is ignored by the extension when the top level value is set
             ],
             'tags' => [
                 'enabled' => 'auto',
@@ -457,6 +459,22 @@ class ConfigurationTest extends AbstractExtensionConfigurationTestCase
                 'header_length' => 1234,
                 'purge_method' => 'MYPURGE',
             ],
+        ];
+
+        $configuration = new Configuration(false);
+        (new Processor())->processConfiguration($configuration, ['fos_http_cache' => $params]);
+    }
+
+    public function testConfiguringGenerateUrlTwiceNotAllowed(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Only configure "generate_url_type" and do not set the deprecated "cache_manager.generate_url_type" option');
+
+        $params = $this->getEmptyConfig();
+        $params['generate_url_type'] = 'auto';
+        $params['cache_manager'] = [
+            'custom_proxy_client' => 'noop',
+            'generate_url_type' => UrlGeneratorInterface::ABSOLUTE_PATH,
         ];
 
         $configuration = new Configuration(false);

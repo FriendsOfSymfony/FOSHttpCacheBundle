@@ -81,22 +81,9 @@ final class FOSHttpCacheExtension extends Extension
                     'fos_http_cache.default_proxy_client'
                 );
             }
-            if ('auto' === $config['cache_manager']['generate_url_type']) {
-                if (array_key_exists('custom_proxy_client', $config['cache_manager'])) {
-                    $generateUrlType = UrlGeneratorInterface::ABSOLUTE_URL;
-                } else {
-                    $defaultClient = $this->getDefaultProxyClient($config['proxy_client']);
-                    if ('noop' !== $defaultClient
-                        && array_key_exists('base_url', $config['proxy_client'][$defaultClient])) {
-                        $generateUrlType = UrlGeneratorInterface::ABSOLUTE_PATH;
-                    } elseif ('cloudfront' === $defaultClient) {
-                        $generateUrlType = UrlGeneratorInterface::ABSOLUTE_PATH;
-                    } else {
-                        $generateUrlType = UrlGeneratorInterface::ABSOLUTE_URL;
-                    }
-                }
-            } else {
-                $generateUrlType = $config['cache_manager']['generate_url_type'];
+            $generateUrlType = (array_key_exists('generate_url_type', $config)) ? $config['generate_url_type'] : $config['cache_manager']['generate_url_type'];
+            if ('auto' === $generateUrlType) {
+                $generateUrlType = $this->determineGenerateUrlType($config);
             }
             $container->setParameter('fos_http_cache.cache_manager.generate_url_type', $generateUrlType);
             $loader->load('cache_manager.php');
@@ -129,6 +116,11 @@ final class FOSHttpCacheExtension extends Extension
             if (!empty($config['invalidation']['rules'])) {
                 $this->loadInvalidatorRules($container, $config['invalidation']['rules']);
             }
+            $generateUrlType = (array_key_exists('generate_url_type', $config)) ? $config['generate_url_type'] : UrlGeneratorInterface::ABSOLUTE_PATH;
+            if ('auto' === $generateUrlType) {
+                $generateUrlType = $this->determineGenerateUrlType($config);
+            }
+            $container->setParameter('fos_http_cache.invalidation.generate_url_type', $generateUrlType);
         }
 
         if ($config['user_context']['enabled']) {
@@ -744,5 +736,23 @@ final class FOSHttpCacheExtension extends Extension
         }
 
         throw new InvalidConfigurationException('No proxy client configured');
+    }
+
+    private function determineGenerateUrlType(array $config): int
+    {
+        if (array_key_exists('cache_manager', $config) && array_key_exists('custom_proxy_client', $config['cache_manager'])) {
+            return UrlGeneratorInterface::ABSOLUTE_URL;
+        }
+
+        $defaultClient = $this->getDefaultProxyClient($config['proxy_client']);
+        if ('noop' !== $defaultClient
+            && array_key_exists('base_url', $config['proxy_client'][$defaultClient])) {
+            return UrlGeneratorInterface::ABSOLUTE_PATH;
+        }
+        if ('cloudfront' === $defaultClient) {
+            return UrlGeneratorInterface::ABSOLUTE_PATH;
+        }
+
+        return UrlGeneratorInterface::ABSOLUTE_URL;
     }
 }

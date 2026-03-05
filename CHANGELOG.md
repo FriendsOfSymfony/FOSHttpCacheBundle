@@ -4,6 +4,12 @@ Changelog
 3.x
 ===
 
+3.4
+---
+
+* Configuration for `generate_url_type` is now on top level instead of on the `cache_manager`, and applies to the InvalidationListener too.
+  Configuring `cache_manager.generate_url_type` is deprecated and will be removed in version 4.
+
 3.3
 ---
 

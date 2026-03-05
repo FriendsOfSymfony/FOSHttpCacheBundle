@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <container xmlns="http://symfony.com/schema/dic/services">
 
-    <config xmlns="http://example.org/schema/dic/fos_http_cache">
+    <config xmlns="http://example.org/schema/dic/fos_http_cache"
+        generate_url_type="0"
+    >
         <cacheable>
             <response>
                 <additional-status>100</additional-status>
