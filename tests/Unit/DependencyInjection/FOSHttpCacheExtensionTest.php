@@ -28,6 +28,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBa
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Router;
 
 class FOSHttpCacheExtensionTest extends TestCase
@@ -51,6 +52,38 @@ class FOSHttpCacheExtensionTest extends TestCase
         $this->assertTrue($container->hasAlias('fos_http_cache.default_proxy_client'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.invalidation'));
         $this->assertTrue($container->hasDefinition('fos_http_cache.event_listener.tag'));
+    }
+
+    public function testVarnishWithBaseUrlAutoResolvesAbsolutePath(): void
+    {
+        $container = $this->createContainer();
+        $this->extension->load([$this->getBaseConfig()], $container);
+
+        $this->assertSame(
+            UrlGeneratorInterface::ABSOLUTE_PATH,
+            $container->getParameter('fos_http_cache.cache_manager.generate_url_type'),
+            'Varnish with base_url must auto-resolve to ABSOLUTE_PATH so the Host header uses base_url, not the CMS request hostname.'
+        );
+    }
+
+    public function testVarnishWithoutBaseUrlAutoResolvesAbsoluteUrl(): void
+    {
+        $container = $this->createContainer();
+        $config = [
+            'proxy_client' => [
+                'varnish' => [
+                    'http' => [
+                        'servers' => ['127.0.0.1'],
+                    ],
+                ],
+            ],
+        ];
+        $this->extension->load([$config], $container);
+
+        $this->assertSame(
+            UrlGeneratorInterface::ABSOLUTE_URL,
+            $container->getParameter('fos_http_cache.cache_manager.generate_url_type')
+        );
     }
 
     public function testConfigLoadVarnishCustomClient(): void

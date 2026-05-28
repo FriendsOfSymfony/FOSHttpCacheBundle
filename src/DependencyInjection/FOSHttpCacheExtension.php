@@ -745,9 +745,12 @@ final class FOSHttpCacheExtension extends Extension
         }
 
         $defaultClient = $this->getDefaultProxyClient($config['proxy_client']);
-        if ('noop' !== $defaultClient
-            && array_key_exists('base_url', $config['proxy_client'][$defaultClient])) {
-            return UrlGeneratorInterface::ABSOLUTE_PATH;
+        if ('noop' !== $defaultClient) {
+            $clientConfig = $config['proxy_client'][$defaultClient];
+            $hasBaseUrl = !empty($clientConfig['base_url'] ?? null) || !empty($clientConfig['http']['base_url'] ?? null);
+            if ($hasBaseUrl) {
+                return UrlGeneratorInterface::ABSOLUTE_PATH;
+            }
         }
         if ('cloudfront' === $defaultClient) {
             return UrlGeneratorInterface::ABSOLUTE_PATH;
