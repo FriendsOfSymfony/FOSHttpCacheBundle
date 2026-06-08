@@ -4,6 +4,11 @@ Changelog
 3.x
 ===
 
+3.4.1
+-----
+
+* Fixed configuration validation to allow `generate_url_type` also when `proxy_client.varnish.http.base_url` is configured, not only when `proxy_client.[client].base_url` is configured.
+
 3.4.0
 -----
 
